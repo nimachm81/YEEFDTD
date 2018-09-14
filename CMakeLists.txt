@@ -13,7 +13,7 @@ file(GLOB SOURCES "src/*.cpp")
 
 #${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${MPIEXEC_MAX_NUMPROCS} ${MPIEXEC_PREFLAGS} hello
 
-add_executable(testPrint ${SOURCES})
+add_executable(main ${SOURCES})
 
-target_link_libraries(testPrint ${MPI_CXX_LIBRARIES})
+target_link_libraries(main ${MPI_CXX_LIBRARIES})
 
