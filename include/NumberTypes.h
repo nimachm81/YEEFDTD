@@ -13,12 +13,9 @@
 #include <cstdint>    // std::int64_t
 
 
-namespace fdtd {
-
 using RealNumber = double;
 using BigIntNumber = std::int64_t;
 
-}  // namespace fdtd
 
 #endif  // FDTD_NUMBERTYPES_H_
 

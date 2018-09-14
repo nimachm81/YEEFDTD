@@ -3,29 +3,26 @@
 #define FDTD_YEEGRID_H_
 
 
+#include <cstddef>      //std::size_t
+
 #include "NumberTypes.h"
+#include "YeeGridDataTypes.h"
 
-class YeeGrid {
+class YeeGrid3D {
+    public:
+    YeeGrid3D();
     
-    YeeGrid(int nDim);
     
-    int nDim;
-    std::vector<std::size_t> nPoints;
+    private:
+    std::array<std::size_t, 3> nCells;
     
-    std::vector<YeeGridScalar&> scalars;
+    std::vector<YeeGridScalar3D*> scalars;
 
-    std::vector<YeeGridEScalarArray&> eScalarArrays; 
-    std::vector<YeeGridHScalarArray&> hScalarArrays; 
-
-    std::vector<YeeGridEVectorArray&> eVectorArrays; 
-    std::vector<YeeGridHVectorArray&> hVectorArrays; 
+    std::vector<YeeGridEVectorArray3D*> eVectorArrays; 
+    std::vector<YeeGridHVectorArray3D*> hVectorArrays; 
     
-    std::vector<YeeGridEMatrixArray&> eMatrixArrays; 
-    std::vector<YeeGridHMatrixArray&> hMatrixArrays; 
-    
-}
-
-
+        
+};
 
 
 #endif  // FDTD_YEEGRID_H_
