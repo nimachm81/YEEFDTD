@@ -15,22 +15,22 @@
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<Build command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all' />
+					<CompileFile command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
-					<SilentBuild command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all &gt; $(CMD_NULL)' />
+					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
 				<Option type="4" />
 				<Option compiler="gcc" />
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 rebuild_cache' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<Build command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 rebuild_cache' />
+					<CompileFile command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
@@ -44,12 +44,20 @@
 				<Compiler>
 					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/include" />
 					<Add directory="/usr/include/mpich" />
+					<Add directory="/usr/include/c++/7" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7" />
+					<Add directory="/usr/include/c++/7/backward" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include" />
+					<Add directory="/usr/local/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include" />
 				</Compiler>
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 main' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<Build command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 main' />
+					<CompileFile command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
@@ -63,12 +71,20 @@
 				<Compiler>
 					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/include" />
 					<Add directory="/usr/include/mpich" />
+					<Add directory="/usr/include/c++/7" />
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7" />
+					<Add directory="/usr/include/c++/7/backward" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include" />
+					<Add directory="/usr/local/include" />
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed" />
+					<Add directory="/usr/include/x86_64-linux-gnu" />
+					<Add directory="/usr/include" />
 				</Compiler>
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 main/fast' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<Build command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 main/fast' />
+					<CompileFile command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>
@@ -77,10 +93,10 @@
 				<Option type="4" />
 				<Option compiler="gcc" />
 				<MakeCommands>
-					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 edit_cache' />
-					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
-					<Clean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
-					<DistClean command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<Build command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 edit_cache' />
+					<CompileFile command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
+					<Clean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
+					<DistClean command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 clean' />
 					<AskRebuildNeeded command="$make -q -f $makefile $target" />
 					<SilentBuild command="$make -f $makefile $target &gt; $(CMD_NULL)" />
 				</MakeCommands>

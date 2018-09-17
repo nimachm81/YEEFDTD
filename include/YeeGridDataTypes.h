@@ -12,7 +12,7 @@
 class YeeGridData3D {
     public:
     YeeGridData3D(const std::string name, std::array<std::size_t, 3>& nCells);
-    
+
     protected:
     const std::string name;
     std::array<std::size_t, 3> nCells;
@@ -23,24 +23,23 @@ class YeeGridScalar3D : public YeeGridData3D {
     YeeGridScalar3D(const std::string name, std::array<std::size_t, 3>& nCells);
     void SetValue(RealNumber value);
     RealNumber GetValue() const;
-    
+
     private:
     RealNumber value;
-
 };
 
-class YeeGridEVectorArray3D : public YeeGridData3D {
+class YeeGridEtypeEdgeVectorArray3D : public YeeGridData3D {
     public:
-    YeeGridEVectorArray3D(const std::string name, std::array<std::size_t, 3>& nCells);
-    
+    YeeGridEtypeEdgeVectorArray3D(const std::string name, std::array<std::size_t, 3>& nCells);
+
     private:
     NumberArray3D<RealNumber> numArray[3];
 };
 
-class YeeGridHVectorArray3D : public YeeGridData3D {
+class YeeGridHtypeEdgeVectorArray3D : public YeeGridData3D {
     public:
-    YeeGridHVectorArray3D(const std::string name, std::array<std::size_t, 3>& nCells);
-        
+    YeeGridHtypeEdgeVectorArray3D(const std::string name, std::array<std::size_t, 3>& nCells);
+
     private:
     NumberArray3D<RealNumber> numArray[3];
 };

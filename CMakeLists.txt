@@ -4,6 +4,8 @@ project (YEEFDTD)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 find_package(MPI REQUIRED)
 
+set(CMAKE_BUILD_TYPE Debug)
+
 include_directories(include ${MPI_INCLUDE_PATH})
 
 set (PROJECT_LINK_LIBS "${PROJECT_LINK_LIBS} " )
