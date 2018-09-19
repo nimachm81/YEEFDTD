@@ -70,13 +70,22 @@ class NumberArray3D {
         return arrayData;
     }
 
+    std::array<std::size_t, 3>& GetIndStart() {
+        return indStart;
+    }
+
     const std::array<std::size_t, 3>& GetIndStart() const {
         return indStart;
+    }
+
+    std::array<std::size_t, 3>& GetShape() {
+        return shape;
     }
 
     const std::array<std::size_t, 3>& GetShape() const {
         return shape;
     }
+
 
     bool IsSlice() const {
         return isSlice;
