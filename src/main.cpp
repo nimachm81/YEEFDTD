@@ -1,5 +1,7 @@
  //
 
+#include <any>
+#include <typeinfo>
 #include <iostream>
 
 #include "NumberTypes.h"
@@ -35,6 +37,12 @@ int main(int argc, char** argv) {
     A = B;
     std::cout << " A : " << &A << std::endl;
     A.Print();
+
+    std::any a = std::make_any<NumberArray3D<RealNumber>>(shape, 4.01);
+    std::cout << " a : " << a.type().name() << std::endl;
+
+    std::cout << " a : " << typeid(NumberArray3D<RealNumber>).name() << std::endl;
+    std::any_cast<NumberArray3D<RealNumber>>(a).Print();
 }
 
 

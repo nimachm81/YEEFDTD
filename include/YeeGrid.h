@@ -4,33 +4,25 @@
 
 
 #include <cstddef>      //std::size_t
+#include <string>
+#include <unordered_map>
+#include <memory>
 
 #include "NumberTypes.h"
 #include "YeeGridDataTypes.h"
 
 
-enum class ElementType {
-  EdgeE = 1,
-  EdgeH = 2,
-  NodeE = 3,
-  NodeH = 4
-};
-
 
 class YeeGrid3D {
     public:
-    YeeGrid3D();
-    //UpdateElement(elemType, updateInstructions);
+    YeeGrid3D(std::array<std::size_t, 3>& nCells);
+    void AddGridElement(const std::string name, ElementType elemType);
+    YeeGridData3D& GetGridElement(const std::string name);
 
 
     private:
     std::array<std::size_t, 3> nCells;
-
-    std::vector<YeeGridScalar3D*> scalars;
-
-    std::vector<YeeGridEtypeEdgeVectorArray3D*> eVectorArrays;
-    std::vector<YeeGridHtypeEdgeVectorArray3D*> hVectorArrays;
-
+    std::unordered_map<std::string, std::unique_ptr<YeeGridData3D>> gridElements;
 
 };
 

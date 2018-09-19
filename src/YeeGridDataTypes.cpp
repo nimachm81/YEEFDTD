@@ -7,40 +7,39 @@
 #include "NumberTypes.h"
 #include "YeeGridDataTypes.h"
 
-YeeGridData3D::YeeGridData3D(const std::string name, std::array<std::size_t, 3>& nCells) :
-        name(name), nCells(nCells) {
-    assert(nCells[0] > 0 && nCells[1] > 0 && nCells[2] > 0);
+/*
+YeeGridData3D::YeeGridData3D() {}
+
+YeeGridData3D::YeeGridData3D(const YeeGridData3D& gridData) :
+        elemType(gridData.GetElemType()),
+        numArray{gridData.GetNumArray(0), gridData.GetNumArray(1), gridData.GetNumArray(2)} { }
+
+YeeGridData3D::YeeGridData3D(const YeeGridData3D&& gridData) :
+        elemType(std::move(gridData.GetElemType())),
+        numArray{std::move(gridData.GetNumArray(0)),
+                 std::move(gridData.GetNumArray(1)),
+                 std::move(gridData.GetNumArray(2))} { }
+
+*/
+
+YeeGridData3D::YeeGridData3D(ElementType elemType, std::array<std::size_t, 3>& nCells) : elemType(elemType) {
+    if(elemType==ElementType::EdgeE) {
+        numArray[0].ReInitialize({nCells[0]    , nCells[1] + 1, nCells[2] + 1}, 0.0);
+        numArray[1].ReInitialize({nCells[0] + 1, nCells[1]    , nCells[2] + 1}, 0.0);
+        numArray[2].ReInitialize({nCells[0] + 1, nCells[1] + 1, nCells[2]    }, 0.0);
+    }else if(elemType==ElementType::EdgeH) {
+        numArray[0].ReInitialize({nCells[0] + 1, nCells[1]    , nCells[2]    }, 0.0);
+        numArray[0].ReInitialize({nCells[0]    , nCells[1] + 1, nCells[2]    }, 0.0);
+        numArray[0].ReInitialize({nCells[0]    , nCells[1]    , nCells[2] + 1}, 0.0);
+    }
 }
 
-YeeGridScalar3D::YeeGridScalar3D(const std::string name, std::array<std::size_t, 3>& nCells) :
-        YeeGridData3D(name, nCells) { }
-
-
-void YeeGridScalar3D::SetValue(RealNumber value) {
-    YeeGridScalar3D::value = value;
+ElementType& YeeGridData3D::GetElemType() {
+    return elemType;
 }
 
-RealNumber YeeGridScalar3D::GetValue() const {
-    return value;
+NumberArray3D<RealNumber>& YeeGridData3D::GetNumArray(int i) {
+    return numArray[i];
 }
-
-YeeGridEtypeEdgeVectorArray3D::YeeGridEtypeEdgeVectorArray3D(
-                    const std::string name, std::array<std::size_t, 3>& nCells) :
-        YeeGridData3D(name, nCells),
-        numArray{NumberArray3D<RealNumber>({nCells[0]    , nCells[1] + 1, nCells[2] + 1}, 0.0),
-                 NumberArray3D<RealNumber>({nCells[0] + 1, nCells[1]    , nCells[2] + 1}, 0.0),
-                 NumberArray3D<RealNumber>({nCells[0] + 1, nCells[1] + 1, nCells[2]    }, 0.0)} { }
-
-
-
-YeeGridHtypeEdgeVectorArray3D::YeeGridHtypeEdgeVectorArray3D(
-                    const std::string name, std::array<std::size_t, 3>& nCells) :
-        YeeGridData3D(name, nCells),
-        numArray{NumberArray3D<RealNumber>({nCells[0] + 1, nCells[1]    , nCells[2]    }, 0.0),
-                 NumberArray3D<RealNumber>({nCells[0]    , nCells[1] + 1, nCells[2]    }, 0.0),
-                 NumberArray3D<RealNumber>({nCells[0]    , nCells[1]    , nCells[2] + 1}, 0.0)} { }
-
-
-
 
 

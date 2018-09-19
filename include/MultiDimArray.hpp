@@ -20,6 +20,7 @@ class NumberArray3D {
     bool isSlice = true;
 
     public:
+    NumberArray3D() : isSlice(false), shape{0, 0, 0}, indStart{0, 0, 0} {}
     NumberArray3D(std::array<std::size_t, 3> shape, T initValue) : isSlice(false), shape(shape), indStart{0, 0, 0} {
         arrayData = Create3DNumberArray(shape, initValue);
     }
@@ -55,6 +56,14 @@ class NumberArray3D {
             Delete3DNumberArray(arrayData, shapeOfArrayData);
             std::cout << " Deleting : " << this << std::endl;
         }
+    }
+
+    void ReInitialize(std::array<std::size_t, 3> shape, T initValue) {
+        this->~NumberArray3D();
+        this->isSlice = false;
+        this->shape = shape;
+        this->indStart = std::array<std::size_t, 3>{0, 0, 0};
+        this->arrayData = Create3DNumberArray(shape, initValue);
     }
 
     T*** GetArrayData() const {
@@ -274,7 +283,7 @@ class NumberArray3D {
         std::size_t ind2 = indStart[2];
 
         T*** rhs_arrayData = rhs.GetArrayData();
-        std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
+        const std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
         std::size_t rhs_ind0 = rhs_indStart[0];
         std::size_t rhs_ind1 = rhs_indStart[1];
         std::size_t rhs_ind2 = rhs_indStart[2];

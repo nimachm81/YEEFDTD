@@ -9,41 +9,29 @@
 #include "MultiDimArray.hpp"
 
 
+enum class ElementType {
+    ConstantScalar,
+    EdgeE,
+    EdgeH,
+    NodeE,
+    NodeH
+};
+
+
 class YeeGridData3D {
     public:
-    YeeGridData3D(const std::string name, std::array<std::size_t, 3>& nCells);
+    //YeeGridData3D();
+    //YeeGridData3D(const YeeGridData3D& gridData);
+    //YeeGridData3D(const YeeGridData3D&& gridData);
+    YeeGridData3D(ElementType elemType, std::array<std::size_t, 3>& nCells);
 
-    protected:
-    const std::string name;
-    std::array<std::size_t, 3> nCells;
-};
-
-class YeeGridScalar3D : public YeeGridData3D {
-    public:
-    YeeGridScalar3D(const std::string name, std::array<std::size_t, 3>& nCells);
-    void SetValue(RealNumber value);
-    RealNumber GetValue() const;
+    ElementType& GetElemType();
+    NumberArray3D<RealNumber>& GetNumArray(int i);
 
     private:
-    RealNumber value;
-};
-
-class YeeGridEtypeEdgeVectorArray3D : public YeeGridData3D {
-    public:
-    YeeGridEtypeEdgeVectorArray3D(const std::string name, std::array<std::size_t, 3>& nCells);
-
-    private:
+    ElementType elemType;
     NumberArray3D<RealNumber> numArray[3];
 };
-
-class YeeGridHtypeEdgeVectorArray3D : public YeeGridData3D {
-    public:
-    YeeGridHtypeEdgeVectorArray3D(const std::string name, std::array<std::size_t, 3>& nCells);
-
-    private:
-    NumberArray3D<RealNumber> numArray[3];
-};
-
 
 #endif  // FDTD_YEEGRIDDATATYPES_H_
 
