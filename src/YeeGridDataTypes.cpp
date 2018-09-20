@@ -39,6 +39,7 @@ ElementType& YeeGridData3D::GetElemType() {
 }
 
 NumberArray3D<RealNumber>& YeeGridData3D::GetNumArray(int i) {
+    assert(i>=0 && i<3);
     return numArray[i];
 }
 
