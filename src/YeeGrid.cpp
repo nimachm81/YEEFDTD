@@ -19,6 +19,9 @@ YeeGridData3D& YeeGrid3D::GetGridElement(const std::string name) {
     return *gridElements[name];
 }
 
+void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* parameters) {
+    instructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, parameters);
+}
 
 
 

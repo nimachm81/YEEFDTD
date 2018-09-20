@@ -51,7 +51,7 @@ T** Create2DNumberArray(std::array<std::size_t, 2> arrayShape, T initValue) {
 };
 
 template <typename T>
-void Delete2DNumberArray(T** tArray, std::array<std::size_t, 3> arrayShape) {
+void Delete2DNumberArray(T** tArray, std::array<std::size_t, 3>& arrayShape) {
     if(tArray != nullptr) {
         std::size_t n0 = arrayShape[0];
         std::size_t n1 = arrayShape[1];
@@ -65,7 +65,7 @@ void Delete2DNumberArray(T** tArray, std::array<std::size_t, 3> arrayShape) {
 
 
 template <typename T>
-T*** Create3DNumberArray(std::array<std::size_t, 3> arrayShape, T initValue) {
+T*** Create3DNumberArray(std::array<std::size_t, 3>& arrayShape, T initValue) {
     std::size_t n0 = arrayShape[0];
     std::size_t n1 = arrayShape[1];
     std::size_t n2 = arrayShape[2];
@@ -84,7 +84,7 @@ T*** Create3DNumberArray(std::array<std::size_t, 3> arrayShape, T initValue) {
 
 
 template <typename T>
-void Delete3DNumberArray(T*** tArray, std::array<std::size_t, 3> arrayShape) {
+void Delete3DNumberArray(T*** tArray, std::array<std::size_t, 3>& arrayShape) {
     if(tArray != nullptr) {
         std::size_t n0 = arrayShape[0];
         std::size_t n1 = arrayShape[1];
