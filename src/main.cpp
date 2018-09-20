@@ -68,10 +68,45 @@ void test_vector3() {
     std::cout << "v1 + v2: " << v << std::endl;
 }
 
+#include <any>
+#include <tuple>
+#include <utility>
+#include <vector>
+auto* test_container() {
+    std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>> p0({1,2,3}, {4,5,6});
+    std::cout << p0.first[0] << " " << p0.first[1] << " " << p0.first[2] << std::endl;
+
+    std::array<int, 3> arr0{3, 4, 5};
+    std::array<int, 3> arr1{7, 8, 9};
+    std::pair<std::array<int, 3>, std::array<int, 3>> p1(arr0, arr1);
+    std::cout << p1.first[0] << " " << p1.first[1] << " " << p1.first[2] << std::endl;
+
+    std::vector<std::string> v{"this", "is", "a", "string"};
+    std::cout << v[0] << v[1] << std::endl;
+
+    std::tuple<std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>, std::vector<std::string>> tp(p0, v);
+    std::cout << std::get<0>(tp).first[0] << std::endl;
+
+    double* p_d = new double[10];
+    p_d[0] = 10.12;
+    void* p_v = static_cast<void*>(p_d);
+    std::pair<int, void*> p2(2, p_v);
+    std::cout << static_cast<double*>(p2.second)[0] << "  " << static_cast<double*>(p2.second)[1] << std::endl;
+
+
+    std::any a = p0;
+    auto r_p0 = std::any_cast<std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>>(a);
+    std::cout << "any cast: " << r_p0.first[0] << " " << r_p0.first[1] << " " << r_p0.first[2] << std::endl;
+
+
+    auto tp2 = new std::tuple<std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,
+            std::vector<std::string>>(p0, v);
+    return tp2;
+}
 
 int main(int argc, char** argv) {
-    test_multidim_array();
-
+    auto* tp2 = test_container();
+    std::cout << std::get<0>(*tp2).first[0] << std::endl;
 }
 
 
