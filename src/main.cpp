@@ -92,7 +92,7 @@ auto* test_container() {
     void* p_v = static_cast<void*>(p_d);
     std::pair<int, void*> p2(2, p_v);
     std::cout << static_cast<double*>(p2.second)[0] << "  " << static_cast<double*>(p2.second)[1] << std::endl;
-
+    delete[] p_d;
 
     std::any a = p0;
     auto r_p0 = std::any_cast<std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>>(a);
@@ -104,9 +104,42 @@ auto* test_container() {
     return tp2;
 }
 
+#include "YeeGrid.h"
+void test_yeegrid() {
+    std::size_t nz = 10;
+    std::array<std::size_t, 3> nCells{1, 1, nz};
+    YeeGrid3D yee(nCells);
+    yee.AddGridElement("E", ElementType::EdgeE);
+    yee.AddGridElement("H", ElementType::EdgeH);
+    void* E_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 0, 1},
+        {0, 0, nz-1},
+        "E",
+        0,
+        {1.0, -1.0},
+        {"H", "H"},
+        {1, 1},
+        {{0, 0, 0}, {0, 0, -1}}
+    );
+    void* H_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 0, 0},
+        {0, 0, nz-1},
+        "H",
+        1,
+        {1.0, -1.0},
+        {"E", "E"},
+        {0, 0},
+        {{0, 0, 1}, {0, 0, 0}}
+    );
+    yee.AddUpdateInstruction("E-update", FDInstructionCode::A_plusequal_sum_b_C, E_update_params);
+    yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
+    yee.SetIterationSequence({"E-update", "H-update"});
+    yee.ApplyUpdateInstructions(10);
+}
+
 int main(int argc, char** argv) {
-    auto* tp2 = test_container();
-    std::cout << std::get<0>(*tp2).first[0] << std::endl;
+    test_yeegrid();
+    //test_multidim_array();
 }
 
 

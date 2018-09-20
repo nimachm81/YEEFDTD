@@ -54,7 +54,7 @@ class NumberArray3D {
                                                         shape[1] + indStart[1],
                                                         shape[2] + indStart[2] };
             Delete3DNumberArray(arrayData, shapeOfArrayData);
-            std::cout << " Deleting : " << this << std::endl;
+            //std::cout << " Deleting : " << this << std::endl;
         }
     }
 
@@ -105,14 +105,32 @@ class NumberArray3D {
 
     //------------------------------ Operators ---------------------------------------
 
-    NumberArray3D& operator=(NumberArray3D& numArray) {
-        if(this != &numArray) {
-            this->~NumberArray3D();
+    // it replaces the content of the array by the content of numarray
+    NumberArray3D& operator=(const NumberArray3D& rhs) {
+        if(this != &rhs) {
+            assert( rhs.GetShape() == shape );
+            std::size_t n0 = shape[0];
+            std::size_t n1 = shape[1];
+            std::size_t n2 = shape[2];
+            std::size_t ind0 = indStart[0];
+            std::size_t ind1 = indStart[1];
+            std::size_t ind2 = indStart[2];
+
+            T*** rhs_arrayData = rhs.GetArrayData();
+            const std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
+            std::size_t rhs_ind0 = rhs_indStart[0];
+            std::size_t rhs_ind1 = rhs_indStart[1];
+            std::size_t rhs_ind2 = rhs_indStart[2];
+
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] =
+                                rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+                    }
+                }
+            }
         }
-        isSlice = true;
-        indStart = numArray.GetIndStart();
-        shape = numArray.GetShape();
-        arrayData = numArray.GetArrayData();
         return *this;
     }
 
@@ -276,6 +294,32 @@ class NumberArray3D {
                 for(std::size_t i2 = 0; i2 < n2; ++i2) {
                     c_arrayData[i0][i1][i2] =
                             a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] * numB;
+                }
+            }
+        }
+        return numArrC;     // TODO: define move constructors
+    }
+
+    friend NumberArray3D operator*(const T numB, const NumberArray3D& numArrA) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] =
+                            numB * a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
                 }
             }
         }

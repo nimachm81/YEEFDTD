@@ -25,18 +25,22 @@ enum class FDInstructionCode {
                 //            std::vector<RealNumber>,        // b scalars
                 //            std::vector<std::string>,       // C arrays names
                 //            std::vector<int>,               // C arrays components : 0:C_x, 1:C_y, 2:C_z
-                //            std::vector<std::array<std::size_t, 3>>>    // [i0,j0,k0], ...
+                //            std::vector<int, 3>>>    // [i0,j0,k0], ...
                 //
 };
 
 class YeeGrid3D {
     public:
     YeeGrid3D(std::array<std::size_t, 3>& nCells);
+    ~YeeGrid3D();
+
     void AddGridElement(const std::string name, ElementType elemType);
     YeeGridData3D& GetGridElement(const std::string name);
 
     void AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params);
+    void SetIterationSequence(std::vector<std::string> sequence);
     void ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params);
+    void ApplyUpdateInstructions(std::size_t numIterations);
 
     void* ConstructParams_A_plusequal_sum_b_C(
                                     std::array<std::size_t, 3> ind_start,
@@ -46,13 +50,14 @@ class YeeGrid3D {
                                     std::vector<RealNumber> bValues,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
-                                    std::vector<std::array<std::size_t, 3>> arrayC_indexShifts
+                                    std::vector<std::array<int, 3>> arrayC_indexShifts
                                     );
 
     private:
     std::array<std::size_t, 3> nCells;
     std::unordered_map<std::string, std::unique_ptr<YeeGridData3D>> gridElements;
     std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> instructions;
+    std::vector<std::string> iterationSequence;
 
 };
 
