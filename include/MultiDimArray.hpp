@@ -3,6 +3,7 @@
 #define FDTD_MULTIDIMARRAY_H_
 
 
+#include <cmath>
 #include <cassert>
 #include <cstddef>      //std::size_t, nullptr
 #include <array>       //std::array
@@ -427,7 +428,7 @@ class NumberArray3D {
                 }
             }
         }
-        return numArrC;     // TODO: define move constructors
+        return numArrC;
     }
 
     friend NumberArray3D operator/(const T numB, const NumberArray3D& numArrA) {
@@ -453,7 +454,7 @@ class NumberArray3D {
                 }
             }
         }
-        return numArrC;     // TODO: define move constructors
+        return numArrC;
     }
 
     NumberArray3D& operator/=(const NumberArray3D& rhs) {
@@ -498,6 +499,53 @@ class NumberArray3D {
             }
         }
         return *this;
+    }
+
+    //------------------------- in-place math functions ----------------------------------
+
+    NumberArray3D& SetToNumber(const T num) {
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+        std::size_t ind0 = indStart[0];
+        std::size_t ind1 = indStart[1];
+        std::size_t ind2 = indStart[2];
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = num;
+                }
+            }
+        }
+        return *this;
+    }
+
+    //------------------------- mathematical functions -----------------------------------
+
+    static NumberArray3D exp(const NumberArray3D& numArrA) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] = std::exp(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
+                }
+            }
+        }
+        return numArrC;
     }
 
 

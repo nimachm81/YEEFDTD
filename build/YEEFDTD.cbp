@@ -104,13 +104,19 @@
 		<Unit filename="../CMakeLists.txt">
 			<Option virtualFolder="CMake Files/" />
 		</Unit>
+		<Unit filename="../include/ElementType.h" />
+		<Unit filename="../include/FDInstructionCode.h" />
+		<Unit filename="../include/GridArrayManipulator.h" />
 		<Unit filename="../include/MultiDimArray.hpp" />
 		<Unit filename="../include/MultiDimArrayAllocator.hpp" />
 		<Unit filename="../include/MultiDimArrayPrinting.hpp" />
 		<Unit filename="../include/NumberTypes.h" />
+		<Unit filename="../include/UniformTimeVaryingVector.h" />
 		<Unit filename="../include/Vector.hpp" />
 		<Unit filename="../include/YeeGrid.h" />
 		<Unit filename="../include/YeeGridDataTypes.h" />
+		<Unit filename="../src/GridArrayManipulator.cpp" />
+		<Unit filename="../src/UniformTimeVaryingVector.cpp" />
 		<Unit filename="../src/YeeGrid.cpp">
 			<Option target="main" />
 		</Unit>

@@ -7,15 +7,7 @@
 
 #include "NumberTypes.h"
 #include "MultiDimArray.hpp"
-
-
-enum class ElementType {
-    ConstantScalar,
-    EdgeE,
-    EdgeH,
-    NodeE,
-    NodeH
-};
+#include "ElementType.h"
 
 
 class YeeGridData3D {

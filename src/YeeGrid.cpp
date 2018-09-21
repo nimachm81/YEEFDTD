@@ -34,6 +34,24 @@ YeeGrid3D::~YeeGrid3D() {
     }
 }
 
+void YeeGrid3D::SetCornerCoordinates(std::array<RealNumber, 3> r_0, std::array<RealNumber, 3> r_1) {
+    YeeGrid3D::r_0 = r_0;
+    YeeGrid3D::r_1 = r_1;
+}
+
+const std::array<std::size_t, 3>& YeeGrid3D::GetNumberOfCells() const {
+    return nCells;
+}
+
+const std::array<RealNumber, 3>& YeeGrid3D::GetCornerR0() const {
+    return r_0;
+}
+
+const std::array<RealNumber, 3>& YeeGrid3D::GetCornerR1() const {
+    return r_1;
+}
+
+
 void YeeGrid3D::AddEntireGridElement(const std::string name, ElementType elemType) {
     gridElements[name] = std::make_unique<YeeGridData3D>(elemType, nCells);
 }
