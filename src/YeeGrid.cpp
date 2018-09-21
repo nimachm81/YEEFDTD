@@ -34,9 +34,15 @@ YeeGrid3D::~YeeGrid3D() {
     }
 }
 
-void YeeGrid3D::AddGridElement(const std::string name, ElementType elemType) {
+void YeeGrid3D::AddEntireGridElement(const std::string name, ElementType elemType) {
     gridElements[name] = std::make_unique<YeeGridData3D>(elemType, nCells);
 }
+
+void YeeGrid3D::AddPartialGridElement(const std::string name, ElementType elemType
+        ,std::array<std::size_t, 3> indOrigin ,std::array<std::size_t, 3> numCells) {
+    gridElements[name] = std::make_unique<YeeGridData3D>(elemType, numCells, indOrigin);
+}
+
 
 YeeGridData3D& YeeGrid3D::GetGridElement(const std::string name) {
     return *gridElements[name];

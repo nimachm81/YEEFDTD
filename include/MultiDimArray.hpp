@@ -54,7 +54,6 @@ class NumberArray3D {
                                                         shape[1] + indStart[1],
                                                         shape[2] + indStart[2] };
             Delete3DNumberArray(arrayData, shapeOfArrayData);
-            //std::cout << " Deleting : " << this << std::endl;
         }
     }
 

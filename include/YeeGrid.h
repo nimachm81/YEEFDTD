@@ -33,8 +33,13 @@ class YeeGrid3D {
     public:
     YeeGrid3D(std::array<std::size_t, 3>& nCells);
     ~YeeGrid3D();
-
-    void AddGridElement(const std::string name, ElementType elemType);
+    // an element that spans over the entire Yee grid
+    void AddEntireGridElement(const std::string name, ElementType elemType);
+    // an element that spans over a fraction of the Yee grid
+    void AddPartialGridElement(const std::string name, ElementType elemType
+        ,std::array<std::size_t, 3> indOrigin     // the element start on this index of the background grid
+        ,std::array<std::size_t, 3> numCells      // number of cells covered by the element
+        );
     YeeGridData3D& GetGridElement(const std::string name);
 
     void AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params);

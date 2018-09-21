@@ -22,7 +22,9 @@ YeeGridData3D::YeeGridData3D(const YeeGridData3D&& gridData) :
 
 */
 
-YeeGridData3D::YeeGridData3D(ElementType elemType, std::array<std::size_t, 3>& nCells) : elemType(elemType) {
+YeeGridData3D::YeeGridData3D(ElementType elemType, std::array<std::size_t, 3>& nCells,
+                                                   std::array<std::size_t, 3> indOrigin) :
+                                           elemType(elemType), indexOfOrigin(indOrigin) {
     if(elemType==ElementType::EdgeE) {
         numArray[0].ReInitialize({nCells[0]    , nCells[1] + 1, nCells[2] + 1}, 0.0);
         numArray[1].ReInitialize({nCells[0] + 1, nCells[1]    , nCells[2] + 1}, 0.0);
