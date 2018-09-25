@@ -10,6 +10,9 @@ class UniformSingleDirectionGaussianTimeVaryingVector : public GridArrayManipula
     void SetAmplitude(const RealNumber amplitude);
     void SetCenterTime(const RealNumber t_center);
     void SetDecayTime(const RealNumber t_decay);
+    void SetModulationFrequency(const RealNumber modulationFrequency);
+    void SetModulationPhase(const RealNumber modulationPhase);
+
 
     virtual void UpdateArray(YeeGridData3D& gridData, RealNumber t);
 
@@ -18,6 +21,8 @@ class UniformSingleDirectionGaussianTimeVaryingVector : public GridArrayManipula
     RealNumber amplitude;
     RealNumber t_center;
     RealNumber t_decay;
+    RealNumber modulationFrequency;
+    RealNumber modulationPhase;
 
 }
 

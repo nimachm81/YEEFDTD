@@ -163,3 +163,9 @@ void YeeGrid3D::ApplyUpdateInstructions(std::size_t numIterations) {
 }
 
 
+void YeeGrid3D::AddGaussianPointSource(int direction, std::array<std::size_t, 3> index, RealNumber amplitude,
+        RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy, RealNumber modulatioPhase) {
+    std::unique_ptr<GridArrayManipulator>> = UniformSingleDirectionGaussianTimeVaryingVector
+}
+
+

@@ -51,6 +51,9 @@ class YeeGrid3D {
                                     std::vector<std::array<int, 3>> arrayC_indexShifts
                                     );
 
+    void AddGaussianPointSource(int direction, std::array<std::size_t, 3> index, RealNumber amplitude,
+            RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy, RealNumber modulatioPhase);
+
     private:
     std::array<RealNumber, 3> r_0;  // coordinates of the lower left corner
     std::array<RealNumber, 3> r_1;  // coordinates of the upper right corner

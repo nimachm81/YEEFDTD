@@ -1,4 +1,6 @@
 
+//#define _USE_MATH_DEFINES
+
 #include <cassert>
 #include <cmath>
 
@@ -21,10 +23,18 @@ void UniformSingleDirectionGaussianTimeVaryingVector::SetDecayTime(const RealNum
     t_decay = t_decay;
 }
 
+void UniformSingleDirectionGaussianTimeVaryingVector::SetModulationFrequency(const RealNumber modulationFrequency) {
+    modulationFrequency = modulationFrequency;
+}
+
+void UniformSingleDirectionGaussianTimeVaryingVector::SetModulationPhase(const RealNumber modulationPhase) {
+    modulationPhase = modulationPhase;
+}
 
 virtual void UniformSingleDirectionGaussianTimeVaryingVector::UpdateArray(YeeGridData3D& gridData, RealNumber t) {
     NumberArray3D<RealNumber>& arrayA = gridData.GetNumArray(direction);
-    RealNumber gaussianValue = amplitude * std::exp(-(t - t_center)*(t - t_center) / (t_decay*t_decay));
+    RealNumber gaussianValue = amplitude * std::exp(-(t - t_center)*(t - t_center) / (t_decay*t_decay)) *
+                               std::cos(2.0*M_PI*modulationFrequency*t + modulationPhase);
     arrayA.SetToNumber(gaussianValue);
 }
 
