@@ -6,7 +6,7 @@
 
 #include "NumberTypes.h"
 #include "YeeGrid.h"
-
+#include "GaussianGridArrayManipulator.h"
 
 
 YeeGrid3D::YeeGrid3D(std::array<std::size_t, 3>& nCells) : nCells(nCells) { }
@@ -53,12 +53,12 @@ const std::array<RealNumber, 3>& YeeGrid3D::GetCornerR1() const {
 
 
 void YeeGrid3D::AddEntireGridElement(const std::string name, ElementType elemType) {
-    gridElements[name] = std::make_unique<YeeGridData3D>(elemType, nCells);
+    gridElements[name] = std::make_shared<YeeGridData3D>(elemType, nCells);
 }
 
 void YeeGrid3D::AddPartialGridElement(const std::string name, ElementType elemType
-        ,std::array<std::size_t, 3> indOrigin ,std::array<std::size_t, 3> numCells) {
-    gridElements[name] = std::make_unique<YeeGridData3D>(elemType, numCells, indOrigin);
+        ,std::array<std::size_t, 3> startCell ,std::array<std::size_t, 3> numCells) {
+    gridElements[name] = std::make_shared<YeeGridData3D>(elemType, numCells, startCell);
 }
 
 
@@ -163,9 +163,19 @@ void YeeGrid3D::ApplyUpdateInstructions(std::size_t numIterations) {
 }
 
 
-void YeeGrid3D::AddGaussianPointSource(int direction, std::array<std::size_t, 3> index, RealNumber amplitude,
-        RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy, RealNumber modulatioPhase) {
-    std::unique_ptr<GridArrayManipulator>> = UniformSingleDirectionGaussianTimeVaryingVector
+void YeeGrid3D::AddGaussianPointSource(const std::string name, const std::string gridDataName,
+        int direction, std::array<std::size_t, 3> index, RealNumber amplitude,
+        RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
+        RealNumber modulatioPhase) {
+    std::shared_ptr<GaussianGridArrayManipulator> source(new GaussianGridArrayManipulator);
+    source->SetDirection(direction);
+    source->SetAmplitude(amplitude);
+    source->SetCenterTime(t_center);
+    source->SetDecayTime(t_decay);
+    source->SetModulationFrequency(modulationFrequecy);
+    source->SetModulationPhase(modulatioPhase);
+    source->SetGridData(gridElements[gridDataName]);
+    gridArrayManipulators[name] = source;
 }
 
 

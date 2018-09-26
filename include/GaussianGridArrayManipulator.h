@@ -1,11 +1,15 @@
 
-#ifndef FDTD_UNIFORMTIMEVARYINGCURRENT_H_
-#define FDTD_UNIFORMTIMEVARYINGCURRENT_H_
+#ifndef FDTD_GAUSSIANGRIDARRAYMANIPULATOR_H_
+#define FDTD_GAUSSIANGRIDARRAYMANIPULATOR_H_
+
+#include <cassert>
+#include <cmath>
 
 #include "GridArrayManipulator.h"
 
-class UniformSingleDirectionGaussianTimeVaryingVector : public GridArrayManipulator {
+class GaussianGridArrayManipulator : public GridArrayManipulator {
     public:
+    virtual ~GaussianGridArrayManipulator() { };
     void SetDirection(const int direction);
     void SetAmplitude(const RealNumber amplitude);
     void SetCenterTime(const RealNumber t_center);
@@ -13,8 +17,7 @@ class UniformSingleDirectionGaussianTimeVaryingVector : public GridArrayManipula
     void SetModulationFrequency(const RealNumber modulationFrequency);
     void SetModulationPhase(const RealNumber modulationPhase);
 
-
-    virtual void UpdateArray(YeeGridData3D& gridData, RealNumber t);
+    void UpdateArray(const RealNumber t);
 
     private:
     int direction;
@@ -24,8 +27,8 @@ class UniformSingleDirectionGaussianTimeVaryingVector : public GridArrayManipula
     RealNumber modulationFrequency;
     RealNumber modulationPhase;
 
-}
+};
 
 
-#endif // FDTD_UNIFORMTIMEVARYINGCURRENT_H_
+#endif // FDTD_GAUSSIANGRIDARRAYMANIPULATOR_H_
 

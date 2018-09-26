@@ -107,10 +107,12 @@ auto* test_container() {
 #include "YeeGrid.h"
 void test_yeegrid() {
     std::size_t nz = 10;
+    std::size_t indJ = 5;
     std::array<std::size_t, 3> nCells{1, 1, nz};
     YeeGrid3D yee(nCells);
     yee.AddEntireGridElement("E", ElementType::EdgeE);
     yee.AddEntireGridElement("H", ElementType::EdgeH);
+    yee.AddPartialGridElement("J", ElementType::EdgeE, {0, 0, indJ}, {1, 1, 0});
     void* E_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, 0, 1},
         {0, 0, nz-1},
@@ -137,6 +139,7 @@ void test_yeegrid() {
     yee.ApplyUpdateInstructions(10);
 }
 
+#include "GaussianGridArrayManipulator.h"
 int main(int argc, char** argv) {
     test_yeegrid();
     //test_multidim_array();
