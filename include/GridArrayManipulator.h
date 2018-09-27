@@ -15,6 +15,7 @@ class GridArrayManipulator {
     void SetGridData(std::shared_ptr<YeeGridData3D>& gridData);
 
     virtual void UpdateArray(const RealNumber t) = 0;
+    virtual RealNumber CalculateTime(const RealNumber dt, const std::size_t timeIndex) = 0;
 
     protected:
     std::array<RealNumber, 3> r_0;  // coordinates of the lower left corner

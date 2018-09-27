@@ -18,10 +18,12 @@
 
 class YeeGrid3D {
     public:
-    YeeGrid3D(std::array<std::size_t, 3>& nCells);
+    YeeGrid3D() { };
     ~YeeGrid3D();
 
     void SetCornerCoordinates(std::array<RealNumber, 3> r_0, std::array<RealNumber, 3> r_1);
+    void SetNumOfCells(std::array<std::size_t, 3>& nCells);
+    void SetTimeResolution(const RealNumber dt);
     const std::array<RealNumber, 3>& GetCornerR0() const;
     const std::array<RealNumber, 3>& GetCornerR1() const;
     const std::array<std::size_t, 3>& GetNumberOfCells() const;
@@ -50,16 +52,22 @@ class YeeGrid3D {
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<int, 3>> arrayC_indexShifts
                                     );
+    void* ConstructParams_A_equal_func_r_t(
+                                    std::string gridManipulator_name
+                                    );
 
     void AddGaussianPointSource(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
-            int direction, std::array<std::size_t, 3> index, RealNumber amplitude,
+            int direction, RealNumber amplitude,
             RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-            RealNumber modulatioPhase);
+            RealNumber modulatioPhase, RealNumber timeOffsetFraction);
 
     private:
-    std::array<RealNumber, 3> r_0;  // coordinates of the lower left corner
-    std::array<RealNumber, 3> r_1;  // coordinates of the upper right corner
+    std::size_t timeIndex;
+    RealNumber dt;                  // time resolution
+    std::array<RealNumber, 3> dr;   // spatial resolution
+    std::array<RealNumber, 3> r_0{0, 0, 0};  // coordinates of the lower left corner
+    std::array<RealNumber, 3> r_1{0, 0, 0};  // coordinates of the upper right corner
     std::array<std::size_t, 3> nCells;      // number of Yee cells
     std::unordered_map<std::string, std::shared_ptr<YeeGridData3D>> gridElements;
     std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;

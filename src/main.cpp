@@ -108,11 +108,18 @@ auto* test_container() {
 void test_yeegrid() {
     std::size_t nz = 10;
     std::size_t indJ = 5;
+    RealNumber dt = 0.1;
+    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<RealNumber, 3> r1{0.1, 0.1, 1.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    YeeGrid3D yee(nCells);
+    YeeGrid3D yee;
+    yee.SetCornerCoordinates(r0, r1);
+    yee.SetNumOfCells(nCells);
+    yee.SetTimeResolution(dt);
     yee.AddEntireGridElement("E", ElementType::EdgeE);
     yee.AddEntireGridElement("H", ElementType::EdgeH);
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, 0, indJ}, {1, 1, 0});
+    yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/, 0.0, 0.0, 0.0);
     void* E_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, 0, 1},
         {0, 0, nz-1},
@@ -133,6 +140,10 @@ void test_yeegrid() {
         {0, 0},
         {{0, 0, 1}, {0, 0, 0}}
     );
+    void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
+        "JUpdater"
+    );
+    yee.AddUpdateInstruction("J-update", FDInstructionCode::A_equal_func_r_t, J_update_params);
     yee.AddUpdateInstruction("E-update", FDInstructionCode::A_plusequal_sum_b_C, E_update_params);
     yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
     yee.SetIterationSequence({"E-update", "H-update"});

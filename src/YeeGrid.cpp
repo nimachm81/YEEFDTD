@@ -9,8 +9,6 @@
 #include "GaussianGridArrayManipulator.h"
 
 
-YeeGrid3D::YeeGrid3D(std::array<std::size_t, 3>& nCells) : nCells(nCells) { }
-
 YeeGrid3D::~YeeGrid3D() {
     for(std::string updateName : iterationSequence) {
         auto& instructCode_param_pair = instructions[updateName];
@@ -30,6 +28,14 @@ YeeGrid3D::~YeeGrid3D() {
                     >*
                 >(params);
             delete params_tuple;
+        } else if(instructionCode == FDInstructionCode::A_equal_func_r_t) {
+            auto* params_tuple =
+                static_cast<
+                    std::tuple<
+                        std::string
+                    >*
+                >(params);
+            delete params_tuple;
         }
     }
 }
@@ -37,6 +43,23 @@ YeeGrid3D::~YeeGrid3D() {
 void YeeGrid3D::SetCornerCoordinates(std::array<RealNumber, 3> r_0, std::array<RealNumber, 3> r_1) {
     YeeGrid3D::r_0 = r_0;
     YeeGrid3D::r_1 = r_1;
+}
+
+void YeeGrid3D::SetNumOfCells(std::array<std::size_t, 3>& nCells) {
+    YeeGrid3D::nCells = nCells;
+    for(int i = 0; i < 3; ++i) {
+        assert(nCells[i] >= 0);
+        if(nCells[i] > 0) {
+            dr[i] = (r_1[i] - r_0[i]) / nCells[i];
+        } else {
+            assert(r_1[i]==r_0[i]);
+            dr[i] = 0.0;
+        }
+    }
+}
+
+void YeeGrid3D::SetTimeResolution(const RealNumber dt) {
+    YeeGrid3D::dt = dt;
 }
 
 const std::array<std::size_t, 3>& YeeGrid3D::GetNumberOfCells() const {
@@ -105,6 +128,15 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
      return static_cast<void*>(params_tuple);
 }
 
+
+void* YeeGrid3D::ConstructParams_A_equal_func_r_t(std::string gridManipulator_name) {
+    auto* params_tuple = new std::tuple<std::string>(
+            gridManipulator_name    // 0
+            );
+    return static_cast<void*>(params_tuple);
+}
+
+
 void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params) {
     if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C) {
         auto& params_tuple =
@@ -149,6 +181,17 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
 
             arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
         }
+    } else if(instructionCode == FDInstructionCode::A_equal_func_r_t) {
+        auto& params_tuple =
+            *static_cast<
+                std::tuple<
+                    std::string    // 0
+                >*
+            >(params);
+        std::string& gridManipulator_name = std::get<0>(params_tuple);
+        GridArrayManipulator& gridManipulator = *gridArrayManipulators[gridManipulator_name];
+        RealNumber t = gridManipulator.CalculateTime(dt, timeIndex);
+        gridManipulator.UpdateArray(t);
     }
 }
 
@@ -164,9 +207,9 @@ void YeeGrid3D::ApplyUpdateInstructions(std::size_t numIterations) {
 
 
 void YeeGrid3D::AddGaussianPointSource(const std::string name, const std::string gridDataName,
-        int direction, std::array<std::size_t, 3> index, RealNumber amplitude,
+        int direction, RealNumber amplitude,
         RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-        RealNumber modulatioPhase) {
+        RealNumber modulatioPhase, RealNumber timeOffsetFraction) {
     std::shared_ptr<GaussianGridArrayManipulator> source(new GaussianGridArrayManipulator);
     source->SetDirection(direction);
     source->SetAmplitude(amplitude);
@@ -175,6 +218,7 @@ void YeeGrid3D::AddGaussianPointSource(const std::string name, const std::string
     source->SetModulationFrequency(modulationFrequecy);
     source->SetModulationPhase(modulatioPhase);
     source->SetGridData(gridElements[gridDataName]);
+    source->SetTimeOffsetFraction(timeOffsetFraction);
     gridArrayManipulators[name] = source;
 }
 

@@ -31,6 +31,14 @@ void GaussianGridArrayManipulator::SetModulationPhase(const RealNumber modulatio
     GaussianGridArrayManipulator::modulationPhase = modulationPhase;
 }
 
+void GaussianGridArrayManipulator::SetTimeOffsetFraction(const RealNumber offsetFraction) {
+    timeOffsetFraction = offsetFraction;
+}
+
+RealNumber GaussianGridArrayManipulator::CalculateTime(const RealNumber dt, const std::size_t timeIndex) {
+    return (timeIndex + timeOffsetFraction) * dt;
+}
+
 void GaussianGridArrayManipulator::UpdateArray(const RealNumber t) {
     NumberArray3D<RealNumber>& arrayA = gridData->GetNumArray(direction);
     RealNumber gaussianValue = amplitude * std::exp(-(t - t_center)*(t - t_center) / (t_decay*t_decay)) *

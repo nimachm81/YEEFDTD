@@ -22,6 +22,9 @@ enum class FDInstructionCode {
                 // The function takes the array A and time t as parameters and calculates the parameter r (position)
                 // based on the location of the origin of the array eith respect to the corners of the Yee grid, and
                 // then sets the elements of A based on their positions and time.
+                // parameters : tuple{A, f, t}
+                // std::tuple<std::string     // name of GridArrayManipulator (it has a pointer to A) and a method to
+                //           >                // calculate time
 };
 
 
