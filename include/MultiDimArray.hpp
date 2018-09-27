@@ -548,6 +548,11 @@ class NumberArray3D {
         return numArrC;
     }
 
+    friend std::ostream& operator<<(std::ostream& out, const NumberArray3D& numArr)
+    {
+        Print3DNumberArrayToOstream(out, numArr.GetShape(), numArr.GetArrayData());
+        return out;
+    }
 
     //------------------------------------------------------------------------------------
 

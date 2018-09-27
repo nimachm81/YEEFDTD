@@ -43,14 +43,14 @@ class YeeGrid3D {
     void ApplyUpdateInstructions(std::size_t numIterations);
 
     void* ConstructParams_A_plusequal_sum_b_C(
-                                    std::array<std::size_t, 3> ind_start,
-                                    std::array<std::size_t, 3> ind_end,
+                                    std::array<std::size_t, 3> ind_start_A,
+                                    std::array<std::size_t, 3> ind_end_A,
                                     std::string arrayA_name,
                                     int arrayA_component,
                                     std::vector<RealNumber> bValues,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
-                                    std::vector<std::array<int, 3>> arrayC_indexShifts
+                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart
                                     );
     void* ConstructParams_A_equal_func_r_t(
                                     std::string gridManipulator_name
@@ -61,6 +61,8 @@ class YeeGrid3D {
             int direction, RealNumber amplitude,
             RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
             RealNumber modulatioPhase, RealNumber timeOffsetFraction);
+
+    void PrintAllGridData();
 
     private:
     std::size_t timeIndex;

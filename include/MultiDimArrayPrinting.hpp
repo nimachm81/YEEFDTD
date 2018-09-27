@@ -20,7 +20,7 @@ void Print3DNumberArray(std::array<std::size_t, 3> arrayShape, T*** arrayData) {
             if(i1 > 0) std::cout << "  ";
             for(std::size_t i2 = 0; i2 < n2; ++i2) {
                 if(i2 > 0) std::cout << " ";
-                std::cout << arrayData[i0][i1][i2]; 
+                std::cout << arrayData[i0][i1][i2];
             }
             if(i1 < n1 - 1) std::cout << std::endl;
         }
@@ -30,6 +30,29 @@ void Print3DNumberArray(std::array<std::size_t, 3> arrayShape, T*** arrayData) {
     std::cout << "]" << std::endl;
 };
 
+template <typename T>
+std::ostream& Print3DNumberArrayToOstream(std::ostream& out, std::array<std::size_t, 3> arrayShape, T*** arrayData) {
+    std::size_t n0 = arrayShape[0];
+    std::size_t n1 = arrayShape[1];
+    std::size_t n2 = arrayShape[2];
+    out << "[" ;
+    for(std::size_t i0 = 0; i0 < n0; ++i0) {
+        if(i0 > 0) out << " ";
+        out << "[";
+        for(std::size_t i1 = 0; i1 < n1; ++i1) {
+            if(i1 > 0) out << "  ";
+            for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                if(i2 > 0) out << " ";
+                out << arrayData[i0][i1][i2];
+            }
+            if(i1 < n1 - 1) out << std::endl;
+        }
+        out << "]";
+        if(i0 < n0 - 1) out << std::endl;
+    }
+    out << "]" << std::endl;
+    return out;
+};
 
 
 #endif  // FDTD_MULTIDIMARRAYPRINTING_H_

@@ -121,18 +121,28 @@ void test_yeegrid() {
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, 0, indJ}, {1, 1, 0});
     yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/, 0.0, 0.0, 0.0);
     void* E_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
-        {0, 0, 1},
-        {0, 0, nz-1},
+        {0, 0, 1},      // ind_start_A
+        {1, 1, nz},   // ind_end_A
+        "E",            // arrayA_name
+        0,              // arrayA_component
+        {1.0, -1.0},    // bValues
+        {"H", "H"},     // arrayC_names
+        {1, 1},         // arraC_components
+        {{0, 0, 1}, {0, 0, 0}}     // arrayC_indsStart
+    );
+    void* E_J_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 0, indJ},
+        {1, 1, indJ+1},
         "E",
         0,
-        {1.0, -1.0},
-        {"H", "H"},
-        {1, 1},
-        {{0, 0, 0}, {0, 0, -1}}
+        {1.0},
+        {"J"},
+        {0},
+        {{0, 0, 0}}
     );
     void* H_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, 0, 0},
-        {0, 0, nz-1},
+        {1, 1, nz},
         "H",
         1,
         {1.0, -1.0},
@@ -145,8 +155,9 @@ void test_yeegrid() {
     );
     yee.AddUpdateInstruction("J-update", FDInstructionCode::A_equal_func_r_t, J_update_params);
     yee.AddUpdateInstruction("E-update", FDInstructionCode::A_plusequal_sum_b_C, E_update_params);
+    yee.AddUpdateInstruction("E-J-update", FDInstructionCode::A_plusequal_sum_b_C, E_J_update_params);
     yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
-    yee.SetIterationSequence({"E-update", "H-update"});
+    yee.SetIterationSequence({"J-update", "E-update", "E-J-update", "H-update"});
     yee.ApplyUpdateInstructions(10);
 }
 
