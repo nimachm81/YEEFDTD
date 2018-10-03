@@ -4,7 +4,7 @@
 
 
 enum class FDInstructionCode {
-    A_plusequal_sum_b_C  // Update array A as A += Sum{b_n*C_n}
+    A_plusequal_sum_b_C  // Update array A as:     A += Sum{b_n*C_n}
                 // A[i][j][k] += b0*C[i+i0][j+j0][k+k0] + b1*C[i+i1][j+j1][k+k1] + ... for ijk in the range
                 // ind_start...ind_end
                 // parameters : tuple{pair(ind_start, ind_end), A, ind_xyz_A, vector<b>, vector<C>, vector<ind_xyz_C>,
@@ -17,6 +17,15 @@ enum class FDInstructionCode {
                 //            std::vector<int>,               // C arrays components : 0:C_x, 1:C_y, 2:C_z
                 //            std::vector<int, 3>>>    // [i0,j0,k0], ...
                 //
+
+    ,A_equal_sum_b_C    // Sets array A as:     A = Sum{b_n*C_n}
+                // same parameters as A_plusequal_sum_b_C
+
+    ,A_plusequal_sum_B_C    // Update array A as:       A += Sum{B_n*C_n}
+                // same parameters as in A_plusequal_sum_b_C except B is a grid array with the same shape as A and C
+
+    ,A_equal_sum_B_C    // Sets array A as:     A = Sum{B_n*C_n}
+                // same parameters as in A_plusequal_sum_b_C except B is a grid array with the same shape as A and C
 
     ,A_equal_func_r_t   // update array A as a function of space and time
                 // The function takes the array A and time t as parameters and calculates the parameter r (position)

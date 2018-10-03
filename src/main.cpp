@@ -110,8 +110,8 @@ void test_yeegrid() {
     std::size_t indJ = 5;
     RealNumber dt = 0.1;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.1, 1.0};
-    std::array<std::size_t, 3> nCells{1, 1, nz};
+    std::array<RealNumber, 3> r1{0.1, 0.0, 1.0};
+    std::array<std::size_t, 3> nCells{1, 0, nz};
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);

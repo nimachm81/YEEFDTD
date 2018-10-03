@@ -52,6 +52,18 @@ class YeeGrid3D {
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
                                     );
+    void* ConstructParams_A_plusequal_sum_B_C(
+                                    std::array<std::size_t, 3> ind_start_A,
+                                    std::array<std::size_t, 3> ind_end_A,
+                                    std::string arrayA_name,
+                                    int arrayA_component,
+                                    std::vector<std::string> arrayB_names,
+                                    std::vector<int> arrayB_components,
+                                    std::vector<std::array<std::size_t, 3>> arrayB_indsStart,
+                                    std::vector<std::string> arrayC_names,
+                                    std::vector<int> arrayC_components,
+                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                    );
     void* ConstructParams_A_equal_func_r_t(
                                     std::string gridManipulator_name
                                     );
