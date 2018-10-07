@@ -104,14 +104,82 @@ auto* test_container() {
     return tp2;
 }
 
+#include <fstream>
+#include "MultiDimArrayFileIO.hpp"
+void test_file_write() {
+    std::ofstream myfile;
+    myfile.open("example.bin", std::ios::out | std::ios::binary);
+    if(myfile.is_open()) {
+        int* i = new int[3];
+        i[0] = 1; i[1] = 13;
+        std::array<std::size_t, 3> shape{3,4,5};
+        NumberArray3D<RealNumber> A(shape, 2.01);
+        NumberArray3D<RealNumber> B = A.GetSlice({1, 1, 1}, {2, 3, 4});
+        double* d = new double[4];
+        d[3] = 32.4;
+
+        myfile.write((char*)i, sizeof(int)*3);
+        B.WriteArrayDataToFile(&myfile);
+        myfile.write((char*)d, sizeof(double)*4);
+
+        myfile.close();
+        delete[] i;
+        delete[] d;
+    }
+}
+
+void test_file_read() {
+    std::streampos objsize;
+    std::ifstream myfile;
+    myfile.open("example.bin", std::ios::in | std::ios::binary);
+    if(myfile.is_open()) {
+        int* i = new int[3];
+        double* d = new double[4];
+        //myfile.seekg(0, std::ios::beg);
+        std::array<std::size_t, 3> shape{3,4,5};
+        NumberArray3D<RealNumber> A(shape, 0.0);
+        NumberArray3D<RealNumber> B = A.GetSlice({1, 1, 1}, {2, 3, 4});
+
+        myfile.read((char*)i, sizeof(int)*3);
+        B.ReadArrayDataFromFile(&myfile);
+        myfile.read((char*)d, sizeof(double)*4);
+        myfile.close();
+        std::cout << "i[1] expected : 13, got :" << i[1] << std::endl;
+        std::cout << "d[3] expected : 32.4, got :" << d[3] << std::endl;
+        A.Print();
+        delete[] i;
+        delete[] d;
+    }
+}
+
+void test_file_read_backwards() {
+    std::streampos objsize;
+    std::ifstream myfile;
+    myfile.open("example.bin", std::ios::in | std::ios::binary);
+    if(myfile.is_open()) {
+        int* i = new int[3];
+        double* d = new double[4];
+        myfile.seekg(-sizeof(double)*4, std::ios::end);
+        myfile.read((char*)d, sizeof(double)*4);
+        myfile.seekg(0, std::ios::beg);
+        myfile.read((char*)i, sizeof(int)*3);
+        myfile.close();
+        std::cout << "i[1] expected : 13, got :" << i[1] << std::endl;
+        std::cout << "d[3] expected : 32.4, got :" << d[3] << std::endl;
+        delete[] i;
+        delete[] d;
+    }
+}
+
 #include "YeeGrid.h"
 void test_yeegrid() {
-    std::size_t nz = 10;
-    std::size_t indJ = 5;
-    RealNumber dt = 0.1;
+    std::size_t nz = 1000;
+    std::size_t indJ = nz/2;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.0, 1.0};
-    std::array<std::size_t, 3> nCells{1, 0, nz};
+    std::array<RealNumber, 3> r1{0.1, 0.0, 10.0};
+    std::array<std::size_t, 3> nCells{1, 1, nz};
+    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dt = dz*0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -122,10 +190,10 @@ void test_yeegrid() {
     yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/, 0.0, 0.0, 0.0);
     void* E_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, 0, 1},      // ind_start_A
-        {1, 1, nz},   // ind_end_A
+        {1, 1, nz},     // ind_end_A
         "E",            // arrayA_name
         0,              // arrayA_component
-        {1.0, -1.0},    // bValues
+        {1.0*dt/dz, -1.0*dt/dz},    // bValues
         {"H", "H"},     // arrayC_names
         {1, 1},         // arraC_components
         {{0, 0, 1}, {0, 0, 0}}     // arrayC_indsStart
@@ -135,7 +203,7 @@ void test_yeegrid() {
         {1, 1, indJ+1},
         "E",
         0,
-        {1.0},
+        {1.0*dt/dz},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -145,7 +213,7 @@ void test_yeegrid() {
         {1, 1, nz},
         "H",
         1,
-        {1.0, -1.0},
+        {1.0*dt/dz, -1.0*dt/dz},
         {"E", "E"},
         {0, 0},
         {{0, 0, 1}, {0, 0, 0}}
@@ -158,7 +226,9 @@ void test_yeegrid() {
     yee.AddUpdateInstruction("E-J-update", FDInstructionCode::A_plusequal_sum_b_C, E_J_update_params);
     yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
     yee.SetIterationSequence({"J-update", "E-update", "E-J-update", "H-update"});
-    yee.ApplyUpdateInstructions(10);
+    yee.AddFullGridElementView("E-x", "E", 0);
+    yee.DeleteOlderViewFiles();
+    yee.ApplyUpdateInstructions(10000);
 }
 
 #include "GaussianGridArrayManipulator.h"

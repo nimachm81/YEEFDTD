@@ -76,6 +76,17 @@ class YeeGrid3D {
 
     void PrintAllGridData();
 
+    void AddGridElementView(std::string gridElemViewName,   // name of the gridView
+                            std::string gridElemName , int gridElemComponent,   // name of the gridElement and its x,y,z component
+                            std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd // slice start and end
+                            );
+    void AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
+                            std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component
+                            );
+    void WriteGridDataToFile(std::string fileName, std::string gridElemViewName);
+    void WriteAllGridElemViewsToFile();
+    void DeleteOlderViewFiles();
+
     private:
     std::size_t timeIndex;
     RealNumber dt;                  // time resolution
@@ -87,6 +98,7 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;
     std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> instructions;  // field update instructions
     std::vector<std::string> iterationSequence;     // sequence in which to apply the field update instructions
+    std::unordered_map<std::string, NumberArray3D<RealNumber>> gridElementViews;  // a slice of gridElements for printing to output
 
 };
 

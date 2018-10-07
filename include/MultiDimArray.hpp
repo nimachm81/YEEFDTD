@@ -8,9 +8,11 @@
 #include <cstddef>      //std::size_t, nullptr
 #include <array>       //std::array
 #include <iostream>
+#include <fstream>
 
 #include "MultiDimArrayAllocator.hpp"
 #include "MultiDimArrayPrinting.hpp"
+#include "MultiDimArrayFileIO.hpp"
 
 template <typename T>
 class NumberArray3D {
@@ -560,6 +562,18 @@ class NumberArray3D {
         Print3DNumberArray(shape, arrayData);
     }
 
+    //-----------------------------------------------------------------------------------
+    void WriteArrayDataToFile(std::ofstream* fileOut,
+                              bool writeShape = false,
+                              bool writeDataTypeSize = false) {
+        assert(arrayData != nullptr);
+        return Write3DNumberArrayData(fileOut, shape, indStart, arrayData, writeShape, writeDataTypeSize);
+    }
+
+    void ReadArrayDataFromFile(std::ifstream* fileIn) {
+        assert(arrayData != nullptr);
+        return Read3DNumberArrayData(fileIn, shape, indStart, arrayData);
+    }
 };
 
 

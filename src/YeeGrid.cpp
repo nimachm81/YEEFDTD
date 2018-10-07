@@ -1,6 +1,7 @@
 
 
-#include <cstddef>      //std::size_t
+#include <cstddef>
+#include <cstdio>
 #include <vector>
 #include <memory>
 
@@ -314,7 +315,8 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         RealNumber t = gridManipulator.CalculateTime(dt, timeIndex);
         gridManipulator.UpdateArray(t);
     }
-    PrintAllGridData();
+    //PrintAllGridData();
+    WriteAllGridElemViewsToFile();
 }
 
 
@@ -350,3 +352,48 @@ void YeeGrid3D::PrintAllGridData() {
         std::cout << it->first << std::endl << *(it->second);
     }
 }
+
+void YeeGrid3D::AddGridElementView(std::string gridElemViewName,   // name of the gridView
+            std::string gridElemName , int gridElemComponent,   // name of the gridElement and its x,y,z component
+            std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd // slice start and end
+            ) {
+    gridElementViews.emplace(gridElemViewName, gridElements[gridElemName]->GetNumArray(gridElemComponent).
+                                                                                            GetSlice(indStart, indEnd));
+}
+
+void YeeGrid3D::AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
+            std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component
+            ) {
+    gridElementViews.emplace(gridElemViewName, gridElements[gridElemName]->GetNumArray(gridElemComponent));
+}
+
+
+void YeeGrid3D::WriteGridDataToFile(std::string fileName, std::string gridElemViewName) {
+    std::ofstream file;
+    file.open(fileName, std::ios::out | std::ios::app | std::ios::binary);
+    if(file.is_open()) {
+        gridElementViews[gridElemViewName].WriteArrayDataToFile(&file, true, true);
+        file.close();
+    } else {
+        std::cout << "Could not open file.." << std::endl;
+        assert(false);
+    }
+}
+
+void YeeGrid3D::WriteAllGridElemViewsToFile() {
+    for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
+        WriteGridDataToFile("data/" + it->first + ".data", it->first);
+    }
+}
+
+void YeeGrid3D::DeleteOlderViewFiles() {
+    for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
+        const char* filename = ("data/" + it->first + ".data").c_str();
+        std::ifstream ifile(filename);
+        if(ifile) {
+            int file_deleted = std::remove(filename);
+            assert(file_deleted == 0);
+        }
+    }
+}
+
