@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdio>
+#include <cmath>
 #include <vector>
 #include <memory>
 
@@ -315,8 +316,6 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         RealNumber t = gridManipulator.CalculateTime(dt, timeIndex);
         gridManipulator.UpdateArray(t);
     }
-    //PrintAllGridData();
-    WriteAllGridElemViewsToFile();
 }
 
 
@@ -326,6 +325,10 @@ void YeeGrid3D::ApplyUpdateInstructions(std::size_t numIterations) {
         for(std::string updateName : iterationSequence) {
             auto& instructCode_param_pair = instructions[updateName];
             ApplyUpdateInstruction(instructCode_param_pair.first, instructCode_param_pair.second);
+        }
+        if(std::remainder(timeIndex, saveDataEveryNTimeSamples) == 0) {
+            WriteAllGridElemViewsToFile();
+            //PrintAllGridData();
         }
     }
 }
@@ -367,6 +370,9 @@ void YeeGrid3D::AddFullGridElementView(std::string gridElemViewName,   // name o
     gridElementViews.emplace(gridElemViewName, gridElements[gridElemName]->GetNumArray(gridElemComponent));
 }
 
+void YeeGrid3D::SetDataStoreRate(std::size_t saveEveryNSammples) {
+    saveDataEveryNTimeSamples = saveEveryNSammples;
+}
 
 void YeeGrid3D::WriteGridDataToFile(std::string fileName, std::string gridElemViewName) {
     std::ofstream file;

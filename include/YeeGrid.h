@@ -86,6 +86,7 @@ class YeeGrid3D {
     void WriteGridDataToFile(std::string fileName, std::string gridElemViewName);
     void WriteAllGridElemViewsToFile();
     void DeleteOlderViewFiles();
+    void SetDataStoreRate(std::size_t saveEveryNSammples);
 
     private:
     std::size_t timeIndex;
@@ -99,7 +100,7 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> instructions;  // field update instructions
     std::vector<std::string> iterationSequence;     // sequence in which to apply the field update instructions
     std::unordered_map<std::string, NumberArray3D<RealNumber>> gridElementViews;  // a slice of gridElements for printing to output
-
+    std::size_t saveDataEveryNTimeSamples = 1;
 };
 
 

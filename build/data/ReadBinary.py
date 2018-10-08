@@ -1,5 +1,6 @@
 
 import struct
+import numpy as np
 from matplotlib import pyplot as plt
 import time
 
@@ -40,8 +41,10 @@ def PrintArrays(fileContent):
                 data_ij = struct.unpack("d"*shape[2], fileContent[ind_st: ind_st + size])
                 ind_st += size
                 print(data_ij)
+        print()
 
-def PlotArrays(fileContent):
+readEvery = 1
+def PlotArrays1D(fileContent):
     plt.ion()
     n_total = GetNumOfArrays(fileContent);
     ind_st = 0
@@ -58,16 +61,49 @@ def PlotArrays(fileContent):
                 size = shape[2]*8
                 data_ij = struct.unpack("d"*shape[2], fileContent[ind_st: ind_st + size])
                 ind_st += size
-                if n % 100 == 0:
+                if n % readEvery == 0:
                     plt.plot(data_ij)
         #plt.show()
-        if n % 100 == 0:
+        if n % readEvery == 0:
             plt.pause(0.05)
             plt.clf()
     plt.show()        
 
 
-PlotArrays(fileContent)
+def PlotArrays2D(fileContent):
+    plt.ion()
+    n_total = GetNumOfArrays(fileContent);
+    ind_st = 0
+    for n in range(n_total):
+        size = 8
+        typeSize = struct.unpack("Q", fileContent[ind_st: ind_st + size])
+        ind_st += size
+        size = 8*3
+        shape = struct.unpack("QQQ", fileContent[ind_st: ind_st + size])
+        ind_st += size
+        size_total = 1*8 + 3*8 + shape[0]*shape[1]*shape[2]*8
+        for i in range(shape[0]):
+            E = np.zeros((shape[1], shape[2]))
+            for j in range(shape[1]):
+                size = shape[2]*8
+                data_ij = struct.unpack("d"*shape[2], fileContent[ind_st: ind_st + size])
+                E[j, :] = data_ij
+                ind_st += size
+            if n % readEvery == 0:
+                print(np.max(np.abs(E)))
+                plt.imshow(E, cmap="rainbow")
+                plt.colorbar()
+        #plt.show()
+        if n % readEvery == 0:
+            plt.pause(0.05)
+            plt.clf()
+    plt.show()        
+
+
+#PrintArrays(fileContent);
+PlotArrays2D(fileContent)
+
+
 
 
 
