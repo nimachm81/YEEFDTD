@@ -227,7 +227,7 @@ void test_yeegrid_1d() {
     yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
     yee.SetIterationSequence({"J-update", "E-update", "E-J-update", "H-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
-    yee.SetDataStoreRate(100);
+    yee.SetDataStoreRate("E-x", 100);
     yee.DeleteOlderViewFiles();
     yee.ApplyUpdateInstructions(10000);
 }
@@ -312,9 +312,9 @@ void test_yeegrid_2d() {
     yee.AddUpdateInstruction("Hz-update", FDInstructionCode::A_plusequal_sum_b_C, Hz_update_params);
     yee.SetIterationSequence({"J-update", "E-Hy-update", "E-Hz-update", "E-J-update", "Hy-update", "Hz-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
-    yee.SetDataStoreRate(1);
     yee.DeleteOlderViewFiles();
-    yee.ApplyUpdateInstructions(200);
+    yee.SetDataStoreRate("E-x", 1);
+    yee.ApplyUpdateInstructions(400);
 }
 
 

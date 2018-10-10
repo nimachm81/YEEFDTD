@@ -14,7 +14,7 @@
 #include "FDInstructionCode.h"
 #include "ElementType.h"
 #include "GridArrayManipulator.h"
-
+#include "GridElementView.h"
 
 class YeeGrid3D {
     public:
@@ -83,10 +83,11 @@ class YeeGrid3D {
     void AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
                             std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component
                             );
-    void WriteGridDataToFile(std::string fileName, std::string gridElemViewName);
+
     void WriteAllGridElemViewsToFile();
     void DeleteOlderViewFiles();
-    void SetDataStoreRate(std::size_t saveEveryNSammples);
+    void SetDataStoreRate(std::string gridElemViewName, std::size_t saveEveryNSammples);
+    void CloseGridViewFiles();
 
     private:
     std::size_t timeIndex;
@@ -99,8 +100,7 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;
     std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> instructions;  // field update instructions
     std::vector<std::string> iterationSequence;     // sequence in which to apply the field update instructions
-    std::unordered_map<std::string, NumberArray3D<RealNumber>> gridElementViews;  // a slice of gridElements for printing to output
-    std::size_t saveDataEveryNTimeSamples = 1;
+    std::unordered_map<std::string, GridElementView> gridElementViews;  // a slice of gridElements for printing to output
 };
 
 

@@ -326,11 +326,10 @@ void YeeGrid3D::ApplyUpdateInstructions(std::size_t numIterations) {
             auto& instructCode_param_pair = instructions[updateName];
             ApplyUpdateInstruction(instructCode_param_pair.first, instructCode_param_pair.second);
         }
-        if(std::remainder(timeIndex, saveDataEveryNTimeSamples) == 0) {
-            WriteAllGridElemViewsToFile();
-            //PrintAllGridData();
-        }
+        WriteAllGridElemViewsToFile();
+        //PrintAllGridData();
     }
+    CloseGridViewFiles();
 }
 
 
@@ -360,46 +359,39 @@ void YeeGrid3D::AddGridElementView(std::string gridElemViewName,   // name of th
             std::string gridElemName , int gridElemComponent,   // name of the gridElement and its x,y,z component
             std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd // slice start and end
             ) {
-    gridElementViews.emplace(gridElemViewName, gridElements[gridElemName]->GetNumArray(gridElemComponent).
-                                                                                            GetSlice(indStart, indEnd));
+    gridElementViews.emplace(gridElemViewName, GridElementView());
+    GridElementView& geView = gridElementViews[gridElemViewName];
+    geView.SetName(gridElemViewName);
+    geView.SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent).GetSlice(indStart, indEnd));
 }
 
 void YeeGrid3D::AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
             std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component
             ) {
-    gridElementViews.emplace(gridElemViewName, gridElements[gridElemName]->GetNumArray(gridElemComponent));
+    gridElementViews.emplace(gridElemViewName, GridElementView());
+    GridElementView& geView = gridElementViews[gridElemViewName];
+    geView.SetName(gridElemViewName);
+    geView.SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent));
 }
 
-void YeeGrid3D::SetDataStoreRate(std::size_t saveEveryNSammples) {
-    saveDataEveryNTimeSamples = saveEveryNSammples;
-}
-
-void YeeGrid3D::WriteGridDataToFile(std::string fileName, std::string gridElemViewName) {
-    std::ofstream file;
-    file.open(fileName, std::ios::out | std::ios::app | std::ios::binary);
-    if(file.is_open()) {
-        gridElementViews[gridElemViewName].WriteArrayDataToFile(&file, true, true);
-        file.close();
-    } else {
-        std::cout << "Could not open file.." << std::endl;
-        assert(false);
-    }
+void YeeGrid3D::SetDataStoreRate(std::string gridElemViewName, std::size_t saveEveryNSammples) {
+    gridElementViews[gridElemViewName].SetSaveOnDiskFrequency(saveEveryNSammples);
 }
 
 void YeeGrid3D::WriteAllGridElemViewsToFile() {
     for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
-        WriteGridDataToFile("data/" + it->first + ".data", it->first);
+        it->second.StoreData(timeIndex);;
     }
 }
 
 void YeeGrid3D::DeleteOlderViewFiles() {
     for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
-        const char* filename = ("data/" + it->first + ".data").c_str();
-        std::ifstream ifile(filename);
-        if(ifile) {
-            int file_deleted = std::remove(filename);
-            assert(file_deleted == 0);
-        }
+        it->second.DeleteOlderFiles();
     }
 }
 
+void YeeGrid3D::CloseGridViewFiles() {
+    for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
+        it->second.CloseFile();
+    }
+}
