@@ -1,6 +1,7 @@
  //
 
 
+#include <cmath>
 #include <iostream>
 
 #include "NumberTypes.h"
@@ -187,7 +188,8 @@ void test_yeegrid_1d() {
     yee.AddEntireGridElement("E", ElementType::EdgeE);
     yee.AddEntireGridElement("H", ElementType::EdgeH);
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, 0, indJ}, {1, 1, 0});
-    yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/, 0.0, 0.0, 0.0);
+    yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
+            0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
     void* E_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, 0, 1},      // ind_start_A
         {1, 1, nz},     // ind_end_A
@@ -250,26 +252,17 @@ void test_yeegrid_2d() {
     yee.AddEntireGridElement("E", ElementType::EdgeE);
     yee.AddEntireGridElement("H", ElementType::EdgeH);
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, indyJx, indzJx}, {1, 0, 0});
-    yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/, 0.0, 0.0, 0.0);
-    void* E_Hy_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+    yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
+            0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
+    void* Ex_H_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, 1, 1},      // ind_start_A
         {1, ny, nz},    // ind_end_A
         "E",            // arrayA_name
         0,              // arrayA_component
-        {-1.0*dt/dz, +1.0*dt/dz},    // bValues
-        {"H", "H"},     // arrayC_names
-        {1, 1},         // arraC_components
-        {{0, 1, 1}, {0, 1, 0}}     // arrayC_indsStart
-    );
-    void* E_Hz_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
-        {0, 1, 1},      // ind_start_A
-        {1, ny, nz},    // ind_end_A
-        "E",            // arrayA_name
-        0,              // arrayA_component
-        {1.0*dt/dy, -1.0*dt/dy},    // bValues
-        {"H", "H"},     // arrayC_names
-        {2, 2},         // arraC_components
-        {{0, 1, 1}, {0, 0, 1}}     // arrayC_indsStart
+        {-1.0*dt/dz, +1.0*dt/dz, +1.0*dt/dy, -1.0*dt/dy},    // bValues
+        {"H",        "H",        "H",        "H"},           // arrayC_names
+        {1,           1,          2,          2},            // arraC_components
+        {{0, 1, 1},   {0, 1, 0},  {0, 1, 1},  {0, 0, 1}}     // arrayC_indsStart
     );
     void* E_J_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
         {0, indyJx, indzJx},
@@ -305,23 +298,135 @@ void test_yeegrid_2d() {
         "JUpdater"
     );
     yee.AddUpdateInstruction("J-update", FDInstructionCode::A_equal_func_r_t, J_update_params);
-    yee.AddUpdateInstruction("E-Hy-update", FDInstructionCode::A_plusequal_sum_b_C, E_Hy_update_params);
-    yee.AddUpdateInstruction("E-Hz-update", FDInstructionCode::A_plusequal_sum_b_C, E_Hz_update_params);
+    yee.AddUpdateInstruction("Ex-H-update", FDInstructionCode::A_plusequal_sum_b_C, Ex_H_update_params);
     yee.AddUpdateInstruction("E-J-update", FDInstructionCode::A_plusequal_sum_b_C, E_J_update_params);
     yee.AddUpdateInstruction("Hy-update", FDInstructionCode::A_plusequal_sum_b_C, Hy_update_params);
     yee.AddUpdateInstruction("Hz-update", FDInstructionCode::A_plusequal_sum_b_C, Hz_update_params);
-    yee.SetIterationSequence({"J-update", "E-Hy-update", "E-Hz-update", "E-J-update", "Hy-update", "Hz-update"});
+    yee.SetIterationSequence({"J-update", "Ex-H-update", "E-J-update", "Hy-update", "Hz-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
+    yee.AddFullGridElementView("H-y", "H", 1);
     yee.DeleteOlderViewFiles();
     yee.SetDataStoreRate("E-x", 1);
-    yee.ApplyUpdateInstructions(400);
+    yee.SetDataStoreRate("H-y", 1);
+    yee.ApplyUpdateInstructions(401);
+}
+
+void test_yeegrid_3d() {
+    std::size_t nx = 200;
+    std::size_t nz = 200;
+    std::size_t ny = 200;
+    std::size_t indxJx = nx/2;
+    std::size_t indzJx = nz/2;
+    std::size_t indyJx = ny/2;
+    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<RealNumber, 3> r1{10.0, 10.0, 10.0};
+    std::array<std::size_t, 3> nCells{nx, ny, nz};
+    RealNumber dx = (r1[0] - r0[0])/nx;
+    RealNumber dy = (r1[1] - r0[1])/ny;
+    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dt = dz/std::sqrt(3.0)*0.99;
+    YeeGrid3D yee;
+    yee.SetCornerCoordinates(r0, r1);
+    yee.SetNumOfCells(nCells);
+    yee.SetTimeResolution(dt);
+    yee.AddEntireGridElement("E", ElementType::EdgeE);
+    yee.AddEntireGridElement("H", ElementType::EdgeH);
+    yee.AddPartialGridElement("J", ElementType::EdgeE, {indxJx, indyJx, indzJx}, {1, 0, 0});
+    yee.AddGaussianPointSource("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
+            1.0 /*modulation frequency*/, M_PI/2.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
+    void* Ex_H_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 1, 1},      // ind_start_A
+        {nx, ny, nz},    // ind_end_A
+        "E",            // arrayA_name
+        0,              // arrayA_component
+        {-1.0*dt/dz, +1.0*dt/dz, +1.0*dt/dy, -1.0*dt/dy},    // bValues
+        {"H",        "H",        "H",        "H"},     // arrayC_names
+        {1,           1,          2,          2},         // arraC_components
+        {{0, 1, 1},   {0, 1, 0},  {0, 1, 1},  {0, 0, 1}}     // arrayC_indsStart
+    );
+    void* Ey_H_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {1, 0, 1},      // ind_start_A
+        {nx, ny, nz},    // ind_end_A
+        "E",            // arrayA_name
+        1,              // arrayA_component
+        {+1.0*dt/dz, -1.0*dt/dz, -1.0*dt/dx, +1.0*dt/dx},    // bValues
+        {"H",        "H",        "H",       "H"},     // arrayC_names
+        {0,           0,          2,         2},         // arraC_components
+        {{1, 0, 1},   {1, 0, 0},  {1, 0, 1}, {0, 0, 1}}     // arrayC_indsStart
+    );
+    void* Ez_H_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {1, 1, 0},      // ind_start_A
+        {nx, ny, nz},    // ind_end_A
+        "E",            // arrayA_name
+        2,              // arrayA_component
+        {-1.0*dt/dy, +1.0*dt/dy, +1.0*dt/dx, -1.0*dt/dx},    // bValues
+        {"H",        "H",        "H",        "H"},     // arrayC_names
+        {0,           0,          1,          1},         // arraC_components
+        {{1, 1, 0},   {1, 0, 0},  {1, 1, 0},  {0, 1, 0}}     // arrayC_indsStart
+    );
+    void* E_J_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {indxJx, indyJx, indzJx},
+        {indxJx + 1, indyJx + 1, indzJx + 1},
+        "E",
+        0,
+        {-1.0*dt/(dx*dy*dz)},
+        {"J"},
+        {0},
+        {{0, 0, 0}}
+    );
+    void* Hx_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 0, 0},
+        {nx + 1, ny, nz},
+        "H",
+        0,
+        {+1.0*dt/dz, -1.0*dt/dz, -1.0*dt/dy, +1.0*dt/dy},
+        {"E",        "E",        "E",        "E"},
+        {1,           1,          2,          2},
+        {{0, 0, 1},   {0, 0, 0},  {0, 1, 0},  {0, 0, 0}}
+    );
+    void* Hy_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 0, 0},
+        {nx, ny + 1, nz},
+        "H",
+        1,
+        {-1.0*dt/dz, +1.0*dt/dz, +1.0*dt/dx, -1.0*dt/dx},
+        {"E",        "E",        "E",        "E"},
+        {0,           0,          2,          2},
+        {{0, 0, 1},   {0, 0, 0},  {1, 0, 0},  {0, 0, 0}}
+    );
+    void* Hz_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
+        {0, 0, 0},
+        {nx, ny, nz + 1},
+        "H",
+        2,
+        {+1.0*dt/dy, -1.0*dt/dy, -1.0*dt/dx, +1.0*dt/dx},
+        {"E",        "E",        "E",        "E"},
+        {0,           0,         1,           1},
+        {{0, 1, 0},   {0, 0, 0}, {1, 0, 0},   {0, 0, 0}}
+    );
+    void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
+        "JUpdater"
+    );
+    yee.AddUpdateInstruction("J-update", FDInstructionCode::A_equal_func_r_t, J_update_params);
+    yee.AddUpdateInstruction("Ex-H-update", FDInstructionCode::A_plusequal_sum_b_C, Ex_H_update_params);
+    yee.AddUpdateInstruction("Ey-H-update", FDInstructionCode::A_plusequal_sum_b_C, Ey_H_update_params);
+    yee.AddUpdateInstruction("Ez-H-update", FDInstructionCode::A_plusequal_sum_b_C, Ez_H_update_params);
+    yee.AddUpdateInstruction("E-J-update", FDInstructionCode::A_plusequal_sum_b_C, E_J_update_params);
+    yee.AddUpdateInstruction("Hx-update", FDInstructionCode::A_plusequal_sum_b_C, Hx_update_params);
+    yee.AddUpdateInstruction("Hy-update", FDInstructionCode::A_plusequal_sum_b_C, Hy_update_params);
+    yee.AddUpdateInstruction("Hz-update", FDInstructionCode::A_plusequal_sum_b_C, Hz_update_params);
+    yee.SetIterationSequence({"J-update", "Ex-H-update", "Ey-H-update", "Ez-H-update", "E-J-update",
+                                          "Hx-update", "Hy-update", "Hz-update"});
+    yee.AddGridElementView("E-x", "E", 0, {indxJx, 0, 0}, {indxJx + 1, ny + 1, nz + 1});
+    yee.DeleteOlderViewFiles();
+    yee.SetDataStoreRate("E-x", 1);
+    yee.ApplyUpdateInstructions(200);
 }
 
 
 #include "GaussianGridArrayManipulator.h"
 int main(int argc, char** argv) {
     test_yeegrid_2d();
-    //test_multidim_array();
 }
 
 

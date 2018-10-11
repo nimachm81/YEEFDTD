@@ -1,11 +1,13 @@
 
+
+__all__ = ["PrintArrays", "PlotArrays1D", "PlotArrays2D"]
+
 import struct
 import numpy as np
 from matplotlib import pyplot as plt
 import time
 
-file = open("E-x.data", mode='rb')
-fileContent = file.read()
+
 
 def GetNumOfArrays(fileContent):
     ind_st = 0
@@ -24,7 +26,9 @@ def GetNumOfArrays(fileContent):
     print("total bytes : ", len(fileContent))
     return int(n_total)
 
-def PrintArrays(fileContent):
+def PrintArrays(fileName):
+    file = open(fileName, mode='rb')
+    fileContent = file.read()
     n_total = GetNumOfArrays(fileContent);
     ind_st = 0
     for n in range(n_total):
@@ -43,8 +47,10 @@ def PrintArrays(fileContent):
                 print(data_ij)
         print()
 
-readEvery = 1
-def PlotArrays1D(fileContent):
+
+def PlotArrays1D(fileName, readEvery = 1):
+    file = open(fileName, mode='rb')
+    fileContent = file.read()
     plt.ion()
     n_total = GetNumOfArrays(fileContent);
     ind_st = 0
@@ -70,7 +76,9 @@ def PlotArrays1D(fileContent):
     plt.show()        
 
 
-def PlotArrays2D(fileContent):
+def PlotArrays2D(fileName, readEvery = 1):
+    file = open(fileName, mode='rb')
+    fileContent = file.read()
     plt.ion()
     n_total = GetNumOfArrays(fileContent);
     ind_st = 0
@@ -100,8 +108,6 @@ def PlotArrays2D(fileContent):
     plt.show()        
 
 
-#PrintArrays(fileContent);
-PlotArrays2D(fileContent)
 
 
 

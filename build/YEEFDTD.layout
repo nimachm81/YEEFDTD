@@ -2,16 +2,6 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="main" />
-	<File name="../src/GridElementView.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1757" topLine="36" />
-		</Cursor>
-	</File>
-	<File name="../src/YeeGridDataTypes.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1026" topLine="6" />
-		</Cursor>
-	</File>
 	<File name="../src/GridArrayManipulator.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="363" topLine="0" />
@@ -27,19 +17,29 @@
 			<Cursor1 position="255" topLine="7" />
 		</Cursor>
 	</File>
-	<File name="../include/YeeGrid.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/YeeGridDataTypes.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="0" topLine="83" />
+			<Cursor1 position="1026" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="../src/GaussianGridArrayManipulator.cpp" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="262" topLine="19" />
+		</Cursor>
+	</File>
+	<File name="../src/GridElementView.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1757" topLine="36" />
 		</Cursor>
 	</File>
 	<File name="../src/main.cpp" open="1" top="1" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10473" topLine="301" />
+			<Cursor1 position="16296" topLine="406" />
 		</Cursor>
 	</File>
-	<File name="../src/GaussianGridArrayManipulator.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../include/YeeGrid.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="262" topLine="0" />
+			<Cursor1 position="4336" topLine="68" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

@@ -23,7 +23,7 @@ class GridElementView {
     void DeleteOlderFiles();
 
     private:
-    std::size_t saveOnDiskFrequency;
+    std::size_t saveOnDiskFrequency = 1;
     std::unique_ptr<NumberArray3D<RealNumber>> numArray;
     std::string viewName;
     std::string viewFolder;

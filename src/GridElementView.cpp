@@ -6,6 +6,7 @@
 GridElementView::GridElementView() {
     viewFolder = "data";
     viewFileExtension = ".data";
+    saveOnDiskFrequency = 1;
 }
 
 void GridElementView::SetSaveOnDiskFrequency(const std::size_t eachNSamples) {
