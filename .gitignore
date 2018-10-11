@@ -9,7 +9,7 @@ compile_commands.json
 CTestTestfile.cmake
 
 # python 
-/build/data/__pycache__/
+build/data/__pycache__/
 
 # raw data files
 *.data
