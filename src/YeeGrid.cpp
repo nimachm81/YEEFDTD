@@ -82,6 +82,18 @@ void YeeGrid3D::SetTimeResolution(const RealNumber dt) {
     YeeGrid3D::dt = dt;
 }
 
+RealNumber YeeGrid3D::GetTimeResolution() const {
+    return dt;
+}
+
+RealNumber YeeGrid3D::GetSpaceResolution(int i) const {
+    return dr[i];
+}
+
+const std::array<RealNumber, 3>& YeeGrid3D::GetSpaceResolution() const {
+    return dr;
+}
+
 const std::array<std::size_t, 3>& YeeGrid3D::GetNumberOfCells() const {
     return nCells;
 }
@@ -126,7 +138,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
                                   std::vector<std::array<std::size_t, 3>> arrayC_indsStart
-                                  ) {
+                                  ) const {
     auto* params_tuple =
         new std::tuple<
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
@@ -159,7 +171,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_B_C(
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
                                   std::vector<std::array<std::size_t, 3>> arrayC_indsStart
-                                  ) {
+                                  ) const {
     auto* params_tuple =
         new std::tuple<
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
@@ -186,7 +198,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_B_C(
 }
 
 
-void* YeeGrid3D::ConstructParams_A_equal_func_r_t(std::string gridManipulator_name) {
+void* YeeGrid3D::ConstructParams_A_equal_func_r_t(std::string gridManipulator_name) const {
     auto* params_tuple = new std::tuple<std::string>(
             gridManipulator_name    // 0
             );

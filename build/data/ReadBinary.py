@@ -32,6 +32,7 @@ def PrintArrays(fileName):
     n_total = GetNumOfArrays(fileContent);
     ind_st = 0
     for n in range(n_total):
+        print(n, ": ")
         size = 8
         typeSize = struct.unpack("Q", fileContent[ind_st: ind_st + size])
         ind_st += size
@@ -48,7 +49,7 @@ def PrintArrays(fileName):
         print()
 
 
-def PlotArrays1D(fileName, readEvery = 1):
+def PlotArrays1D(fileName, readEvery = 1, delay = 0.05):
     file = open(fileName, mode='rb')
     fileContent = file.read()
     plt.ion()
@@ -71,7 +72,7 @@ def PlotArrays1D(fileName, readEvery = 1):
                     plt.plot(data_ij)
         #plt.show()
         if n % readEvery == 0:
-            plt.pause(0.05)
+            plt.pause(delay)
             plt.clf()
     plt.show()        
 

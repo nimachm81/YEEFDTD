@@ -5,6 +5,7 @@
 
 #include <cstddef>      //std::size_t
 #include <string>
+#include <vector>
 #include <unordered_map>
 #include <utility>
 #include <memory>
@@ -27,6 +28,9 @@ class YeeGrid3D {
     const std::array<RealNumber, 3>& GetCornerR0() const;
     const std::array<RealNumber, 3>& GetCornerR1() const;
     const std::array<std::size_t, 3>& GetNumberOfCells() const;
+    RealNumber GetTimeResolution() const;
+    RealNumber GetSpaceResolution(int i) const;
+    const std::array<RealNumber, 3>& GetSpaceResolution() const;
 
     // an element that spans over the entire Yee grid
     void AddEntireGridElement(const std::string name, ElementType elemType);
@@ -51,7 +55,7 @@ class YeeGrid3D {
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
-                                    );
+                                    ) const;
     void* ConstructParams_A_plusequal_sum_B_C(
                                     std::array<std::size_t, 3> ind_start_A,
                                     std::array<std::size_t, 3> ind_end_A,
@@ -63,10 +67,10 @@ class YeeGrid3D {
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
-                                    );
+                                    ) const;
     void* ConstructParams_A_equal_func_r_t(
                                     std::string gridManipulator_name
-                                    );
+                                    ) const;
 
     void AddGaussianPointSource(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
