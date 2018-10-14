@@ -4,12 +4,12 @@
 
 
 
-void GridArrayManipulator::SetCornerCoordinates(std::array<RealNumber, 3>& r_0, std::array<RealNumber, 3>& r_1) {
-    GridArrayManipulator::r_0 = r_0;
-    GridArrayManipulator::r_1 = r_1;
+void GridArrayManipulator::SetCornerCoordinates(std::array<RealNumber, 3>& r0, std::array<RealNumber, 3>& r1) {
+    GridArrayManipulator::r0 = r0;
+    GridArrayManipulator::r1 = r1;
 }
 
-void GridArrayManipulator::SetGridData(std::shared_ptr<YeeGridData3D>& gridData) {
-    GridArrayManipulator::gridData = gridData;
+void GridArrayManipulator::SetGridArrayTo(NumberArray3D<RealNumber>& gridArray) {
+    GridArrayManipulator::gridArray.MakeThisASliceOf(gridArray);
 }
 

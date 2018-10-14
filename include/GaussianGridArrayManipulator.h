@@ -10,7 +10,6 @@
 class GaussianGridArrayManipulator : public GridArrayManipulator {
     public:
     virtual ~GaussianGridArrayManipulator() { };
-    void SetDirection(const int direction);
     void SetAmplitude(const RealNumber amplitude);
     void SetCenterTime(const RealNumber t_center);
     void SetDecayTime(const RealNumber t_decay);
@@ -22,7 +21,6 @@ class GaussianGridArrayManipulator : public GridArrayManipulator {
     RealNumber CalculateTime(const RealNumber dt, const std::size_t timeIndex);
 
     private:
-    int direction;
     RealNumber amplitude;
     RealNumber t_center;
     RealNumber t_decay;

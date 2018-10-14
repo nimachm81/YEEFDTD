@@ -72,11 +72,18 @@ class YeeGrid3D {
                                     std::string gridManipulator_name
                                     ) const;
 
-    void AddGaussianPointSource(const std::string name,
+    void AddGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
             int direction, RealNumber amplitude,
             RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-            RealNumber modulatioPhase, RealNumber timeOffsetFraction);
+            RealNumber modulatioPhase, RealNumber timeOffsetFraction
+            );
+    void AddSpatialCubeGridArrayManipulator(const std::string name,
+            const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
+            int direction, // 0:x-component 1:y-component 2-z-component
+            std::array<RealNumber, 3> boxCornerR0, std::array<RealNumber, 3> boxCornerR1, // corners of the cube
+            RealNumber insideValue, RealNumber outsideValue // inside the cube set the array value to insideValue and...
+            );
 
     void PrintAllGridData();
 

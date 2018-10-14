@@ -6,11 +6,6 @@
 
 #include "GaussianGridArrayManipulator.h"
 
-void GaussianGridArrayManipulator::SetDirection(const int direction) {
-    assert(direction>=0 && direction<3);
-    GaussianGridArrayManipulator::direction = direction;
-}
-
 void GaussianGridArrayManipulator::SetAmplitude(const RealNumber amplitude) {
     GaussianGridArrayManipulator::amplitude = amplitude;
 }
@@ -40,9 +35,8 @@ RealNumber GaussianGridArrayManipulator::CalculateTime(const RealNumber dt, cons
 }
 
 void GaussianGridArrayManipulator::UpdateArray(const RealNumber t) {
-    NumberArray3D<RealNumber>& arrayA = gridData->GetNumArray(direction);
     RealNumber gaussianValue = amplitude * std::exp(-(t - t_center)*(t - t_center) / (t_decay*t_decay)) *
                                std::cos(2.0*M_PI*modulationFrequency*t + modulationPhase);
-    arrayA.SetToNumber(gaussianValue);
+    gridArray.SetToNumber(gaussianValue);
 }
 

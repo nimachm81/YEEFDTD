@@ -105,6 +105,18 @@ class NumberArray3D {
         return NumberArray3D(arrayData, shape_slice, indStart_slice_total);
     }
 
+    NumberArray3D& MakeThisASliceOf(const NumberArray3D& rhs) {
+        if(this != &rhs) {
+            this->~NumberArray3D();
+            isSlice = true;
+            shape = rhs.GetShape();
+            indStart = rhs.GetIndStart();
+
+            arrayData = rhs.GetArrayData();
+        }
+        return *this;
+    }
+
     //------------------------------ Operators ---------------------------------------
 
     // it replaces the content of the array by the content of numarray
