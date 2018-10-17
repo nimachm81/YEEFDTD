@@ -32,20 +32,21 @@ YeeGrid3D::~YeeGrid3D() {
                     >*
                 >(params);
             delete params_tuple;
-        } else if(instructionCode == FDInstructionCode::A_plusequal_sum_B_C ||
-           instructionCode == FDInstructionCode::A_equal_sum_B_C) {
+        } else if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C ||
+           instructionCode == FDInstructionCode::A_equal_sum_bB_C) {
             auto* params_tuple =
                 static_cast<
                     std::tuple<
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                     std::string,    // 1
                     int,    // 2
-                    std::vector<std::string>,   // 3
-                    std::vector<int>,           // 4
-                    std::vector<std::array<std::size_t, 3>>,    // 5
-                    std::vector<std::string>,   // 6
-                    std::vector<int>,           // 7
-                    std::vector<std::array<std::size_t, 3>>     // 8
+                    std::vector<RealNumber>,    // 3
+                    std::vector<std::string>,   // 4
+                    std::vector<int>,           // 5
+                    std::vector<std::array<std::size_t, 3>>,    // 6
+                    std::vector<std::string>,   // 7
+                    std::vector<int>,           // 8
+                    std::vector<std::array<std::size_t, 3>>     // 9
                     >*
                 >(params);
             delete params_tuple;
@@ -161,11 +162,12 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
      return static_cast<void*>(params_tuple);
 }
 
-void* YeeGrid3D::ConstructParams_A_plusequal_sum_B_C(
+void* YeeGrid3D::ConstructParams_A_plusequal_sum_bB_C(
                                   std::array<std::size_t, 3> ind_start_A,
                                   std::array<std::size_t, 3> ind_end_A,
                                   std::string arrayA_name,
                                   int arrayA_component,
+                                  std::vector<RealNumber> bValues,
                                   std::vector<std::string> arrayB_names,
                                   std::vector<int> arrayB_components,
                                   std::vector<std::array<std::size_t, 3>> arrayB_indsStart,
@@ -178,22 +180,24 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_B_C(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
             std::string,    // 1
             int,    // 2
-            std::vector<std::string>,   // 3
-            std::vector<int>,           // 4
-            std::vector<std::array<std::size_t, 3>>,    // 5
-            std::vector<std::string>,   // 6
-            std::vector<int>,           // 7
-            std::vector<std::array<std::size_t, 3>>     // 8
+            std::vector<RealNumber>,    // 3
+            std::vector<std::string>,   // 4
+            std::vector<int>,           // 5
+            std::vector<std::array<std::size_t, 3>>,    // 6
+            std::vector<std::string>,   // 7
+            std::vector<int>,           // 8
+            std::vector<std::array<std::size_t, 3>>     // 9
         >(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>(ind_start_A, ind_end_A),  // 0
             arrayA_name,        // 1
             arrayA_component,   // 2
-            arrayB_names,       // 3
-            arrayB_components,  // 4
-            arrayB_indsStart,   // 5
-            arrayC_names,       // 6
-            arrayC_components,  // 7
-            arrayC_indsStart    // 8
+            bValues,            // 3
+            arrayB_names,       // 4
+            arrayB_components,  // 5
+            arrayB_indsStart,   // 6
+            arrayC_names,       // 7
+            arrayC_components,  // 8
+            arrayC_indsStart    // 9
         );
      return static_cast<void*>(params_tuple);
 }
@@ -257,35 +261,37 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 }
             }
         }
-    } else if(instructionCode == FDInstructionCode::A_plusequal_sum_B_C ||
-       instructionCode == FDInstructionCode::A_equal_sum_B_C) {
+    } else if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C ||
+       instructionCode == FDInstructionCode::A_equal_sum_bB_C) {
         auto& params_tuple =
             *static_cast<
                 std::tuple<
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                     std::string,    // 1
                     int,    // 2
-                    std::vector<std::string>,   // 3
-                    std::vector<int>,           // 4
-                    std::vector<std::array<std::size_t, 3>>,    // 5
-                    std::vector<std::string>,   // 6
-                    std::vector<int>,           // 7
-                    std::vector<std::array<std::size_t, 3>>     // 8
+                    std::vector<RealNumber>,    // 3
+                    std::vector<std::string>,   // 4
+                    std::vector<int>,           // 5
+                    std::vector<std::array<std::size_t, 3>>,    // 6
+                    std::vector<std::string>,   // 7
+                    std::vector<int>,           // 8
+                    std::vector<std::array<std::size_t, 3>>     // 9
                 >*
             >(params);
         std::array<std::size_t, 3>& ind_start_A = std::get<0>(params_tuple).first;
         std::array<std::size_t, 3>& ind_end_A = std::get<0>(params_tuple).second;
         std::string& arrayA_name = std::get<1>(params_tuple);
         int arrayA_component = std::get<2>(params_tuple);
-        std::vector<std::string>& arrayB_names = std::get<3>(params_tuple);
-        std::vector<int>& arrayB_components = std::get<4>(params_tuple);
-        std::vector<std::array<std::size_t, 3>>& arrayB_indsStart = std::get<5>(params_tuple);
-        std::vector<std::string>& arrayC_names = std::get<6>(params_tuple);
-        std::vector<int>& arrayC_components = std::get<7>(params_tuple);
-        std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<8>(params_tuple);
+        std::vector<RealNumber>& bValues = std::get<3>(params_tuple);
+        std::vector<std::string>& arrayB_names = std::get<4>(params_tuple);
+        std::vector<int>& arrayB_components = std::get<5>(params_tuple);
+        std::vector<std::array<std::size_t, 3>>& arrayB_indsStart = std::get<6>(params_tuple);
+        std::vector<std::string>& arrayC_names = std::get<7>(params_tuple);
+        std::vector<int>& arrayC_components = std::get<8>(params_tuple);
+        std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<9>(params_tuple);
 
-        std::size_t numRhs = arrayB_names.size();
-        assert(arrayC_names.size() == numRhs &&
+        std::size_t numRhs = bValues.size();
+        assert(arrayB_names.size() == numRhs && arrayC_names.size() == numRhs &&
                arrayC_components.size() == numRhs && arrayC_indsStart.size() == numRhs &&
                arrayB_components.size() == numRhs && arrayB_indsStart.size() == numRhs);
 
@@ -293,6 +299,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         NumberArray3D<RealNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
 
         for(std::size_t i = 0; i < numRhs; ++i) {
+            RealNumber b = bValues[i];
             NumberArray3D<RealNumber>& arrayB = (*(gridElements[arrayB_names[i]])).GetNumArray(arrayB_components[i]);
             std::array<std::size_t, 3>& ind_start_B = arrayB_indsStart[i];
             std::array<std::size_t, 3> ind_end_B{ind_start_B[0] + ind_end_A[0] - ind_start_A[0],
@@ -307,13 +314,13 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                                                  ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
             NumberArray3D<RealNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
 
-            if(instructionCode == FDInstructionCode::A_plusequal_sum_B_C) {
-                arrayASlice += arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
-            } else if(instructionCode == FDInstructionCode::A_equal_sum_B_C) {
+            if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C) {
+                arrayASlice += b*arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
+            } else if(instructionCode == FDInstructionCode::A_equal_sum_bB_C) {
                 if(i == 0) {
-                    arrayASlice = arrayBSlice*arrayCSlice;   // TODO : Do A = B*C in place, without creating a temp rhs
+                    arrayASlice = b*arrayBSlice*arrayCSlice;   // TODO : Do A = B*C in place, without creating a temp rhs
                 } else {
-                    arrayASlice += arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
+                    arrayASlice += b*arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
                 }
             }
         }
