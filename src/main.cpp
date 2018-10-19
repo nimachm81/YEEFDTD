@@ -226,13 +226,13 @@ void test_yeegrid_1d() {
     yee.AddUpdateInstruction("E-update", FDInstructionCode::A_plusequal_sum_b_C, E_update_params);
     yee.AddUpdateInstruction("E-J-update", FDInstructionCode::A_plusequal_sum_b_C, E_J_update_params);
     yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
-    yee.SetIterationSequence({"J-update", "E-update", "E-J-update", "H-update"});
+    yee.SetIterativeSequence({"J-update", "E-update", "E-J-update", "H-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
     yee.AddFullGridElementView("H-y", "H", 1);
     yee.SetDataStoreRate("E-x", 1);
     yee.SetDataStoreRate("H-y", 1);
     yee.DeleteOlderViewFiles();
-    yee.ApplyUpdateInstructions(600);
+    yee.ApplyIterativeInstructions(600);
 }
 
 void test_yeegrid_2d() {
@@ -304,13 +304,13 @@ void test_yeegrid_2d() {
     yee.AddUpdateInstruction("E-J-update", FDInstructionCode::A_plusequal_sum_b_C, E_J_update_params);
     yee.AddUpdateInstruction("Hy-update", FDInstructionCode::A_plusequal_sum_b_C, Hy_update_params);
     yee.AddUpdateInstruction("Hz-update", FDInstructionCode::A_plusequal_sum_b_C, Hz_update_params);
-    yee.SetIterationSequence({"J-update", "Ex-Hy-update", "Ex-Hz-update", "E-J-update", "Hy-update", "Hz-update"});
+    yee.SetIterativeSequence({"J-update", "Ex-Hy-update", "Ex-Hz-update", "E-J-update", "Hy-update", "Hz-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
     yee.AddFullGridElementView("H-y", "H", 1);
     yee.DeleteOlderViewFiles();
     yee.SetDataStoreRate("E-x", 1);
     yee.SetDataStoreRate("H-y", 1);
-    yee.ApplyUpdateInstructions(401);
+    yee.ApplyIterativeInstructions(401);
 }
 
 void test_yeegrid_3d() {
@@ -454,7 +454,7 @@ void test_yeegrid_3d() {
     yee.AddUpdateInstruction("Hy-Ez-update", FDInstructionCode::A_plusequal_sum_b_C, Hy_Ez_update_params);
     yee.AddUpdateInstruction("Hz-Ex-update", FDInstructionCode::A_plusequal_sum_b_C, Hz_Ex_update_params);
     yee.AddUpdateInstruction("Hz-Ey-update", FDInstructionCode::A_plusequal_sum_b_C, Hz_Ey_update_params);
-    yee.SetIterationSequence({"J-update", "Ex-Hy-update", "Ex-Hz-update",
+    yee.SetIterativeSequence({"J-update", "Ex-Hy-update", "Ex-Hz-update",
                                           "Ey-Hx-update", "Ey-Hz-update",
                                           "Ez-Hx-update", "Ez-Hy-update",
                                           "E-J-update",
@@ -466,11 +466,11 @@ void test_yeegrid_3d() {
     yee.DeleteOlderViewFiles();
     yee.SetDataStoreRate("E-x", 1);
     yee.SetDataStoreRate("H-y", 1);
-    yee.ApplyUpdateInstructions(150);
+    yee.ApplyIterativeInstructions(150);
 }
 
 void test_yeegrid_dielectric_1d() {
-    std::size_t nz = 300;
+    std::size_t nz = 1000;
     std::size_t indJ = nz/2;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
@@ -489,7 +489,8 @@ void test_yeegrid_dielectric_1d() {
     yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
             0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("EpsilonUpdater", "EpsilonInv", 0 /*x*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 8.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 9.0} /*box corner 1*/,
+            {r0[0] - 0.1, r0[1] - 0.1, 7.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 9.0} /*box corner 1*/,
+            {0.0, 0.0, 0.5} /*edge thickness*/,
             1.0/4.0 /*insideValue*/, 1.0 /*outsideValue*/);
 
     void* D_update_params = FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CyEdgeH(
@@ -542,7 +543,8 @@ void test_yeegrid_dielectric_1d() {
     yee.AddUpdateInstruction("D-J-update", FDInstructionCode::A_plusequal_sum_b_C, D_J_update_params);
     yee.AddUpdateInstruction("E-update", FDInstructionCode::A_equal_sum_bB_C, E_update_params);
     yee.AddUpdateInstruction("H-update", FDInstructionCode::A_plusequal_sum_b_C, H_update_params);
-    yee.SetIterationSequence({"Epsilon-update", "J-update", "D-update", "D-J-update", "E-update", "H-update"});
+    yee.SetSingleRunSequence({"Epsilon-update"});
+    yee.SetIterativeSequence({"J-update", "D-update", "D-J-update", "E-update", "H-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
     yee.AddFullGridElementView("H-y", "H", 1);
     yee.AddFullGridElementView("Eps", "EpsilonInv", 0);
@@ -550,11 +552,12 @@ void test_yeegrid_dielectric_1d() {
     yee.SetDataStoreRate("H-y", 1);
     yee.SetDataStoreRate("Eps", 1);
     yee.DeleteOlderViewFiles();
-    yee.ApplyUpdateInstructions(600);
+    yee.ApplySingleRunInstructions();
+    yee.ApplyIterativeInstructions(600);
 }
 
 void test_yeegrid_dielectric_pml_1d() {
-    std::size_t nz = 500;
+    std::size_t nz = 600;
     std::size_t indJ = nz/2;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 0.1, 15.0};
@@ -576,12 +579,15 @@ void test_yeegrid_dielectric_pml_1d() {
             0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("EpsilonUpdater", "EpsilonInv", 0 /*x*/,
             {r0[0] - 0.1, r0[1] - 0.1, 9.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 15.0} /*box corner 1*/,
+            {0.0, 0.0, 0.0} /*edge thickness*/,
             1.0/4.0 /*insideValue*/, 1.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEUpdater", "sig-E", 2 /*z*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 4.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 11.0} /*box corner 1*/,
+            {r0[0] - 0.1, r0[1] - 0.1, 4.01} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 11.01} /*box corner 1*/,
+            {0.0, 0.0, 1.0} /*edge thickness*/,
             0.0 /*insideValue*/, +1.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHUpdater", "sig-H", 2 /*z*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 4.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 11.0} /*box corner 1*/,
+            {r0[0] - 0.1, r0[1] - 0.1, 4.01} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 11.01} /*box corner 1*/,
+            {0.0, 0.0, 1.0} /*edge thickness*/,
             0.0 /*insideValue*/, +1.0 /*outsideValue*/);
 
     void* D_curlH_update_params = FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CyEdgeH(
@@ -670,7 +676,8 @@ void test_yeegrid_dielectric_pml_1d() {
     yee.AddUpdateInstruction("E-D-update", FDInstructionCode::A_equal_sum_bB_C, E_D_update_params);
     yee.AddUpdateInstruction("H-curlE-update", FDInstructionCode::A_plusequal_sum_b_C, H_curlE_update_params);
     yee.AddUpdateInstruction("H-sigz-update", FDInstructionCode::A_plusequal_sum_bB_C, H_sigz_update_params);
-    yee.SetIterationSequence({"Epsilon-update", "SigE-update", "SigH-update", "J-update",
+    yee.SetSingleRunSequence({"Epsilon-update", "SigE-update", "SigH-update"});
+    yee.SetIterativeSequence({"J-update",
                               "D-sigz-update", "D-curlH-update", "D-J-update", "E-D-update",
                               "H-sigz-update", "H-curlE-update"});
     yee.AddFullGridElementView("E-x", "E", 0);
@@ -680,7 +687,8 @@ void test_yeegrid_dielectric_pml_1d() {
     yee.SetDataStoreRate("H-y", 1);
     yee.SetDataStoreRate("Eps", 1);
     yee.DeleteOlderViewFiles();
-    yee.ApplyUpdateInstructions(600);
+    yee.ApplySingleRunInstructions();
+    yee.ApplyIterativeInstructions(600);
 }
 
 int main(int argc, char** argv) {

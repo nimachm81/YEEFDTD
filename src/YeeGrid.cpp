@@ -13,8 +13,8 @@
 
 
 YeeGrid3D::~YeeGrid3D() {
-    for(std::string updateName : iterationSequence) {
-        auto& instructCode_param_pair = instructions[updateName];
+    for(std::string updateName : iterativeSequence) {
+        auto& instructCode_param_pair = updateInstructions[updateName];
         auto& instructionCode = instructCode_param_pair.first;
         void* params = instructCode_param_pair.second;
         if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
@@ -124,11 +124,15 @@ YeeGridData3D& YeeGrid3D::GetGridElement(const std::string name) {
 }
 
 void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params) {
-    instructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, params);
+    updateInstructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, params);
 }
 
-void YeeGrid3D::SetIterationSequence(std::vector<std::string> sequence) {
-    iterationSequence = sequence;
+void YeeGrid3D::SetIterativeSequence(std::vector<std::string> sequence) {
+    iterativeSequence = sequence;
+}
+
+void YeeGrid3D::SetSingleRunSequence(std::vector<std::string> sequence) {
+    singleRunSequence = sequence;
 }
 
 void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
@@ -339,17 +343,25 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
 }
 
 
-void YeeGrid3D::ApplyUpdateInstructions(std::size_t numIterations) {
+void YeeGrid3D::ApplyIterativeInstructions(std::size_t numIterations) {
     for(std::size_t i = 0; i < numIterations; ++i) {
         timeIndex = i;
-        for(std::string updateName : iterationSequence) {
-            auto& instructCode_param_pair = instructions[updateName];
+        for(std::string updateName : iterativeSequence) {
+            auto& instructCode_param_pair = updateInstructions[updateName];
             ApplyUpdateInstruction(instructCode_param_pair.first, instructCode_param_pair.second);
         }
         WriteAllGridElemViewsToFile();
         //PrintAllGridData();
     }
     CloseGridViewFiles();
+}
+
+
+void YeeGrid3D::ApplySingleRunInstructions() {
+    for(std::string updateName : singleRunSequence) {
+        auto& instructCode_param_pair = updateInstructions[updateName];
+        ApplyUpdateInstruction(instructCode_param_pair.first, instructCode_param_pair.second);
+    }
 }
 
 
@@ -372,10 +384,12 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
         const std::string gridDataName,
         int direction,
         std::array<RealNumber, 3> boxCornerR0, std::array<RealNumber, 3> boxCornerR1,
+        std::array<RealNumber, 3> edgeThickness,
         RealNumber insideValue, RealNumber outsideValue
         ) {
     std::shared_ptr<SpatialCubeGridArrayManipulator> modifier(new SpatialCubeGridArrayManipulator);
     modifier->SetCubeCorners(boxCornerR0, boxCornerR1);
+    modifier->SetEdgeThickness(edgeThickness);
     modifier->SetInsideValue(insideValue);
     modifier->SetOutsideValue(outsideValue);
 

@@ -42,9 +42,11 @@ class YeeGrid3D {
     YeeGridData3D& GetGridElement(const std::string name);
 
     void AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params);
-    void SetIterationSequence(std::vector<std::string> sequence);
+    void SetIterativeSequence(std::vector<std::string> sequence);
+    void SetSingleRunSequence(std::vector<std::string> sequence);
     void ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params);
-    void ApplyUpdateInstructions(std::size_t numIterations);
+    void ApplyIterativeInstructions(std::size_t numIterations);
+    void ApplySingleRunInstructions();
 
     void* ConstructParams_A_plusequal_sum_b_C(
                                     std::array<std::size_t, 3> ind_start_A,
@@ -83,6 +85,7 @@ class YeeGrid3D {
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
             int direction, // 0:x-component 1:y-component 2-z-component
             std::array<RealNumber, 3> boxCornerR0, std::array<RealNumber, 3> boxCornerR1, // corners of the cube
+            std::array<RealNumber, 3> edgeThickness,    // thickness of the smooth edge
             RealNumber insideValue, RealNumber outsideValue // inside the cube set the array value to insideValue and...
             );
 
@@ -110,8 +113,9 @@ class YeeGrid3D {
     std::array<std::size_t, 3> nCells;      // number of Yee cells
     std::unordered_map<std::string, std::shared_ptr<YeeGridData3D>> gridElements;
     std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;
-    std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> instructions;  // field update instructions
-    std::vector<std::string> iterationSequence;     // sequence in which to apply the field update instructions
+    std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> updateInstructions;  // field update instructions
+    std::vector<std::string> iterativeSequence;     // sequence in which to apply the field update instructions
+    std::vector<std::string> singleRunSequence;     // sequence in which to apply the field update instructions
     std::unordered_map<std::string, GridElementView> gridElementViews;  // a slice of gridElements for printing to output
 };
 

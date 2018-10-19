@@ -209,6 +209,119 @@ class NumberArray3D {
         return numArrC;     // TODO: define move constructors
     }
 
+    friend NumberArray3D operator+(const T numB, const NumberArray3D& numArrA) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] =
+                            numB + a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                }
+            }
+        }
+        return numArrC;     // TODO: define move constructors
+    }
+
+    friend NumberArray3D operator-(const NumberArray3D& numArrA, const NumberArray3D& numArrB) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        const std::array<std::size_t, 3>& b_shape = numArrB.GetShape();
+        T*** b_arrayData = numArrB.GetArrayData();
+        const std::array<std::size_t, 3>& b_indStart = numArrB.GetIndStart();
+        std::size_t b_ind0 = b_indStart[0];
+        std::size_t b_ind1 = b_indStart[1];
+        std::size_t b_ind2 = b_indStart[2];
+
+        assert( a_shape == b_shape );
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] =
+                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] -
+                            b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+                }
+            }
+        }
+        return numArrC;     // TODO: define move constructors
+    }
+
+    friend NumberArray3D operator-(const NumberArray3D& numArrA, const T numB) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] =
+                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] - numB;
+                }
+            }
+        }
+        return numArrC;     // TODO: define move constructors
+    }
+
+    friend NumberArray3D operator-(const T numB, const NumberArray3D& numArrA) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] =
+                            numB - a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                }
+            }
+        }
+        return numArrC;     // TODO: define move constructors
+    }
+
     NumberArray3D& operator+=(const NumberArray3D& rhs) {
         assert( rhs.GetShape() == shape );
         std::size_t n0 = shape[0];
@@ -561,6 +674,87 @@ class NumberArray3D {
         }
         return numArrC;
     }
+
+    static NumberArray3D cos(const NumberArray3D& numArrA) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] = std::cos(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
+                }
+            }
+        }
+        return numArrC;
+    }
+
+    static NumberArray3D sin(const NumberArray3D& numArrA) {
+        const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
+        T*** a_arrayData = numArrA.GetArrayData();
+        const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
+        std::size_t a_ind0 = a_indStart[0];
+        std::size_t a_ind1 = a_indStart[1];
+        std::size_t a_ind2 = a_indStart[2];
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
+        T*** c_arrayData = numArrC.GetArrayData();
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    c_arrayData[i0][i1][i2] = std::sin(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
+                }
+            }
+        }
+        return numArrC;
+    }
+    //---------------------   meshgrid
+
+    static NumberArray3D GetMeshGrid(const std::array<std::size_t, 3>& a_shape,
+                                     const std::array<RealNumber, 3>& r_min, const std::array<RealNumber, 3>& r_max,
+                                     int direction) {
+        NumberArray3D numArrA(a_shape, 0);
+        T*** a_arrayData = numArrA.GetArrayData();
+
+        std::size_t n0 = a_shape[0];
+        std::size_t n1 = a_shape[1];
+        std::size_t n2 = a_shape[2];
+
+        std::array<RealNumber, 3> d_max;
+        for(int i = 0; i < 3; ++i) {
+            d_max[i] = (r_max[i] - r_min[i])/(a_shape[i] - 1);
+        }
+
+        std::array<std::size_t, 3> i;
+        std::size_t& i0 = i[0];
+        std::size_t& i1 = i[1];
+        std::size_t& i2 = i[2];
+        for(i0 = 0; i0 < n0; ++i0) {
+            for(i1 = 0; i1 < n1; ++i1) {
+                for(i2 = 0; i2 < n2; ++i2) {
+                    a_arrayData[i0][i1][i2] = r_min[direction] + i[direction]*d_max[direction];
+                }
+            }
+        }
+        return numArrA;
+    }
+    //------------------------------  ostream  -----------
 
     friend std::ostream& operator<<(std::ostream& out, const NumberArray3D& numArr)
     {
