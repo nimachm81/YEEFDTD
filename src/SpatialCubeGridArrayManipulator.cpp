@@ -92,6 +92,33 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
     NumberArray3D slice = gridArray.GetSlice(indStart_p, indEnd_m);
     slice.SetToNumber(1.0);
 
+    // set the edge frames to 1.0
+    if(smoothEdgeThickness[0] > 0.0) {
+    // get an slice for the cube face with normal along +x or -x
+
+        std::array<std::size_t, 3> indStart_xm{indStart_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_xm{indStart_p[0], indEnd_p[1], indEnd_p[2]};
+        std::array<std::size_t, 3> indStart_xp{indEnd_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_xp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
+
+        NumberArray3D slice_xm = gridArray.GetSlice(indStart_xm, indEnd_xm);
+        slice_xm.SetToNumber(1.0);
+        NumberArray3D slice_xp = gridArray.GetSlice(indStart_xp, indEnd_xp);
+        slice_xp.SetToNumber(1.0);
+    }
+    if(smoothEdgeThickness[1] > 0.0) {
+    // get an slice for the cube face with normal along +y or -y
+
+        std::array<std::size_t, 3> indStart_ym{indStart_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_ym{indEnd_p[0], indStart_p[1], indEnd_p[2]};
+        std::array<std::size_t, 3> indStart_yp{indStart_m[0], indEnd_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_yp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
+
+        NumberArray3D slice_ym = gridArray.GetSlice(indStart_ym, indEnd_ym);
+        slice_ym.SetToNumber(1.0);
+        NumberArray3D slice_yp = gridArray.GetSlice(indStart_yp, indEnd_yp);
+        slice_yp.SetToNumber(1.0);
+    }
     if(smoothEdgeThickness[2] > 0.0) {
     // get an slice for the cube face with normal along +z or -z
 
@@ -104,7 +131,62 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
         slice_zm.SetToNumber(1.0);
         NumberArray3D slice_zp = gridArray.GetSlice(indStart_zp, indEnd_zp);
         slice_zp.SetToNumber(1.0);
+    }
 
+    // smoothen the edges
+    if(smoothEdgeThickness[0] > 0.0) {
+    // get an slice for the cube face with normal along +x or -x
+
+        std::array<std::size_t, 3> indStart_xm{indStart_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_xm{indStart_p[0], indEnd_p[1], indEnd_p[2]};
+        std::array<std::size_t, 3> indStart_xp{indEnd_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_xp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
+
+        NumberArray3D slice_xm = gridArray.GetSlice(indStart_xm, indEnd_xm);
+        NumberArray3D slice_xp = gridArray.GetSlice(indStart_xp, indEnd_xp);
+
+        // create meshgrid
+        std::array<RealNumber, 3> r0_xm{indStart_xm[0]*dx, indStart_xm[1]*dy, indStart_xm[2]*dz};
+        std::array<RealNumber, 3> r1_xm{indEnd_xm[0]*dx, indEnd_xm[1]*dy, indEnd_xm[2]*dz};
+        NumberArray3D<RealNumber> xm = NumberArray3D<RealNumber>::GetMeshGrid(slice_xm.GetShape(), r0_xm, r1_xm, 0);
+        slice_xm *= 0.5*NumberArray3D<RealNumber>::sin((xm - r0_xm[0])*M_PI/(r1_xm[0] - r0_xm[0]) - M_PI/2) + 0.5;
+
+        std::array<RealNumber, 3> r0_xp{r0[0] + indStart_xp[0]*dx, r0[1] + indStart_xp[1]*dy, r0[2] + indStart_xp[2]*dz};
+        std::array<RealNumber, 3> r1_xp{r0[0] + indEnd_xp[0]*dx, r0[1] + indEnd_xp[1]*dy, r0[2] + indEnd_xp[2]*dz};
+        NumberArray3D<RealNumber> xp = NumberArray3D<RealNumber>::GetMeshGrid(slice_xp.GetShape(), r0_xp, r1_xp, 0);
+        slice_xp *= 0.5*NumberArray3D<RealNumber>::cos((xp - r0_xp[0])*M_PI/(r1_xp[0] - r0_xp[0])) + 0.5;
+    }
+    if(smoothEdgeThickness[1] > 0.0) {
+    // get an slice for the cube face with normal along +y or -y
+
+        std::array<std::size_t, 3> indStart_ym{indStart_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_ym{indEnd_p[0], indStart_p[1], indEnd_p[2]};
+        std::array<std::size_t, 3> indStart_yp{indStart_m[0], indEnd_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_yp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
+
+        NumberArray3D slice_ym = gridArray.GetSlice(indStart_ym, indEnd_ym);
+        NumberArray3D slice_yp = gridArray.GetSlice(indStart_yp, indEnd_yp);
+        // create meshgrid
+        std::array<RealNumber, 3> r0_ym{indStart_ym[0]*dx, indStart_ym[1]*dy, indStart_ym[2]*dz};
+        std::array<RealNumber, 3> r1_ym{indEnd_ym[0]*dx, indEnd_ym[1]*dy, indEnd_ym[2]*dz};
+        NumberArray3D<RealNumber> ym = NumberArray3D<RealNumber>::GetMeshGrid(slice_ym.GetShape(), r0_ym, r1_ym, 1);
+        slice_ym *= 0.5*NumberArray3D<RealNumber>::sin((ym - r0_ym[1])*M_PI/(r1_ym[1] - r0_ym[1]) - M_PI/2) + 0.5;
+
+        std::array<RealNumber, 3> r0_yp{r0[0] + indStart_yp[0]*dx, r0[1] + indStart_yp[1]*dy, r0[2] + indStart_yp[2]*dz};
+        std::array<RealNumber, 3> r1_yp{r0[0] + indEnd_yp[0]*dx, r0[1] + indEnd_yp[1]*dy, r0[2] + indEnd_yp[2]*dz};
+        NumberArray3D<RealNumber> yp = NumberArray3D<RealNumber>::GetMeshGrid(slice_yp.GetShape(), r0_yp, r1_yp, 1);
+        slice_yp *= 0.5*NumberArray3D<RealNumber>::cos((yp - r0_yp[1])*M_PI/(r1_yp[1] - r0_yp[1])) + 0.5;
+    }
+    if(smoothEdgeThickness[2] > 0.0) {
+    // get an slice for the cube face with normal along +z or -z
+
+        std::array<std::size_t, 3> indStart_zm{indStart_m[0], indStart_m[1], indStart_m[2]};
+        std::array<std::size_t, 3> indEnd_zm{indEnd_p[0], indEnd_p[1], indStart_p[2]};
+        std::array<std::size_t, 3> indStart_zp{indStart_m[0], indStart_m[1], indEnd_m[2]};
+        std::array<std::size_t, 3> indEnd_zp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
+
+        NumberArray3D slice_zm = gridArray.GetSlice(indStart_zm, indEnd_zm);
+        NumberArray3D slice_zp = gridArray.GetSlice(indStart_zp, indEnd_zp);
         // create meshgrid
         std::array<RealNumber, 3> r0_zm{indStart_zm[0]*dx, indStart_zm[1]*dy, indStart_zm[2]*dz};
         std::array<RealNumber, 3> r1_zm{indEnd_zm[0]*dx, indEnd_zm[1]*dy, indEnd_zm[2]*dz};

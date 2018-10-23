@@ -110,28 +110,46 @@ const std::array<RealNumber, 3>& YeeGrid3D::GetCornerR1() const {
 
 
 void YeeGrid3D::AddEntireGridElement(const std::string name, ElementType elemType) {
+    auto found = gridElements.find(name);
+    assert(found == gridElements.end()); // make sure name does not already exist.
     gridElements[name] = std::make_shared<YeeGridData3D>(elemType, nCells);
 }
 
 void YeeGrid3D::AddPartialGridElement(const std::string name, ElementType elemType
         ,std::array<std::size_t, 3> startCell ,std::array<std::size_t, 3> numCells) {
+    auto found = gridElements.find(name);
+    assert(found == gridElements.end()); // make sure name does not already exist.
     gridElements[name] = std::make_shared<YeeGridData3D>(elemType, numCells, startCell);
 }
 
 
 YeeGridData3D& YeeGrid3D::GetGridElement(const std::string name) {
+    auto found = gridElements.find(name);
+    assert(found != gridElements.end()); // make sure name is valid.
     return *gridElements[name];
 }
 
 void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params) {
+    auto found = updateInstructions.find(name);
+    assert(found == updateInstructions.end()); // make sure name does not already exist.
     updateInstructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, params);
 }
 
 void YeeGrid3D::SetIterativeSequence(std::vector<std::string> sequence) {
+    for(auto instructionName : sequence) {
+        // make sure sequence instruction names are valid.
+        auto found = updateInstructions.find(instructionName);
+        assert(found != updateInstructions.end());
+    }
     iterativeSequence = sequence;
 }
 
 void YeeGrid3D::SetSingleRunSequence(std::vector<std::string> sequence) {
+    for(auto instructionName : sequence) {
+        // make sure sequence instruction names are valid.
+        auto found = updateInstructions.find(instructionName);
+        assert(found != updateInstructions.end());
+    }
     singleRunSequence = sequence;
 }
 
