@@ -119,6 +119,7 @@
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
 		<Unit filename="../include/Vector.hpp" />
 		<Unit filename="../include/YeeGrid.h" />
+		<Unit filename="../include/YeeGridCollection.h" />
 		<Unit filename="../include/YeeGridDataTypes.h" />
 		<Unit filename="../src/FDInstructionFactory.cpp">
 			<Option target="main" />
@@ -136,6 +137,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/YeeGrid.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/YeeGridCollection.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/YeeGridDataTypes.cpp">

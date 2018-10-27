@@ -34,6 +34,13 @@ enum class FDInstructionCode {
                 // parameters : tuple{A, f, t}
                 // std::tuple<std::string     // name of GridArrayManipulator (it has a pointer to A) and a method to
                 //           >                // calculate time
+
+    ,A_plusequal_sum_b_C_neighbor    // Sets array A from a neighbor grid as:     A += Sum{b_n*C_n}
+                // same parameters as A_plusequal_sum_b_C, except it takes an extra argument as a refrence to the
+                // neighbor grid
+                // A belongs to this,  C belongs to neighbor
+    ,A_equal_sum_b_C_neighbor    // Sets array A from a neighbor grid as:     A = Sum{b_n*C_n}
+                // same parameters as A_neighbor_plusequal_sum_b_C
 };
 
 
