@@ -13,6 +13,7 @@
 #include "MultiDimArrayAllocator.hpp"
 #include "MultiDimArrayPrinting.hpp"
 #include "MultiDimArrayFileIO.hpp"
+#include "MultiDimArrayBufferIO.hpp"
 
 template <typename T>
 class NumberArray3D {
@@ -754,6 +755,30 @@ class NumberArray3D {
         }
         return numArrA;
     }
+
+    //-----------------------------  bufferIO ----------------
+    void WriteArrayDataToBuffer(RealNumber* buffer,
+                                std::size_t bufferSize,     // maximum buffer size
+                                std::size_t indStartBuffer  // write starting this index
+                                ) {
+        assert(arrayData != nullptr);
+        std::size_t totalElements = shape[0]*shape[1]*shape[2];
+        assert(indStartBuffer + totalElements <= bufferSize);
+        RealNumber* bufferStart = &(buffer[indStartBuffer]);
+        ndarray::buffer::Write3D(bufferStart, shape, indStart, arrayData);
+    }
+
+    void ReadArrayDatafromBuffer(RealNumber* buffer,
+                                 std::size_t bufferSize,     // maximum buffer size
+                                 std::size_t indStartBuffer  // read starting this index
+                                 ) {
+        assert(arrayData != nullptr);
+        std::size_t totalElements = shape[0]*shape[1]*shape[2];
+        assert(indStartBuffer + totalElements <= bufferSize);
+        RealNumber* bufferStart = &(buffer[indStartBuffer]);
+        ndarray::buffer::Read3D(bufferStart, shape, indStart, arrayData);
+    }
+
     //------------------------------  ostream  -----------
 
     friend std::ostream& operator<<(std::ostream& out, const NumberArray3D& numArr)

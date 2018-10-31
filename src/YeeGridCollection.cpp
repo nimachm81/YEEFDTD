@@ -9,12 +9,10 @@ std::size_t YeeGridCollection::AddGrid() {
     return grids.size() - 1;
 }
 
-
 YeeGrid3D& YeeGridCollection::GetGrid(std::size_t index) {
     assert(index < grids.size());
     return grids[index];
 }
-
 
 void YeeGridCollection::RunInstructionsPeriodically(std::size_t timeIndStart, std::size_t timeIndEnd,
                                                     std::vector<std::string> instructions) {

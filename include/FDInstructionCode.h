@@ -41,6 +41,10 @@ enum class FDInstructionCode {
                 // A belongs to this,  C belongs to neighbor
     ,A_equal_sum_b_C_neighbor    // Sets array A from a neighbor grid as:     A = Sum{b_n*C_n}
                 // same parameters as A_neighbor_plusequal_sum_b_C
+    ,A_to_buffer        // writes array A to a buffer
+                // parameters : tuple{pair(ind_start, ind_end), A, ind_xyz_A, buffer, ind_start_buffer
+    ,A_from_buffer      // reads A from buffer
+                // same parameters as A_to_buffer
 };
 
 
