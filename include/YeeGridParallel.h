@@ -25,8 +25,8 @@ class YeeGrid3DParallel : public YeeGrid3D {
     void ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params);
 
     private:
-    std::unordered_map<std::string, RealNumber*>* inBuffers;
-    std::unordered_map<std::string, RealNumber*>* outBuffers;
+    std::unordered_map<std::string, RealNumber*>* inBuffers = nullptr;
+    std::unordered_map<std::string, RealNumber*>* outBuffers = nullptr;
 };
 
 #endif // FDTD_YEEGRIDPARALLEL_H_
