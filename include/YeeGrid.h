@@ -93,15 +93,6 @@ class YeeGrid3D {
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
                                     ) const;
-    void* ConstructParams_A_to_buffer(
-                                    std::array<std::size_t, 3> ind_start_A,
-                                    std::array<std::size_t, 3> ind_end_A,
-                                    std::string arrayA_name,
-                                    int arrayA_component,
-                                    RealNumber* buffer,
-                                    std::size_t bufferSize,
-                                    std::size_t ind_start_buffer
-                                    ) const;
 
     void AddGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source

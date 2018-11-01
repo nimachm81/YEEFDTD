@@ -1363,7 +1363,7 @@ void test_yeegrid_1d_collection() {
 }
 
 int main(int argc, char** argv) {
-    test_yeegrid_1d_collection();
+    //test_yeegrid_1d_collection();
 }
 
 

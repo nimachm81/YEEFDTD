@@ -12,6 +12,8 @@
 
 class YeeGridCollectionParallel : public YeeGridCollection {
     public:
+    ~YeeGridCollectionParallel();
+
     void AddInBuffer(std::string name, std::size_t bufferSize);
     void AddOutBuffer(std::string name, std::size_t bufferSize);
 
