@@ -1,0 +1,47 @@
+<updateInstruction name="EdgeEplusEqualCurlEdgeH1DInside">
+    <arrayOperation>AplusEqualSumbC</arrayOperation>
+    <AName>E</AName>
+    <indStart>
+        <index id="­­0"><number type="int">0</number></index>
+        <index id="­­1"><number type="int">0</number></index>
+        <index id="­­2"><number type="int">1</number></index>
+    </indStart>
+    <indEnd>
+        <index id="­­0"><number type="int">1</number></index>
+        <index id="­­1"><number type="int">1</number></index>
+        <index id="2"><var>nz</var></index>
+    </indEnd>
+    <bValues>
+        <b id="0">
+            <mathOperation>
+                <devision>
+                    <arg id="0">
+                        <product>
+                            <arg id="0"><number type="double">1.0</number></arg>
+                            <arg id="1"><var>dt</var></arg>
+                        </product>
+                    </arg>
+                    <arg id="1"><var>dz</var></arg>
+                </devision>
+            </mathOperation>
+        </b>
+        <b id="1">
+            <mathOperation>
+                <devision>
+                    <arg id="0">
+                        <product>
+                            <arg id="0"><number type="double">-1.0</number></arg>
+                            <arg id="1"><var>dt</var></arg>
+                        </product>
+                    </arg>
+                    <arg id="1"><var>dz</var></arg>
+                </devision>
+            </mathOperation>
+        </b>
+    </bValues>
+    <CNames>
+        <CName id="0">H</CName>
+        <CName id="1">H</CName>
+    </CNames>
+</updateInstruction>
+

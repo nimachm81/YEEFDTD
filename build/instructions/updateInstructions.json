@@ -1,0 +1,78 @@
+
+{
+"EdgeExPorPECurlEdgeHy1DInside":{ 
+    "comment":"the variable operation could be += or =",
+    "arrayOperation":{"name":"var", "value":"operation"},
+    "AName":"E",
+    "ADirection":0,
+    "AIndStart":[{"name":"number", "type":"size_t", "value":0}, 
+                 {"name":"number", "type":"size_t", "value":0}, 
+                 {"name":"number", "type":"size_t", "value":1}],
+    "AIndEnd":[{"name":"number", "type":"size_t", "value":1}, 
+              {"name":"number", "type":"size_t", "value":1}, 
+              {"name":"var", "value":"nz"}],
+    "bValues":[{"name":"mathExpression", 
+                "value":{"name":"binaryMathOperator", 
+                         "value":"division", 
+                         "args":[{"name":"var", "value":"multiplier"}, 
+                                 {"name":"var", "value":"dz"}]
+                        }
+               }, 
+               {"name":"mathExpression", 
+                "value":{"name":"binaryMathOperator", 
+                         "value":"division", 
+                         "args":[{"name":"unaryMathOperator", 
+                                  "value":"negative", 
+                                  "arg":{"name":"var", "value":"multiplier"}}, 
+                                        {"name":"var", "value":"dz"}]
+                        }
+               }],
+    "CNames":["H", "H"],
+    "CDirections":[1, 1],
+    "CIndsStart":[[{"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":0}],
+                  [{"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":1}]]
+},
+
+"EdgeHyPorPECurlEdgeEx1DInside":{ 
+    "comment":"the variable operation could be += or =",
+    "arrayOperation":{"name":"var", "value":"operation"},
+    "AName":"H",
+    "ADirection":1,
+    "AIndStart":[{"name":"number", "type":"size_t", "value":0}, 
+                 {"name":"number", "type":"size_t", "value":0}, 
+                 {"name":"number", "type":"size_t", "value":0}],
+    "AIndEnd":[{"name":"number", "type":"size_t", "value":1}, 
+               {"name":"number", "type":"size_t", "value":1}, 
+               {"name":"var", "value":"nz"}],
+    "bValues":[{"name":"mathExpression", 
+                "value":{"name":"binaryMathOperator", 
+                         "value":"division", 
+                         "args":[{"name":"var", "value":"multiplier"}, 
+                                 {"name":"var", "value":"dz"}]
+                        }
+               }, 
+               {"name":"mathExpression", 
+                "value":{"name":"binaryMathOperator", 
+                         "value":"division", 
+                         "args":[{"name":"unaryMathOperator", 
+                                  "value":"negative", 
+                                  "arg":{"name":"var", "value":"multiplier"}}, 
+                                        {"name":"var", "value":"dz"}]
+                        }
+               }],
+    "CNames":["E", "E"],
+    "CDirections":[0, 0],
+    "CIndsStart":[[{"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":0}],
+                  [{"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":0}, 
+                   {"name":"number", "type":"size_t", "value":1}]]
+
+}
+}
+

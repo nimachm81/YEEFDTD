@@ -1,0 +1,10 @@
+
+{
+"MaxwellYeeWithPointSource1D":{
+    "nz":300,
+    "indJ":150,
+    "stabilityFactor":0.99
+    
+}
+}
+

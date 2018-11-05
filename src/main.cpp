@@ -179,7 +179,7 @@ void test_yeegrid_1d() {
     std::size_t nz = 300;
     std::size_t indJ = nz/2;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.0, 10.0};
+    std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
     RealNumber dz = (r1[2] - r0[2])/nz;
     RealNumber dt = dz*0.99;
@@ -1363,7 +1363,7 @@ void test_yeegrid_1d_collection() {
 }
 
 int main(int argc, char** argv) {
-    //test_yeegrid_1d_collection();
+    test_yeegrid_1d();
 }
 
 
