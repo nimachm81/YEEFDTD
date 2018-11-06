@@ -1362,8 +1362,30 @@ void test_yeegrid_1d_collection() {
     yeeCollection.RunInstructionsPeriodically(0, 600, {"iterative-E-update", "iterative-H-update"});
 }
 
+
+#include "ParameterExtractor.h"
+void test_read_json() {
+    ParameterExtractor paramExtractor("instructions/MaxwellYee1D.json");
+
+    auto simulationType = paramExtractor.GetStringProperty("simulationType");
+    auto r0 = paramExtractor.Get3VecRealProperty("simulationParameters.dimensions.r0");
+    auto r1 = paramExtractor.Get3VecRealProperty("simulationParameters.dimensions.r1");
+    auto nCells = paramExtractor.Get3VecUintProperty("simulationParameters.dimensions.nCells");
+    auto stabilityFactor = paramExtractor.GetRealProperty("simulationParameters.stabilityFactor");
+    auto numberOfTimeSamples = paramExtractor.GetUintProperty("simulationParameters.numberOfTimeSamples");
+
+    std::cout << "simulationType : " << simulationType << std::endl;
+    std::cout << "r0 : " << r0[0] << " " << r0[1] << " " << r0[2] << std::endl;
+    std::cout << "r1 : " << r1[0] << " " << r1[1] << " " << r1[2] << std::endl;
+    std::cout << "nCells : " << nCells[0] << " " << nCells[1] << " " << nCells[2] << std::endl;
+    std::cout << "stabilityFactor : " << stabilityFactor << std::endl;
+    std::cout << "numberOfTimeSamples : " << numberOfTimeSamples << std::endl;
+}
+
+
 int main(int argc, char** argv) {
-    test_yeegrid_1d();
+    //test_yeegrid_1d();
+    test_read_json();
 }
 
 

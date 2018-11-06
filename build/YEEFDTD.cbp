@@ -43,7 +43,10 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/include" />
-					<Add directory="/usr/include/mpich" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent/include" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include" />
 					<Add directory="/usr/include/c++/7" />
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7" />
 					<Add directory="/usr/include/c++/7/backward" />
@@ -70,7 +73,10 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/include" />
-					<Add directory="/usr/include/mpich" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent/include" />
+					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include" />
 					<Add directory="/usr/include/c++/7" />
 					<Add directory="/usr/include/x86_64-linux-gnu/c++/7" />
 					<Add directory="/usr/include/c++/7/backward" />
@@ -117,6 +123,7 @@
 		<Unit filename="../include/MultiDimArrayFileIO.hpp" />
 		<Unit filename="../include/MultiDimArrayPrinting.hpp" />
 		<Unit filename="../include/NumberTypes.h" />
+		<Unit filename="../include/ParameterExtractor.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
 		<Unit filename="../include/Vector.hpp" />
 		<Unit filename="../include/YeeGrid.h" />
@@ -134,6 +141,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GridElementView.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/ParameterExtractor.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/SpatialCubeGridArrayManipulator.cpp">

@@ -1,10 +1,49 @@
 
 {
-"MaxwellYeeWithPointSource1D":{
-    "nz":300,
-    "indJ":150,
-    "stabilityFactor":0.99
-    
+"simulationType":"singleGrid",
+"simulationParameters":{
+    "dimensions":{
+        "r0":[0.0, 0.0, 0.0],
+        "r1":[0.1, 0.1, 10.0],
+        "nCells":[1, 1, 300]
+    },
+    "stabilityFactor":0.99,
+    "numberOfTimeSamples":600,
+    "sources":[
+        {
+        "type":"GaussianPointSource",
+        "parameters":{
+            "name":"Je",
+            "position":[0.05, 0.0, 5.0],
+            "direction":"x",
+            "amplitude":1.0,
+            "t_center":1.0,
+            "t_decay":0.2,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
+            }
+        }
+    ],
+    "gridViews":[
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"E-x",
+            "field":"E",
+            "direction":"x"
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"H-y",
+            "field":"H",
+            "direction":"y"
+            }
+        }
+    ]
 }
 }
+
 
