@@ -1365,27 +1365,76 @@ void test_yeegrid_1d_collection() {
 
 #include "ParameterExtractor.h"
 void test_read_json() {
-    ParameterExtractor paramExtractor("instructions/MaxwellYee1D.json");
+    ParameterExtractor paramExtractor("instructions/MaxwellYee1D_processed.json");
 
     auto simulationType = paramExtractor.GetStringProperty("simulationType");
-    auto r0 = paramExtractor.Get3VecRealProperty("simulationParameters.dimensions.r0");
-    auto r1 = paramExtractor.Get3VecRealProperty("simulationParameters.dimensions.r1");
-    auto nCells = paramExtractor.Get3VecUintProperty("simulationParameters.dimensions.nCells");
     auto stabilityFactor = paramExtractor.GetRealProperty("simulationParameters.stabilityFactor");
-    auto numberOfTimeSamples = paramExtractor.GetUintProperty("simulationParameters.numberOfTimeSamples");
+
+    ParameterExtractor dimensionsExtractor(paramExtractor.GetSubTreeRootNode("simulationParameters.dimensions"));
+    auto r0 = dimensionsExtractor.Get3VecRealProperty("r0");
+    auto r1 = dimensionsExtractor.Get3VecRealProperty("r1");
+    auto nCells = dimensionsExtractor.Get3VecUintProperty("nCells");
 
     std::cout << "simulationType : " << simulationType << std::endl;
     std::cout << "r0 : " << r0[0] << " " << r0[1] << " " << r0[2] << std::endl;
     std::cout << "r1 : " << r1[0] << " " << r1[1] << " " << r1[2] << std::endl;
     std::cout << "nCells : " << nCells[0] << " " << nCells[1] << " " << nCells[2] << std::endl;
     std::cout << "stabilityFactor : " << stabilityFactor << std::endl;
-    std::cout << "numberOfTimeSamples : " << numberOfTimeSamples << std::endl;
+
+    ParameterExtractor entireGridArrayExtractor(paramExtractor.GetSubTreeRootNode("simulationParameters.entireGridArrays"));
+    ParameterExtractor entireGridArrayExtractorFirst(entireGridArrayExtractor.GetSubTreeByIndex(1));
+    std::string gridName = entireGridArrayExtractorFirst.GetStringProperty("name");
+    std::cout << "GridArrayName : " << gridName << std::endl;
+
+    ParameterExtractor updateSequenceExtractor(paramExtractor.GetSubTreeRootNode("simulationParameters.updateSequences"));
+    for(std::size_t i = 0; i < updateSequenceExtractor.GetSize(); ++i) {
+        ParameterExtractor updateSequenceExtractor_i(updateSequenceExtractor.GetSubTreeByIndex(i));
+        auto update_sequence_name = updateSequenceExtractor_i.GetStringProperty("name");
+        std::cout << "update sequence : " << update_sequence_name <<  std::endl;
+        ParameterExtractor updateSequence_sequenceExtractor(updateSequenceExtractor_i.GetSubTreeRootNode("sequence"));
+        for(std::size_t j = 0; j < updateSequence_sequenceExtractor.GetSize(); ++j) {
+            ParameterExtractor updateSequence_sequenceExtractor_j(updateSequence_sequenceExtractor.GetSubTreeByIndex(j));
+            auto update_name_j = updateSequence_sequenceExtractor_j.GetStringProperty("");
+            std::cout << update_name_j <<  std::endl;
+        }
+    }
 }
 
+#include "ParameterExtractor.h"
+#include "boost/lexical_cast.hpp"
+void test_replice_string_in_file() {
+    RealNumber z0 = 0.0;
+    RealNumber z1 = 10.0;
+    std::size_t nz = 300;
+    RealNumber dz = (z1 - z0)/nz;
+    RealNumber stabilityFactor = 0.99;
+    RealNumber dt = dz/stabilityFactor;
+    RealNumber z_j = 5.0;
+    std::size_t indJ = std::round(z_j/dz);
+    std::size_t numOfTimeSamples = 600;
+
+    std::unordered_map<std::string, std::string> str_replacewith{
+            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
+            {"\"_S_\"", boost::lexical_cast<std::string>(stabilityFactor)},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_indJ_\"", boost::lexical_cast<std::string>(indJ)},
+            {"\"_indJ_p1_\"", boost::lexical_cast<std::string>(indJ + 1)},
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            };
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D.json",
+                "instructions/MaxwellYee1D_processed.json", str_replacewith);
+}
 
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
     test_read_json();
+    //test_replice_string_in_file();
 }
 
 
