@@ -1409,7 +1409,7 @@ void test_run_fdtd_1d_from_json() {
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = dz*stabilityFactor;
     RealNumber z_j = 5.0;
-    std::size_t indJ = std::round(z_j/dz);
+    std::size_t indJ = std::round((z_j - z0)/dz);
     std::size_t numOfTimeSamples = 600;
 
     std::unordered_map<std::string, std::string> str_replacewith{
@@ -1433,20 +1433,20 @@ void test_run_fdtd_1d_from_json() {
 }
 
 void test_run_fdtd_2d_from_json() {
-    RealNumber y0 = 0.0;
-    RealNumber y1 = 10.0;
-    RealNumber z0 = 0.0;
-    RealNumber z1 = 10.0;
+    RealNumber y0 = -5.0;
+    RealNumber y1 = 5.0;
+    RealNumber z0 = -5.0;
+    RealNumber z1 = 5.0;
     std::size_t ny = 200;
-    std::size_t nz = 200;
+    std::size_t nz = 250;
     RealNumber dy = (y1 - y0)/ny;
     RealNumber dz = (z1 - z0)/nz;
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
     RealNumber y_j = (y0 + y1)/2;
     RealNumber z_j = (z0 + z1)/2;
-    std::size_t indyJ = std::round(y_j/dy);
-    std::size_t indzJ = std::round(z_j/dz);
+    std::size_t indyJ = std::round((y_j - y0)/dy);
+    std::size_t indzJ = std::round((z_j - z0)/dz);
     std::size_t numOfTimeSamples = 401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
@@ -1481,10 +1481,76 @@ void test_run_fdtd_2d_from_json() {
     fileTranslator.Translate();
 }
 
+void test_run_fdtd_3d_from_json() {
+    RealNumber x0 = 0;
+    RealNumber x1 = 10.0;
+    RealNumber y0 = 0;
+    RealNumber y1 = 10.0;
+    RealNumber z0 = 0.0;
+    RealNumber z1 = 10.0;
+    std::size_t nx = 200;
+    std::size_t ny = 200;
+    std::size_t nz = 200;
+    RealNumber dx = (x1 - x0)/nx;
+    RealNumber dy = (y1 - y0)/ny;
+    RealNumber dz = (z1 - z0)/nz;
+    RealNumber stabilityFactor = 0.99;
+    RealNumber dt = 1.0/std::sqrt(1.0/(dx*dx) + 1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
+    RealNumber x_j = (x0 + x1)/2;
+    RealNumber y_j = (y0 + y1)/2;
+    RealNumber z_j = (z0 + z1)/2;
+    std::size_t indxJ = std::round((x_j - x0)/dx);
+    std::size_t indyJ = std::round((y_j - y0)/dy);
+    std::size_t indzJ = std::round((z_j - z0)/dz);
+    std::size_t numOfTimeSamples = 150;
+
+    std::unordered_map<std::string, std::string> str_replacewith{
+            {"\"_x0_\"", boost::lexical_cast<std::string>(x0)},
+            {"\"_x1_\"", boost::lexical_cast<std::string>(x1)},
+            {"\"_y0_\"", boost::lexical_cast<std::string>(y0)},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(y1)},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_nx_\"", boost::lexical_cast<std::string>(nx)},
+            {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
+            {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
+            {"\"_nx_p1_\"", boost::lexical_cast<std::string>(nx + 1)},
+            {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
+            {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
+            {"\"_dx_\"", boost::lexical_cast<std::string>(dx)},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(dy)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
+            {"\"_dt_dx_\"", boost::lexical_cast<std::string>(dt/dx)},
+            {"\"_m_dt_dx_\"", boost::lexical_cast<std::string>(-dt/dx)},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(dt/dy)},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(-dt/dy)},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
+            {"\"_m_dt_dxdydz_\"", boost::lexical_cast<std::string>(-dt/(dx*dy*dz))},
+            {"\"_x_j_\"", boost::lexical_cast<std::string>(x_j)},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(y_j)},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_indxJ_\"", boost::lexical_cast<std::string>(indxJ)},
+            {"\"_indxJ_p1_\"", boost::lexical_cast<std::string>(indxJ + 1)},
+            {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
+            {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
+            {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
+            {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)},
+            {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)}
+            };
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D.json",
+                "instructions/MaxwellYee3D_processed.json", str_replacewith);
+
+    ParamFileTranslator fileTranslator("instructions/MaxwellYee3D_processed.json");
+    fileTranslator.Translate();
+}
+
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
     // test_read_json();
-    test_run_fdtd_2d_from_json();
+    test_run_fdtd_3d_from_json();
 }
 
 

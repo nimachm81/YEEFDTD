@@ -142,6 +142,21 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
 
             std::size_t saveRate = viewParams.GetUintProperty("saveRate");
             yee.SetDataStoreRate(viewName, saveRate);
+        } else if(viewType == "partial") {
+            ParameterExtractor viewParams(std::get<1>(viewTypeandParams));
+
+            std::string viewName = viewParams.GetStringProperty("name");
+            std::string arrayName = viewParams.GetStringProperty("array");
+            int arrayDirection = stringDirectionToIntDirectionMap[viewParams.GetStringProperty("direction")];
+            auto indStart = viewParams.Get3VecUintProperty("indStart");
+            auto indEnd = viewParams.Get3VecUintProperty("indEnd");
+
+            yee.AddGridElementView(viewName, arrayName, arrayDirection, indStart, indEnd);
+
+            std::size_t saveRate = viewParams.GetUintProperty("saveRate");
+            yee.SetDataStoreRate(viewName, saveRate);
+        } else {
+            assert(false);
         }
     }
 
