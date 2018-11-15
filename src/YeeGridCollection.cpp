@@ -25,9 +25,9 @@ void YeeGridCollection::RunInstructionsPeriodically(std::size_t timeIndStart, st
             }
         }
     }
-    for(auto& grid : grids) {
-        grid.CloseGridViewFiles();
-    }
+//    for(auto& grid : grids) {
+//        grid.CloseGridViewFiles();
+//    }
 }
 
 

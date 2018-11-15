@@ -13,6 +13,7 @@
 
 
 YeeGrid3D::~YeeGrid3D() {
+    CloseGridViewFiles();
     for(std::string updateName : iterativeSequence) {
         auto& instructCode_param_pair = updateInstructions[updateName];
         auto& instructionCode = instructCode_param_pair.first;
@@ -484,7 +485,7 @@ void YeeGrid3D::ApplyIterativeInstructions(std::size_t numIterations) {
         WriteAllGridElemViewsToFile();
         //PrintAllGridData();
     }
-    CloseGridViewFiles();
+    //CloseGridViewFiles();
 }
 
 void YeeGrid3D::ApplyIterativeInstructionsOnce() {
@@ -507,7 +508,7 @@ void YeeGrid3D::ApplyInstructions(std::string name, std::size_t timeIndStart, st
         ApplyInstructionsOnce(name);
         WriteAllGridElemViewsToFile();
     }
-    CloseGridViewFiles();
+    //CloseGridViewFiles();
 }
 
 void YeeGrid3D::ApplyInstructionsOnce(std::string name) {

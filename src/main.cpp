@@ -1400,7 +1400,8 @@ void test_read_json() {
 
 #include "ParameterExtractor.h"
 #include "boost/lexical_cast.hpp"
-void test_replice_string_in_file() {
+#include "ParamFileTranslator.h"
+void test_run_fdtd_1d_from_json() {
     RealNumber z0 = 0.0;
     RealNumber z1 = 10.0;
     std::size_t nz = 300;
@@ -1426,19 +1427,64 @@ void test_replice_string_in_file() {
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D.json",
                 "instructions/MaxwellYee1D_processed.json", str_replacewith);
+
+    ParamFileTranslator fileTranslator("instructions/MaxwellYee1D_processed.json");
+    fileTranslator.Translate();
 }
 
-#include "ParamFileTranslator.h"
-void test_run_fdtd_from_json(const std::string filename) {
-    ParamFileTranslator fileTranslator(filename);
+void test_run_fdtd_2d_from_json() {
+    RealNumber y0 = 0.0;
+    RealNumber y1 = 10.0;
+    RealNumber z0 = 0.0;
+    RealNumber z1 = 10.0;
+    std::size_t ny = 200;
+    std::size_t nz = 200;
+    RealNumber dy = (y1 - y0)/ny;
+    RealNumber dz = (z1 - z0)/nz;
+    RealNumber stabilityFactor = 0.99;
+    RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
+    RealNumber y_j = (y0 + y1)/2;
+    RealNumber z_j = (z0 + z1)/2;
+    std::size_t indyJ = std::round(y_j/dy);
+    std::size_t indzJ = std::round(z_j/dz);
+    std::size_t numOfTimeSamples = 401;
+
+    std::unordered_map<std::string, std::string> str_replacewith{
+            {"\"_y0_\"", boost::lexical_cast<std::string>(y0)},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(y1)},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
+            {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
+            {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
+            {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(dy)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(dt/dy)},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(-dt/dy)},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
+            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(-dt/(dy*dz))},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(y_j)},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
+            {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
+            {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
+            {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            };
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D.json",
+                "instructions/MaxwellYee2D_processed.json", str_replacewith);
+
+    ParamFileTranslator fileTranslator("instructions/MaxwellYee2D_processed.json");
     fileTranslator.Translate();
 }
 
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
     // test_read_json();
-    test_replice_string_in_file();
-    test_run_fdtd_from_json("instructions/MaxwellYee1D_processed.json");
+    test_run_fdtd_2d_from_json();
 }
 
 

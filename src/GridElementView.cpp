@@ -53,12 +53,12 @@ void GridElementView::StoreData(std::size_t iterationIndex) {
 void GridElementView::DeleteOlderFiles() {
     assert(!viewName.empty());
     std::string fileName = viewFolder + "/" + viewName + viewFileExtension;
-    std::cout << "Older data file: " << fileName << " will be overwritten." << std::endl;
+    //std::cout << "Older data file: " << fileName << " will be overwritten." << std::endl;
     std::ifstream ifile(fileName.c_str());
     if(ifile) {
         int file_deleted = std::remove(fileName.c_str());
         assert(file_deleted == 0);
-        std::cout << fileName << " deleted!" << std::endl;
+        std::cout << fileName << " already exists. It was Overwritten!" << std::endl;
     }
 }
 

@@ -34,7 +34,7 @@ class NumberArray3D {
     NumberArray3D(const NumberArray3D& numArray) : isSlice(true), shape(numArray.GetShape()),
             indStart(numArray.GetIndStart()) {
         arrayData = numArray.GetArrayData();
-        std::cout << "inside the copy constructor" << std::endl;
+        //std::cout << "inside the copy constructor" << std::endl;
     }
 
     NumberArray3D(const NumberArray3D&& numArray) :
@@ -42,7 +42,7 @@ class NumberArray3D {
             shape(std::move(numArray.GetShape())),
             indStart(std::move(numArray.GetIndStart())) {
         std::cout << "inside the move constructor" << std::endl;
-        arrayData = std::move(numArray.GetArrayData());
+        //arrayData = std::move(numArray.GetArrayData());
     }
 
     NumberArray3D(T*** arraySlice, std::array<std::size_t, 3> shape, std::array<std::size_t, 3> indStart) :
