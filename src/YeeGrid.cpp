@@ -501,7 +501,16 @@ void YeeGrid3D::ApplySingleRunInstructions() {
     }
 }
 
-void YeeGrid3D::ApplyInstructions(std::string name) {
+void YeeGrid3D::ApplyInstructions(std::string name, std::size_t timeIndStart, std::size_t timeIndEnd) {
+    for(std::size_t i = timeIndStart; i < timeIndEnd; ++i) {
+        timeIndex = i;
+        ApplyInstructionsOnce(name);
+        WriteAllGridElemViewsToFile();
+    }
+    CloseGridViewFiles();
+}
+
+void YeeGrid3D::ApplyInstructionsOnce(std::string name) {
     auto found = instructionSequences.find(name);
     assert(found != instructionSequences.end());  // name is valid
 

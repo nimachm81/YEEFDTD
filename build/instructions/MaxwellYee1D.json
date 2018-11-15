@@ -2,22 +2,21 @@
 {
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":["_z0_", "_z1_", "_nz_", "_dz_", "_S_", "_dt_", "_nt_", "_z_j_", "_indJ_", "_indJ_p1_", "_dt_dz_", "_m_dt_dz_"],
+    "variables":["_z0_", "_z1_", "_nz_", "_dz_", "_dt_", "_nt_", "_z_j_", "_indJ_", "_indJ_p1_", "_dt_dz_", "_m_dt_dz_"],
     "dimensions":{
         "r0":[0.0, 0.0, "_z0_"],
         "r1":[0.1, 0.1, "_z1_"],
-        "nCells":[1, 1, "_nz_"]
+        "nCells":[1, 1, "_nz_"],
+        "dt":"_dt_"
     },
-    "stabilityFactor":"_S_",
-    "entireGridArrays":[{"name":"E"}, {"name":"H"}],
-    "partialGridArrays":[{"name":"J", "indStart":[0, 0, "_indJ_"], "nCells":[1, 1, 0]}],
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, "_indJ_"], "nCells":[1, 1, 0]}],
     "girdArrayManipulators":[
         {
         "type":"GaussianGridArrayManipulator",
         "parameters":{
             "name":"Jupdater",
             "array":"J",
-            "position":[0.05, 0.0, "_z_j_"],
             "direction":"x",
             "amplitude":1.0,
             "t_center":1.0,
@@ -65,14 +64,14 @@
             "A_direction":"x",
             "A_indStart":[0, 0, "_indJ_"],
             "A_indEnd":[1, 1, "_indJ_p1_"],
-            "b":["_dt_dz_"],
+            "b":["_m_dt_dz_"],
             "C":["J"],
             "C_direction":["x"],
             "C_indStart":[[0, 0, 0]]
             }
         },
         {
-        "type":"A+=frt",
+        "type":"A=frt",
         "parameters":{
             "name":"J_update",
             "girdArrayManipulator":"Jupdater"
@@ -80,14 +79,15 @@
         }
     ],
     "updateSequences":[{"name":"iterative", "sequence":["J_update", "E_me_J", "E_pe_curl_H", "H_pe_m_curl_E"]}],
-    "runSequence":[["iterative", "_nt_"]],
+    "runSequence":[{"name":"iterative", "timeIndStart":0, "timeIndEnd":"_nt_"}],
     "gridViews":[
         {
         "type":"entire",
         "parameters":{
             "name":"E-x",
             "array":"E",
-            "direction":"x"
+            "direction":"x",
+            "saveRate":1
             }
         },
         {
@@ -95,7 +95,17 @@
         "parameters":{
             "name":"H-y",
             "array":"H",
-            "direction":"y"
+            "direction":"y",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"J-x",
+            "array":"J",
+            "direction":"x",
+            "saveRate":1
             }
         }
     ]

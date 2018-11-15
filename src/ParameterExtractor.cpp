@@ -65,6 +65,39 @@ std::array<RealNumber, 3> ParameterExtractor::Get3VecRealProperty(const std::str
     return vec;
 }
 
+std::vector<std::string> ParameterExtractor::GetStringArray(const std::string path) {
+    std::vector<std::string> strings;
+    ParameterExtractor stringArrayExtractor(GetSubTreeRootNode(path));
+    for(std::size_t i = 0; i < stringArrayExtractor.GetSize(); ++i){
+        ParameterExtractor stringExtractor_i(stringArrayExtractor.GetSubTreeByIndex(i));
+        strings.emplace_back(stringExtractor_i.GetStringProperty(""));  // an array has no key. For example the array
+                                                                        // ["an", "the", "by"]
+                                                                        // is assumed to represent
+                                                                        // {"":"an", "":"the", "":"by"}
+                                                                        // in boost's JSON reader.
+    }
+    return strings;
+}
+
+std::vector<RealNumber> ParameterExtractor::GetRealArray(const std::string path) {
+    std::vector<RealNumber> realNumbers;
+    ParameterExtractor realArrayExtractor(GetSubTreeRootNode(path));
+    for(std::size_t i = 0; i < realArrayExtractor.GetSize(); ++i){
+        ParameterExtractor realExtractor_i(realArrayExtractor.GetSubTreeByIndex(i));
+        realNumbers.emplace_back(realExtractor_i.GetRealProperty(""));    // array elements have empty keys
+    }
+    return realNumbers;
+}
+
+std::vector<std::array<std::size_t, 3>> ParameterExtractor::Get3VecUintArray(const std::string path) {
+    std::vector<std::array<std::size_t, 3>> _3UintArrays;
+    ParameterExtractor _3UintArrayExtractor(GetSubTreeRootNode(path));
+    for(std::size_t i = 0; i < _3UintArrayExtractor.GetSize(); ++i){
+        ParameterExtractor _3UintExtractor_i(_3UintArrayExtractor.GetSubTreeByIndex(i));
+        _3UintArrays.emplace_back(_3UintExtractor_i.Get3VecUintProperty(""));  // array elements have empty keys
+    }
+    return _3UintArrays;
+}
 
 void ParameterExtractor::ReplaceStringsInFile(const std::string filename, const std::string filename_replaced,
         std::unordered_map<std::string, std::string>& str_replacewith) {

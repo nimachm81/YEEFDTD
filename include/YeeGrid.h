@@ -53,7 +53,8 @@ class YeeGrid3D {
     void ApplyIterativeInstructions(std::size_t numIterations);
     void ApplyIterativeInstructionsOnce();
     void ApplySingleRunInstructions();
-    void ApplyInstructions(std::string name);
+    void ApplyInstructionsOnce(std::string name);
+    void ApplyInstructions(std::string name, std::size_t timeIndStart, std::size_t timeIndEnd);
 
     void* ConstructParams_A_plusequal_sum_b_C(
                                     std::array<std::size_t, 3> ind_start_A,
@@ -126,7 +127,7 @@ class YeeGrid3D {
     void CloseGridViewFiles();
 
     protected:
-    std::size_t timeIndex;
+    std::size_t timeIndex = 0;
     RealNumber dt;                  // time resolution
     std::array<RealNumber, 3> dr;   // spatial resolution
     std::array<RealNumber, 3> r_0{0, 0, 0};  // coordinates of the lower left corner

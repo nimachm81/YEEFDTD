@@ -1368,7 +1368,6 @@ void test_read_json() {
     ParameterExtractor paramExtractor("instructions/MaxwellYee1D_processed.json");
 
     auto simulationType = paramExtractor.GetStringProperty("simulationType");
-    auto stabilityFactor = paramExtractor.GetRealProperty("simulationParameters.stabilityFactor");
 
     ParameterExtractor dimensionsExtractor(paramExtractor.GetSubTreeRootNode("simulationParameters.dimensions"));
     auto r0 = dimensionsExtractor.Get3VecRealProperty("r0");
@@ -1379,7 +1378,6 @@ void test_read_json() {
     std::cout << "r0 : " << r0[0] << " " << r0[1] << " " << r0[2] << std::endl;
     std::cout << "r1 : " << r1[0] << " " << r1[1] << " " << r1[2] << std::endl;
     std::cout << "nCells : " << nCells[0] << " " << nCells[1] << " " << nCells[2] << std::endl;
-    std::cout << "stabilityFactor : " << stabilityFactor << std::endl;
 
     ParameterExtractor entireGridArrayExtractor(paramExtractor.GetSubTreeRootNode("simulationParameters.entireGridArrays"));
     ParameterExtractor entireGridArrayExtractorFirst(entireGridArrayExtractor.GetSubTreeByIndex(1));
@@ -1408,7 +1406,7 @@ void test_replice_string_in_file() {
     std::size_t nz = 300;
     RealNumber dz = (z1 - z0)/nz;
     RealNumber stabilityFactor = 0.99;
-    RealNumber dt = dz/stabilityFactor;
+    RealNumber dt = dz*stabilityFactor;
     RealNumber z_j = 5.0;
     std::size_t indJ = std::round(z_j/dz);
     std::size_t numOfTimeSamples = 600;
@@ -1418,7 +1416,6 @@ void test_replice_string_in_file() {
             {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_S_\"", boost::lexical_cast<std::string>(stabilityFactor)},
             {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
             {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
             {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
@@ -1431,10 +1428,17 @@ void test_replice_string_in_file() {
                 "instructions/MaxwellYee1D_processed.json", str_replacewith);
 }
 
+#include "ParamFileTranslator.h"
+void test_run_fdtd_from_json(const std::string filename) {
+    ParamFileTranslator fileTranslator(filename);
+    fileTranslator.Translate();
+}
+
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
-    test_read_json();
-    //test_replice_string_in_file();
+    // test_read_json();
+    test_replice_string_in_file();
+    test_run_fdtd_from_json("instructions/MaxwellYee1D_processed.json");
 }
 
 
