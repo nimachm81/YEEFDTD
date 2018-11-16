@@ -1588,10 +1588,65 @@ void test_run_fdtd_dielectric_1d_from_json() {
     fileTranslator.Translate();
 }
 
+void test_run_fdtd_dielectric_pml_1d_from_json() {
+    RealNumber z0 = 0.0;
+    RealNumber z1 = 15.0;
+    std::size_t nz = 600;
+    RealNumber dz = (z1 - z0)/nz;
+    RealNumber stabilityFactor = 0.95;
+    RealNumber dt = dz*stabilityFactor;
+    RealNumber z_j = 5.0;
+    std::size_t indJ = std::round((z_j - z0)/dz);
+    std::size_t numOfTimeSamples = 800;
+
+    RealNumber cube_z0 = 9.0;
+    RealNumber cube_z1 = 15.0;
+    RealNumber cube_dz = 0.0;
+
+    RealNumber epsilon = 4.0;
+
+    RealNumber pml_z0 = 3.0;
+    RealNumber pml_z1 = 12.0;
+    RealNumber pml_dz = 1.0;
+
+    RealNumber sig_e = 1.0;
+    RealNumber sig_h = 1.0;
+
+
+    std::unordered_map<std::string, std::string> str_replacewith{
+            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
+            {"\"_m_dt_\"", boost::lexical_cast<std::string>(-dt)},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_indJ_\"", boost::lexical_cast<std::string>(indJ)},
+            {"\"_indJ_p1_\"", boost::lexical_cast<std::string>(indJ + 1)},
+            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(cube_z0)},
+            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(cube_z1)},
+            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(cube_dz)},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(1.0/epsilon)},
+            {"\"_pml_z0_\"", boost::lexical_cast<std::string>(pml_z0)},
+            {"\"_pml_z1_\"", boost::lexical_cast<std::string>(pml_z1)},
+            {"\"_pml_dz_\"", boost::lexical_cast<std::string>(pml_dz)},
+            {"\"_sig_e_\"", boost::lexical_cast<std::string>(sig_e)},
+            {"\"_sig_h_\"", boost::lexical_cast<std::string>(sig_h)},
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            };
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_dielectric_pml.json",
+                "instructions/MaxwellYee1D_dielectric_pml_processed.json", str_replacewith);
+
+    ParamFileTranslator fileTranslator("instructions/MaxwellYee1D_dielectric_pml_processed.json");
+    fileTranslator.Translate();
+}
+
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
     // test_read_json();
-    test_run_fdtd_dielectric_1d_from_json();
+    test_run_fdtd_dielectric_pml_1d_from_json();
 }
 
 
