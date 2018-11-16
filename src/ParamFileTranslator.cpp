@@ -62,6 +62,19 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
                     manipulatorParams.GetRealProperty("modulationPhase"),
                     manipulatorParams.GetRealProperty("timeOffsetFraction"));
 
+        }else if(std::get<0>(manipulatorNameAndParams) == "SpatialCubeGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddSpatialCubeGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.Get3VecRealProperty("cornerR0"),
+                    manipulatorParams.Get3VecRealProperty("cornerR1"),
+                    manipulatorParams.Get3VecRealProperty("edgeThickness"),
+                    manipulatorParams.GetRealProperty("valueInside"),
+                    manipulatorParams.GetRealProperty("valueOutside")
+                    );
+
         } else {
             assert(false);
         }
@@ -98,6 +111,49 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
             }else if(updateType == "A=sumbC") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_equal_sum_b_C,
+                        updateParamsPtr
+                        );
+            } else {
+                assert(false);
+            }
+
+        } else if(updateType == "A+=sumbBC" || updateType == "A=sumbBC") {
+            ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
+
+            auto B_directions_str = updateParams.GetStringArray("B_direction");
+            std::vector<int> B_directions;
+            for(auto& direction : B_directions_str) {
+                B_directions.emplace_back(stringDirectionToIntDirectionMap[direction]);
+            }
+
+            auto C_directions_str = updateParams.GetStringArray("C_direction");
+            std::vector<int> C_directions;
+            for(auto& direction : C_directions_str) {
+                C_directions.emplace_back(stringDirectionToIntDirectionMap[direction]);
+            }
+
+            void* updateParamsPtr = yee.ConstructParams_A_plusequal_sum_bB_C(
+                updateParams.Get3VecUintProperty("A_indStart"),  // indStart
+                updateParams.Get3VecUintProperty("A_indEnd"), // indEnd
+                updateParams.GetStringProperty("A"),        // A name
+                stringDirectionToIntDirectionMap[updateParams.GetStringProperty("A_direction")], // A direcction
+                updateParams.GetRealArray("b"),     // b values
+                updateParams.GetStringArray("B"),   // B names
+                B_directions,
+                updateParams.Get3VecUintArray("B_indStart"),
+                updateParams.GetStringArray("C"),   // C names
+                C_directions,
+                updateParams.Get3VecUintArray("C_indStart")
+                );
+
+            if(updateType == "A+=sumbBC") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_plusequal_sum_bB_C,
+                        updateParamsPtr
+                        );
+            }else if(updateType == "A=sumbBC") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_equal_sum_bB_C,
                         updateParamsPtr
                         );
             } else {
