@@ -11,7 +11,8 @@
 class GridArrayManipulator {
     public:
     virtual ~GridArrayManipulator() { };
-    void SetCornerCoordinates(std::array<RealNumber, 3>& r0, std::array<RealNumber, 3>& r1);
+    void SetCornerCoordinate(std::array<RealNumber, 3>& r0);
+    void SetGridSpacing(std::array<RealNumber, 3>& dr);
     void SetGridArrayTo(NumberArray3D<RealNumber>& gridData);
 
     virtual void UpdateArray(const RealNumber t) = 0;
@@ -19,7 +20,9 @@ class GridArrayManipulator {
 
     protected:
     std::array<RealNumber, 3> r0;  // coordinates of the first element [0,0,0] of gridArray
-    std::array<RealNumber, 3> r1;  // coordinates of the last element of gridArray
+    std::array<RealNumber, 3> dr;  // distance between elements. If the array has only one component along a given direction
+                                   // this distance represents the distance between 2 elemnts of the background grid in
+                                   // the same direction.
     NumberArray3D<RealNumber> gridArray;     // array slice
 
 };

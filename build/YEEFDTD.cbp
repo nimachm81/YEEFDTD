@@ -9,6 +9,7 @@
 		<Build>
 			<Target title="all">
 				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
 				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -114,6 +115,7 @@
 		<Unit filename="../include/FDInstructionCode.h" />
 		<Unit filename="../include/FDInstructionFactory.h" />
 		<Unit filename="../include/GaussianGridArrayManipulator.h" />
+		<Unit filename="../include/GaussianSpaceTimeGridArrayManipulator.h" />
 		<Unit filename="../include/GridArrayManipulator.h" />
 		<Unit filename="../include/GridElementView.h" />
 		<Unit filename="../include/MultiDimArray.hpp" />
@@ -136,6 +138,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GaussianGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/GaussianSpaceTimeGridArrayManipulator.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GridArrayManipulator.cpp">

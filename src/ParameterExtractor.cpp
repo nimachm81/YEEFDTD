@@ -65,6 +65,16 @@ std::array<RealNumber, 3> ParameterExtractor::Get3VecRealProperty(const std::str
     return vec;
 }
 
+std::array<RealNumber, 4> ParameterExtractor::Get4VecRealProperty(const std::string path) {
+    std::array<RealNumber, 4> vec;
+    int i = 0;
+    for(boost::property_tree::ptree::value_type &vec_i : treeRoot.get_child(path)) {
+        vec[i] = vec_i.second.get_value<RealNumber>();
+        ++i;
+    }
+    return vec;
+}
+
 std::vector<std::string> ParameterExtractor::GetStringArray(const std::string path) {
     std::vector<std::string> strings;
     ParameterExtractor stringArrayExtractor(GetSubTreeRootNode(path));

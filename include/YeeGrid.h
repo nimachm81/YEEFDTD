@@ -95,6 +95,8 @@ class YeeGrid3D {
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
                                     ) const;
 
+    std::array<RealNumber, 3> GetCoordinatesOfFirstElementOfGridDataArray(const std::string& gridDataName, int direction);
+
     void AddGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
             int direction, RealNumber amplitude,
@@ -108,7 +110,14 @@ class YeeGrid3D {
             std::array<RealNumber, 3> edgeThickness,    // thickness of the smooth edge
             RealNumber insideValue, RealNumber outsideValue // inside the cube set the array value to insideValue and...
             );
-
+void AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction, RealNumber amplitude,
+            std::array<RealNumber, 4> st_center,
+            std::array<RealNumber, 4> st_decay_rate,
+            std::array<RealNumber, 4> st_modulationFrequecy,
+            std::array<RealNumber, 4> st_modulatioPhase,
+            RealNumber timeOffsetFraction);
 
 
     void PrintAllGridData();

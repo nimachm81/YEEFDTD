@@ -5,10 +5,10 @@
 #include "SpatialCubeGridArrayManipulator.h"
 
 
-void SpatialCubeGridArrayManipulator::SetCubeCorners(std::array<RealNumber, 3>& r0, std::array<RealNumber, 3>& r1) {
-    assert(r0[0] <= r1[0] && r0[1] <= r1[1] && r0[2] <= r1[2]);
-    cubeR0 = r0;
-    cubeR1 = r1;
+void SpatialCubeGridArrayManipulator::SetCubeCorners(std::array<RealNumber, 3>& cube_r0, std::array<RealNumber, 3>& cube_r1) {
+    assert(cube_r0[0] <= cube_r1[0] && cube_r0[1] <= cube_r1[1] && cube_r0[2] <= cube_r1[2]);
+    cubeR0 = cube_r0;
+    cubeR1 = cube_r1;
 }
 
 void SpatialCubeGridArrayManipulator::SetEdgeThickness(std::array<RealNumber, 3>& thickness) {
@@ -28,9 +28,9 @@ std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>
     SpatialCubeGridArrayManipulator::GetArrayIndicesBetweenTwoCorners(std::array<RealNumber, 3>& cornerR0,
                                                                       std::array<RealNumber, 3>& cornerR1) {
     std::array<std::size_t, 3> shape = gridArray.GetShape();
-    RealNumber dx = (r1[0] - r0[0])/shape[0];
-    RealNumber dy = (r1[1] - r0[1])/shape[1];
-    RealNumber dz = (r1[2] - r0[2])/shape[2];
+    RealNumber dx = dr[0];
+    RealNumber dy = dr[1];
+    RealNumber dz = dr[2];
 
     std::array<std::size_t, 3> indStart = {(std::size_t)std::ceil((cornerR0[0] - r0[0])/dx),
                                            (std::size_t)std::ceil((cornerR0[1] - r0[1])/dy),
@@ -58,9 +58,9 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
     gridArray.SetToNumber(0.0);
 
     std::array<std::size_t, 3> shape = gridArray.GetShape();
-    RealNumber dx = (r1[0] - r0[0])/shape[0];
-    RealNumber dy = (r1[1] - r0[1])/shape[1];
-    RealNumber dz = (r1[2] - r0[2])/shape[2];
+    RealNumber dx = dr[0];
+    RealNumber dy = dr[1];
+    RealNumber dz = dr[2];
 
     // get an slice on the cube and set its value to insideValue
     std::array<RealNumber, 3> cubeR0_p{cubeR0[0] + smoothEdgeThickness[0]/2,

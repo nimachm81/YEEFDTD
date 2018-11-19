@@ -10,6 +10,7 @@
 #include "YeeGrid.h"
 #include "GaussianGridArrayManipulator.h"
 #include "SpatialCubeGridArrayManipulator.h"
+#include "GaussianSpaceTimeGridArrayManipulator.h"
 
 
 YeeGrid3D::~YeeGrid3D() {
@@ -419,6 +420,10 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 >*
             >(params);
         std::string& gridManipulator_name = std::get<0>(params_tuple);
+
+        auto found = gridArrayManipulators.find(gridManipulator_name);
+        assert(found != gridArrayManipulators.end());  // name is valid
+
         GridArrayManipulator& gridManipulator = *gridArrayManipulators[gridManipulator_name];
         RealNumber t = gridManipulator.CalculateTime(dt, timeIndex);
         gridManipulator.UpdateArray(t);
@@ -550,6 +555,44 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
     modifier->SetInsideValue(insideValue);
     modifier->SetOutsideValue(outsideValue);
 
+    // find the coordinates of the first element of the array
+    std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction, RealNumber amplitude,
+        std::array<RealNumber, 4> st_center,
+        std::array<RealNumber, 4> st_decay_rate,
+        std::array<RealNumber, 4> st_modulationFrequecy,
+        std::array<RealNumber, 4> st_modulatioPhase,
+        RealNumber timeOffsetFraction) {
+    std::shared_ptr<GaussianSaceTimeGridArrayManipulator> modifier(new GaussianSaceTimeGridArrayManipulator);
+    modifier->SetAmplitude(amplitude);
+    modifier->SetSpaceTimeCenterPoint(st_center);
+    modifier->SetSpeceTimeDecayRate(st_decay_rate);
+    modifier->SetSpaceTimeModulationFrequency(st_modulationFrequecy);
+    modifier->SetSpaceTimeModulationPhase(st_modulatioPhase);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    modifier->SetTimeOffsetFraction(timeOffsetFraction);
+
+        // find the coordinates of the first element of the array
+    std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
+std::array<RealNumber, 3> YeeGrid3D::GetCoordinatesOfFirstElementOfGridDataArray(
+                                        const std::string& gridDataName,
+                                        int direction) {
     std::array<std::size_t, 3>& indexOfOrigin = gridElements[gridDataName]->GetIndexOfOrigin();
     // find the coordinates of the first element of the array
     std::array<RealNumber, 3> arrayR0{r_0[0] + indexOfOrigin[0]*dr[0],
@@ -568,17 +611,10 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
         assert(false);
     }
 
-    std::array<std::size_t, 3>& shape = gridElements[gridDataName]->GetNumArray(direction).GetShape();
-
-    //coordinates of the last element of the array
-    std::array<RealNumber, 3> arrayR1{arrayR0[0] + shape[0]*dr[0],
-                                      arrayR0[1] + shape[1]*dr[1],
-                                      arrayR0[2] + shape[2]*dr[2]};
-
-    modifier->SetCornerCoordinates(arrayR0, arrayR1);
-    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
-    gridArrayManipulators[name] = modifier;
+    return arrayR0;
 }
+
+
 
 
 void YeeGrid3D::PrintAllGridData() {

@@ -41,6 +41,9 @@ class ParameterExtractor {
     std::array<RealNumber, 3> Get3VecRealProperty(const std::string path);      // given a path to
                                                                 // "key":[1.2, 3.1, 2.1] returns the array [1.2, 3.1, 2.1]
 
+    std::array<RealNumber, 4> Get4VecRealProperty(const std::string path);      // given a path to
+                                                                // "key":[1.2, 3.1, 2.1, 7.2] returns the array [1.2, 3.1, 2.1, 7.2]
+
     std::vector<std::string> GetStringArray(const std::string path);  // gets a path to a string array such as ["a", "few", "words"]
                                                                 // and returns the strings in a vector
 
