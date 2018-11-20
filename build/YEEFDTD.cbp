@@ -9,7 +9,6 @@
 		<Build>
 			<Target title="all">
 				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
 				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -126,6 +125,7 @@
 		<Unit filename="../include/NumberTypes.h" />
 		<Unit filename="../include/ParamFileTranslator.h" />
 		<Unit filename="../include/ParameterExtractor.h" />
+		<Unit filename="../include/PeriodicGridArrayManipulator.h" />
 		<Unit filename="../include/SingleGridParameterExtractor.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
 		<Unit filename="../include/Vector.hpp" />
@@ -155,6 +155,7 @@
 		<Unit filename="../src/ParameterExtractor.cpp">
 			<Option target="main" />
 		</Unit>
+		<Unit filename="../src/PeriodicGridArrayManipulator.cpp" />
 		<Unit filename="../src/SingleGridParameterExtractor.cpp">
 			<Option target="main" />
 		</Unit>
