@@ -75,6 +75,24 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
                     manipulatorParams.Get4VecRealProperty("st_modulationPhase"),
                     manipulatorParams.GetRealProperty("timeOffsetFraction"));
 
+        } else if(std::get<0>(manipulatorNameAndParams) == "PeriodicGaussianGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+
+            auto primitiveVectors_vec = manipulatorParams.Get3VecRealArray("primitiveVectors");
+            assert(primitiveVectors_vec.size() == 3);
+            std::array<std::array<RealNumber, 3>, 3> primitiveVectors_array{primitiveVectors_vec[0],    // a 3-array
+                                                                            primitiveVectors_vec[1],    // containing the
+                                                                            primitiveVectors_vec[2]};   // 3 primitive vectors
+            yee.AddPeriodicGaussianGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.GetRealProperty("amplitude"),
+                    manipulatorParams.Get3VecRealProperty("center"),
+                    manipulatorParams.Get3VecRealProperty("decay_rate"),
+                    manipulatorParams.Get3VecRealProperty("unitCellOrigin"),
+                    primitiveVectors_array);
+
         } else if(std::get<0>(manipulatorNameAndParams) == "SpatialCubeGridArrayManipulator") {
             ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
             yee.AddSpatialCubeGridArrayManipulator(

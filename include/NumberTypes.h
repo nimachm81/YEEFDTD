@@ -11,7 +11,7 @@
 // provides memory efficiency and it can be vectorized more efficiently.
 
 #include <cstdint>    // std::int64_t
-
+#include <complex>
 
 using RealNumber = double;
 using BigIntNumber = std::int64_t;

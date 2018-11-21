@@ -102,7 +102,7 @@ def PlotArrays2D(fileName, readEvery = 1, delay = 0.05):
                 ind_st += size
             if n % readEvery == 0:
                 print(np.max(np.abs(E)))
-                plt.imshow(E, cmap="rainbow")
+                plt.imshow(E.T, cmap="rainbow", origin='lower', aspect='auto')
                 plt.colorbar()
         #plt.show()
         if n % readEvery == 0:
@@ -140,7 +140,7 @@ def SaveFigure2D(fileName, n=0):
             ind_st += size
 
         print(np.max(np.abs(E)))
-        fig = plt.imshow(E, cmap="rainbow")
+        fig = plt.imshow(E.T, cmap="rainbow", origin='lower', aspect='auto')
         plt.colorbar()
     plt.savefig(fileName+".png", bbox_inches='tight', pad_inches=0.5)
 
@@ -176,7 +176,7 @@ def SaveAnimation2D(fileName, readEvery=1):
                 ind_st += size
 
             print(np.max(np.abs(E)))
-            fig = plt.imshow(E, cmap="rainbow")
+            fig = plt.imshow(E.T, cmap="rainbow", origin='lower', aspect='auto')
             plt.colorbar()
         return fig
     

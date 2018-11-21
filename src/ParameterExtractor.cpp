@@ -109,6 +109,16 @@ std::vector<std::array<std::size_t, 3>> ParameterExtractor::Get3VecUintArray(con
     return _3UintArrays;
 }
 
+std::vector<std::array<RealNumber, 3>> ParameterExtractor::Get3VecRealArray(const std::string path) {
+    std::vector<std::array<RealNumber, 3>> _3RealArrays;
+    ParameterExtractor _3RealArrayExtractor(GetSubTreeRootNode(path));
+    for(std::size_t i = 0; i < _3RealArrayExtractor.GetSize(); ++i){
+        ParameterExtractor _3RealExtractor_i(_3RealArrayExtractor.GetSubTreeByIndex(i));
+        _3RealArrays.emplace_back(_3RealExtractor_i.Get3VecRealProperty(""));  // array elements have empty keys
+    }
+    return _3RealArrays;
+}
+
 void ParameterExtractor::ReplaceStringsInFile(const std::string filename, const std::string filename_replaced,
         std::unordered_map<std::string, std::string>& str_replacewith) {
     std::ifstream infile;

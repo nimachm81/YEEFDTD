@@ -110,15 +110,25 @@ class YeeGrid3D {
             std::array<RealNumber, 3> edgeThickness,    // thickness of the smooth edge
             RealNumber insideValue, RealNumber outsideValue // inside the cube set the array value to insideValue and...
             );
-void AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
+    void AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
             const std::string gridDataName,
-            int direction, RealNumber amplitude,
+            int direction,
+            RealNumber amplitude,
             std::array<RealNumber, 4> st_center,
             std::array<RealNumber, 4> st_decay_rate,
             std::array<RealNumber, 4> st_modulationFrequecy,
             std::array<RealNumber, 4> st_modulatioPhase,
-            RealNumber timeOffsetFraction);
-
+            RealNumber timeOffsetFraction
+            );
+    void AddPeriodicGaussianGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            RealNumber amplitude,
+            std::array<RealNumber, 3> center,
+            std::array<RealNumber, 3> decay_rate,
+            std::array<RealNumber, 3> unitCellOrigin,
+            std::array<std::array<RealNumber, 3>, 3> primitiveVectors
+            );
 
     void PrintAllGridData();
 

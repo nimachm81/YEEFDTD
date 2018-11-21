@@ -21,7 +21,7 @@ class PeriodicGridArrayManipulator : public GridArrayManipulator {
 
     virtual RealNumber Func(const std::array<RealNumber, 3> r, const RealNumber t) = 0;
 
-    private:
+    protected:
     std::array<RealNumber, 3> unitCellOrigin;       // the unit cell starts at this point and ends at the end of
     std::array<std::array<RealNumber, 3>, 3> primitiveVectors;     // the primitive vectors
 };

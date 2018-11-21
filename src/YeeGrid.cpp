@@ -11,7 +11,7 @@
 #include "GaussianGridArrayManipulator.h"
 #include "SpatialCubeGridArrayManipulator.h"
 #include "GaussianSpaceTimeGridArrayManipulator.h"
-
+#include "PeriodicGaussianGridArrayManipulator.h"
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -566,7 +566,8 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
 
 void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
         const std::string gridDataName,
-        int direction, RealNumber amplitude,
+        int direction,
+        RealNumber amplitude,
         std::array<RealNumber, 4> st_center,
         std::array<RealNumber, 4> st_decay_rate,
         std::array<RealNumber, 4> st_modulationFrequecy,
@@ -580,6 +581,31 @@ void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
     modifier->SetSpaceTimeModulationPhase(st_modulatioPhase);
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
     modifier->SetTimeOffsetFraction(timeOffsetFraction);
+
+        // find the coordinates of the first element of the array
+    std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction,
+        RealNumber amplitude,
+        std::array<RealNumber, 3> center,
+        std::array<RealNumber, 3> decay_rate,
+        std::array<RealNumber, 3> unitCellOrigin,
+        std::array<std::array<RealNumber, 3>, 3> primitiveVectors) {
+    std::shared_ptr<PeriodicGaussianGridArrayManipulator> modifier(new PeriodicGaussianGridArrayManipulator);
+    modifier->SetGaussianAmplitude(amplitude);
+    modifier->SetGaussianCenter(center);
+    modifier->SetGaussianDecayRate(decay_rate);
+    modifier->SetUnitCellOrigin(unitCellOrigin);
+    modifier->SetPrimitiveVectors(primitiveVectors[0], primitiveVectors[1], primitiveVectors[2]);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
 
         // find the coordinates of the first element of the array
     std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);

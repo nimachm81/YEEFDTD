@@ -54,6 +54,10 @@ class ParameterExtractor {
                                                                 // such as [[1 , 2, 3], [2, 5, 1], [5, 6, 9], [6, 3, 0] ...]
                                                                 // and returns the 3size_t-arrays in a vector
 
+    std::vector<std::array<RealNumber, 3>> Get3VecRealArray(const std::string path);  // gets a path to an array
+                                                                // such as [[1.1 , 2.2, 3.1], [2.4, 5.7, 1.5], [5.4, 6, 9.2], [6, 3.2, 0] ...]
+                                                                // and returns the 3Real-arrays in a vector
+
     void static ReplaceStringsInFile(const std::string filename, const std::string filename_replaced,
             std::unordered_map<std::string, std::string>& str_replacewith);     // replaces the words as speified in
                                                                                 // str_replacewith

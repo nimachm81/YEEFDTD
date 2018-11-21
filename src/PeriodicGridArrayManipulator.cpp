@@ -46,7 +46,7 @@ void PeriodicGridArrayManipulator::UpdateArray(const RealNumber t) {
             for(std::size_t i2 = 0; i2 < n2; ++i2) {
                 z = z0 + i2*dz;
                 std::array<RealNumber, 3> r{x, y, z};
-                std::array<RealNumber, 3> r_in = BringInsideUnitCell(r);
+                std::array<RealNumber, 3> r_in = BringPointInsideUnitCell(r);
                 arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = Func(r_in, t);
             }
         }
@@ -59,24 +59,33 @@ std::array<RealNumber, 3> PeriodicGridArrayManipulator::BringPointInsideUnitCell
                           (r[1] - unitCellOrigin[1])*v0[1] +
                           (r[2] - unitCellOrigin[2])*v0[2];
     RealNumber v0_len = std::sqrt(v0[0]*v0[0] + v0[1]*v0[1] + v0[2]*v0[2]);
-    RealNumber rem_0 = std::remainder(r_dot_v0, v0_len);
+    RealNumber rem_0 = std::fmod(r_dot_v0, v0_len);
+    if(rem_0 < 0.0) {
+        rem_0 += v0_len;
+    }
 
     std::array<RealNumber, 3>& v1 = primitiveVectors[1];
     RealNumber r_dot_v1 = (r[0] - unitCellOrigin[0])*v1[0] +
                           (r[1] - unitCellOrigin[1])*v1[1] +
                           (r[2] - unitCellOrigin[2])*v1[2];
     RealNumber v1_len = std::sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]);
-    RealNumber rem_1 = std::remainder(r_dot_v1, v1_len);
+    RealNumber rem_1 = std::fmod(r_dot_v1, v1_len);
+    if(rem_1 < 0.0) {
+        rem_1 += v1_len;
+    }
 
     std::array<RealNumber, 3>& v2 = primitiveVectors[2];
     RealNumber r_dot_v2 = (r[0] - unitCellOrigin[0])*v2[0] +
                           (r[1] - unitCellOrigin[1])*v2[1] +
                           (r[2] - unitCellOrigin[2])*v2[2];
     RealNumber v2_len = std::sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
-    RealNumber rem_2 = std::remainder(r_dot_v2, v2_len);
+    RealNumber rem_2 = std::fmod(r_dot_v2, v2_len);
+    if(rem_2 < 0.0) {
+        rem_2 += v2_len;
+    }
 
     return std::array<RealNumber, 3>{rem_0*v0[0] + rem_1*v1[0] + rem_2*v2[0],
                                      rem_0*v0[1] + rem_1*v1[1] + rem_2*v2[1],
-                                     rem_0*v0[2] + rem_1*v1[2] + rem_2*v2[2]}
+                                     rem_0*v0[2] + rem_1*v1[2] + rem_2*v2[2]};
 }
 
