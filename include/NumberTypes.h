@@ -13,7 +13,7 @@
 #include <cstdint>    // std::int64_t
 #include <complex>
 
-using RealNumber = double;
+using RealNumber = std::complex<double>;
 using BigIntNumber = std::int64_t;
 
 

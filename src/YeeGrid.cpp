@@ -90,7 +90,7 @@ void YeeGrid3D::SetNumOfCells(std::array<std::size_t, 3>& nCells) {
     for(int i = 0; i < 3; ++i) {
         assert(nCells[i] >= 0);
         if(nCells[i] > 0) {
-            dr[i] = (r_1[i] - r_0[i]) / nCells[i];
+            dr[i] = (r_1[i] - r_0[i]) / (RealNumber)(nCells[i]);
         } else {
             assert(r_1[i]==r_0[i]);
             dr[i] = 0.0;
@@ -621,9 +621,9 @@ std::array<RealNumber, 3> YeeGrid3D::GetCoordinatesOfFirstElementOfGridDataArray
                                         int direction) {
     std::array<std::size_t, 3>& indexOfOrigin = gridElements[gridDataName]->GetIndexOfOrigin();
     // find the coordinates of the first element of the array
-    std::array<RealNumber, 3> arrayR0{r_0[0] + indexOfOrigin[0]*dr[0],
-                                      r_0[1] + indexOfOrigin[1]*dr[1],
-                                      r_0[2] + indexOfOrigin[2]*dr[2]};
+    std::array<RealNumber, 3> arrayR0{r_0[0] + (RealNumber)(indexOfOrigin[0])*dr[0],
+                                      r_0[1] + (RealNumber)(indexOfOrigin[1])*dr[1],
+                                      r_0[2] + (RealNumber)(indexOfOrigin[2])*dr[2]};
     ElementType& elemType = gridElements[gridDataName]->GetElemType();
     if(elemType == ElementType::EdgeE) {
         arrayR0[direction] += dr[direction]/2.0;

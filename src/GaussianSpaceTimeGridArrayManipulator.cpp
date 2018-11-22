@@ -41,7 +41,7 @@ void GaussianSaceTimeGridArrayManipulator::SetTimeOffsetFraction(const RealNumbe
 }
 
 RealNumber GaussianSaceTimeGridArrayManipulator::CalculateTime(const RealNumber dt, const std::size_t timeIndex) {
-    return (timeIndex + timeOffsetFraction) * dt;
+    return ((RealNumber)timeIndex + timeOffsetFraction) * dt;
 }
 
 void GaussianSaceTimeGridArrayManipulator::UpdateArray(const RealNumber t) {
@@ -71,17 +71,17 @@ void GaussianSaceTimeGridArrayManipulator::UpdateArray(const RealNumber t) {
     RealNumber x, y, z;
 
     for(std::size_t i0 = 0; i0 < n0; ++i0) {
-        x = x0 + i0*dx;
+        x = x0 + (RealNumber)i0*dx;
         RealNumber gaussianValue_x = std::exp(-(x - st_center[0])*(x - st_center[0]) *
                                             (st_decay_rate[0]*st_decay_rate[0]))
                                      * std::cos(2.0*M_PI*st_modulationFrequency[0]*x + st_modulationPhase[0]);
         for(std::size_t i1 = 0; i1 < n1; ++i1) {
-            y = y0 + i1*dy;
+            y = y0 + (RealNumber)i1*dy;
             RealNumber gaussianValue_y = std::exp(-(y - st_center[1])*(y - st_center[1]) *
                                                 (st_decay_rate[1]*st_decay_rate[1]))
                                          * std::cos(2.0*M_PI*st_modulationFrequency[1]*y + st_modulationPhase[1]);
             for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                z = z0 + i2*dz;
+                z = z0 + (RealNumber)i2*dz;
                 RealNumber gaussianValue_z = std::exp(-(z - st_center[2])*(z - st_center[2]) *
                                                     (st_decay_rate[2]*st_decay_rate[2]))
                                              * std::cos(2.0*M_PI*st_modulationFrequency[2]*z + st_modulationPhase[2]);

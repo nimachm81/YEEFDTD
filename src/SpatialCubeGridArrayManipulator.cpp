@@ -6,13 +6,17 @@
 
 
 void SpatialCubeGridArrayManipulator::SetCubeCorners(std::array<RealNumber, 3>& cube_r0, std::array<RealNumber, 3>& cube_r1) {
-    assert(cube_r0[0] <= cube_r1[0] && cube_r0[1] <= cube_r1[1] && cube_r0[2] <= cube_r1[2]);
+    assert(std::real(cube_r0[0]) <= std::real(cube_r1[0]) &&
+           std::real(cube_r0[1]) <= std::real(cube_r1[1]) &&
+           std::real(cube_r0[2]) <= std::real(cube_r1[2]));
     cubeR0 = cube_r0;
     cubeR1 = cube_r1;
 }
 
 void SpatialCubeGridArrayManipulator::SetEdgeThickness(std::array<RealNumber, 3>& thickness) {
-    assert(thickness[0] >= 0.0 && thickness[1] >= 0.0 && thickness[2] >= 0.0);
+    assert(std::real(thickness[0]) >= 0.0 &&
+           std::real(thickness[1]) >= 0.0 &&
+           std::real(thickness[2]) >= 0.0);
     smoothEdgeThickness = thickness;
 }
 
@@ -32,23 +36,23 @@ std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>
     RealNumber dy = dr[1];
     RealNumber dz = dr[2];
 
-    std::array<std::size_t, 3> indStart = {(std::size_t)std::ceil((cornerR0[0] - r0[0])/dx),
-                                           (std::size_t)std::ceil((cornerR0[1] - r0[1])/dy),
-                                           (std::size_t)std::ceil((cornerR0[2] - r0[2])/dz)};
-    if(cornerR0[0] <= r0[0]) {indStart[0] = 0;}
-    if(cornerR0[1] <= r0[1]) {indStart[1] = 0;}
-    if(cornerR0[2] <= r0[2]) {indStart[2] = 0;}
+    std::array<std::size_t, 3> indStart = {(std::size_t)std::ceil(std::real((cornerR0[0] - r0[0])/dx)),
+                                           (std::size_t)std::ceil(std::real((cornerR0[1] - r0[1])/dy)),
+                                           (std::size_t)std::ceil(std::real((cornerR0[2] - r0[2])/dz))};
+    if(std::real(cornerR0[0]) <= std::real(r0[0])) {indStart[0] = 0;}
+    if(std::real(cornerR0[1]) <= std::real(r0[1])) {indStart[1] = 0;}
+    if(std::real(cornerR0[2]) <= std::real(r0[2])) {indStart[2] = 0;}
 
-    std::array<std::size_t, 3> indEnd = {(std::size_t)std::floor((cornerR1[0] - r0[0])/dx),
-                                         (std::size_t)std::floor((cornerR1[1] - r0[1])/dy),
-                                         (std::size_t)std::floor((cornerR1[2] - r0[2])/dz)};
+    std::array<std::size_t, 3> indEnd = {(std::size_t)std::floor(std::real((cornerR1[0] - r0[0])/dx)),
+                                         (std::size_t)std::floor(std::real((cornerR1[1] - r0[1])/dy)),
+                                         (std::size_t)std::floor(std::real((cornerR1[2] - r0[2])/dz))};
 
     if(indEnd[0] > shape[0]) {indEnd[0] = shape[0];}
     if(indEnd[1] > shape[1]) {indEnd[1] = shape[1];}
     if(indEnd[2] > shape[2]) {indEnd[2] = shape[2];}
-    if(cornerR1[0] <= r0[0]) {indEnd[0] = 0;}
-    if(cornerR1[1] <= r0[1]) {indEnd[1] = 0;}
-    if(cornerR1[2] <= r0[2]) {indEnd[2] = 0;}
+    if(std::real(cornerR1[0]) <= std::real(r0[0])) {indEnd[0] = 0;}
+    if(std::real(cornerR1[1]) <= std::real(r0[1])) {indEnd[1] = 0;}
+    if(std::real(cornerR1[2]) <= std::real(r0[2])) {indEnd[2] = 0;}
 
     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>> indexPair(indStart, indEnd);
     return indexPair;
@@ -63,18 +67,18 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
     RealNumber dz = dr[2];
 
     // get an slice on the cube and set its value to insideValue
-    std::array<RealNumber, 3> cubeR0_p{cubeR0[0] + smoothEdgeThickness[0]/2,
-                                       cubeR0[1] + smoothEdgeThickness[1]/2,
-                                       cubeR0[2] + smoothEdgeThickness[2]/2};
-    std::array<RealNumber, 3> cubeR0_m{cubeR0[0] - smoothEdgeThickness[0]/2,
-                                       cubeR0[1] - smoothEdgeThickness[1]/2,
-                                       cubeR0[2] - smoothEdgeThickness[2]/2};
-    std::array<RealNumber, 3> cubeR1_p{cubeR1[0] + smoothEdgeThickness[0]/2,
-                                       cubeR1[1] + smoothEdgeThickness[1]/2,
-                                       cubeR1[2] + smoothEdgeThickness[2]/2};
-    std::array<RealNumber, 3> cubeR1_m{cubeR1[0] - smoothEdgeThickness[0]/2,
-                                       cubeR1[1] - smoothEdgeThickness[1]/2,
-                                       cubeR1[2] - smoothEdgeThickness[2]/2};
+    std::array<RealNumber, 3> cubeR0_p{cubeR0[0] + smoothEdgeThickness[0]/(RealNumber)2,
+                                       cubeR0[1] + smoothEdgeThickness[1]/(RealNumber)2,
+                                       cubeR0[2] + smoothEdgeThickness[2]/(RealNumber)2};
+    std::array<RealNumber, 3> cubeR0_m{cubeR0[0] - smoothEdgeThickness[0]/(RealNumber)2,
+                                       cubeR0[1] - smoothEdgeThickness[1]/(RealNumber)2,
+                                       cubeR0[2] - smoothEdgeThickness[2]/(RealNumber)2};
+    std::array<RealNumber, 3> cubeR1_p{cubeR1[0] + smoothEdgeThickness[0]/(RealNumber)2,
+                                       cubeR1[1] + smoothEdgeThickness[1]/(RealNumber)2,
+                                       cubeR1[2] + smoothEdgeThickness[2]/(RealNumber)2};
+    std::array<RealNumber, 3> cubeR1_m{cubeR1[0] - smoothEdgeThickness[0]/(RealNumber)2,
+                                       cubeR1[1] - smoothEdgeThickness[1]/(RealNumber)2,
+                                       cubeR1[2] - smoothEdgeThickness[2]/(RealNumber)2};
 
     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>> indexPair_mp =
             GetArrayIndicesBetweenTwoCorners(cubeR0_m, cubeR1_p);
@@ -93,7 +97,7 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
     slice.SetToNumber(1.0);
 
     // set the edge frames to 1.0
-    if(smoothEdgeThickness[0] > 0.0) {
+    if(std::real(smoothEdgeThickness[0]) > 0.0) {
     // get an slice for the cube face with normal along +x or -x
 
         std::array<std::size_t, 3> indStart_xm{indStart_m[0], indStart_m[1], indStart_m[2]};
@@ -106,7 +110,7 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
         NumberArray3D slice_xp = gridArray.GetSlice(indStart_xp, indEnd_xp);
         slice_xp.SetToNumber(1.0);
     }
-    if(smoothEdgeThickness[1] > 0.0) {
+    if(std::real(smoothEdgeThickness[1]) > 0.0) {
     // get an slice for the cube face with normal along +y or -y
 
         std::array<std::size_t, 3> indStart_ym{indStart_m[0], indStart_m[1], indStart_m[2]};
@@ -119,7 +123,7 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
         NumberArray3D slice_yp = gridArray.GetSlice(indStart_yp, indEnd_yp);
         slice_yp.SetToNumber(1.0);
     }
-    if(smoothEdgeThickness[2] > 0.0) {
+    if(std::real(smoothEdgeThickness[2]) > 0.0) {
     // get an slice for the cube face with normal along +z or -z
 
         std::array<std::size_t, 3> indStart_zm{indStart_m[0], indStart_m[1], indStart_m[2]};
@@ -134,7 +138,7 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
     }
 
     // smoothen the edges
-    if(smoothEdgeThickness[0] > 0.0) {
+    if(std::real(smoothEdgeThickness[0]) > 0.0) {
     // get an slice for the cube face with normal along +x or -x
 
         std::array<std::size_t, 3> indStart_xm{indStart_m[0], indStart_m[1], indStart_m[2]};
@@ -146,17 +150,27 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
         NumberArray3D slice_xp = gridArray.GetSlice(indStart_xp, indEnd_xp);
 
         // create meshgrid
-        std::array<RealNumber, 3> r0_xm{indStart_xm[0]*dx, indStart_xm[1]*dy, indStart_xm[2]*dz};
-        std::array<RealNumber, 3> r1_xm{indEnd_xm[0]*dx, indEnd_xm[1]*dy, indEnd_xm[2]*dz};
+        std::array<RealNumber, 3> r0_xm{(RealNumber)(indStart_xm[0])*dx,
+                                        (RealNumber)(indStart_xm[1])*dy,
+                                        (RealNumber)(indStart_xm[2])*dz};
+        std::array<RealNumber, 3> r1_xm{(RealNumber)(indEnd_xm[0])*dx,
+                                        (RealNumber)(indEnd_xm[1])*dy,
+                                        (RealNumber)(indEnd_xm[2])*dz};
         NumberArray3D<RealNumber> xm = NumberArray3D<RealNumber>::GetMeshGrid(slice_xm.GetShape(), r0_xm, r1_xm, 0);
         slice_xm *= 0.5*NumberArray3D<RealNumber>::sin((xm - r0_xm[0])*M_PI/(r1_xm[0] - r0_xm[0]) - M_PI/2) + 0.5;
 
-        std::array<RealNumber, 3> r0_xp{r0[0] + indStart_xp[0]*dx, r0[1] + indStart_xp[1]*dy, r0[2] + indStart_xp[2]*dz};
-        std::array<RealNumber, 3> r1_xp{r0[0] + indEnd_xp[0]*dx, r0[1] + indEnd_xp[1]*dy, r0[2] + indEnd_xp[2]*dz};
+        std::array<RealNumber, 3> r0_xp{r0[0] + (RealNumber)(indStart_xp[0])*dx,
+                                        r0[1] + (RealNumber)(indStart_xp[1])*dy,
+                                        r0[2] + (RealNumber)(indStart_xp[2])*dz};
+
+        std::array<RealNumber, 3> r1_xp{r0[0] + (RealNumber)(indEnd_xp[0])*dx,
+                                        r0[1] + (RealNumber)(indEnd_xp[1])*dy,
+                                        r0[2] + (RealNumber)(indEnd_xp[2])*dz};
+
         NumberArray3D<RealNumber> xp = NumberArray3D<RealNumber>::GetMeshGrid(slice_xp.GetShape(), r0_xp, r1_xp, 0);
         slice_xp *= 0.5*NumberArray3D<RealNumber>::cos((xp - r0_xp[0])*M_PI/(r1_xp[0] - r0_xp[0])) + 0.5;
     }
-    if(smoothEdgeThickness[1] > 0.0) {
+    if(std::real(smoothEdgeThickness[1]) > 0.0) {
     // get an slice for the cube face with normal along +y or -y
 
         std::array<std::size_t, 3> indStart_ym{indStart_m[0], indStart_m[1], indStart_m[2]};
@@ -167,17 +181,29 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
         NumberArray3D slice_ym = gridArray.GetSlice(indStart_ym, indEnd_ym);
         NumberArray3D slice_yp = gridArray.GetSlice(indStart_yp, indEnd_yp);
         // create meshgrid
-        std::array<RealNumber, 3> r0_ym{indStart_ym[0]*dx, indStart_ym[1]*dy, indStart_ym[2]*dz};
-        std::array<RealNumber, 3> r1_ym{indEnd_ym[0]*dx, indEnd_ym[1]*dy, indEnd_ym[2]*dz};
+        std::array<RealNumber, 3> r0_ym{(RealNumber)(indStart_ym[0])*dx,
+                                        (RealNumber)(indStart_ym[1])*dy,
+                                        (RealNumber)(indStart_ym[2])*dz};
+
+        std::array<RealNumber, 3> r1_ym{(RealNumber)(indEnd_ym[0])*dx,
+                                        (RealNumber)(indEnd_ym[1])*dy,
+                                        (RealNumber)(indEnd_ym[2])*dz};
+
         NumberArray3D<RealNumber> ym = NumberArray3D<RealNumber>::GetMeshGrid(slice_ym.GetShape(), r0_ym, r1_ym, 1);
         slice_ym *= 0.5*NumberArray3D<RealNumber>::sin((ym - r0_ym[1])*M_PI/(r1_ym[1] - r0_ym[1]) - M_PI/2) + 0.5;
 
-        std::array<RealNumber, 3> r0_yp{r0[0] + indStart_yp[0]*dx, r0[1] + indStart_yp[1]*dy, r0[2] + indStart_yp[2]*dz};
-        std::array<RealNumber, 3> r1_yp{r0[0] + indEnd_yp[0]*dx, r0[1] + indEnd_yp[1]*dy, r0[2] + indEnd_yp[2]*dz};
+        std::array<RealNumber, 3> r0_yp{r0[0] + (RealNumber)(indStart_yp[0])*dx,
+                                        r0[1] + (RealNumber)(indStart_yp[1])*dy,
+                                        r0[2] + (RealNumber)(indStart_yp[2])*dz};
+
+        std::array<RealNumber, 3> r1_yp{r0[0] + (RealNumber)(indEnd_yp[0])*dx,
+                                        r0[1] + (RealNumber)(indEnd_yp[1])*dy,
+                                        r0[2] + (RealNumber)(indEnd_yp[2])*dz};
+
         NumberArray3D<RealNumber> yp = NumberArray3D<RealNumber>::GetMeshGrid(slice_yp.GetShape(), r0_yp, r1_yp, 1);
         slice_yp *= 0.5*NumberArray3D<RealNumber>::cos((yp - r0_yp[1])*M_PI/(r1_yp[1] - r0_yp[1])) + 0.5;
     }
-    if(smoothEdgeThickness[2] > 0.0) {
+    if(std::real(smoothEdgeThickness[2]) > 0.0) {
     // get an slice for the cube face with normal along +z or -z
 
         std::array<std::size_t, 3> indStart_zm{indStart_m[0], indStart_m[1], indStart_m[2]};
@@ -188,13 +214,22 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
         NumberArray3D slice_zm = gridArray.GetSlice(indStart_zm, indEnd_zm);
         NumberArray3D slice_zp = gridArray.GetSlice(indStart_zp, indEnd_zp);
         // create meshgrid
-        std::array<RealNumber, 3> r0_zm{indStart_zm[0]*dx, indStart_zm[1]*dy, indStart_zm[2]*dz};
-        std::array<RealNumber, 3> r1_zm{indEnd_zm[0]*dx, indEnd_zm[1]*dy, indEnd_zm[2]*dz};
+        std::array<RealNumber, 3> r0_zm{(RealNumber)(indStart_zm[0])*dx,
+                                        (RealNumber)(indStart_zm[1])*dy,
+                                        (RealNumber)(indStart_zm[2])*dz};
+
+        std::array<RealNumber, 3> r1_zm{(RealNumber)(indEnd_zm[0])*dx,
+                                        (RealNumber)(indEnd_zm[1])*dy,
+                                        (RealNumber)(indEnd_zm[2])*dz};
         NumberArray3D<RealNumber> zm = NumberArray3D<RealNumber>::GetMeshGrid(slice_zm.GetShape(), r0_zm, r1_zm, 2);
         slice_zm *= 0.5*NumberArray3D<RealNumber>::sin((zm - r0_zm[2])*M_PI/(r1_zm[2] - r0_zm[2]) - M_PI/2) + 0.5;
 
-        std::array<RealNumber, 3> r0_zp{r0[0] + indStart_zp[0]*dx, r0[1] + indStart_zp[1]*dy, r0[2] + indStart_zp[2]*dz};
-        std::array<RealNumber, 3> r1_zp{r0[0] + indEnd_zp[0]*dx, r0[1] + indEnd_zp[1]*dy, r0[2] + indEnd_zp[2]*dz};
+        std::array<RealNumber, 3> r0_zp{r0[0] + (RealNumber)(indStart_zp[0])*dx,
+                                        r0[1] + (RealNumber)(indStart_zp[1])*dy,
+                                        r0[2] + (RealNumber)(indStart_zp[2])*dz};
+        std::array<RealNumber, 3> r1_zp{r0[0] + (RealNumber)(indEnd_zp[0])*dx,
+                                        r0[1] + (RealNumber)(indEnd_zp[1])*dy,
+                                        r0[2] + (RealNumber)(indEnd_zp[2])*dz};
         NumberArray3D<RealNumber> zp = NumberArray3D<RealNumber>::GetMeshGrid(slice_zp.GetShape(), r0_zp, r1_zp, 2);
         slice_zp *= 0.5*NumberArray3D<RealNumber>::cos((zp - r0_zp[2])*M_PI/(r1_zp[2] - r0_zp[2])) + 0.5;
     }
@@ -204,7 +239,7 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const RealNumber t) {
 }
 
 RealNumber SpatialCubeGridArrayManipulator::CalculateTime(const RealNumber dt, const std::size_t timeIndex) {
-    return timeIndex*dt;
+    return (RealNumber)timeIndex*dt;
 }
 
 

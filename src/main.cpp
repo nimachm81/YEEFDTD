@@ -181,7 +181,7 @@ void test_yeegrid_1d() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dt = dz*0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
@@ -243,8 +243,8 @@ void test_yeegrid_2d() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 10.0, 10.0};
     std::array<std::size_t, 3> nCells{1, ny, nz};
-    RealNumber dz = (r1[2] - r0[2])/nz;
-    RealNumber dy = (r1[1] - r0[1])/ny;
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
+    RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
     RealNumber dt = dz/std::sqrt(2.0)*0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
@@ -323,9 +323,9 @@ void test_yeegrid_3d() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{10.0, 10.0, 10.0};
     std::array<std::size_t, 3> nCells{nx, ny, nz};
-    RealNumber dx = (r1[0] - r0[0])/nx;
-    RealNumber dy = (r1[1] - r0[1])/ny;
-    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dx = (r1[0] - r0[0])/(RealNumber)(nx);
+    RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dt = dz/std::sqrt(3.0)*0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
@@ -475,7 +475,7 @@ void test_yeegrid_dielectric_1d() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dt = dz*0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
@@ -562,7 +562,7 @@ void test_yeegrid_dielectric_pml_1d() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 0.1, 15.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dt = dz*0.95;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
@@ -699,8 +699,8 @@ void test_yeegrid_2d_pml() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 10.0, 10.0};
     std::array<std::size_t, 3> nCells{1, ny, nz};
-    RealNumber dz = (r1[2] - r0[2])/nz;
-    RealNumber dy = (r1[1] - r0[1])/ny;
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
+    RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
     RealNumber dt = dz/std::sqrt(2.0)*0.95;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
@@ -1053,7 +1053,7 @@ void test_yeegrid_1d_collection() {
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
     std::array<RealNumber, 3> r1{0.1, 0.0, 5.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/nz;
+    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dt = dz*0.99;
     //------ left side
     YeeGrid3D& yee_l = yeeCollection.GetGrid(yeeLeftInd);
@@ -1248,22 +1248,22 @@ void test_run_fdtd_1d_from_json() {
     RealNumber z0 = 0.0;
     RealNumber z1 = 10.0;
     std::size_t nz = 300;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = dz*stabilityFactor;
     RealNumber z_j = 5.0;
-    std::size_t indJ = std::round((z_j - z0)/dz);
+    std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 600;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indJ_\"", boost::lexical_cast<std::string>(indJ)},
             {"\"_indJ_p1_\"", boost::lexical_cast<std::string>(indJ + 1)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
@@ -1282,35 +1282,35 @@ void test_run_fdtd_2d_from_json() {
     RealNumber z1 = 5.0;
     std::size_t ny = 200;
     std::size_t nz = 250;
-    RealNumber dy = (y1 - y0)/ny;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/2;
-    RealNumber z_j = (z0 + z1)/2;
-    std::size_t indyJ = std::round((y_j - y0)/dy);
-    std::size_t indzJ = std::round((z_j - z0)/dz);
+    RealNumber y_j = (y0 + y1)/2.0;
+    RealNumber z_j = (z0 + z1)/2.0;
+    std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
+    std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_y0_\"", boost::lexical_cast<std::string>(y0)},
-            {"\"_y1_\"", boost::lexical_cast<std::string>(y1)},
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(std::real(y1))},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
             {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
-            {"\"_dy_\"", boost::lexical_cast<std::string>(dy)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(dt/dy)},
-            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(-dt/dy)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(-dt/(dy*dz))},
-            {"\"_y_j_\"", boost::lexical_cast<std::string>(y_j)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(std::real(dy))},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dy))},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dy*dz)))},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
             {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
@@ -1334,46 +1334,46 @@ void test_run_fdtd_3d_from_json() {
     std::size_t nx = 200;
     std::size_t ny = 200;
     std::size_t nz = 200;
-    RealNumber dx = (x1 - x0)/nx;
-    RealNumber dy = (y1 - y0)/ny;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dx = (x1 - x0)/(RealNumber)(nx);
+    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = 1.0/std::sqrt(1.0/(dx*dx) + 1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber x_j = (x0 + x1)/2;
-    RealNumber y_j = (y0 + y1)/2;
-    RealNumber z_j = (z0 + z1)/2;
-    std::size_t indxJ = std::round((x_j - x0)/dx);
-    std::size_t indyJ = std::round((y_j - y0)/dy);
-    std::size_t indzJ = std::round((z_j - z0)/dz);
+    RealNumber x_j = (x0 + x1)/2.0;
+    RealNumber y_j = (y0 + y1)/2.0;
+    RealNumber z_j = (z0 + z1)/2.0;
+    std::size_t indxJ = std::round(std::real((x_j - x0)/dx));
+    std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
+    std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 150;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_x0_\"", boost::lexical_cast<std::string>(x0)},
-            {"\"_x1_\"", boost::lexical_cast<std::string>(x1)},
-            {"\"_y0_\"", boost::lexical_cast<std::string>(y0)},
-            {"\"_y1_\"", boost::lexical_cast<std::string>(y1)},
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_x0_\"", boost::lexical_cast<std::string>(std::real(x0))},
+            {"\"_x1_\"", boost::lexical_cast<std::string>(std::real(x1))},
+            {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(std::real(y1))},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_nx_\"", boost::lexical_cast<std::string>(nx)},
             {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_nx_p1_\"", boost::lexical_cast<std::string>(nx + 1)},
             {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
             {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
-            {"\"_dx_\"", boost::lexical_cast<std::string>(dx)},
-            {"\"_dy_\"", boost::lexical_cast<std::string>(dy)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_dt_dx_\"", boost::lexical_cast<std::string>(dt/dx)},
-            {"\"_m_dt_dx_\"", boost::lexical_cast<std::string>(-dt/dx)},
-            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(dt/dy)},
-            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(-dt/dy)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_m_dt_dxdydz_\"", boost::lexical_cast<std::string>(-dt/(dx*dy*dz))},
-            {"\"_x_j_\"", boost::lexical_cast<std::string>(x_j)},
-            {"\"_y_j_\"", boost::lexical_cast<std::string>(y_j)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dx_\"", boost::lexical_cast<std::string>(std::real(dx))},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(std::real(dy))},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_dt_dx_\"", boost::lexical_cast<std::string>(std::real(dt/dx))},
+            {"\"_m_dt_dx_\"", boost::lexical_cast<std::string>(std::real(-dt/dx))},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dy))},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_m_dt_dxdydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dx*dy*dz)))},
+            {"\"_x_j_\"", boost::lexical_cast<std::string>(std::real(x_j))},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indxJ_\"", boost::lexical_cast<std::string>(indxJ)},
             {"\"_indxJ_p1_\"", boost::lexical_cast<std::string>(indxJ + 1)},
             {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
@@ -1394,11 +1394,11 @@ void test_run_fdtd_dielectric_1d_from_json() {
     RealNumber z0 = 0.0;
     RealNumber z1 = 10.0;
     std::size_t nz = 600;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = dz*stabilityFactor;
     RealNumber z_j = 5.0;
-    std::size_t indJ = std::round((z_j - z0)/dz);
+    std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 600;
 
     RealNumber cube_z0 = 7.0;
@@ -1408,20 +1408,20 @@ void test_run_fdtd_dielectric_1d_from_json() {
     RealNumber epsilon = 4.0;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indJ_\"", boost::lexical_cast<std::string>(indJ)},
             {"\"_indJ_p1_\"", boost::lexical_cast<std::string>(indJ + 1)},
-            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(cube_z0)},
-            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(cube_z1)},
-            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(cube_dz)},
-            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(1.0/epsilon)},
+            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
+            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
+            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real(1.0/epsilon))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_dielectric.json",
@@ -1435,11 +1435,11 @@ void test_run_fdtd_dielectric_pml_1d_from_json() {
     RealNumber z0 = 0.0;
     RealNumber z1 = 15.0;
     std::size_t nz = 600;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.95;
     RealNumber dt = dz*stabilityFactor;
     RealNumber z_j = 5.0;
-    std::size_t indJ = std::round((z_j - z0)/dz);
+    std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 800;
 
     RealNumber cube_z0 = 9.0;
@@ -1457,26 +1457,26 @@ void test_run_fdtd_dielectric_pml_1d_from_json() {
 
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_m_dt_\"", boost::lexical_cast<std::string>(-dt)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_m_dt_\"", boost::lexical_cast<std::string>(std::real(-dt))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indJ_\"", boost::lexical_cast<std::string>(indJ)},
             {"\"_indJ_p1_\"", boost::lexical_cast<std::string>(indJ + 1)},
-            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(cube_z0)},
-            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(cube_z1)},
-            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(cube_dz)},
-            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(1.0/epsilon)},
-            {"\"_pml_z0_\"", boost::lexical_cast<std::string>(pml_z0)},
-            {"\"_pml_z1_\"", boost::lexical_cast<std::string>(pml_z1)},
-            {"\"_pml_dz_\"", boost::lexical_cast<std::string>(pml_dz)},
-            {"\"_sig_e_\"", boost::lexical_cast<std::string>(sig_e)},
-            {"\"_sig_h_\"", boost::lexical_cast<std::string>(sig_h)},
+            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
+            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
+            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real(1.0/epsilon))},
+            {"\"_pml_z0_\"", boost::lexical_cast<std::string>(std::real(pml_z0))},
+            {"\"_pml_z1_\"", boost::lexical_cast<std::string>(std::real(pml_z1))},
+            {"\"_pml_dz_\"", boost::lexical_cast<std::string>(std::real(pml_dz))},
+            {"\"_sig_e_\"", boost::lexical_cast<std::string>(std::real(sig_e))},
+            {"\"_sig_h_\"", boost::lexical_cast<std::string>(std::real(sig_h))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_dielectric_pml.json",
@@ -1490,11 +1490,11 @@ void test_run_fdtd_plasma_1d_from_json() {
     RealNumber z0 = 0.0;
     RealNumber z1 = 10.0;
     std::size_t nz = 1000;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = dz*stabilityFactor;
     RealNumber z_j = 5.0;
-    std::size_t indJ = std::round((z_j - z0)/dz);
+    std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 3000;
 
     RealNumber cube_z0 = 7.0;
@@ -1505,22 +1505,22 @@ void test_run_fdtd_plasma_1d_from_json() {
     RealNumber wp = 2.0*M_PI*3.0;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_m_dt_\"", boost::lexical_cast<std::string>(-dt)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_m_dt_\"", boost::lexical_cast<std::string>(std::real(-dt))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indJ_\"", boost::lexical_cast<std::string>(indJ)},
             {"\"_indJ_p1_\"", boost::lexical_cast<std::string>(indJ + 1)},
-            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(cube_z0)},
-            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(cube_z1)},
-            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(cube_dz)},
-            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(wp*wp)},
-            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(-dt*gamma)},
+            {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
+            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
+            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
+            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(std::real(wp*wp))},
+            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(std::real(-dt*gamma))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_plasma.json",
@@ -1537,14 +1537,14 @@ void test_run_fdtd_gaussian_plasma_2d_from_json() {
     RealNumber z1 = 5.0;
     std::size_t ny = 800;
     std::size_t nz = 800;
-    RealNumber dy = (y1 - y0)/ny;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/2;
-    RealNumber z_j = (z0 + z1)/2;
-    std::size_t indyJ = std::round((y_j - y0)/dy);
-    std::size_t indzJ = std::round((z_j - z0)/dz);
+    RealNumber y_j = (y0 + y1)/2.0;
+    RealNumber z_j = (z0 + z1)/2.0;
+    std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
+    std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 601;
 
     RealNumber gamma = 1.0;
@@ -1555,35 +1555,35 @@ void test_run_fdtd_gaussian_plasma_2d_from_json() {
     RealNumber wp2_center_z = 2.0;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_y0_\"", boost::lexical_cast<std::string>(y0)},
-            {"\"_y1_\"", boost::lexical_cast<std::string>(y1)},
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(std::real(y1))},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
             {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
-            {"\"_dy_\"", boost::lexical_cast<std::string>(dy)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_m_dt_\"", boost::lexical_cast<std::string>(-dt)},
-            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(dt/dy)},
-            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(-dt/dy)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(-dt/(dy*dz))},
-            {"\"_y_j_\"", boost::lexical_cast<std::string>(y_j)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(std::real(dy))},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_m_dt_\"", boost::lexical_cast<std::string>(std::real(-dt))},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dy))},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dy*dz)))},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
             {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
-            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(-dt*gamma)},
-            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(wp*wp)},
-            {"\"_wp_sq_center_y_\"", boost::lexical_cast<std::string>(wp2_center_y)},
-            {"\"_wp_sq_center_z_\"", boost::lexical_cast<std::string>(wp2_center_z )},
-            {"\"_wp_sq_decayrate_y_\"", boost::lexical_cast<std::string>(wp2_decayrate_y)},
-            {"\"_wp_sq_decayrate_z_\"", boost::lexical_cast<std::string>(wp2_decayrate_z)},
+            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(std::real(-dt*gamma))},
+            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(std::real(wp*wp))},
+            {"\"_wp_sq_center_y_\"", boost::lexical_cast<std::string>(std::real(wp2_center_y))},
+            {"\"_wp_sq_center_z_\"", boost::lexical_cast<std::string>(std::real(wp2_center_z))},
+            {"\"_wp_sq_decayrate_y_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_y))},
+            {"\"_wp_sq_decayrate_z_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_z))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_GaussianPlasma.json",
@@ -1600,15 +1600,15 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
     RealNumber z1 = 5.0;
     std::size_t ny = 800;
     std::size_t nz = 800;
-    RealNumber dy = (y1 - y0)/ny;
-    RealNumber dz = (z1 - z0)/nz;
+    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
     RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/2;
-    RealNumber z_j = (z0 + z1)/2;
-    std::size_t indyJ = std::round((y_j - y0)/dy);
-    std::size_t indzJ = std::round((z_j - z0)/dz);
-    std::size_t numOfTimeSamples = 601;
+    RealNumber y_j = (y0 + y1)/2.0;
+    RealNumber z_j = (z0 + z1)/2.0;
+    std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
+    std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
+    std::size_t numOfTimeSamples = 201;
 
     RealNumber gamma = 1.0;
     RealNumber wp = 2.0*M_PI*5.0;
@@ -1618,35 +1618,35 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
     RealNumber wp2_center_z = 0.5;
 
     std::unordered_map<std::string, std::string> str_replacewith{
-            {"\"_y0_\"", boost::lexical_cast<std::string>(y0)},
-            {"\"_y1_\"", boost::lexical_cast<std::string>(y1)},
-            {"\"_z0_\"", boost::lexical_cast<std::string>(z0)},
-            {"\"_z1_\"", boost::lexical_cast<std::string>(z1)},
+            {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(std::real(y1))},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
             {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
-            {"\"_dy_\"", boost::lexical_cast<std::string>(dy)},
-            {"\"_dz_\"", boost::lexical_cast<std::string>(dz)},
-            {"\"_dt_\"", boost::lexical_cast<std::string>(dt)},
-            {"\"_m_dt_\"", boost::lexical_cast<std::string>(-dt)},
-            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(dt/dy)},
-            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(-dt/dy)},
-            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(dt/dz)},
-            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(-dt/dz)},
-            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(-dt/(dy*dz))},
-            {"\"_y_j_\"", boost::lexical_cast<std::string>(y_j)},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(z_j)},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(std::real(dy))},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_m_dt_\"", boost::lexical_cast<std::string>(std::real(-dt))},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dy))},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dy*dz)))},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
             {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
-            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(-dt*gamma)},
-            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(wp*wp)},
-            {"\"_wp_sq_center_y_\"", boost::lexical_cast<std::string>(wp2_center_y)},
-            {"\"_wp_sq_center_z_\"", boost::lexical_cast<std::string>(wp2_center_z )},
-            {"\"_wp_sq_decayrate_y_\"", boost::lexical_cast<std::string>(wp2_decayrate_y)},
-            {"\"_wp_sq_decayrate_z_\"", boost::lexical_cast<std::string>(wp2_decayrate_z)},
+            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(std::real(-dt*gamma))},
+            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(std::real(wp*wp))},
+            {"\"_wp_sq_center_y_\"", boost::lexical_cast<std::string>(std::real(wp2_center_y))},
+            {"\"_wp_sq_center_z_\"", boost::lexical_cast<std::string>(std::real(wp2_center_z))},
+            {"\"_wp_sq_decayrate_y_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_y))},
+            {"\"_wp_sq_decayrate_z_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_z))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_PeriodicGaussianPlasma.json",
@@ -1658,9 +1658,11 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
 
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
-    // test_read_json();
+    //test_read_json();
+    test_run_fdtd_1d_from_json();
 
-    test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+    //test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+    //test_run_fdtd_1d_from_json();
 }
 
 

@@ -31,7 +31,7 @@ void GaussianGridArrayManipulator::SetTimeOffsetFraction(const RealNumber offset
 }
 
 RealNumber GaussianGridArrayManipulator::CalculateTime(const RealNumber dt, const std::size_t timeIndex) {
-    return (timeIndex + timeOffsetFraction) * dt;
+    return ((RealNumber)timeIndex + timeOffsetFraction) * dt;
 }
 
 void GaussianGridArrayManipulator::UpdateArray(const RealNumber t) {

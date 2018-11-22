@@ -739,7 +739,7 @@ class NumberArray3D {
 
         std::array<RealNumber, 3> d_max;
         for(int i = 0; i < 3; ++i) {
-            d_max[i] = (r_max[i] - r_min[i])/(a_shape[i] - 1);
+            d_max[i] = (r_max[i] - r_min[i])/(RealNumber)(a_shape[i] - 1);
         }
 
         std::array<std::size_t, 3> i;
@@ -749,7 +749,7 @@ class NumberArray3D {
         for(i0 = 0; i0 < n0; ++i0) {
             for(i1 = 0; i1 < n1; ++i1) {
                 for(i2 = 0; i2 < n2; ++i2) {
-                    a_arrayData[i0][i1][i2] = r_min[direction] + i[direction]*d_max[direction];
+                    a_arrayData[i0][i1][i2] = r_min[direction] + (RealNumber)(i[direction])*d_max[direction];
                 }
             }
         }

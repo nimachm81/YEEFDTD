@@ -24,7 +24,7 @@ RealNumber PeriodicGaussianGridArrayManipulator::Func(const std::array<RealNumbe
 }
 
 RealNumber PeriodicGaussianGridArrayManipulator::CalculateTime(const RealNumber dt, const std::size_t timeIndex) {
-    return dt*timeIndex;
+    return dt*(RealNumber)timeIndex;
 }
 
 
