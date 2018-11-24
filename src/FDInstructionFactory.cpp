@@ -19,7 +19,7 @@ void* FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CyEdgeH(
         indEnd,         // ind_end_A
         aArrayName,     // arrayA_name
         0,              // arrayA_component
-        {-1.0*bNumber/dz,    1.0*bNumber/dz},                      // bValues
+        {-(RealNumber)1.0*bNumber/dz,    (RealNumber)1.0*bNumber/dz},                      // bValues
         {cArrayName,         cArrayName},                                  // arrayC_names
         {1,                  1},                                           // arraC_components
         {indStart,           {indStart[0], indStart[1], indStart[2] - 1}}  // arrayC_indsStart
@@ -41,7 +41,7 @@ void* FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CzEdgeH(
         indEnd,    // ind_end_A
         aArrayName,            // arrayA_name
         0,              // arrayA_component
-        {+1.0*bNumber/dy, -1.0*bNumber/dy},   // bValues
+        {+(RealNumber)1.0*bNumber/dy, -(RealNumber)1.0*bNumber/dy},   // bValues
         {cArrayName,      cArrayName},           // arrayC_names
         {2,               2},                    // arraC_components
         {indStart,        {indStart[0], indStart[1] - 1, indStart[2]}}     // arrayC_indsStart
@@ -63,7 +63,7 @@ void* FDInstructionFactory::Get_AyEdgeE_plusEqual_b_Curl_CxEdgeH(
         indEnd,    // ind_end_A
         aArrayName,            // arrayA_name
         1,              // arrayA_component
-        {+1.0*bNumber/dz, -1.0*bNumber/dz},    // bValues
+        {+(RealNumber)1.0*bNumber/dz, -(RealNumber)1.0*bNumber/dz},    // bValues
         {cArrayName,       cArrayName},     // arrayC_names
         {0,                0},         // arraC_components
         {indStart,         {indStart[0], indStart[1], indStart[2] - 1}}     // arrayC_indsStart
@@ -85,7 +85,7 @@ void* FDInstructionFactory::Get_AyEdgeE_plusEqual_b_Curl_CzEdgeH(
         indEnd,    // ind_end_A
         aArrayName,            // arrayA_name
         1,              // arrayA_component
-        {-1.0*bNumber/dx, +1.0*bNumber/dx},    // bValues
+        {-(RealNumber)1.0*bNumber/dx, +(RealNumber)1.0*bNumber/dx},    // bValues
         {cArrayName,       cArrayName},     // arrayC_names
         {2,         2},         // arraC_components
         {indStart, {indStart[0] - 1, indStart[1], indStart[2]}}     // arrayC_indsStart
@@ -107,7 +107,7 @@ void* FDInstructionFactory::Get_AzEdgeE_plusEqual_b_Curl_CxEdgeH(
         indEnd,    // ind_end_A
         aArrayName,            // arrayA_name
         2,              // arrayA_component
-        {-1.0*bNumber/dy, +1.0*bNumber/dy},    // bValues
+        {-(RealNumber)1.0*bNumber/dy, +(RealNumber)1.0*bNumber/dy},    // bValues
         {cArrayName,        cArrayName},     // arrayC_names
         {0,           0},         // arraC_components
         {indStart,   {indStart[0], indStart[1] - 1, indStart[2]}}     // arrayC_indsStart
@@ -129,7 +129,7 @@ void* FDInstructionFactory::Get_AzEdgeE_plusEqual_b_Curl_CyEdgeH(
         indEnd,    // ind_end_A
         aArrayName,            // arrayA_name
         2,              // arrayA_component
-        {+1.0*bNumber/dx, -1.0*bNumber/dx},    // bValues
+        {+(RealNumber)1.0*bNumber/dx, -(RealNumber)1.0*bNumber/dx},    // bValues
         {cArrayName,        cArrayName},     // arrayC_names
         {1,          1},         // arraC_components
         {indStart,  {indStart[0] - 1, indStart[1], indStart[2]}}     // arrayC_indsStart
@@ -152,7 +152,7 @@ void* FDInstructionFactory::Get_AxEdgeH_plusEqual_b_Curl_CyEdgeE(
         indEnd,
         aArrayName,
         0,
-        {-1.0*bNumber/dz,                             +1.0*bNumber/dz},
+        {-(RealNumber)1.0*bNumber/dz,                 +(RealNumber)1.0*bNumber/dz},
         {cArrayName,                                  cArrayName},
         {1,                                           1},
         {{indStart[0], indStart[1], indStart[2] + 1}, indStart}
@@ -175,7 +175,7 @@ void* FDInstructionFactory::Get_AxEdgeH_plusEqual_b_Curl_CzEdgeE(
         indEnd,
         aArrayName,
         0,
-        {+1.0*bNumber/dy,                              -1.0*bNumber/dy},
+        {+(RealNumber)1.0*bNumber/dy,                  -(RealNumber)1.0*bNumber/dy},
         {cArrayName,                                   cArrayName},
         {2,                                            2},
         {{indStart[0], indStart[1] + 1, indStart[2]},  indStart}
@@ -198,7 +198,7 @@ void* FDInstructionFactory::Get_AyEdgeH_plusEqual_b_Curl_CxEdgeE(
         indEnd,         // ind_end_A
         aArrayName,     // arrayA_name
         1,              // arrayA_component
-        {+1.0*bNumber/dz,                             -1.0*bNumber/dz},      // bValues
+        {+(RealNumber)1.0*bNumber/dz,                 -(RealNumber)1.0*bNumber/dz},      // bValues
         {cArrayName,                                  cArrayName},              // arrayC_names
         {0,                                           0},                       // arraC_components
         {{indStart[0], indStart[1], indStart[2] + 1}, indStart}                 // arrayC_indsStart
@@ -221,7 +221,7 @@ void* FDInstructionFactory::Get_AyEdgeH_plusEqual_b_Curl_CzEdgeE(
         indEnd,
         aArrayName,
         1,
-        {-1.0*bNumber/dx,                              +1.0*bNumber/dx},
+        {-(RealNumber)1.0*bNumber/dx,                  +(RealNumber)1.0*bNumber/dx},
         {cArrayName,                                   cArrayName},
         {2,                                            2},
         {{indStart[0] + 1, indStart[1], indStart[2]},  indStart}
@@ -243,7 +243,7 @@ void* FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CxEdgeE(
         indEnd,
         aArrayName,
         2,
-        {-1.0*bNumber/dy, +1.0*bNumber/dy},
+        {-(RealNumber)1.0*bNumber/dy, +(RealNumber)1.0*bNumber/dy},
         {cArrayName, cArrayName},
         {0, 0},
         {{indStart[0], indStart[1] + 1, indStart[2]}, indStart}
@@ -265,7 +265,7 @@ void* FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CyEdgeE(
         indEnd,
         aArrayName,
         2,
-        {+1.0*bNumber/dx, -1.0*bNumber/dx},
+        {+(RealNumber)1.0*bNumber/dx, -(RealNumber)1.0*bNumber/dx},
         {cArrayName,        cArrayName},
         {1,           1},
         {{indStart[0] + 1, indStart[1], indStart[2]},   indStart}

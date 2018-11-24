@@ -6,9 +6,11 @@
 #include <cmath>
 #include <cassert>
 #include <cstddef>      //std::size_t, nullptr
+#include <complex>
 #include <array>       //std::array
 #include <iostream>
 #include <fstream>
+#include <typeinfo>
 
 #include "MultiDimArrayAllocator.hpp"
 #include "MultiDimArrayPrinting.hpp"
@@ -95,6 +97,7 @@ class NumberArray3D {
     }
 
     NumberArray3D GetSlice(std::array<std::size_t, 3> indStart_slice, std::array<std::size_t, 3> indEnd_slice) {
+        assert(indEnd_slice[0] <= shape[0] && indEnd_slice[1] <= shape[1] && indEnd_slice[2] <= shape[2]);
         std::array<std::size_t, 3> shape_slice;
         for(std::size_t i = 0; i < 3; ++i) {
             shape_slice[i] = indEnd_slice[i] - indStart_slice[i];
@@ -798,7 +801,18 @@ class NumberArray3D {
                               bool writeShape = false,
                               bool writeDataTypeSize = false) {
         assert(arrayData != nullptr);
-        return Write3DNumberArrayData(fileOut, shape, indStart, arrayData, writeShape, writeDataTypeSize);
+        int dataTypeCode = -1;
+        if(typeid(T) == typeid(float)) {
+            dataTypeCode = 1;
+        } else if(typeid(T) == typeid(double)) {
+            dataTypeCode = 2;
+        } else if(typeid(T) == typeid(std::complex<float>)) {
+            dataTypeCode = 3;
+        } else if(typeid(T) == typeid(std::complex<double>)) {
+            dataTypeCode = 4;
+        }
+
+        return Write3DNumberArrayData(fileOut, shape, indStart, arrayData, dataTypeCode, writeShape, writeDataTypeSize);
     }
 
     void ReadArrayDataFromFile(std::ifstream* fileIn) {

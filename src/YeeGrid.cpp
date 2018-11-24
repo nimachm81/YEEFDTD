@@ -626,11 +626,11 @@ std::array<RealNumber, 3> YeeGrid3D::GetCoordinatesOfFirstElementOfGridDataArray
                                       r_0[2] + (RealNumber)(indexOfOrigin[2])*dr[2]};
     ElementType& elemType = gridElements[gridDataName]->GetElemType();
     if(elemType == ElementType::EdgeE) {
-        arrayR0[direction] += dr[direction]/2.0;
+        arrayR0[direction] += dr[direction]/(RealNumber)2.0;
     }else if(elemType == ElementType::EdgeH) {
         for(int i = 0; i < 3; ++i) {
             if(i != direction) {
-                arrayR0[i] += dr[i]/2.0;
+                arrayR0[i] += dr[i]/(RealNumber)2.0;
             }
         }
     }else{

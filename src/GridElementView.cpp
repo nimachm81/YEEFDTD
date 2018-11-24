@@ -46,7 +46,10 @@ void GridElementView::StoreData(std::size_t iterationIndex) {
         OpenFileToWrite();
     }
     if(std::remainder(iterationIndex, saveOnDiskFrequency) == 0) {
-        numArray->WriteArrayDataToFile(&file, true, true);
+        numArray->WriteArrayDataToFile(&file,
+                                       true,    // writeShape
+                                       true     // writeDataTypeSize
+                                       );
     }
 }
 

@@ -6,15 +6,21 @@
 
 
 template <typename T>
-void Write3DNumberArrayData(std::ofstream* fileOut, std::array<std::size_t, 3>& arrayShape,
-                                      T*** arrayData,
-                                      bool writeShape = false,
-                                      bool writeDataTypeSize = false) {
+void Write3DNumberArrayData(std::ofstream* fileOut,
+                            std::array<std::size_t, 3>& arrayShape,
+                            T*** arrayData,
+                            int dataypeCode = -1,       // if code >=0 it will be written to file
+                            bool writeShape = false,
+                            bool writeDataTypeSize = false) {
     std::size_t n0 = arrayShape[0];
     std::size_t n1 = arrayShape[1];
     std::size_t n2 = arrayShape[2];
 
     std::size_t sizeOfT = sizeof(T);
+
+    if(dataypeCode >= 0) {
+        fileOut->write((char*)&dataypeCode, sizeof(int));
+    }
 
     if(writeDataTypeSize) {
         fileOut->write((char*)&sizeOfT, sizeof(std::size_t));
@@ -34,11 +40,13 @@ void Write3DNumberArrayData(std::ofstream* fileOut, std::array<std::size_t, 3>& 
 };
 
 template <typename T>
-void Write3DNumberArrayData(std::ofstream* fileOut, std::array<std::size_t, 3>& arrayShape,
-                                      std::array<std::size_t, 3>& indStart,
-                                      T*** arrayData,
-                                      bool writeShape = false,
-                                      bool writeDataTypeSize = false) {
+void Write3DNumberArrayData(std::ofstream* fileOut,
+                            std::array<std::size_t, 3>& arrayShape,
+                            std::array<std::size_t, 3>& indStart,
+                            T*** arrayData,
+                            int dataypeCode = -1,       // if code >=0 it will be written to file
+                            bool writeShape = false,
+                            bool writeDataTypeSize = false) {
     std::size_t n0 = arrayShape[0];
     std::size_t n1 = arrayShape[1];
     std::size_t n2 = arrayShape[2];
@@ -48,6 +56,10 @@ void Write3DNumberArrayData(std::ofstream* fileOut, std::array<std::size_t, 3>& 
     std::size_t ind2 = indStart[2];
 
     std::size_t sizeOfT = sizeof(T);
+
+    if(dataypeCode >= 0) {
+        fileOut->write((char*)&dataypeCode, sizeof(int));
+    }
 
     if(writeDataTypeSize) {
         fileOut->write((char*)&sizeOfT, sizeof(std::size_t));

@@ -33,7 +33,14 @@ class ParameterExtractor {
 
     std::size_t GetUintProperty(const std::string path);        // given a path to "key":1162 retuens 1162 as size_t
 
-    RealNumber GetRealProperty(const std::string path);         // given a path to "key":1.2 returns 1.2
+    RealNumber GetRealProperty(const std::string path);         // given a path to "key":1.2 returns 1.2 the return type
+                                                                // is RealNumber (which could have been defined to be of
+                                                                // complex typme in the header NumberTypes.h)
+
+    double GetDoubleProperty(const std::string path);           // given a path to "key":1.2 returns 1.2
+
+    std::complex<double> GetComplexProperty(const std::string path);     // given a path to "key":[1.2, 3.1] returns
+                                                                         // the complex number 1.2 + 3.1j
 
     std::array<std::size_t, 3> Get3VecUintProperty(const std::string path);     // given a path to
                                                                 // "key":[1, 2, 3] returns the array [1, 2, 3]

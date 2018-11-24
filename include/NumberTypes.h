@@ -10,10 +10,12 @@
 // "RealNumber = double" provides higher accuracy, while "RealNumber = float"
 // provides memory efficiency and it can be vectorized more efficiently.
 
+//#define FDTD_COMPLEX_SUPPORTED
+
 #include <cstdint>    // std::int64_t
 #include <complex>
 
-using RealNumber = std::complex<double>;
+using RealNumber = double; //std::complex<double>;
 using BigIntNumber = std::int64_t;
 
 

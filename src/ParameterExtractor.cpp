@@ -18,8 +18,6 @@ boost::property_tree::ptree ParameterExtractor::GetSubTreeRootNode(const std::st
 }
 
 boost::property_tree::ptree ParameterExtractor::GetSubTreeByIndex(const std::size_t index) {
-    //boost::property_tree::ptree::value_type& it = treeRoot.front();
-    //return it.second;//.get_value<boost::property_tree::ptree>();
     assert(index < GetSize());
     auto it = treeRoot.begin();
     std::advance(it, index);
@@ -43,7 +41,29 @@ std::size_t ParameterExtractor::GetUintProperty(const std::string path) {
 }
 
 RealNumber ParameterExtractor::GetRealProperty(const std::string path) {
+#ifdef  FDTD_COMPLEX_SUPPORTED
+    if(treeRoot.get_child(path).size() == 2 &&
+            (typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>)) ) {
+        return (RealNumber)(GetComplexProperty(path));
+    } else {
+        return treeRoot.get<RealNumber>(path);
+    }
+#else
     return treeRoot.get<RealNumber>(path);
+#endif // FDTD_COMPLEX_SUPPORTED
+}
+
+double ParameterExtractor::GetDoubleProperty(const std::string path) {
+    return treeRoot.get<double>(path);
+}
+
+std::complex<double> ParameterExtractor::GetComplexProperty(const std::string path) {
+    ParameterExtractor complexExtractor(GetSubTreeRootNode(path));
+    assert(complexExtractor.GetSize() == 2);
+    ParameterExtractor complexExtractor_real(complexExtractor.GetSubTreeByIndex(0));
+    ParameterExtractor complexExtractor_imag(complexExtractor.GetSubTreeByIndex(1));
+    return std::complex(complexExtractor_real.GetDoubleProperty(""), complexExtractor_imag.GetDoubleProperty(""));
+
 }
 
 std::array<std::size_t, 3> ParameterExtractor::Get3VecUintProperty(const std::string path) {
@@ -57,23 +77,25 @@ std::array<std::size_t, 3> ParameterExtractor::Get3VecUintProperty(const std::st
 }
 
 std::array<RealNumber, 3> ParameterExtractor::Get3VecRealProperty(const std::string path) {
-    std::array<RealNumber, 3> vec;
-    int i = 0;
-    for(boost::property_tree::ptree::value_type &vec_i : treeRoot.get_child(path)) {
-        vec[i] = vec_i.second.get_value<RealNumber>();
-        ++i;
+    std::array<RealNumber, 3> realNumbers;
+    ParameterExtractor realArrayExtractor(GetSubTreeRootNode(path));
+    assert(realArrayExtractor.GetSize() == 3);
+    for(std::size_t i = 0; i < realArrayExtractor.GetSize(); ++i){
+        ParameterExtractor realExtractor_i(realArrayExtractor.GetSubTreeByIndex(i));
+        realNumbers[i] = realExtractor_i.GetRealProperty("");    // array elements have empty keys
     }
-    return vec;
+    return realNumbers;
 }
 
 std::array<RealNumber, 4> ParameterExtractor::Get4VecRealProperty(const std::string path) {
-    std::array<RealNumber, 4> vec;
-    int i = 0;
-    for(boost::property_tree::ptree::value_type &vec_i : treeRoot.get_child(path)) {
-        vec[i] = vec_i.second.get_value<RealNumber>();
-        ++i;
+    std::array<RealNumber, 4> realNumbers;
+    ParameterExtractor realArrayExtractor(GetSubTreeRootNode(path));
+    assert(realArrayExtractor.GetSize() == 4);
+    for(std::size_t i = 0; i < realArrayExtractor.GetSize(); ++i){
+        ParameterExtractor realExtractor_i(realArrayExtractor.GetSubTreeByIndex(i));
+        realNumbers[i] = realExtractor_i.GetRealProperty("");    // array elements have empty keys
     }
-    return vec;
+    return realNumbers;
 }
 
 std::vector<std::string> ParameterExtractor::GetStringArray(const std::string path) {

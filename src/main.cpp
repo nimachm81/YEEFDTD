@@ -182,7 +182,7 @@ void test_yeegrid_1d() {
     std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*0.99;
+    RealNumber dt = dz*(RealNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -198,7 +198,7 @@ void test_yeegrid_1d() {
             {0, 0, 1},  // indStart
             {1, 1, nz}, // indEnd
             "E",        // A name
-            1.0*dt,     // b value
+            dt,     // b value
             "H"         // C name
             );
     void* E_J_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
@@ -206,7 +206,7 @@ void test_yeegrid_1d() {
         {1, 1, indJ+1},
         "E",
         0,
-        {-1.0*dt/dz},
+        {-(RealNumber)1.0*dt/dz},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -217,7 +217,7 @@ void test_yeegrid_1d() {
             {0, 0, 0},
             {1, 1, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
         "JUpdater"
@@ -245,7 +245,7 @@ void test_yeegrid_2d() {
     std::array<std::size_t, 3> nCells{1, ny, nz};
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
-    RealNumber dt = dz/std::sqrt(2.0)*0.99;
+    RealNumber dt = dz/std::sqrt((RealNumber)2.0)*(RealNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -260,7 +260,7 @@ void test_yeegrid_2d() {
                 {0, 1, 1},        // indStart
                 {1, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* Ex_Hz_update_params = FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CzEdgeH(  // A_x += b*curl C
@@ -268,7 +268,7 @@ void test_yeegrid_2d() {
                 {0, 1, 1},        // indStart
                 {1, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* E_J_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
@@ -276,7 +276,7 @@ void test_yeegrid_2d() {
         {1, indyJx + 1, indzJx + 1},
         "E",
         0,
-        {-1.0*dt/(dy*dz)},
+        {-(RealNumber)1.0*dt/(dy*dz)},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -286,14 +286,14 @@ void test_yeegrid_2d() {
             {0, 0, 0},
             {1, ny + 1, nz},
             "H",
-            -1.0*dt,
+            -(RealNumber)1.0*dt,
             "E");
     void* Hz_update_params = FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CxEdgeE(
             yee,
             {0, 0, 0},
             {1, ny, nz + 1},
             "H",
-            -1.0*dt,
+            -(RealNumber)1.0*dt,
             "E");
     void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
         "JUpdater"
@@ -326,7 +326,7 @@ void test_yeegrid_3d() {
     RealNumber dx = (r1[0] - r0[0])/(RealNumber)(nx);
     RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz/std::sqrt(3.0)*0.99;
+    RealNumber dt = dz/std::sqrt((RealNumber)3.0)*(RealNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -342,7 +342,7 @@ void test_yeegrid_3d() {
                 {0, 1, 1},        // indStart
                 {nx, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* Ex_Hz_update_params = FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CzEdgeH(
@@ -350,7 +350,7 @@ void test_yeegrid_3d() {
                 {0, 1, 1},        // indStart
                 {nx, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* Ey_Hx_update_params = FDInstructionFactory::Get_AyEdgeE_plusEqual_b_Curl_CxEdgeH(
@@ -358,7 +358,7 @@ void test_yeegrid_3d() {
                 {1, 0, 1},        // indStart
                 {nx, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* Ey_Hz_update_params = FDInstructionFactory::Get_AyEdgeE_plusEqual_b_Curl_CzEdgeH(
@@ -366,7 +366,7 @@ void test_yeegrid_3d() {
                 {1, 0, 1},        // indStart
                 {nx, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* Ez_Hx_update_params = FDInstructionFactory::Get_AzEdgeE_plusEqual_b_Curl_CxEdgeH(
@@ -374,7 +374,7 @@ void test_yeegrid_3d() {
                 {1, 1, 0},        // indStart
                 {nx, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* Ez_Hy_update_params = FDInstructionFactory::Get_AzEdgeE_plusEqual_b_Curl_CyEdgeH(
@@ -382,7 +382,7 @@ void test_yeegrid_3d() {
                 {1, 1, 0},        // indStart
                 {nx, ny, nz},      // indEnd
                 "E",              // name of A
-                +1.0*dt,             // b value
+                +dt,             // b value
                 "H"                  // name of C
                 );
     void* E_J_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
@@ -390,7 +390,7 @@ void test_yeegrid_3d() {
         {indxJx + 1, indyJx + 1, indzJx + 1},
         "E",
         0,
-        {-1.0*dt/(dx*dy*dz)},
+        {-dt/(dx*dy*dz)},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -400,42 +400,42 @@ void test_yeegrid_3d() {
             {0, 0, 0},
             {nx + 1, ny, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* Hx_Ez_update_params = FDInstructionFactory::Get_AxEdgeH_plusEqual_b_Curl_CzEdgeE(
             yee,
             {0, 0, 0},
             {nx + 1, ny, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* Hy_Ex_update_params = FDInstructionFactory::Get_AyEdgeH_plusEqual_b_Curl_CxEdgeE(
             yee,
             {0, 0, 0},
             {nx, ny + 1, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* Hy_Ez_update_params = FDInstructionFactory::Get_AyEdgeH_plusEqual_b_Curl_CzEdgeE(
             yee,
             {0, 0, 0},
             {nx, ny + 1, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* Hz_Ex_update_params = FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CxEdgeE(
             yee,
             {0, 0, 0},
             {nx, ny, nz + 1},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* Hz_Ey_update_params = FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CyEdgeE(
             yee,
             {0, 0, 0},
             {nx, ny, nz + 1},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
         "JUpdater"
@@ -476,7 +476,7 @@ void test_yeegrid_dielectric_1d() {
     std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*0.99;
+    RealNumber dt = dz*(RealNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -489,7 +489,8 @@ void test_yeegrid_dielectric_1d() {
     yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
             0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("EpsilonUpdater", "EpsilonInv", 0 /*x*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 7.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 9.0} /*box corner 1*/,
+            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)7.0} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)9.0} /*box corner 1*/,
             {0.0, 0.0, 0.5} /*edge thickness*/,
             1.0/4.0 /*insideValue*/, 1.0 /*outsideValue*/);
 
@@ -498,7 +499,7 @@ void test_yeegrid_dielectric_1d() {
             {0, 0, 1},  // indStart
             {1, 1, nz}, // indEnd
             "D",        // A name
-            1.0*dt,     // b value
+            dt,         // b value
             "H"         // C name
             );
     void* E_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
@@ -506,7 +507,7 @@ void test_yeegrid_dielectric_1d() {
         {1, 1, nz},
         "E",
         0,
-        {1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"EpsilonInv"},
         {0},
         {{0, 0, 1}},
@@ -519,7 +520,7 @@ void test_yeegrid_dielectric_1d() {
         {1, 1, indJ+1},
         "D",
         0,
-        {-1.0*dt/dz},
+        {-dt/dz},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -529,7 +530,7 @@ void test_yeegrid_dielectric_1d() {
             {0, 0, 0},
             {1, 1, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
         "JUpdater"
@@ -563,7 +564,7 @@ void test_yeegrid_dielectric_pml_1d() {
     std::array<RealNumber, 3> r1{0.1, 0.1, 15.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*0.95;
+    RealNumber dt = dz*(RealNumber)0.95;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -575,27 +576,31 @@ void test_yeegrid_dielectric_pml_1d() {
     yee.AddEntireGridElement("H", ElementType::EdgeH);
     yee.AddEntireGridElement("sig-H", ElementType::EdgeH);
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, 0, indJ}, {1, 1, 0});
-    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
-            0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
+    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, (RealNumber)1.0 /*amp*/, (RealNumber)1.0 /*t_center*/,
+            (RealNumber)0.2 /*t_decay*/, (RealNumber)0.0 /*modulation frequency*/,
+            (RealNumber)0.0 /*modulation phase*/, -(RealNumber)0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("EpsilonUpdater", "EpsilonInv", 0 /*x*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 9.0} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 15.0} /*box corner 1*/,
+            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)9.0} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)15.0} /*box corner 1*/,
             {0.0, 0.0, 0.0} /*edge thickness*/,
-            1.0/4.0 /*insideValue*/, 1.0 /*outsideValue*/);
+            (RealNumber)1.0/(RealNumber)4.0 /*insideValue*/, (RealNumber)1.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEUpdater", "sig-E", 2 /*z*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 4.01} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 11.01} /*box corner 1*/,
-            {0.0, 0.0, 1.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +1.0 /*outsideValue*/);
+            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)4.01} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)11.01} /*box corner 1*/,
+            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(RealNumber)1.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHUpdater", "sig-H", 2 /*z*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 4.01} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 11.01} /*box corner 1*/,
-            {0.0, 0.0, 1.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +1.0 /*outsideValue*/);
+            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)4.01} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)11.01} /*box corner 1*/,
+            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(RealNumber)1.0 /*outsideValue*/);
 
     void* D_curlH_update_params = FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CyEdgeH(
             yee,    // grid
             {0, 0, 1},  // indStart
             {1, 1, nz}, // indEnd
             "D",        // A name
-            1.0*dt,     // b value
+            dt,         // b value
             "H"         // C name
             );
     void* D_sigz_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
@@ -603,7 +608,7 @@ void test_yeegrid_dielectric_pml_1d() {
         {1, 1, nz},
         "D",
         0,
-        {-1.0*dt},          // bValues
+        {-dt},          // bValues
         {"sig-E"},
         {2},
         {{0, 0, 1}},
@@ -616,7 +621,7 @@ void test_yeegrid_dielectric_pml_1d() {
         {1, 1, nz},
         "E",
         0,
-        {1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"EpsilonInv"},
         {0},
         {{0, 0, 1}},
@@ -629,7 +634,7 @@ void test_yeegrid_dielectric_pml_1d() {
         {1, 1, indJ+1},
         "D",
         0,
-        {-1.0*dt/dz},
+        {-dt/dz},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -639,14 +644,14 @@ void test_yeegrid_dielectric_pml_1d() {
             {0, 0, 0},
             {1, 1, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* H_sigz_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
         {0, 0, 0},
         {1, 1, nz},
         "H",
         1,
-        {-1.0*dt},          // bValues
+        {-dt},          // bValues
         {"sig-H"},
         {2},
         {{0, 0, 0}},
@@ -697,11 +702,11 @@ void test_yeegrid_2d_pml() {
     std::size_t indzJx = nz/2;
     std::size_t indyJx = ny/2;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 10.0, 10.0};
+    std::array<RealNumber, 3> r1{(RealNumber)0.1, (RealNumber)10.0, (RealNumber)10.0};
     std::array<std::size_t, 3> nCells{1, ny, nz};
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
     RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
-    RealNumber dt = dz/std::sqrt(2.0)*0.95;
+    RealNumber dt = dz/std::sqrt((RealNumber)2.0)*(RealNumber)0.95;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -720,30 +725,35 @@ void test_yeegrid_2d_pml() {
 
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, indyJx, indzJx}, {1, 0, 0});
 
-    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
-            0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
+    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, (RealNumber)1.0 /*amp*/, (RealNumber)1.0 /*t_center*/,
+            (RealNumber)0.2 /*t_decay*/, 0.0 /*modulation frequency*/, 0.0 /*modulation phase*/,
+            -(RealNumber)0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEzUpdater", "sig-E", 2 /*z*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 2.01} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 8.01} /*box corner 1*/,
-            {0.0, 0.0, 1.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +2.0 /*outsideValue*/);
+            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)2.01} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)8.01} /*box corner 1*/,
+            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(RealNumber)2.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEyUpdater", "sig-E", 1 /*y*/,
-            {r0[0] - 0.1, 2.01, r0[2] - 0.1} /*box corner 0*/, {r1[0] + 0.1, 8.01, r1[2] + 0.1} /*box corner 1*/,
+            {r0[0] - (RealNumber)0.1, (RealNumber)2.01, r0[2] - (RealNumber)0.1} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, (RealNumber)8.01, r1[2] + (RealNumber)0.1} /*box corner 1*/,
             {0.0, 1.0, 0.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +2.0 /*outsideValue*/);
+            0.0 /*insideValue*/, +(RealNumber)2.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHzUpdater", "sig-H", 2 /*z*/,
-            {r0[0] - 0.1, r0[1] - 0.1, 2.01} /*box corner 0*/, {r1[0] + 0.1, r1[1] + 0.1, 8.01} /*box corner 1*/,
-            {0.0, 0.0, 1.0} /*edge thickness*/,
+            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)2.01} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)8.01} /*box corner 1*/,
+            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
             0.0 /*insideValue*/, +2.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHyUpdater", "sig-H", 1 /*y*/,
-            {r0[0] - 0.1, 2.01, r0[2] - 0.1} /*box corner 0*/, {r1[0] + 0.1, 8.01, r1[2] + 0.1} /*box corner 1*/,
-            {0.0, 1.0, 0.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +2.0 /*outsideValue*/);
+            {r0[0] - (RealNumber)0.1, (RealNumber)2.01, r0[2] - (RealNumber)0.1} /*box corner 0*/,
+            {r1[0] + (RealNumber)0.1, (RealNumber)8.01, r1[2] + (RealNumber)0.1} /*box corner 1*/,
+            {0.0, (RealNumber)1.0, 0.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(RealNumber)2.0 /*outsideValue*/);
     void* dFx_sigzFx_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
         {0, 1, 1},
         {1, ny, nz},
         "dF",
         0,
-        {-1.0},          // bValues
+        {-(RealNumber)1.0},          // bValues
         {"sig-E"},
         {2},
         {{0, 1, 1}},
@@ -764,7 +774,7 @@ void test_yeegrid_2d_pml() {
                 {0, 1, 1},        // indStart
                 {1, ny, nz},      // indEnd
                 "dF",              // name of A
-                +1.0,             // b value
+                +(RealNumber)1.0,             // b value
                 "H"                  // name of C
                 );
     void* dFx_Jx_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
@@ -772,7 +782,7 @@ void test_yeegrid_2d_pml() {
         {1, indyJx + 1, indzJx + 1},
         "dF",    //
         0,
-        {-1.0/(dy*dz)},
+        {-(RealNumber)1.0/(dy*dz)},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -782,7 +792,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "F",
         0,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"dF"},
         {0},
         {{0, 1, 1}}
@@ -792,7 +802,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "D",
         0,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"dF"},
         {0},
         {{0, 1, 1}}
@@ -802,7 +812,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "D",
         0,
-        {-1.0*dt},          // bValues
+        {-dt},          // bValues
         {"sig-E"},
         {1},            // y component
         {{0, 1, 1}},
@@ -815,7 +825,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "E",
         0,
-        {+1.0},          // bValues
+        {+(RealNumber)1.0},          // bValues
         {"D"},
         {0},
         {{0, 1, 1}}
@@ -825,21 +835,21 @@ void test_yeegrid_2d_pml() {
             {0, 0, 0},
             {1, ny + 1, nz},
             "dG",
-            -1.0,
+            -(RealNumber)1.0,
             "E");
     void* dGz_Ex_update_params = FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CxEdgeE(
             yee,
             {0, 0, 0},
             {1, ny, nz + 1},
             "dG",
-            -1.0,
+            (RealNumber)(-1.0),
             "E");
     void* dGz_sigyGz_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
         {0, 0, 0},
         {1, ny, nz + 1},
         "dG",
         2,
-        {-1.0},          // bValues
+        {(RealNumber)(-1.0)},          // bValues
         {"sig-H"},
         {1},
         {{0, 0, 0}},
@@ -852,7 +862,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "B",
         2,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"sig-H"},
         {2},
         {{0, 0, 0}},
@@ -865,7 +875,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "G",
         2,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"dG"},
         {2},
         {{0, 0, 0}}
@@ -875,7 +885,7 @@ void test_yeegrid_2d_pml() {
         {1, ny + 1, nz},
         "G",
         1,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"dG"},
         {1},
         {{0, 0, 0}}
@@ -885,7 +895,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "B",
         2,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"dG"},
         {2},
         {{0, 0, 0}}
@@ -895,7 +905,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},    // TODO: ny+1 should be done separately
         "B",
         1,
-        {-1.0*dt},          // bValues
+        {-dt},          // bValues
         {"sig-H"},
         {2},
         {{0, 0, 0}},
@@ -908,7 +918,7 @@ void test_yeegrid_2d_pml() {
         {1, ny + 1, nz},
         "B",
         1,
-        {+1.0*dt},          // bValues
+        {+dt},          // bValues
         {"dG"},
         {1},
         {{0, 0, 0}}
@@ -918,7 +928,7 @@ void test_yeegrid_2d_pml() {
         {1, ny + 1, nz},
         "H",
         1,
-        {+1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"B"},
         {1},
         {{0, 0, 0}}
@@ -928,7 +938,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "H",
         2,
-        {+1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"B"},
         {2},
         {{0, 0, 0}}
@@ -953,7 +963,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "E",
         0,
-        {+1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"F"},
         {0},
         {{0, 1, 1}}
@@ -963,7 +973,7 @@ void test_yeegrid_2d_pml() {
         {1, ny + 1, nz},
         "H",
         1,
-        {+1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"G"},
         {1},
         {{0, 0, 0}}
@@ -973,7 +983,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "H",
         2,
-        {+1.0},          // bValues
+        {(RealNumber)1.0},          // bValues
         {"G"},
         {2},
         {{0, 0, 0}}
@@ -1051,10 +1061,10 @@ void test_yeegrid_1d_collection() {
     std::size_t nz = 300/2;
     std::size_t indJ = nz/2;
     std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.0, 5.0};
+    std::array<RealNumber, 3> r1{0.1, 0.0, (RealNumber)5.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
     RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*0.99;
+    RealNumber dt = dz*(RealNumber)0.99;
     //------ left side
     YeeGrid3D& yee_l = yeeCollection.GetGrid(yeeLeftInd);
     YeeGrid3D& yee_r = yeeCollection.GetGrid(yeeRightInd);
@@ -1073,7 +1083,7 @@ void test_yeegrid_1d_collection() {
             {0, 0, 1},  // indStart
             {1, 1, nz}, // indEnd
             "E",        // A name
-            1.0*dt,     // b value
+            dt,     // b value
             "H"         // C name
             );
     void* E_J_update_params_l = yee_l.ConstructParams_A_plusequal_sum_b_C(
@@ -1081,7 +1091,7 @@ void test_yeegrid_1d_collection() {
         {1, 1, indJ+1},
         "E",
         0,
-        {-1.0*dt/dz},
+        {-dt/dz},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -1092,14 +1102,14 @@ void test_yeegrid_1d_collection() {
             {0, 0, 0},
             {1, 1, nz - 1},     // except the last H element
             "H",
-            -1.0*dt,
+            -dt,
             "E");
     void* H_update_params_nz_inside_l = yee_l.ConstructParams_A_plusequal_sum_b_C(
             {0, 0, nz - 1},  // indStart
             {1, 1, nz},  // indEnd
             "H",        // A name
             1,
-            {+1.0*dt/dz},     // b values
+            {+dt/dz},     // b values
             {"E"},           // C names
             {0},
             {{0, 0, nz - 1}}
@@ -1110,7 +1120,7 @@ void test_yeegrid_1d_collection() {
             {1, 1, nz},  // indEnd
             "H",        // A name
             1,
-            {-1.0*dt/dz},     // b values
+            {-dt/dz},     // b values
             {"E"},           // C names
             {0},
             {{0, 0, 0}}
@@ -1128,8 +1138,8 @@ void test_yeegrid_1d_collection() {
                                 H_update_params_nz_outside_l);
 
     //-------- right side
-    r0[2] += 5.0;
-    r1[2] += 5.0;
+    r0[2] += (RealNumber)5.0;
+    r1[2] += (RealNumber)5.0;
     yee_r.SetCornerCoordinates(r0, r1);
     yee_r.SetNumOfCells(nCells);
     yee_r.SetTimeResolution(dt);
@@ -1141,7 +1151,7 @@ void test_yeegrid_1d_collection() {
             {0, 0, 1},  // indStart
             {1, 1, nz}, // indEnd
             "E",        // A name
-            1.0*dt,     // b value
+            dt,         // b value
             "H"         // C name
             );
     void* E_update_params_0_inside_r = yee_r.ConstructParams_A_plusequal_sum_b_C(
@@ -1149,7 +1159,7 @@ void test_yeegrid_1d_collection() {
             {1, 1, 1},  // indEnd
             "E",        // A name
             0,
-            {-1.0*dt/dz},     // b values
+            {-dt/dz},        // b values
             {"H"},           // C names
             {1},
             {{0, 0, 0}}
@@ -1160,7 +1170,7 @@ void test_yeegrid_1d_collection() {
             {1, 1, 1},  // indEnd
             "E",        // A name
             0,
-            {+1.0*dt/dz},     // b values
+            {+dt/dz},     // b values
             {"H"},           // C names
             {1},
             {{0, 0, nz - 1}}
@@ -1171,7 +1181,7 @@ void test_yeegrid_1d_collection() {
             {0, 0, 0},
             {1, 1, nz},
             "H",
-            -1.0*dt,
+            -dt,
             "E");
 
     yee_r.AddUpdateInstruction("E-update", FDInstructionCode::A_plusequal_sum_b_C, E_update_params_r);
@@ -1285,9 +1295,9 @@ void test_run_fdtd_2d_from_json() {
     RealNumber dy = (y1 - y0)/(RealNumber)(ny);
     RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
-    RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/2.0;
-    RealNumber z_j = (z0 + z1)/2.0;
+    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
+    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
+    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 401;
@@ -1338,10 +1348,10 @@ void test_run_fdtd_3d_from_json() {
     RealNumber dy = (y1 - y0)/(RealNumber)(ny);
     RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
-    RealNumber dt = 1.0/std::sqrt(1.0/(dx*dx) + 1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber x_j = (x0 + x1)/2.0;
-    RealNumber y_j = (y0 + y1)/2.0;
-    RealNumber z_j = (z0 + z1)/2.0;
+    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dx*dx) + (RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
+    RealNumber x_j = (x0 + x1)/(RealNumber)2.0;
+    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
+    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
     std::size_t indxJ = std::round(std::real((x_j - x0)/dx));
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
@@ -1421,7 +1431,7 @@ void test_run_fdtd_dielectric_1d_from_json() {
             {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
             {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
             {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
-            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real(1.0/epsilon))},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real((RealNumber)1.0/epsilon))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_dielectric.json",
@@ -1471,7 +1481,7 @@ void test_run_fdtd_dielectric_pml_1d_from_json() {
             {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
             {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
             {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
-            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real(1.0/epsilon))},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real((RealNumber)1.0/epsilon))},
             {"\"_pml_z0_\"", boost::lexical_cast<std::string>(std::real(pml_z0))},
             {"\"_pml_z1_\"", boost::lexical_cast<std::string>(std::real(pml_z1))},
             {"\"_pml_dz_\"", boost::lexical_cast<std::string>(std::real(pml_dz))},
@@ -1540,9 +1550,9 @@ void test_run_fdtd_gaussian_plasma_2d_from_json() {
     RealNumber dy = (y1 - y0)/(RealNumber)(ny);
     RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
-    RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/2.0;
-    RealNumber z_j = (z0 + z1)/2.0;
+    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
+    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
+    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 601;
@@ -1603,12 +1613,12 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
     RealNumber dy = (y1 - y0)/(RealNumber)(ny);
     RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
-    RealNumber dt = 1.0/std::sqrt(1.0/(dy*dy) + 1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/2.0;
-    RealNumber z_j = (z0 + z1)/2.0;
+    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
+    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
+    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
-    std::size_t numOfTimeSamples = 201;
+    std::size_t numOfTimeSamples = 801;
 
     RealNumber gamma = 1.0;
     RealNumber wp = 2.0*M_PI*5.0;
@@ -1656,13 +1666,114 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
     fileTranslator.Translate();
 }
 
+std::string CastComplexToJSONString(RealNumber complxNum) {
+#ifdef FDTD_COMPLEX_SUPPORTED
+    assert(typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>));
+    std::string stringCast = std::string("[") +
+                            boost::lexical_cast<std::string>(complxNum.real()) +
+                            std::string(",") +
+                            boost::lexical_cast<std::string>(complxNum.imag()) +
+                            std::string("]");
+    return stringCast;
+#else
+    assert(false);
+    return std::string();
+#endif // FDTD_COMPLEX_SUPPORTED
+}
+
+void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
+    RealNumber y0 = -0.5;
+    RealNumber y1 = 0.5;
+    RealNumber z0 = -0.5;
+    RealNumber z1 = 0.5;
+    std::size_t ny = 100;
+    std::size_t nz = 100;
+    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
+    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
+    RealNumber stabilityFactor = 0.99;
+    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
+    RealNumber y_j = (RealNumber)0.5*y0 + (RealNumber)0.5*y1;
+    RealNumber z_j = (RealNumber)0.9*z0 + (RealNumber)0.1*z1;
+    std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
+    std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
+    std::size_t numOfTimeSamples = 801;
+
+    RealNumber gamma = 0.0;
+    RealNumber wp = 2.0*M_PI*5.0;
+    RealNumber wp2_decayrate_y = 6.0;
+    RealNumber wp2_decayrate_z = 6.0;
+    RealNumber wp2_center_y = 0.0;
+    RealNumber wp2_center_z = 0.0;
+
+    RealNumber ky_max = (RealNumber)(2.0*M_PI)/(y1 - y0);
+    RealNumber kz_max = (RealNumber)(2.0*M_PI)/(z1 - z0);
+    RealNumber k_y = (RealNumber)0.0*ky_max;
+    RealNumber k_z = (RealNumber)0.25*kz_max;
+
+#ifdef FDTD_COMPLEX_SUPPORTED
+    RealNumber _j = (RealNumber)(std::complex<double>(0.0, 1.0));
+#else
+    RealNumber _j = 0.0;
+#endif // FDTD_COMPLEX_SUPPORTED
+
+    RealNumber _m_dt_dy_exp_jky_y10_ = -dt/dy*std::exp(_j*k_y*(y1 - y0));
+    RealNumber _dt_dz_exp_jkz_z10_  = dt/dz*std::exp(_j*k_z*(z1 - z0));
+    RealNumber _exp_mjky_y10_ = std::exp(-_j*k_y*(y1 - y0));
+    RealNumber _exp_mjkz_z10_ = std::exp(-_j*k_z*(z1 - z0));
+
+    std::unordered_map<std::string, std::string> str_replacewith{
+            {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
+            {"\"_y1_\"", boost::lexical_cast<std::string>(std::real(y1))},
+            {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
+            {"\"_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
+            {"\"_ny_\"", boost::lexical_cast<std::string>(ny)},
+            {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
+            {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
+            {"\"_ny_m1_\"", boost::lexical_cast<std::string>(ny - 1)},
+            {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
+            {"\"_nz_m1_\"", boost::lexical_cast<std::string>(nz - 1)},
+            {"\"_dy_\"", boost::lexical_cast<std::string>(std::real(dy))},
+            {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
+            {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
+            {"\"_m_dt_\"", boost::lexical_cast<std::string>(std::real(-dt))},
+            {"\"_dt_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dy))},
+            {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
+            {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
+            {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dy*dz)))},
+            {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
+            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
+            {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
+            {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
+            {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
+            {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
+            {"\"_m_dt_tau_\"", boost::lexical_cast<std::string>(std::real(-dt*gamma))},
+            {"\"_wp_sq_\"", boost::lexical_cast<std::string>(std::real(wp*wp))},
+            {"\"_wp_sq_center_y_\"", boost::lexical_cast<std::string>(std::real(wp2_center_y))},
+            {"\"_wp_sq_center_z_\"", boost::lexical_cast<std::string>(std::real(wp2_center_z))},
+            {"\"_wp_sq_decayrate_y_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_y))},
+            {"\"_wp_sq_decayrate_z_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_z))},
+            {"\"_m_dt_dy_exp_jky_y10_\"", CastComplexToJSONString(_m_dt_dy_exp_jky_y10_)},
+            {"\"_dt_dz_exp_jkz_z10_\"", CastComplexToJSONString(_dt_dz_exp_jkz_z10_)},
+            {"\"_exp_mjky_y10_\"", CastComplexToJSONString(_exp_mjky_y10_)},
+            {"\"_exp_mjkz_z10_\"", CastComplexToJSONString(_exp_mjkz_z10_)},
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            };
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_GaussianPlasma_PBC.json",
+                "instructions/MaxwellYee2D_GaussianPlasma_PBC_processed.json", str_replacewith);
+
+    ParamFileTranslator fileTranslator("instructions/MaxwellYee2D_GaussianPlasma_PBC_processed.json");
+    fileTranslator.Translate();
+}
+
+#include <typeinfo>
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
-    //test_read_json();
-    test_run_fdtd_1d_from_json();
-
-    //test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+   // test_read_json();
     //test_run_fdtd_1d_from_json();
+
+    //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
+    test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
 }
 
 

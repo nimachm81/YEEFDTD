@@ -36,7 +36,7 @@ RealNumber GaussianGridArrayManipulator::CalculateTime(const RealNumber dt, cons
 
 void GaussianGridArrayManipulator::UpdateArray(const RealNumber t) {
     RealNumber gaussianValue = amplitude * std::exp(-(t - t_center)*(t - t_center) / (t_decay*t_decay)) *
-                               std::cos(2.0*M_PI*modulationFrequency*t + modulationPhase);
+                               std::cos((RealNumber)(2.0*M_PI)*modulationFrequency*t + modulationPhase);
     gridArray.SetToNumber(gaussianValue);
 }
 
