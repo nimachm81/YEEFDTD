@@ -1666,22 +1666,21 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
     fileTranslator.Translate();
 }
 
+#include "boost/lexical_cast.hpp"
+#include "DemotableComplex.hpp"
 std::string CastComplexToJSONString(RealNumber complxNum) {
-#ifdef FDTD_COMPLEX_SUPPORTED
-    assert(typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>));
+    DemotableComplex<double> c(complxNum);
     std::string stringCast = std::string("[") +
-                            boost::lexical_cast<std::string>(complxNum.real()) +
+                            boost::lexical_cast<std::string>(c.real()) +
                             std::string(",") +
-                            boost::lexical_cast<std::string>(complxNum.imag()) +
+                            boost::lexical_cast<std::string>(c.imag()) +
                             std::string("]");
     return stringCast;
-#else
-    assert(false);
-    return std::string();
-#endif // FDTD_COMPLEX_SUPPORTED
-}
+};
 
 void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
+    assert(typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>));
+
     RealNumber y0 = -0.5;
     RealNumber y1 = 0.5;
     RealNumber z0 = -0.5;
@@ -1710,11 +1709,8 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
     RealNumber k_y = (RealNumber)0.0*ky_max;
     RealNumber k_z = (RealNumber)0.25*kz_max;
 
-#ifdef FDTD_COMPLEX_SUPPORTED
-    RealNumber _j = (RealNumber)(std::complex<double>(0.0, 1.0));
-#else
-    RealNumber _j = 0.0;
-#endif // FDTD_COMPLEX_SUPPORTED
+
+    RealNumber _j = (RealNumber)(DemotableComplex<double>(0.0, 1.0));
 
     RealNumber _m_dt_dy_exp_jky_y10_ = -dt/dy*std::exp(_j*k_y*(y1 - y0));
     RealNumber _dt_dz_exp_jkz_z10_  = dt/dz*std::exp(_j*k_z*(z1 - z0));
@@ -1766,14 +1762,15 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
     fileTranslator.Translate();
 }
 
+
 #include <typeinfo>
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
    // test_read_json();
     //test_run_fdtd_1d_from_json();
 
-    //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
-    test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+    test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
+    //test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
 }
 
 

@@ -41,28 +41,24 @@ std::size_t ParameterExtractor::GetUintProperty(const std::string path) {
 }
 
 RealNumber ParameterExtractor::GetRealProperty(const std::string path) {
-#ifdef  FDTD_COMPLEX_SUPPORTED
     if(treeRoot.get_child(path).size() == 2 &&
             (typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>)) ) {
         return (RealNumber)(GetComplexProperty(path));
     } else {
         return treeRoot.get<RealNumber>(path);
     }
-#else
-    return treeRoot.get<RealNumber>(path);
-#endif // FDTD_COMPLEX_SUPPORTED
 }
 
 double ParameterExtractor::GetDoubleProperty(const std::string path) {
     return treeRoot.get<double>(path);
 }
 
-std::complex<double> ParameterExtractor::GetComplexProperty(const std::string path) {
+DemotableComplex<double> ParameterExtractor::GetComplexProperty(const std::string path) {
     ParameterExtractor complexExtractor(GetSubTreeRootNode(path));
     assert(complexExtractor.GetSize() == 2);
     ParameterExtractor complexExtractor_real(complexExtractor.GetSubTreeByIndex(0));
     ParameterExtractor complexExtractor_imag(complexExtractor.GetSubTreeByIndex(1));
-    return std::complex(complexExtractor_real.GetDoubleProperty(""), complexExtractor_imag.GetDoubleProperty(""));
+    return DemotableComplex(complexExtractor_real.GetDoubleProperty(""), complexExtractor_imag.GetDoubleProperty(""));
 
 }
 

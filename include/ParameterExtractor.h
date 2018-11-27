@@ -10,6 +10,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include "NumberTypes.h"
+#include "DemotableComplex.hpp"
 
 class ParameterExtractor {
     public:
@@ -39,7 +40,7 @@ class ParameterExtractor {
 
     double GetDoubleProperty(const std::string path);           // given a path to "key":1.2 returns 1.2
 
-    std::complex<double> GetComplexProperty(const std::string path);     // given a path to "key":[1.2, 3.1] returns
+    DemotableComplex<double> GetComplexProperty(const std::string path); // given a path to "key":[1.2, 3.1] returns
                                                                          // the complex number 1.2 + 3.1j
 
     std::array<std::size_t, 3> Get3VecUintProperty(const std::string path);     // given a path to
