@@ -163,7 +163,7 @@ def PlotArrays2D(fileName, readEvery = 1, delay = 0.05):
                 E[j, :] = data_ij
             if n % readEvery == 0:
                 print(np.max(np.abs(E)))
-                plt.imshow(np.real(E).T, cmap="rainbow", origin='lower', aspect='auto')
+                plt.imshow(np.real(E), cmap="rainbow", origin='lower', aspect='auto')
                 plt.colorbar()
         #plt.show()
         if n % readEvery == 0:

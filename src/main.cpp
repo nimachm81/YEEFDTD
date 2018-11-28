@@ -1695,7 +1695,7 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
     RealNumber z_j = (RealNumber)0.9*z0 + (RealNumber)0.1*z1;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
-    std::size_t numOfTimeSamples = 801;
+    std::size_t numOfTimeSamples = 1500;
 
     RealNumber gamma = 0.0;
     RealNumber wp = 2.0*M_PI*5.0;
@@ -1769,8 +1769,8 @@ int main(int argc, char** argv) {
    // test_read_json();
     //test_run_fdtd_1d_from_json();
 
-    test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
-    //test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+    //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
+    test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
 }
 
 
