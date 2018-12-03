@@ -2,7 +2,7 @@
 {
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_m_dt_", "_nt_", "_y_j_", "_z_j_", "_indyJ_", "_indzJ_", "_indyJ_p1_", "_indzJ_p1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_m_dt_dydz_", "_wp_sq_", "_wp_sq_center_y_", "_wp_sq_center_z_", "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_", "_m_dt_tau_"],
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_p1_", "_nz_m1_", "_dy_", "_dz_", "_dt_", "_m_dt_", "_nt_", "_indyJ_", "_indzJ_", "_indyJ_p1_", "_indzJ_p1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_m_dt_dydz_", "_wp_sq_", "_wp_sq_center_y_", "_wp_sq_center_z_", "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_", "_m_dt_tau_"],
     "dimensions":{
         "r0":[0.0, "_y0_", "_z0_"],
         "r1":[0.1, "_y1_", "_z1_"],
@@ -37,6 +37,70 @@
             "decay_rate":[0.0, "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_"],
             "unitCellOrigin":[0.0, 0.0, 0.0],
             "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+            }
+        },
+        {
+        "type":"GaussianSliceGridArrayManipulator",
+        "parameters":{
+            "name":"PMCY0updater",
+            "array":"H",
+            "direction":"z",
+            "indStart":[0, 0, 0],
+            "indEnd":[1, 1, "_nz_p1_"],
+            "amplitude":0.0,
+            "t_center":0.0,
+            "t_decay":0.0,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
+            }
+        },
+        {
+        "type":"GaussianSliceGridArrayManipulator",
+        "parameters":{
+            "name":"PMCY1updater",
+            "array":"H",
+            "direction":"z",
+            "indStart":[0, "_ny_m1_", 0],
+            "indEnd":[1, "_ny_", "_nz_p1_"],
+            "amplitude":0.0,
+            "t_center":0.0,
+            "t_decay":0.0,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
+            }
+        },
+        {
+        "type":"GaussianSliceGridArrayManipulator",
+        "parameters":{
+            "name":"PMCZ0updater",
+            "array":"H",
+            "direction":"y",
+            "indStart":[0, 0, 0],
+            "indEnd":[1, "_ny_p1_", 1],
+            "amplitude":0.0,
+            "t_center":0.0,
+            "t_decay":0.0,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
+            }
+        },
+        {
+        "type":"GaussianSliceGridArrayManipulator",
+        "parameters":{
+            "name":"PMCZ1updater",
+            "array":"H",
+            "direction":"y",
+            "indStart":[0, 0, "_nz_m1_"],
+            "indEnd":[1, "_ny_p1_", "_nz_"],
+            "amplitude":0.0,
+            "t_center":0.0,
+            "t_decay":0.0,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
             }
         }
     ],
@@ -155,11 +219,40 @@
             "name":"Wp_update",
             "girdArrayManipulator":"Wpupdater"
             }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"PMCZ0_update",
+            "girdArrayManipulator":"PMCZ0updater"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"PMCZ1_update",
+            "girdArrayManipulator":"PMCZ1updater"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"PMCY0_update",
+            "girdArrayManipulator":"PMCY0updater"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"PMCY1_update",
+            "girdArrayManipulator":"PMCY1updater"
+            }
         }
     ],
     "updateSequences":[{"name":"materialSetup", "sequence":["Wp_update"]},
                        {"name":"iterative", "sequence":["E_me_J", "E_me_Jp", "E_pe_curl_H", 
                                                         "Hy_pe_m_curl_E", "Hz_pe_m_curl_E", 
+                                                        "PMCZ0_update", "PMCZ1_update", "PMCY0_update", "PMCY1_update",
                                                         "J_update", "Jp_pe_WpsqE", "Jp_me_gammaJp"]}],
     "runSequence":[{"name":"materialSetup", "timeIndStart":0, "timeIndEnd":1},
                    {"name":"iterative", "timeIndStart":0, "timeIndEnd":"_nt_"}],

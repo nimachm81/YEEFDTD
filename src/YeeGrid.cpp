@@ -531,6 +531,9 @@ void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name, const st
         int direction, RealNumber amplitude,
         RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
         RealNumber modulatioPhase, RealNumber timeOffsetFraction) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
     std::shared_ptr<GaussianGridArrayManipulator> modifier(new GaussianGridArrayManipulator);
     modifier->SetAmplitude(amplitude);
     modifier->SetCenterTime(t_center);
@@ -542,6 +545,30 @@ void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name, const st
     gridArrayManipulators[name] = modifier;
 }
 
+void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction,
+        std::array<std::size_t, 3> indStart,
+        std::array<std::size_t, 3> indEnd,
+        RealNumber amplitude,
+        RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
+        RealNumber modulatioPhase, RealNumber timeOffsetFraction
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<GaussianGridArrayManipulator> modifier(new GaussianGridArrayManipulator);
+    modifier->SetAmplitude(amplitude);
+    modifier->SetCenterTime(t_center);
+    modifier->SetDecayTime(t_decay);
+    modifier->SetModulationFrequency(modulationFrequecy);
+    modifier->SetModulationPhase(modulatioPhase);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction).GetSlice(indStart, indEnd));
+    modifier->SetTimeOffsetFraction(timeOffsetFraction);
+    gridArrayManipulators[name] = modifier;
+}
+
+
 void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
         const std::string gridDataName,
         int direction,
@@ -549,6 +576,9 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
         std::array<RealNumber, 3> edgeThickness,
         RealNumber insideValue, RealNumber outsideValue
         ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
     std::shared_ptr<SpatialCubeGridArrayManipulator> modifier(new SpatialCubeGridArrayManipulator);
     modifier->SetCubeCorners(boxCornerR0, boxCornerR1);
     modifier->SetEdgeThickness(edgeThickness);
@@ -572,7 +602,11 @@ void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
         std::array<RealNumber, 4> st_decay_rate,
         std::array<RealNumber, 4> st_modulationFrequecy,
         std::array<RealNumber, 4> st_modulatioPhase,
-        RealNumber timeOffsetFraction) {
+        RealNumber timeOffsetFraction
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
     std::shared_ptr<GaussianSaceTimeGridArrayManipulator> modifier(new GaussianSaceTimeGridArrayManipulator);
     modifier->SetAmplitude(amplitude);
     modifier->SetSpaceTimeCenterPoint(st_center);
@@ -598,7 +632,11 @@ void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
         std::array<RealNumber, 3> center,
         std::array<RealNumber, 3> decay_rate,
         std::array<RealNumber, 3> unitCellOrigin,
-        std::array<std::array<RealNumber, 3>, 3> primitiveVectors) {
+        std::array<std::array<RealNumber, 3>, 3> primitiveVectors
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
     std::shared_ptr<PeriodicGaussianGridArrayManipulator> modifier(new PeriodicGaussianGridArrayManipulator);
     modifier->SetGaussianAmplitude(amplitude);
     modifier->SetGaussianCenter(center);

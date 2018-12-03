@@ -14,6 +14,7 @@ class GridArrayManipulator {
     void SetCornerCoordinate(std::array<RealNumber, 3>& r0);
     void SetGridSpacing(std::array<RealNumber, 3>& dr);
     void SetGridArrayTo(NumberArray3D<RealNumber>& gridData);
+    void SetGridArrayTo(NumberArray3D<RealNumber>&& gridData);
 
     virtual void UpdateArray(const RealNumber t) = 0;
     virtual RealNumber CalculateTime(const RealNumber dt, const std::size_t timeIndex) = 0;

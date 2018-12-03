@@ -36,9 +36,9 @@ class YeeGrid3D {
     RealNumber GetSpaceResolution(int i) const;
     const std::array<RealNumber, 3>& GetSpaceResolution() const;
 
-    // an element that spans over the entire Yee grid
+    // a grid array that spans over the entire Yee grid
     void AddEntireGridElement(const std::string name, ElementType elemType);
-    // an element that spans over a fraction of the Yee grid
+    // a grid array that spans over a fraction of the Yee grid
     void AddPartialGridElement(const std::string name, ElementType elemType
         ,std::array<std::size_t, 3> startCell     // the element start on this cell index of the background grid
         ,std::array<std::size_t, 3> numCells      // number of cells covered by the element
@@ -100,6 +100,15 @@ class YeeGrid3D {
     void AddGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
             int direction, RealNumber amplitude,
+            RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
+            RealNumber modulatioPhase, RealNumber timeOffsetFraction
+            );
+    void AddGaussianGridArrayManipulator(const std::string name,
+            const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
+            int direction,
+            std::array<std::size_t, 3> indStart,    // The manipulator only operates on a slice of the array starting from indStart
+            std::array<std::size_t, 3> indEnd,      // and ending at indEnd-1
+            RealNumber amplitude,
             RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
             RealNumber modulatioPhase, RealNumber timeOffsetFraction
             );

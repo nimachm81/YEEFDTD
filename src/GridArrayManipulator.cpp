@@ -16,3 +16,7 @@ void GridArrayManipulator::SetGridArrayTo(NumberArray3D<RealNumber>& gridArray) 
     GridArrayManipulator::gridArray.MakeThisASliceOf(gridArray);
 }
 
+void GridArrayManipulator::SetGridArrayTo(NumberArray3D<RealNumber>&& gridArray) {
+    GridArrayManipulator::gridArray.MakeThisASliceOf(gridArray);
+}
+

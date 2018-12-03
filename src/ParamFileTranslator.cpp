@@ -62,6 +62,21 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
                     manipulatorParams.GetRealProperty("modulationPhase"),
                     manipulatorParams.GetRealProperty("timeOffsetFraction"));
 
+        } else if(std::get<0>(manipulatorNameAndParams) == "GaussianSliceGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddGaussianGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.Get3VecUintProperty("indStart"),
+                    manipulatorParams.Get3VecUintProperty("indEnd"),
+                    manipulatorParams.GetRealProperty("amplitude"),
+                    manipulatorParams.GetRealProperty("t_center"),
+                    manipulatorParams.GetRealProperty("t_decay"),
+                    manipulatorParams.GetRealProperty("modulationFrequency"),
+                    manipulatorParams.GetRealProperty("modulationPhase"),
+                    manipulatorParams.GetRealProperty("timeOffsetFraction"));
+
         } else if(std::get<0>(manipulatorNameAndParams) == "GaussianSpaceTimeGridArrayManipulator") {
             ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
             yee.AddGaussianSpaceTimeGridArrayManipulator(

@@ -1604,21 +1604,21 @@ void test_run_fdtd_gaussian_plasma_2d_from_json() {
 }
 
 void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
-    RealNumber y0 = -5.0;
-    RealNumber y1 = 5.0;
-    RealNumber z0 = -5.0;
+    RealNumber y0 = -0.5;
+    RealNumber y1 = 0.5;
+    RealNumber z0 = -8.0;
     RealNumber z1 = 5.0;
-    std::size_t ny = 800;
-    std::size_t nz = 800;
+    std::size_t ny = 100;
+    std::size_t nz = 1300;
     RealNumber dy = (y1 - y0)/(RealNumber)(ny);
     RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
+    RealNumber stabilityFactor = 0.95;
     RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
     RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
-    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
+    //RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
-    std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
-    std::size_t numOfTimeSamples = 801;
+    std::size_t indzJ = 1; //std::round(std::real((z_j - z0)/dz));
+    std::size_t numOfTimeSamples = 2000;
 
     RealNumber gamma = 1.0;
     RealNumber wp = 2.0*M_PI*5.0;
@@ -1636,6 +1636,8 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
             {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
+            {"\"_ny_m1_\"", boost::lexical_cast<std::string>(ny - 1)},
+            {"\"_nz_m1_\"", boost::lexical_cast<std::string>(nz - 1)},
             {"\"_dy_\"", boost::lexical_cast<std::string>(std::real(dy))},
             {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
             {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
@@ -1645,8 +1647,6 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
             {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
             {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
             {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dy*dz)))},
-            {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
-            {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
             {"\"_indyJ_\"", boost::lexical_cast<std::string>(indyJ)},
             {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
@@ -1678,15 +1678,28 @@ std::string CastComplexToJSONString(RealNumber complxNum) {
     return stringCast;
 };
 
-void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
+RealNumber FWHMtoDecayRate(RealNumber FWHM) {
+    return (RealNumber)(2.0*std::sqrt(std::log(2)))/FWHM;
+};
+
+void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json(
+            double ky_kymax = 0.0,      // ky/ky_max
+            double kz_kzmax = 0.5,     // kz_kz_max
+            std::string fileNamePostfix = "-GX-",
+            int fileInd = 0
+            ) {
     assert(typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>));
+
+    RealNumber pitch = 127.0;
+    RealNumber FWHM = 62.0;
+    RealNumber eps_r = 11.7;
 
     RealNumber y0 = -0.5;
     RealNumber y1 = 0.5;
     RealNumber z0 = -0.5;
     RealNumber z1 = 0.5;
-    std::size_t ny = 100;
-    std::size_t nz = 100;
+    std::size_t ny = 110;
+    std::size_t nz = 110;
     RealNumber dy = (y1 - y0)/(RealNumber)(ny);
     RealNumber dz = (z1 - z0)/(RealNumber)(nz);
     RealNumber stabilityFactor = 0.99;
@@ -1698,24 +1711,44 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
     std::size_t numOfTimeSamples = 1500;
 
     RealNumber gamma = 0.0;
-    RealNumber wp = 2.0*M_PI*5.0;
-    RealNumber wp2_decayrate_y = 6.0;
-    RealNumber wp2_decayrate_z = 6.0;
+    RealNumber wp = 5.0*1.0e12/(3.0e8/(pitch*1.0e-6));
+    std::cout << "wp : " << wp << std::endl;
+
+    RealNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
+    RealNumber wp2_decayrate_z = FWHMtoDecayRate(FWHM/pitch);
     RealNumber wp2_center_y = 0.0;
     RealNumber wp2_center_z = 0.0;
+    std::cout << "wp2_decayrate_y : " << wp2_decayrate_y << std::endl;
+    std::cout << "wp2_decayrate_z : " << wp2_decayrate_z << std::endl;
 
     RealNumber ky_max = (RealNumber)(2.0*M_PI)/(y1 - y0);
     RealNumber kz_max = (RealNumber)(2.0*M_PI)/(z1 - z0);
-    RealNumber k_y = (RealNumber)0.0*ky_max;
-    RealNumber k_z = (RealNumber)0.25*kz_max;
+    RealNumber k_y = (RealNumber)ky_kymax*ky_max;
+    RealNumber k_z = (RealNumber)kz_kzmax*kz_max;
 
 
     RealNumber _j = (RealNumber)(DemotableComplex<double>(0.0, 1.0));
 
-    RealNumber _m_dt_dy_exp_jky_y10_ = -dt/dy*std::exp(_j*k_y*(y1 - y0));
-    RealNumber _dt_dz_exp_jkz_z10_  = dt/dz*std::exp(_j*k_z*(z1 - z0));
+    RealNumber _m_dt_dy_exp_jky_y10_eps_ = -dt/dy*std::exp(_j*k_y*(y1 - y0))/eps_r;
+    RealNumber _dt_dz_exp_jkz_z10_eps_  = dt/dz*std::exp(_j*k_z*(z1 - z0))/eps_r;
     RealNumber _exp_mjky_y10_ = std::exp(-_j*k_y*(y1 - y0));
     RealNumber _exp_mjkz_z10_ = std::exp(-_j*k_z*(z1 - z0));
+
+    std::string ExFilename = std::string("\"") +
+                             "GaussianPlasmaPBC/E-x" +
+                             fileNamePostfix +
+                             boost::lexical_cast<std::string>(fileInd) +
+                             "\"";
+    std::string HyFilename = std::string("\"") +
+                             "GaussianPlasmaPBC/H-y" +
+                             fileNamePostfix +
+                             boost::lexical_cast<std::string>(fileInd) +
+                             "\"";
+    std::string Wp2Filename = std::string("\"") +
+                              "GaussianPlasmaPBC/Wp2-x" +
+                              fileNamePostfix +
+                              boost::lexical_cast<std::string>(fileInd) +
+                              "\"";
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -1736,6 +1769,10 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
             {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
             {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
             {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_dt_dy_eps_\"", boost::lexical_cast<std::string>(std::real(dt/dy/eps_r))},
+            {"\"_m_dt_dy_eps_\"", boost::lexical_cast<std::string>(std::real(-dt/dy/eps_r))},
+            {"\"_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(dt/dz/eps_r))},
+            {"\"_m_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(-dt/dz/eps_r))},
             {"\"_m_dt_dydz_\"", boost::lexical_cast<std::string>(std::real(-dt/(dy*dz)))},
             {"\"_y_j_\"", boost::lexical_cast<std::string>(std::real(y_j))},
             {"\"_z_j_\"", boost::lexical_cast<std::string>(std::real(z_j))},
@@ -1749,11 +1786,14 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
             {"\"_wp_sq_center_z_\"", boost::lexical_cast<std::string>(std::real(wp2_center_z))},
             {"\"_wp_sq_decayrate_y_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_y))},
             {"\"_wp_sq_decayrate_z_\"", boost::lexical_cast<std::string>(std::real(wp2_decayrate_z))},
-            {"\"_m_dt_dy_exp_jky_y10_\"", CastComplexToJSONString(_m_dt_dy_exp_jky_y10_)},
-            {"\"_dt_dz_exp_jkz_z10_\"", CastComplexToJSONString(_dt_dz_exp_jkz_z10_)},
+            {"\"_m_dt_dy_exp_jky_y10_eps_\"", CastComplexToJSONString(_m_dt_dy_exp_jky_y10_eps_)},
+            {"\"_dt_dz_exp_jkz_z10_eps_\"", CastComplexToJSONString(_dt_dz_exp_jkz_z10_eps_)},
             {"\"_exp_mjky_y10_\"", CastComplexToJSONString(_exp_mjky_y10_)},
             {"\"_exp_mjkz_z10_\"", CastComplexToJSONString(_exp_mjkz_z10_)},
-            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)},
+            {"\"_Ex_filename_\"", boost::lexical_cast<std::string>(ExFilename)},
+            {"\"_Hy_filename_\"", boost::lexical_cast<std::string>(HyFilename)},
+            {"\"_Wp2_filename_\"", boost::lexical_cast<std::string>(Wp2Filename)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_GaussianPlasma_PBC.json",
                 "instructions/MaxwellYee2D_GaussianPlasma_PBC_processed.json", str_replacewith);
@@ -1762,6 +1802,13 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json() {
     fileTranslator.Translate();
 }
 
+void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_sweep_over_BZ(int n_pts = 100) {
+    for(int i = 0; i < n_pts; ++i) {
+        double ky_kymax = 0.0;
+        double kz_kzmax = (double)i/n_pts;
+        test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json(ky_kymax, kz_kzmax, "-GX-", i);
+    }
+}
 
 #include <typeinfo>
 int main(int argc, char** argv) {
@@ -1769,8 +1816,11 @@ int main(int argc, char** argv) {
    // test_read_json();
     //test_run_fdtd_1d_from_json();
 
-    //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
-    test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+    test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
+    //test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
+
+    //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_sweep_over_BZ(100);
+
 }
 
 
