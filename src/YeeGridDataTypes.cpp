@@ -26,7 +26,7 @@ ElementType& YeeGridData3D::GetElemType() {
     return elemType;
 }
 
-NumberArray3D<RealNumber>& YeeGridData3D::GetNumArray(int i) {
+NumberArray3D<FPNumber>& YeeGridData3D::GetNumArray(int i) {
     assert(i>=0 && i<3);
     return numArray[i];
 }

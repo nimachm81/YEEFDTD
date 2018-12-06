@@ -17,12 +17,12 @@ class YeeGridData3D {
                                         std::array<std::size_t, 3> indOrigin={0,0,0});
 
     ElementType& GetElemType();
-    NumberArray3D<RealNumber>& GetNumArray(int i);
+    NumberArray3D<FPNumber>& GetNumArray(int i);
     std::array<std::size_t, 3>& GetIndexOfOrigin();
 
     private:
     ElementType elemType;
-    NumberArray3D<RealNumber> numArray[3];
+    NumberArray3D<FPNumber> numArray[3];
     std::array<std::size_t, 3> numOfCells;
     std::array<std::size_t, 3> indexOfOrigin;   // index of the first cell
                                                 // {0,0,0} starts on the lower left corner of the background grid

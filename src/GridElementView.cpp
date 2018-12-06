@@ -21,8 +21,8 @@ void GridElementView::SetName(std::string name) {
     viewName = name;
 }
 
-void GridElementView::SetNumArray(const NumberArray3D<RealNumber>& numArray) {
-    GridElementView::numArray = std::make_unique<NumberArray3D<RealNumber>>(numArray);
+void GridElementView::SetNumArray(const NumberArray3D<FPNumber>& numArray) {
+    GridElementView::numArray = std::make_unique<NumberArray3D<FPNumber>>(numArray);
 }
 
 void GridElementView::OpenFileToWrite() {

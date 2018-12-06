@@ -1,0 +1,244 @@
+
+{
+"simulationType":"gridCollection",
+"simulationParameters":{
+"variables":"_gall_nt_",
+"grids":{
+"grid0":{
+    "variables":["_g0_z0_", "_g0_z1_", "_g0_nz_", "_g0_nz_m1_", "_g0_dz_", "_g0_dt_", "_g0_indJ_", "_g0_indJ_p1_", "_g0_dt_dz_", "_g0_m_dt_dz_"],
+    "dimensions":{
+        "r0":[0.0, 0.0, "_g0_z0_"],
+        "r1":[0.1, 0.1, "_g0_z1_"],
+        "nCells":[1, 1, "_g0_nz_"],
+        "dt":"_g0_dt_" 
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, "_g0_indJ_"], "nCells":[1, 1, 0]}],
+    "girdArrayManipulators":[
+        {
+        "type":"GaussianGridArrayManipulator",
+        "parameters":{
+            "name":"Jupdater",
+            "array":"J",
+            "direction":"x",
+            "amplitude":1.0,
+            "t_center":1.0,
+            "t_decay":0.2,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 1],
+            "A_indEnd":[1, 1, "_g0_nz_"],
+            "b":["_g0_dt_dz_", "_g0_m_dt_dz_"],
+            "C":["H", "H"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, 1, "_g0_nz_m1_"],
+            "b":["_g0_dt_dz_", "_g0_m_dt_dz_"],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_last_pe_m_curl_E_inside",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, "_g0_nz_m1_"],
+            "A_indEnd":[1, 1, "_g0_nz_"],
+            "b":["_g0_dt_dz_"],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, "_g0_nz_m1_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"H_last_pe_m_curl_E_outside",
+            "neighborGrid":"grid1",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, "_g0_nz_m1_"],
+            "A_indEnd":[1, 1, "_g0_nz_"],
+            "b":["_g0_m_dt_dz_"],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_me_J",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, "_g0_indJ_"],
+            "A_indEnd":[1, 1, "_g0_indJ_p1_"],
+            "b":["_g0_m_dt_dz_"],
+            "C":["J"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"J_update",
+            "girdArrayManipulator":"Jupdater"
+            }
+        }
+    ],
+    "updateSequences":[{"name":"update-E", "sequence":["J_update", "E_me_J", "E_pe_curl_H"]},
+                       {"name":"update-H", "sequence":["H_pe_m_curl_E", "H_last_pe_m_curl_E_inside", "H_last_pe_m_curl_E_outside"]}],
+    "gridViews":[
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"E-x",
+            "array":"E",
+            "direction":"x",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"H-y",
+            "array":"H",
+            "direction":"y",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"J-x",
+            "array":"J",
+            "direction":"x",
+            "saveRate":1
+            }
+        }
+    ]
+},
+"grid1":{
+    "variables":["_g1_z0_", "_g1_z1_", "_g1_nz_", "_g1_nz_m1_", "_g1_dz_", "_g1_dt_", "_g1_dt_dz_", "_g1_m_dt_dz_"],
+    "dimensions":{
+        "r0":[0.0, 0.0, "_g1_z0_"],
+        "r1":[0.1, 0.1, "_g1_z1_"],
+        "nCells":[1, 1, "_g1_nz_"],
+        "dt":"_g1_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[],
+    "girdArrayManipulators":[],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 1],
+            "A_indEnd":[1, 1, "_g1_nz_"],
+            "b":["_g1_dt_dz_", "_g1_m_dt_dz_"],
+            "C":["H", "H"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_first_pe_curl_H_inside",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, 1, 1],
+            "b":["_g1_m_dt_dz_"],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"E_first_pe_curl_H_outside",
+            "neighborGrid":"grid0",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, 1, 1],
+            "b":["_g1_dt_dz_"],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, "_g1_nz_m1_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, 1, "_g1_nz_m1_"],
+            "b":["_g1_dt_dz_", "_g1_m_dt_dz_"],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        }
+    ],
+    "updateSequences":[{"name":"update-E", "sequence":["E_pe_curl_H", "E_first_pe_curl_H_inside", "E_first_pe_curl_H_outside"]},
+                       {"name":"update-H", "sequence":["H_pe_m_curl_E"]}],
+    "gridViews":[
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"E-x",
+            "array":"E",
+            "direction":"x",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"H-y",
+            "array":"H",
+            "direction":"y",
+            "saveRate":1
+            }
+        }
+    ]
+}
+},
+"runSequence":[{"timeIndStart":0, "timeIndEnd":"_gall_nt_", "sequence":[["grid0", "update-E"], ["grid1", "update-E"], 
+                                                                        ["grid0", "update-H"], ["grid1", "update-H"]]}]
+}
+}
+
+

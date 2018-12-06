@@ -731,7 +731,7 @@ class NumberArray3D {
     //---------------------   meshgrid
 
     static NumberArray3D GetMeshGrid(const std::array<std::size_t, 3>& a_shape,
-                                     const std::array<RealNumber, 3>& r_min, const std::array<RealNumber, 3>& r_max,
+                                     const std::array<FPNumber, 3>& r_min, const std::array<FPNumber, 3>& r_max,
                                      int direction) {
         NumberArray3D numArrA(a_shape, 0);
         T*** a_arrayData = numArrA.GetArrayData();
@@ -740,9 +740,9 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
-        std::array<RealNumber, 3> d_max;
+        std::array<FPNumber, 3> d_max;
         for(int i = 0; i < 3; ++i) {
-            d_max[i] = (r_max[i] - r_min[i])/(RealNumber)(a_shape[i] - 1);
+            d_max[i] = (r_max[i] - r_min[i])/(FPNumber)(a_shape[i] - 1);
         }
 
         std::array<std::size_t, 3> i;
@@ -752,7 +752,7 @@ class NumberArray3D {
         for(i0 = 0; i0 < n0; ++i0) {
             for(i1 = 0; i1 < n1; ++i1) {
                 for(i2 = 0; i2 < n2; ++i2) {
-                    a_arrayData[i0][i1][i2] = r_min[direction] + (RealNumber)(i[direction])*d_max[direction];
+                    a_arrayData[i0][i1][i2] = r_min[direction] + (FPNumber)(i[direction])*d_max[direction];
                 }
             }
         }
@@ -760,25 +760,25 @@ class NumberArray3D {
     }
 
     //-----------------------------  bufferIO ----------------
-    void WriteArrayDataToBuffer(RealNumber* buffer,
+    void WriteArrayDataToBuffer(FPNumber* buffer,
                                 std::size_t bufferSize,     // maximum buffer size
                                 std::size_t indStartBuffer  // write starting this index
                                 ) {
         assert(arrayData != nullptr);
         std::size_t totalElements = shape[0]*shape[1]*shape[2];
         assert(indStartBuffer + totalElements <= bufferSize);
-        RealNumber* bufferStart = &(buffer[indStartBuffer]);
+        FPNumber* bufferStart = &(buffer[indStartBuffer]);
         ndarray::buffer::Write3D(bufferStart, shape, indStart, arrayData);
     }
 
-    void ReadArrayDatafromBuffer(RealNumber* buffer,
+    void ReadArrayDatafromBuffer(FPNumber* buffer,
                                  std::size_t bufferSize,     // maximum buffer size
                                  std::size_t indStartBuffer  // read starting this index
                                  ) {
         assert(arrayData != nullptr);
         std::size_t totalElements = shape[0]*shape[1]*shape[2];
         assert(indStartBuffer + totalElements <= bufferSize);
-        RealNumber* bufferStart = &(buffer[indStartBuffer]);
+        FPNumber* bufferStart = &(buffer[indStartBuffer]);
         ndarray::buffer::Read3D(bufferStart, shape, indStart, arrayData);
     }
 

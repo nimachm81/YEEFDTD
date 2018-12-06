@@ -118,6 +118,7 @@
 		<Unit filename="../include/GaussianGridArrayManipulator.h" />
 		<Unit filename="../include/GaussianSpaceTimeGridArrayManipulator.h" />
 		<Unit filename="../include/GridArrayManipulator.h" />
+		<Unit filename="../include/GridCollectionParameterExtractor.h" />
 		<Unit filename="../include/GridElementView.h" />
 		<Unit filename="../include/MultiDimArray.hpp" />
 		<Unit filename="../include/MultiDimArrayAllocator.hpp" />
@@ -147,6 +148,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/GridCollectionParameterExtractor.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GridElementView.cpp">

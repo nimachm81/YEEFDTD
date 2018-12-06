@@ -11,20 +11,20 @@
 class GridArrayManipulator {
     public:
     virtual ~GridArrayManipulator() { };
-    void SetCornerCoordinate(std::array<RealNumber, 3>& r0);
-    void SetGridSpacing(std::array<RealNumber, 3>& dr);
-    void SetGridArrayTo(NumberArray3D<RealNumber>& gridData);
-    void SetGridArrayTo(NumberArray3D<RealNumber>&& gridData);
+    void SetCornerCoordinate(std::array<FPNumber, 3>& r0);
+    void SetGridSpacing(std::array<FPNumber, 3>& dr);
+    void SetGridArrayTo(NumberArray3D<FPNumber>& gridData);
+    void SetGridArrayTo(NumberArray3D<FPNumber>&& gridData);
 
-    virtual void UpdateArray(const RealNumber t) = 0;
-    virtual RealNumber CalculateTime(const RealNumber dt, const std::size_t timeIndex) = 0;
+    virtual void UpdateArray(const FPNumber t) = 0;
+    virtual FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex) = 0;
 
     protected:
-    std::array<RealNumber, 3> r0;  // coordinates of the first element [0,0,0] of gridArray
-    std::array<RealNumber, 3> dr;  // distance between elements. If the array has only one component along a given direction
+    std::array<FPNumber, 3> r0;  // coordinates of the first element [0,0,0] of gridArray
+    std::array<FPNumber, 3> dr;  // distance between elements. If the array has only one component along a given direction
                                    // this distance represents the distance between 2 elemnts of the background grid in
                                    // the same direction.
-    NumberArray3D<RealNumber> gridArray;     // array slice
+    NumberArray3D<FPNumber> gridArray;     // array slice
 
 };
 

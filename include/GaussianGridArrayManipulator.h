@@ -10,23 +10,23 @@
 class GaussianGridArrayManipulator : public GridArrayManipulator {
     public:
     virtual ~GaussianGridArrayManipulator() { };
-    void SetAmplitude(const RealNumber amplitude);
-    void SetCenterTime(const RealNumber t_center);
-    void SetDecayTime(const RealNumber t_decay);
-    void SetModulationFrequency(const RealNumber modulationFrequency);
-    void SetModulationPhase(const RealNumber modulationPhase);
-    void SetTimeOffsetFraction(const RealNumber offsetFraction);
+    void SetAmplitude(const FPNumber amplitude);
+    void SetCenterTime(const FPNumber t_center);
+    void SetDecayTime(const FPNumber t_decay);
+    void SetModulationFrequency(const FPNumber modulationFrequency);
+    void SetModulationPhase(const FPNumber modulationPhase);
+    void SetTimeOffsetFraction(const FPNumber offsetFraction);
 
-    void UpdateArray(const RealNumber t);
-    RealNumber CalculateTime(const RealNumber dt, const std::size_t timeIndex);
+    void UpdateArray(const FPNumber t);
+    FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex);
 
     private:
-    RealNumber amplitude;
-    RealNumber t_center;
-    RealNumber t_decay;
-    RealNumber modulationFrequency;
-    RealNumber modulationPhase;
-    RealNumber timeOffsetFraction = 0.0;
+    FPNumber amplitude;
+    FPNumber t_center;
+    FPNumber t_decay;
+    FPNumber modulationFrequency;
+    FPNumber modulationPhase;
+    FPNumber timeOffsetFraction = 0.0;
 
 };
 

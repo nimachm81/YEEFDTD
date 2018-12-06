@@ -27,7 +27,7 @@ YeeGrid3D::~YeeGrid3D() {
                         std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                         std::string,    // 1
                         int,    // 2
-                        std::vector<RealNumber>,    // 3
+                        std::vector<FPNumber>,    // 3
                         std::vector<std::string>,   // 4
                         std::vector<int>,           // 5
                         std::vector<std::array<std::size_t, 3>>     // 6
@@ -42,7 +42,7 @@ YeeGrid3D::~YeeGrid3D() {
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                     std::string,    // 1
                     int,    // 2
-                    std::vector<RealNumber>,    // 3
+                    std::vector<FPNumber>,    // 3
                     std::vector<std::string>,   // 4
                     std::vector<int>,           // 5
                     std::vector<std::array<std::size_t, 3>>,    // 6
@@ -69,7 +69,7 @@ YeeGrid3D::~YeeGrid3D() {
                         std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 1
                         std::string,    // 2
                         int,    // 3
-                        std::vector<RealNumber>,    // 4
+                        std::vector<FPNumber>,    // 4
                         std::vector<std::string>,   // 5
                         std::vector<int>,           // 6
                         std::vector<std::array<std::size_t, 3>>     // 7
@@ -80,7 +80,7 @@ YeeGrid3D::~YeeGrid3D() {
     }
 }
 
-void YeeGrid3D::SetCornerCoordinates(std::array<RealNumber, 3> r_0, std::array<RealNumber, 3> r_1) {
+void YeeGrid3D::SetCornerCoordinates(std::array<FPNumber, 3> r_0, std::array<FPNumber, 3> r_1) {
     YeeGrid3D::r_0 = r_0;
     YeeGrid3D::r_1 = r_1;
 }
@@ -90,7 +90,7 @@ void YeeGrid3D::SetNumOfCells(std::array<std::size_t, 3>& nCells) {
     for(int i = 0; i < 3; ++i) {
         assert(nCells[i] >= 0);
         if(nCells[i] > 0) {
-            dr[i] = (r_1[i] - r_0[i]) / (RealNumber)(nCells[i]);
+            dr[i] = (r_1[i] - r_0[i]) / (FPNumber)(nCells[i]);
         } else {
             assert(r_1[i]==r_0[i]);
             dr[i] = 0.0;
@@ -98,7 +98,7 @@ void YeeGrid3D::SetNumOfCells(std::array<std::size_t, 3>& nCells) {
     }
 }
 
-void YeeGrid3D::SetTimeResolution(const RealNumber dt) {
+void YeeGrid3D::SetTimeResolution(const FPNumber dt) {
     YeeGrid3D::dt = dt;
 }
 
@@ -106,15 +106,15 @@ void YeeGrid3D::SetTimeIndex(const std::size_t ind) {
     timeIndex = ind;
 }
 
-RealNumber YeeGrid3D::GetTimeResolution() const {
+FPNumber YeeGrid3D::GetTimeResolution() const {
     return dt;
 }
 
-RealNumber YeeGrid3D::GetSpaceResolution(int i) const {
+FPNumber YeeGrid3D::GetSpaceResolution(int i) const {
     return dr[i];
 }
 
-const std::array<RealNumber, 3>& YeeGrid3D::GetSpaceResolution() const {
+const std::array<FPNumber, 3>& YeeGrid3D::GetSpaceResolution() const {
     return dr;
 }
 
@@ -122,11 +122,11 @@ const std::array<std::size_t, 3>& YeeGrid3D::GetNumberOfCells() const {
     return nCells;
 }
 
-const std::array<RealNumber, 3>& YeeGrid3D::GetCornerR0() const {
+const std::array<FPNumber, 3>& YeeGrid3D::GetCornerR0() const {
     return r_0;
 }
 
-const std::array<RealNumber, 3>& YeeGrid3D::GetCornerR1() const {
+const std::array<FPNumber, 3>& YeeGrid3D::GetCornerR1() const {
     return r_1;
 }
 
@@ -191,7 +191,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
                                   std::array<std::size_t, 3> ind_end_A,
                                   std::string arrayA_name,
                                   int arrayA_component,
-                                  std::vector<RealNumber> bValues,
+                                  std::vector<FPNumber> bValues,
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
                                   std::vector<std::array<std::size_t, 3>> arrayC_indsStart
@@ -201,7 +201,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
             std::string,    // 1
             int,    // 2
-            std::vector<RealNumber>,    // 3
+            std::vector<FPNumber>,    // 3
             std::vector<std::string>,   // 4
             std::vector<int>,           // 5
             std::vector<std::array<std::size_t, 3>>     // 6
@@ -222,7 +222,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_bB_C(
                                   std::array<std::size_t, 3> ind_end_A,
                                   std::string arrayA_name,
                                   int arrayA_component,
-                                  std::vector<RealNumber> bValues,
+                                  std::vector<FPNumber> bValues,
                                   std::vector<std::string> arrayB_names,
                                   std::vector<int> arrayB_components,
                                   std::vector<std::array<std::size_t, 3>> arrayB_indsStart,
@@ -235,7 +235,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_bB_C(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
             std::string,    // 1
             int,    // 2
-            std::vector<RealNumber>,    // 3
+            std::vector<FPNumber>,    // 3
             std::vector<std::string>,   // 4
             std::vector<int>,           // 5
             std::vector<std::array<std::size_t, 3>>,    // 6
@@ -271,7 +271,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
                                   std::array<std::size_t, 3> ind_end_A,
                                   std::string arrayA_name,
                                   int arrayA_component,
-                                  std::vector<RealNumber> bValues,
+                                  std::vector<FPNumber> bValues,
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
                                   std::vector<std::array<std::size_t, 3>> arrayC_indsStart
@@ -282,7 +282,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 1
             std::string,    // 2
             int,    // 3
-            std::vector<RealNumber>,    // 4
+            std::vector<FPNumber>,    // 4
             std::vector<std::string>,   // 5
             std::vector<int>,           // 6
             std::vector<std::array<std::size_t, 3>>     // 7
@@ -308,7 +308,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                     std::string,    // 1
                     int,    // 2
-                    std::vector<RealNumber>,    // 3
+                    std::vector<FPNumber>,    // 3
                     std::vector<std::string>,   // 4
                     std::vector<int>,           // 5
                     std::vector<std::array<std::size_t, 3>>     // 6
@@ -318,7 +318,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::array<std::size_t, 3>& ind_end_A = std::get<0>(params_tuple).second;
         std::string& arrayA_name = std::get<1>(params_tuple);
         int arrayA_component = std::get<2>(params_tuple);
-        std::vector<RealNumber>& bValue = std::get<3>(params_tuple);
+        std::vector<FPNumber>& bValue = std::get<3>(params_tuple);
         std::vector<std::string>& arrayC_names = std::get<4>(params_tuple);
         std::vector<int>& arrayC_components = std::get<5>(params_tuple);
         std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<6>(params_tuple);
@@ -327,17 +327,17 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         assert(arrayC_names.size() == numRhs &&
                arrayC_components.size() == numRhs && arrayC_indsStart.size() == numRhs);
 
-        NumberArray3D<RealNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<RealNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
 
         for(std::size_t i = 0; i < numRhs; ++i) {
-            RealNumber b = bValue[i];
-            NumberArray3D<RealNumber>& arrayC = (*(gridElements[arrayC_names[i]])).GetNumArray(arrayC_components[i]);
+            FPNumber b = bValue[i];
+            NumberArray3D<FPNumber>& arrayC = (*(gridElements[arrayC_names[i]])).GetNumArray(arrayC_components[i]);
             std::array<std::size_t, 3>& ind_start_C = arrayC_indsStart[i];
             std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + ind_end_A[0] - ind_start_A[0],
                                                  ind_start_C[1] + ind_end_A[1] - ind_start_A[1],
                                                  ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<RealNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
+            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C) {
                 arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
@@ -357,7 +357,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                     std::string,    // 1
                     int,    // 2
-                    std::vector<RealNumber>,    // 3
+                    std::vector<FPNumber>,    // 3
                     std::vector<std::string>,   // 4
                     std::vector<int>,           // 5
                     std::vector<std::array<std::size_t, 3>>,    // 6
@@ -370,7 +370,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::array<std::size_t, 3>& ind_end_A = std::get<0>(params_tuple).second;
         std::string& arrayA_name = std::get<1>(params_tuple);
         int arrayA_component = std::get<2>(params_tuple);
-        std::vector<RealNumber>& bValues = std::get<3>(params_tuple);
+        std::vector<FPNumber>& bValues = std::get<3>(params_tuple);
         std::vector<std::string>& arrayB_names = std::get<4>(params_tuple);
         std::vector<int>& arrayB_components = std::get<5>(params_tuple);
         std::vector<std::array<std::size_t, 3>>& arrayB_indsStart = std::get<6>(params_tuple);
@@ -383,24 +383,24 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                arrayC_components.size() == numRhs && arrayC_indsStart.size() == numRhs &&
                arrayB_components.size() == numRhs && arrayB_indsStart.size() == numRhs);
 
-        NumberArray3D<RealNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<RealNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
 
         for(std::size_t i = 0; i < numRhs; ++i) {
-            RealNumber b = bValues[i];
-            NumberArray3D<RealNumber>& arrayB = (*(gridElements[arrayB_names[i]])).GetNumArray(arrayB_components[i]);
+            FPNumber b = bValues[i];
+            NumberArray3D<FPNumber>& arrayB = (*(gridElements[arrayB_names[i]])).GetNumArray(arrayB_components[i]);
             std::array<std::size_t, 3>& ind_start_B = arrayB_indsStart[i];
             std::array<std::size_t, 3> ind_end_B{ind_start_B[0] + ind_end_A[0] - ind_start_A[0],
                                                  ind_start_B[1] + ind_end_A[1] - ind_start_A[1],
                                                  ind_start_B[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<RealNumber> arrayBSlice = arrayB.GetSlice(ind_start_B, ind_end_B);
+            NumberArray3D<FPNumber> arrayBSlice = arrayB.GetSlice(ind_start_B, ind_end_B);
 
-            NumberArray3D<RealNumber>& arrayC = (*(gridElements[arrayC_names[i]])).GetNumArray(arrayC_components[i]);
+            NumberArray3D<FPNumber>& arrayC = (*(gridElements[arrayC_names[i]])).GetNumArray(arrayC_components[i]);
             std::array<std::size_t, 3>& ind_start_C = arrayC_indsStart[i];
             std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + ind_end_A[0] - ind_start_A[0],
                                                  ind_start_C[1] + ind_end_A[1] - ind_start_A[1],
                                                  ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<RealNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
+            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C) {
                 arrayASlice += b*arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
@@ -425,7 +425,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         assert(found != gridArrayManipulators.end());  // name is valid
 
         GridArrayManipulator& gridManipulator = *gridArrayManipulators[gridManipulator_name];
-        RealNumber t = gridManipulator.CalculateTime(dt, timeIndex);
+        FPNumber t = gridManipulator.CalculateTime(dt, timeIndex);
         gridManipulator.UpdateArray(t);
     } else if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor ||
        instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
@@ -436,7 +436,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 1
                     std::string,    // 2
                     int,    // 3
-                    std::vector<RealNumber>,    // 4
+                    std::vector<FPNumber>,    // 4
                     std::vector<std::string>,   // 5
                     std::vector<int>,           // 6
                     std::vector<std::array<std::size_t, 3>>     // 7
@@ -447,7 +447,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::array<std::size_t, 3>& ind_end_A = std::get<1>(params_tuple).second;
         std::string& arrayA_name = std::get<2>(params_tuple);
         int arrayA_component = std::get<3>(params_tuple);
-        std::vector<RealNumber>& bValue = std::get<4>(params_tuple);
+        std::vector<FPNumber>& bValue = std::get<4>(params_tuple);
         std::vector<std::string>& arrayC_names = std::get<5>(params_tuple);
         std::vector<int>& arrayC_components = std::get<6>(params_tuple);
         std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<7>(params_tuple);
@@ -456,18 +456,18 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         assert(arrayC_names.size() == numRhs &&
                arrayC_components.size() == numRhs && arrayC_indsStart.size() == numRhs);
 
-        NumberArray3D<RealNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<RealNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
 
         for(std::size_t i = 0; i < numRhs; ++i) {
-            RealNumber b = bValue[i];
-            NumberArray3D<RealNumber>& arrayC =
+            FPNumber b = bValue[i];
+            NumberArray3D<FPNumber>& arrayC =
                     neighborGrid->GetGridElement(arrayC_names[i]).GetNumArray(arrayC_components[i]);
             std::array<std::size_t, 3>& ind_start_C = arrayC_indsStart[i];
             std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + ind_end_A[0] - ind_start_A[0],
                                                  ind_start_C[1] + ind_end_A[1] - ind_start_A[1],
                                                  ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<RealNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
+            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor) {
                 arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
@@ -528,9 +528,9 @@ void YeeGrid3D::ApplyInstructionsOnce(std::string name) {
 }
 
 void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name, const std::string gridDataName,
-        int direction, RealNumber amplitude,
-        RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-        RealNumber modulatioPhase, RealNumber timeOffsetFraction) {
+        int direction, FPNumber amplitude,
+        FPNumber t_center, FPNumber t_decay, FPNumber modulationFrequecy,
+        FPNumber modulatioPhase, FPNumber timeOffsetFraction) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
@@ -550,9 +550,9 @@ void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name,
         int direction,
         std::array<std::size_t, 3> indStart,
         std::array<std::size_t, 3> indEnd,
-        RealNumber amplitude,
-        RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-        RealNumber modulatioPhase, RealNumber timeOffsetFraction
+        FPNumber amplitude,
+        FPNumber t_center, FPNumber t_decay, FPNumber modulationFrequecy,
+        FPNumber modulatioPhase, FPNumber timeOffsetFraction
         ) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
@@ -572,9 +572,9 @@ void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name,
 void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
         const std::string gridDataName,
         int direction,
-        std::array<RealNumber, 3> boxCornerR0, std::array<RealNumber, 3> boxCornerR1,
-        std::array<RealNumber, 3> edgeThickness,
-        RealNumber insideValue, RealNumber outsideValue
+        std::array<FPNumber, 3> boxCornerR0, std::array<FPNumber, 3> boxCornerR1,
+        std::array<FPNumber, 3> edgeThickness,
+        FPNumber insideValue, FPNumber outsideValue
         ) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
@@ -586,7 +586,7 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
     modifier->SetOutsideValue(outsideValue);
 
     // find the coordinates of the first element of the array
-    std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
 
     modifier->SetCornerCoordinate(arrayR0);
     modifier->SetGridSpacing(dr);
@@ -597,12 +597,12 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
 void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
         const std::string gridDataName,
         int direction,
-        RealNumber amplitude,
-        std::array<RealNumber, 4> st_center,
-        std::array<RealNumber, 4> st_decay_rate,
-        std::array<RealNumber, 4> st_modulationFrequecy,
-        std::array<RealNumber, 4> st_modulatioPhase,
-        RealNumber timeOffsetFraction
+        FPNumber amplitude,
+        std::array<FPNumber, 4> st_center,
+        std::array<FPNumber, 4> st_decay_rate,
+        std::array<FPNumber, 4> st_modulationFrequecy,
+        std::array<FPNumber, 4> st_modulatioPhase,
+        FPNumber timeOffsetFraction
         ) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
@@ -617,7 +617,7 @@ void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
     modifier->SetTimeOffsetFraction(timeOffsetFraction);
 
         // find the coordinates of the first element of the array
-    std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
 
     modifier->SetCornerCoordinate(arrayR0);
     modifier->SetGridSpacing(dr);
@@ -628,11 +628,11 @@ void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
 void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
         const std::string gridDataName,
         int direction,
-        RealNumber amplitude,
-        std::array<RealNumber, 3> center,
-        std::array<RealNumber, 3> decay_rate,
-        std::array<RealNumber, 3> unitCellOrigin,
-        std::array<std::array<RealNumber, 3>, 3> primitiveVectors
+        FPNumber amplitude,
+        std::array<FPNumber, 3> center,
+        std::array<FPNumber, 3> decay_rate,
+        std::array<FPNumber, 3> unitCellOrigin,
+        std::array<std::array<FPNumber, 3>, 3> primitiveVectors
         ) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
@@ -646,7 +646,7 @@ void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
 
         // find the coordinates of the first element of the array
-    std::array<RealNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
 
     modifier->SetCornerCoordinate(arrayR0);
     modifier->SetGridSpacing(dr);
@@ -654,21 +654,21 @@ void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
     gridArrayManipulators[name] = modifier;
 }
 
-std::array<RealNumber, 3> YeeGrid3D::GetCoordinatesOfFirstElementOfGridDataArray(
+std::array<FPNumber, 3> YeeGrid3D::GetCoordinatesOfFirstElementOfGridDataArray(
                                         const std::string& gridDataName,
                                         int direction) {
     std::array<std::size_t, 3>& indexOfOrigin = gridElements[gridDataName]->GetIndexOfOrigin();
     // find the coordinates of the first element of the array
-    std::array<RealNumber, 3> arrayR0{r_0[0] + (RealNumber)(indexOfOrigin[0])*dr[0],
-                                      r_0[1] + (RealNumber)(indexOfOrigin[1])*dr[1],
-                                      r_0[2] + (RealNumber)(indexOfOrigin[2])*dr[2]};
+    std::array<FPNumber, 3> arrayR0{r_0[0] + (FPNumber)(indexOfOrigin[0])*dr[0],
+                                      r_0[1] + (FPNumber)(indexOfOrigin[1])*dr[1],
+                                      r_0[2] + (FPNumber)(indexOfOrigin[2])*dr[2]};
     ElementType& elemType = gridElements[gridDataName]->GetElemType();
     if(elemType == ElementType::EdgeE) {
-        arrayR0[direction] += dr[direction]/(RealNumber)2.0;
+        arrayR0[direction] += dr[direction]/(FPNumber)2.0;
     }else if(elemType == ElementType::EdgeH) {
         for(int i = 0; i < 3; ++i) {
             if(i != direction) {
-                arrayR0[i] += dr[i]/(RealNumber)2.0;
+                arrayR0[i] += dr[i]/(FPNumber)2.0;
             }
         }
     }else{

@@ -1,4 +1,6 @@
 
+#include <string>
+#include <map>
 
 #include "YeeGrid.h"
 #include "ParamFileTranslator.h"
@@ -12,6 +14,8 @@ void ParamFileTranslator::Translate() {
     auto simulationType = paramExtractor.GetStringProperty("simulationType");
     if(simulationType == "singleGrid") {
         TranslateSingleGrid(paramExtractor.GetSubTreeRootNode("simulationParameters"));
+    } else if(simulationType == "gridCollection") {
+        TranslateGridCollection(paramExtractor.GetSubTreeRootNode("simulationParameters"));
     } else {
         assert(false);
     }
@@ -20,18 +24,64 @@ void ParamFileTranslator::Translate() {
 void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) {
 
     SingleGridParameterExtractor singleGridRoot(node);
+    YeeGrid3D yee;
+    std::map<std::string, YeeGrid3D> grids;     // not used. but it should be defined to pass to SetSingleGridUpddateInstructions
+
+    SetSingleGridDimensions(yee, singleGridRoot);
+    SetSingleGridGridArrays(yee, singleGridRoot);
+    SetSingleGridGridArrayManipulators(yee, singleGridRoot);
+    SetSingleGridUpddateInstructions(yee, singleGridRoot, grids);
+    SetSingleGridUpdateSequences(yee, singleGridRoot);
+    SetSingleGridGridViews(yee, singleGridRoot);
+    SetAndRunSingleGridRunSequencs(yee, singleGridRoot);
+}
+
+void ParamFileTranslator::TranslateGridCollection(boost::property_tree::ptree node) {
+    ParameterExtractor simulationParamsRoot(node);
+    ParameterExtractor gridsRoot(simulationParamsRoot.GetSubTreeRootNode("grids"));     // TODO: assert "grids" exists
+
+    std::size_t numOfGrids = gridsRoot.GetSize();
+    // initialize grids
+    std::map<std::string, YeeGrid3D> gridsMap;
+    for(auto& it : gridsRoot.GetPropertyTreeRoot()) {
+        std::string gridName = it.first;
+        std::cout << gridName << std::endl;
+        gridsMap[gridName] = YeeGrid3D();
+    }
+
+    for(auto& it : gridsRoot.GetPropertyTreeRoot()) {
+        std::string gridName = it.first;
+        SingleGridParameterExtractor singleGridRoot(it.second);
+
+        YeeGrid3D& grid_i = gridsMap[gridName];
+
+        SetSingleGridDimensions(grid_i, singleGridRoot);
+        SetSingleGridGridArrays(grid_i, singleGridRoot);
+        SetSingleGridGridArrayManipulators(grid_i, singleGridRoot);
+        SetSingleGridUpddateInstructions(grid_i, singleGridRoot, gridsMap);
+        SetSingleGridUpdateSequences(grid_i, singleGridRoot);
+        SetSingleGridGridViews(grid_i, singleGridRoot);
+    }
+
+    GridCollectionParameterExtractor gridCollectionRoot(node);
+    SetAndRunGridCollectionRunSequencs(gridsMap, gridCollectionRoot);
+}
+
+
+void ParamFileTranslator::SetSingleGridDimensions(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot) {
     ParameterExtractor dimensionsExtractor(singleGridRoot.GetSubTreeRootNode("dimensions"));
     auto r0 = dimensionsExtractor.Get3VecRealProperty("r0");
     auto r1 = dimensionsExtractor.Get3VecRealProperty("r1");
     auto nCells = dimensionsExtractor.Get3VecUintProperty("nCells");
 
-    RealNumber dt = dimensionsExtractor.GetRealProperty("dt");
+    FPNumber dt = dimensionsExtractor.GetRealProperty("dt");
 
-    YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
     yee.SetTimeResolution(dt);
+}
 
+void ParamFileTranslator::SetSingleGridGridArrays(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot) {
     auto entireGridElements = singleGridRoot.GetEntireGridArrayParameters("entireGridArrays");
 
     for(auto& arrayNameType : entireGridElements) {
@@ -46,7 +96,10 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
                                   std::get<3>(arrayParams)
                                   );
     }
+}
 
+void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
+                                                             SingleGridParameterExtractor& singleGridRoot) {
     auto gridArrayManipulators = singleGridRoot.GetTypeStringAndParameterSubtree("girdArrayManipulators");
     for(auto& manipulatorNameAndParams : gridArrayManipulators) {
         if(std::get<0>(manipulatorNameAndParams) == "GaussianGridArrayManipulator") {
@@ -95,7 +148,7 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
 
             auto primitiveVectors_vec = manipulatorParams.Get3VecRealArray("primitiveVectors");
             assert(primitiveVectors_vec.size() == 3);
-            std::array<std::array<RealNumber, 3>, 3> primitiveVectors_array{primitiveVectors_vec[0],    // a 3-array
+            std::array<std::array<FPNumber, 3>, 3> primitiveVectors_array{primitiveVectors_vec[0],    // a 3-array
                                                                             primitiveVectors_vec[1],    // containing the
                                                                             primitiveVectors_vec[2]};   // 3 primitive vectors
             yee.AddPeriodicGaussianGridArrayManipulator(
@@ -125,7 +178,11 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
             assert(false);
         }
     }
+}
 
+void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
+                                                           SingleGridParameterExtractor& singleGridRoot,
+                                                           std::map<std::string, YeeGrid3D>& gridsMap) {
     auto updateInstructions = singleGridRoot.GetTypeStringAndParameterSubtree("updateInstructions");
     for(auto& updateTypeandParams : updateInstructions) {
         auto& updateType = std::get<0>(updateTypeandParams);
@@ -157,6 +214,41 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
             }else if(updateType == "A=sumbC") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_equal_sum_b_C,
+                        updateParamsPtr
+                        );
+            } else {
+                assert(false);
+            }
+
+        } else if(updateType == "A+=sumbC::NB" || updateType == "A=sumbC::NB") {
+            ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
+
+            auto C_directions_str = updateParams.GetStringArray("C_direction");
+            std::vector<int> C_directions;
+            for(auto& direction : C_directions_str) {
+                C_directions.emplace_back(stringDirectionToIntDirectionMap[direction]);
+            }
+
+            void* updateParamsPtr = yee.ConstructParams_A_plusequal_sum_b_C_neighbor(
+                &gridsMap[updateParams.GetStringProperty("neighborGrid")],
+                updateParams.Get3VecUintProperty("A_indStart"),  // indStart
+                updateParams.Get3VecUintProperty("A_indEnd"), // indEnd
+                updateParams.GetStringProperty("A"),        // A name
+                stringDirectionToIntDirectionMap[updateParams.GetStringProperty("A_direction")], // A direcction
+                updateParams.GetRealArray("b"),     // b values
+                updateParams.GetStringArray("C"),   // C names
+                C_directions,
+                updateParams.Get3VecUintArray("C_indStart")
+                );
+
+            if(updateType == "A+=sumbC::NB") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_plusequal_sum_b_C_neighbor,
+                        updateParamsPtr
+                        );
+            }else if(updateType == "A=sumbC::NB") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_equal_sum_b_C_neighbor,
                         updateParamsPtr
                         );
             } else {
@@ -218,10 +310,14 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
                     updateParamsPtr
                     );
         } else {
+            std::cout << "Unknown update instruction: " << updateType << std::endl;
             assert(false);
         }
     }
+}
 
+void ParamFileTranslator::SetSingleGridUpdateSequences(YeeGrid3D& yee,
+                                                             SingleGridParameterExtractor& singleGridRoot) {
     auto updateSequences = singleGridRoot.GetUpdateSequences("updateSequences");
     for(auto& updateNameAndSequence : updateSequences) {
         yee.AddInstructionSequence(
@@ -229,7 +325,10 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
                 std::get<1>(updateNameAndSequence)
                 );
     };
+}
 
+void ParamFileTranslator::SetSingleGridGridViews(YeeGrid3D& yee,
+                                                             SingleGridParameterExtractor& singleGridRoot) {
     auto gridViews = singleGridRoot.GetTypeStringAndParameterSubtree("gridViews");
     for(auto& viewTypeandParams : gridViews) {
         auto& viewType = std::get<0>(viewTypeandParams);
@@ -263,10 +362,13 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
     }
 
     yee.DeleteOlderViewFiles();
+}
 
+void ParamFileTranslator::SetAndRunSingleGridRunSequencs(YeeGrid3D& yee,
+                                                             SingleGridParameterExtractor& singleGridRoot) {
     auto runSequence = singleGridRoot.GetRunSequence("runSequence");
     for(auto& sequenceNameAndNumOfRuns : runSequence) {
-        yee.ApplyInstructions(      //TODO: set time index at the beginning
+        yee.ApplyInstructions(
                 std::get<0>(sequenceNameAndNumOfRuns),
                 std::get<1>(sequenceNameAndNumOfRuns),
                 std::get<2>(sequenceNameAndNumOfRuns)
@@ -274,3 +376,7 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
     }
 }
 
+void ParamFileTranslator::SetAndRunGridCollectionRunSequencs(std::map<std::string, YeeGrid3D>& gridsMap,
+                                                             GridCollectionParameterExtractor& gridCollectionRoot) {
+    auto runSequence = gridCollectionRoot.GetRunSequence("runSequence");
+}

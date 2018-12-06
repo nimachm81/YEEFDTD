@@ -2,19 +2,19 @@
 
 #include "PeriodicGaussianGridArrayManipulator.h"
 
-void PeriodicGaussianGridArrayManipulator::SetGaussianAmplitude(RealNumber amplitude) {
+void PeriodicGaussianGridArrayManipulator::SetGaussianAmplitude(FPNumber amplitude) {
     gaussianAmplitude = amplitude;
 }
 
-void PeriodicGaussianGridArrayManipulator::SetGaussianCenter(std::array<RealNumber, 3>& center) {
+void PeriodicGaussianGridArrayManipulator::SetGaussianCenter(std::array<FPNumber, 3>& center) {
     gaussianCenter = center;
 }
 
-void PeriodicGaussianGridArrayManipulator::SetGaussianDecayRate(std::array<RealNumber, 3>& decayRate) {
+void PeriodicGaussianGridArrayManipulator::SetGaussianDecayRate(std::array<FPNumber, 3>& decayRate) {
     gaussianDecayRate = decayRate;
 }
 
-RealNumber PeriodicGaussianGridArrayManipulator::Func(const std::array<RealNumber, 3> r, const RealNumber t) {
+FPNumber PeriodicGaussianGridArrayManipulator::Func(const std::array<FPNumber, 3> r, const FPNumber t) {
     return gaussianAmplitude * std::exp( -(
         (r[0] - gaussianCenter[0])*(r[0] - gaussianCenter[0])*(gaussianDecayRate[0]*gaussianDecayRate[0]) +
         (r[1] - gaussianCenter[1])*(r[1] - gaussianCenter[1])*(gaussianDecayRate[1]*gaussianDecayRate[1]) +
@@ -23,8 +23,8 @@ RealNumber PeriodicGaussianGridArrayManipulator::Func(const std::array<RealNumbe
                                        );
 }
 
-RealNumber PeriodicGaussianGridArrayManipulator::CalculateTime(const RealNumber dt, const std::size_t timeIndex) {
-    return dt*(RealNumber)timeIndex;
+FPNumber PeriodicGaussianGridArrayManipulator::CalculateTime(const FPNumber dt, const std::size_t timeIndex) {
+    return dt*(FPNumber)timeIndex;
 }
 
 

@@ -18,12 +18,12 @@ YeeGridCollectionParallel::~YeeGridCollectionParallel() {
 }
 
 void YeeGridCollectionParallel::AddInBuffer(std::string name, std::size_t bufferSize) {
-    RealNumber* buffer = new RealNumber[bufferSize];
+    FPNumber* buffer = new FPNumber[bufferSize];
     inBuffers[name] = buffer;
 }
 
 void YeeGridCollectionParallel::AddOutBuffer(std::string name, std::size_t bufferSize) {
-    RealNumber* buffer = new RealNumber[bufferSize];
+    FPNumber* buffer = new FPNumber[bufferSize];
     outBuffers[name] = buffer;
 }
 

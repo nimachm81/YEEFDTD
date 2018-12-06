@@ -7,14 +7,14 @@
 // and the integer types that describe indices for large arrays.
 // Since the size of the arrays may pass INT_MAX, int64_t is provided as the
 // int type.
-// "RealNumber = double" provides higher accuracy, while "RealNumber = float"
+// "FPNumber = double" provides higher accuracy, while "FPNumber = float"
 // provides memory efficiency and it can be vectorized more efficiently.
 
 
 #include <cstdint>    // std::int64_t
 #include <complex>
 
-using RealNumber = std::complex<double>;
+using FPNumber = std::complex<double>;  // floating point number. could be float, double, complex<float>, complex<double>
 using BigIntNumber = std::int64_t;
 
 

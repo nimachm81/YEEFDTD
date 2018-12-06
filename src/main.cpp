@@ -14,11 +14,11 @@ void test_multidim_array() {
     std::cout << "Test." << std::endl;
 
     std::array<std::size_t, 3> shape{2,3,4};
-    NumberArray3D<RealNumber> A(shape, 2.0);
+    NumberArray3D<FPNumber> A(shape, 2.0);
     std::cout << " A : " << &A << std::endl;
     A.Print();
 
-    NumberArray3D<RealNumber> B(shape, 3.0);
+    NumberArray3D<FPNumber> B(shape, 3.0);
     std::cout << " B : " << &B << std::endl;
     B.Print();
 
@@ -33,7 +33,7 @@ void test_multidim_array() {
 
     A.GetSlice({0, 0, 1}, {2, 2, 2}).Print();
 
-    NumberArray3D<RealNumber> C = (A + B);
+    NumberArray3D<FPNumber> C = (A + B);
     std::cout << " C : " << &C << std::endl;
     C.Print();
 
@@ -41,11 +41,11 @@ void test_multidim_array() {
     std::cout << " A : " << &A << std::endl;
     A.Print();
 
-    std::any a = std::make_any<NumberArray3D<RealNumber>>(shape, 4.01);
+    std::any a = std::make_any<NumberArray3D<FPNumber>>(shape, 4.01);
     std::cout << " a : " << a.type().name() << std::endl;
 
-    std::cout << " a : " << typeid(NumberArray3D<RealNumber>).name() << std::endl;
-    std::any_cast<NumberArray3D<RealNumber>>(a).Print();
+    std::cout << " a : " << typeid(NumberArray3D<FPNumber>).name() << std::endl;
+    std::any_cast<NumberArray3D<FPNumber>>(a).Print();
 }
 
 #include <tuple>
@@ -114,8 +114,8 @@ void test_file_write() {
         int* i = new int[3];
         i[0] = 1; i[1] = 13;
         std::array<std::size_t, 3> shape{3,4,5};
-        NumberArray3D<RealNumber> A(shape, 2.01);
-        NumberArray3D<RealNumber> B = A.GetSlice({1, 1, 1}, {2, 3, 4});
+        NumberArray3D<FPNumber> A(shape, 2.01);
+        NumberArray3D<FPNumber> B = A.GetSlice({1, 1, 1}, {2, 3, 4});
         double* d = new double[4];
         d[3] = 32.4;
 
@@ -138,8 +138,8 @@ void test_file_read() {
         double* d = new double[4];
         //myfile.seekg(0, std::ios::beg);
         std::array<std::size_t, 3> shape{3,4,5};
-        NumberArray3D<RealNumber> A(shape, 0.0);
-        NumberArray3D<RealNumber> B = A.GetSlice({1, 1, 1}, {2, 3, 4});
+        NumberArray3D<FPNumber> A(shape, 0.0);
+        NumberArray3D<FPNumber> B = A.GetSlice({1, 1, 1}, {2, 3, 4});
 
         myfile.read((char*)i, sizeof(int)*3);
         B.ReadArrayDataFromFile(&myfile);
@@ -178,11 +178,11 @@ void test_file_read_backwards() {
 void test_yeegrid_1d() {
     std::size_t nz = 300;
     std::size_t indJ = nz/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*(RealNumber)0.99;
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dt = dz*(FPNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -206,7 +206,7 @@ void test_yeegrid_1d() {
         {1, 1, indJ+1},
         "E",
         0,
-        {-(RealNumber)1.0*dt/dz},
+        {-(FPNumber)1.0*dt/dz},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -240,12 +240,12 @@ void test_yeegrid_2d() {
     std::size_t ny = 200;
     std::size_t indzJx = nz/2;
     std::size_t indyJx = ny/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 10.0, 10.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{0.1, 10.0, 10.0};
     std::array<std::size_t, 3> nCells{1, ny, nz};
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
-    RealNumber dt = dz/std::sqrt((RealNumber)2.0)*(RealNumber)0.99;
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dy = (r1[1] - r0[1])/(FPNumber)(ny);
+    FPNumber dt = dz/std::sqrt((FPNumber)2.0)*(FPNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -276,7 +276,7 @@ void test_yeegrid_2d() {
         {1, indyJx + 1, indzJx + 1},
         "E",
         0,
-        {-(RealNumber)1.0*dt/(dy*dz)},
+        {-(FPNumber)1.0*dt/(dy*dz)},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -286,14 +286,14 @@ void test_yeegrid_2d() {
             {0, 0, 0},
             {1, ny + 1, nz},
             "H",
-            -(RealNumber)1.0*dt,
+            -(FPNumber)1.0*dt,
             "E");
     void* Hz_update_params = FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CxEdgeE(
             yee,
             {0, 0, 0},
             {1, ny, nz + 1},
             "H",
-            -(RealNumber)1.0*dt,
+            -(FPNumber)1.0*dt,
             "E");
     void* J_update_params = yee.ConstructParams_A_equal_func_r_t(
         "JUpdater"
@@ -320,13 +320,13 @@ void test_yeegrid_3d() {
     std::size_t indxJx = nx/2;
     std::size_t indzJx = nz/2;
     std::size_t indyJx = ny/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{10.0, 10.0, 10.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{10.0, 10.0, 10.0};
     std::array<std::size_t, 3> nCells{nx, ny, nz};
-    RealNumber dx = (r1[0] - r0[0])/(RealNumber)(nx);
-    RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz/std::sqrt((RealNumber)3.0)*(RealNumber)0.99;
+    FPNumber dx = (r1[0] - r0[0])/(FPNumber)(nx);
+    FPNumber dy = (r1[1] - r0[1])/(FPNumber)(ny);
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dt = dz/std::sqrt((FPNumber)3.0)*(FPNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -472,11 +472,11 @@ void test_yeegrid_3d() {
 void test_yeegrid_dielectric_1d() {
     std::size_t nz = 1000;
     std::size_t indJ = nz/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.1, 10.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{0.1, 0.1, 10.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*(RealNumber)0.99;
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dt = dz*(FPNumber)0.99;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -489,8 +489,8 @@ void test_yeegrid_dielectric_1d() {
     yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, 1.0 /*amp*/, 1.0 /*t_center*/, 0.2 /*t_decay*/,
             0.0 /*modulation frequency*/, 0.0 /*modulation phase*/, -0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("EpsilonUpdater", "EpsilonInv", 0 /*x*/,
-            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)7.0} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)9.0} /*box corner 1*/,
+            {r0[0] - (FPNumber)0.1, r0[1] - (FPNumber)0.1, (FPNumber)7.0} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, r1[1] + (FPNumber)0.1, (FPNumber)9.0} /*box corner 1*/,
             {0.0, 0.0, 0.5} /*edge thickness*/,
             1.0/4.0 /*insideValue*/, 1.0 /*outsideValue*/);
 
@@ -507,7 +507,7 @@ void test_yeegrid_dielectric_1d() {
         {1, 1, nz},
         "E",
         0,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"EpsilonInv"},
         {0},
         {{0, 0, 1}},
@@ -560,11 +560,11 @@ void test_yeegrid_dielectric_1d() {
 void test_yeegrid_dielectric_pml_1d() {
     std::size_t nz = 600;
     std::size_t indJ = nz/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.1, 15.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{0.1, 0.1, 15.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*(RealNumber)0.95;
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dt = dz*(FPNumber)0.95;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -576,24 +576,24 @@ void test_yeegrid_dielectric_pml_1d() {
     yee.AddEntireGridElement("H", ElementType::EdgeH);
     yee.AddEntireGridElement("sig-H", ElementType::EdgeH);
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, 0, indJ}, {1, 1, 0});
-    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, (RealNumber)1.0 /*amp*/, (RealNumber)1.0 /*t_center*/,
-            (RealNumber)0.2 /*t_decay*/, (RealNumber)0.0 /*modulation frequency*/,
-            (RealNumber)0.0 /*modulation phase*/, -(RealNumber)0.5 /*time offset fraction*/);
+    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, (FPNumber)1.0 /*amp*/, (FPNumber)1.0 /*t_center*/,
+            (FPNumber)0.2 /*t_decay*/, (FPNumber)0.0 /*modulation frequency*/,
+            (FPNumber)0.0 /*modulation phase*/, -(FPNumber)0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("EpsilonUpdater", "EpsilonInv", 0 /*x*/,
-            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)9.0} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)15.0} /*box corner 1*/,
+            {r0[0] - (FPNumber)0.1, r0[1] - (FPNumber)0.1, (FPNumber)9.0} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, r1[1] + (FPNumber)0.1, (FPNumber)15.0} /*box corner 1*/,
             {0.0, 0.0, 0.0} /*edge thickness*/,
-            (RealNumber)1.0/(RealNumber)4.0 /*insideValue*/, (RealNumber)1.0 /*outsideValue*/);
+            (FPNumber)1.0/(FPNumber)4.0 /*insideValue*/, (FPNumber)1.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEUpdater", "sig-E", 2 /*z*/,
-            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)4.01} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)11.01} /*box corner 1*/,
-            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +(RealNumber)1.0 /*outsideValue*/);
+            {r0[0] - (FPNumber)0.1, r0[1] - (FPNumber)0.1, (FPNumber)4.01} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, r1[1] + (FPNumber)0.1, (FPNumber)11.01} /*box corner 1*/,
+            {0.0, 0.0, (FPNumber)1.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(FPNumber)1.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHUpdater", "sig-H", 2 /*z*/,
-            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)4.01} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)11.01} /*box corner 1*/,
-            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +(RealNumber)1.0 /*outsideValue*/);
+            {r0[0] - (FPNumber)0.1, r0[1] - (FPNumber)0.1, (FPNumber)4.01} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, r1[1] + (FPNumber)0.1, (FPNumber)11.01} /*box corner 1*/,
+            {0.0, 0.0, (FPNumber)1.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(FPNumber)1.0 /*outsideValue*/);
 
     void* D_curlH_update_params = FDInstructionFactory::Get_AxEdgeE_plusEqual_b_Curl_CyEdgeH(
             yee,    // grid
@@ -621,7 +621,7 @@ void test_yeegrid_dielectric_pml_1d() {
         {1, 1, nz},
         "E",
         0,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"EpsilonInv"},
         {0},
         {{0, 0, 1}},
@@ -701,12 +701,12 @@ void test_yeegrid_2d_pml() {
     std::size_t ny = 200;
     std::size_t indzJx = nz/2;
     std::size_t indyJx = ny/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{(RealNumber)0.1, (RealNumber)10.0, (RealNumber)10.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{(FPNumber)0.1, (FPNumber)10.0, (FPNumber)10.0};
     std::array<std::size_t, 3> nCells{1, ny, nz};
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dy = (r1[1] - r0[1])/(RealNumber)(ny);
-    RealNumber dt = dz/std::sqrt((RealNumber)2.0)*(RealNumber)0.95;
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dy = (r1[1] - r0[1])/(FPNumber)(ny);
+    FPNumber dt = dz/std::sqrt((FPNumber)2.0)*(FPNumber)0.95;
     YeeGrid3D yee;
     yee.SetCornerCoordinates(r0, r1);
     yee.SetNumOfCells(nCells);
@@ -725,35 +725,35 @@ void test_yeegrid_2d_pml() {
 
     yee.AddPartialGridElement("J", ElementType::EdgeE, {0, indyJx, indzJx}, {1, 0, 0});
 
-    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, (RealNumber)1.0 /*amp*/, (RealNumber)1.0 /*t_center*/,
-            (RealNumber)0.2 /*t_decay*/, 0.0 /*modulation frequency*/, 0.0 /*modulation phase*/,
-            -(RealNumber)0.5 /*time offset fraction*/);
+    yee.AddGaussianGridArrayManipulator("JUpdater", "J", 0 /*x*/, (FPNumber)1.0 /*amp*/, (FPNumber)1.0 /*t_center*/,
+            (FPNumber)0.2 /*t_decay*/, 0.0 /*modulation frequency*/, 0.0 /*modulation phase*/,
+            -(FPNumber)0.5 /*time offset fraction*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEzUpdater", "sig-E", 2 /*z*/,
-            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)2.01} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)8.01} /*box corner 1*/,
-            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +(RealNumber)2.0 /*outsideValue*/);
+            {r0[0] - (FPNumber)0.1, r0[1] - (FPNumber)0.1, (FPNumber)2.01} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, r1[1] + (FPNumber)0.1, (FPNumber)8.01} /*box corner 1*/,
+            {0.0, 0.0, (FPNumber)1.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(FPNumber)2.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigEyUpdater", "sig-E", 1 /*y*/,
-            {r0[0] - (RealNumber)0.1, (RealNumber)2.01, r0[2] - (RealNumber)0.1} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, (RealNumber)8.01, r1[2] + (RealNumber)0.1} /*box corner 1*/,
+            {r0[0] - (FPNumber)0.1, (FPNumber)2.01, r0[2] - (FPNumber)0.1} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, (FPNumber)8.01, r1[2] + (FPNumber)0.1} /*box corner 1*/,
             {0.0, 1.0, 0.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +(RealNumber)2.0 /*outsideValue*/);
+            0.0 /*insideValue*/, +(FPNumber)2.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHzUpdater", "sig-H", 2 /*z*/,
-            {r0[0] - (RealNumber)0.1, r0[1] - (RealNumber)0.1, (RealNumber)2.01} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, r1[1] + (RealNumber)0.1, (RealNumber)8.01} /*box corner 1*/,
-            {0.0, 0.0, (RealNumber)1.0} /*edge thickness*/,
+            {r0[0] - (FPNumber)0.1, r0[1] - (FPNumber)0.1, (FPNumber)2.01} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, r1[1] + (FPNumber)0.1, (FPNumber)8.01} /*box corner 1*/,
+            {0.0, 0.0, (FPNumber)1.0} /*edge thickness*/,
             0.0 /*insideValue*/, +2.0 /*outsideValue*/);
     yee.AddSpatialCubeGridArrayManipulator("SigHyUpdater", "sig-H", 1 /*y*/,
-            {r0[0] - (RealNumber)0.1, (RealNumber)2.01, r0[2] - (RealNumber)0.1} /*box corner 0*/,
-            {r1[0] + (RealNumber)0.1, (RealNumber)8.01, r1[2] + (RealNumber)0.1} /*box corner 1*/,
-            {0.0, (RealNumber)1.0, 0.0} /*edge thickness*/,
-            0.0 /*insideValue*/, +(RealNumber)2.0 /*outsideValue*/);
+            {r0[0] - (FPNumber)0.1, (FPNumber)2.01, r0[2] - (FPNumber)0.1} /*box corner 0*/,
+            {r1[0] + (FPNumber)0.1, (FPNumber)8.01, r1[2] + (FPNumber)0.1} /*box corner 1*/,
+            {0.0, (FPNumber)1.0, 0.0} /*edge thickness*/,
+            0.0 /*insideValue*/, +(FPNumber)2.0 /*outsideValue*/);
     void* dFx_sigzFx_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
         {0, 1, 1},
         {1, ny, nz},
         "dF",
         0,
-        {-(RealNumber)1.0},          // bValues
+        {-(FPNumber)1.0},          // bValues
         {"sig-E"},
         {2},
         {{0, 1, 1}},
@@ -774,7 +774,7 @@ void test_yeegrid_2d_pml() {
                 {0, 1, 1},        // indStart
                 {1, ny, nz},      // indEnd
                 "dF",              // name of A
-                +(RealNumber)1.0,             // b value
+                +(FPNumber)1.0,             // b value
                 "H"                  // name of C
                 );
     void* dFx_Jx_update_params = yee.ConstructParams_A_plusequal_sum_b_C(
@@ -782,7 +782,7 @@ void test_yeegrid_2d_pml() {
         {1, indyJx + 1, indzJx + 1},
         "dF",    //
         0,
-        {-(RealNumber)1.0/(dy*dz)},
+        {-(FPNumber)1.0/(dy*dz)},
         {"J"},
         {0},
         {{0, 0, 0}}
@@ -825,7 +825,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "E",
         0,
-        {+(RealNumber)1.0},          // bValues
+        {+(FPNumber)1.0},          // bValues
         {"D"},
         {0},
         {{0, 1, 1}}
@@ -835,21 +835,21 @@ void test_yeegrid_2d_pml() {
             {0, 0, 0},
             {1, ny + 1, nz},
             "dG",
-            -(RealNumber)1.0,
+            -(FPNumber)1.0,
             "E");
     void* dGz_Ex_update_params = FDInstructionFactory::Get_AzEdgeH_plusEqual_b_Curl_CxEdgeE(
             yee,
             {0, 0, 0},
             {1, ny, nz + 1},
             "dG",
-            (RealNumber)(-1.0),
+            (FPNumber)(-1.0),
             "E");
     void* dGz_sigyGz_update_params = yee.ConstructParams_A_plusequal_sum_bB_C(
         {0, 0, 0},
         {1, ny, nz + 1},
         "dG",
         2,
-        {(RealNumber)(-1.0)},          // bValues
+        {(FPNumber)(-1.0)},          // bValues
         {"sig-H"},
         {1},
         {{0, 0, 0}},
@@ -928,7 +928,7 @@ void test_yeegrid_2d_pml() {
         {1, ny + 1, nz},
         "H",
         1,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"B"},
         {1},
         {{0, 0, 0}}
@@ -938,7 +938,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "H",
         2,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"B"},
         {2},
         {{0, 0, 0}}
@@ -963,7 +963,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz},
         "E",
         0,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"F"},
         {0},
         {{0, 1, 1}}
@@ -973,7 +973,7 @@ void test_yeegrid_2d_pml() {
         {1, ny + 1, nz},
         "H",
         1,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"G"},
         {1},
         {{0, 0, 0}}
@@ -983,7 +983,7 @@ void test_yeegrid_2d_pml() {
         {1, ny, nz + 1},
         "H",
         2,
-        {(RealNumber)1.0},          // bValues
+        {(FPNumber)1.0},          // bValues
         {"G"},
         {2},
         {{0, 0, 0}}
@@ -1060,11 +1060,11 @@ void test_yeegrid_1d_collection() {
 
     std::size_t nz = 300/2;
     std::size_t indJ = nz/2;
-    std::array<RealNumber, 3> r0{0.0, 0.0, 0.0};
-    std::array<RealNumber, 3> r1{0.1, 0.0, (RealNumber)5.0};
+    std::array<FPNumber, 3> r0{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> r1{0.1, 0.0, (FPNumber)5.0};
     std::array<std::size_t, 3> nCells{1, 1, nz};
-    RealNumber dz = (r1[2] - r0[2])/(RealNumber)(nz);
-    RealNumber dt = dz*(RealNumber)0.99;
+    FPNumber dz = (r1[2] - r0[2])/(FPNumber)(nz);
+    FPNumber dt = dz*(FPNumber)0.99;
     //------ left side
     YeeGrid3D& yee_l = yeeCollection.GetGrid(yeeLeftInd);
     YeeGrid3D& yee_r = yeeCollection.GetGrid(yeeRightInd);
@@ -1138,8 +1138,8 @@ void test_yeegrid_1d_collection() {
                                 H_update_params_nz_outside_l);
 
     //-------- right side
-    r0[2] += (RealNumber)5.0;
-    r1[2] += (RealNumber)5.0;
+    r0[2] += (FPNumber)5.0;
+    r1[2] += (FPNumber)5.0;
     yee_r.SetCornerCoordinates(r0, r1);
     yee_r.SetNumOfCells(nCells);
     yee_r.SetTimeResolution(dt);
@@ -1212,7 +1212,11 @@ void test_yeegrid_1d_collection() {
     yee_r.SetDataStoreRate("H-y-r", 1);
     yee_r.DeleteOlderViewFiles();
 
-    yeeCollection.RunInstructionsPeriodically(0, 600, {"iterative-E-update", "iterative-H-update"});
+    yeeCollection.RunInstructionsPeriodically(0, 600, {std::pair<std::size_t, std::string>{0, "iterative-E-update"},
+                                                       std::pair<std::size_t, std::string>{1, "iterative-E-update"},
+                                                       std::pair<std::size_t, std::string>{0, "iterative-H-update"},
+                                                       std::pair<std::size_t, std::string>{1, "iterative-H-update"}}
+                                                       );
 }
 
 
@@ -1255,13 +1259,13 @@ void test_read_json() {
 #include "boost/lexical_cast.hpp"
 #include "ParamFileTranslator.h"
 void test_run_fdtd_1d_from_json() {
-    RealNumber z0 = 0.0;
-    RealNumber z1 = 10.0;
+    FPNumber z0 = 0.0;
+    FPNumber z1 = 10.0;
     std::size_t nz = 300;
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = dz*stabilityFactor;
-    RealNumber z_j = 5.0;
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = dz*stabilityFactor;
+    FPNumber z_j = 5.0;
     std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 600;
 
@@ -1286,18 +1290,18 @@ void test_run_fdtd_1d_from_json() {
 }
 
 void test_run_fdtd_2d_from_json() {
-    RealNumber y0 = -5.0;
-    RealNumber y1 = 5.0;
-    RealNumber z0 = -5.0;
-    RealNumber z1 = 5.0;
+    FPNumber y0 = -5.0;
+    FPNumber y1 = 5.0;
+    FPNumber z0 = -5.0;
+    FPNumber z1 = 5.0;
     std::size_t ny = 200;
     std::size_t nz = 250;
-    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
-    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
+    FPNumber dy = (y1 - y0)/(FPNumber)(ny);
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
+    FPNumber y_j = (y0 + y1)/(FPNumber)2.0;
+    FPNumber z_j = (z0 + z1)/(FPNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 401;
@@ -1335,23 +1339,23 @@ void test_run_fdtd_2d_from_json() {
 }
 
 void test_run_fdtd_3d_from_json() {
-    RealNumber x0 = 0;
-    RealNumber x1 = 10.0;
-    RealNumber y0 = 0;
-    RealNumber y1 = 10.0;
-    RealNumber z0 = 0.0;
-    RealNumber z1 = 10.0;
+    FPNumber x0 = 0;
+    FPNumber x1 = 10.0;
+    FPNumber y0 = 0;
+    FPNumber y1 = 10.0;
+    FPNumber z0 = 0.0;
+    FPNumber z1 = 10.0;
     std::size_t nx = 200;
     std::size_t ny = 200;
     std::size_t nz = 200;
-    RealNumber dx = (x1 - x0)/(RealNumber)(nx);
-    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dx*dx) + (RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
-    RealNumber x_j = (x0 + x1)/(RealNumber)2.0;
-    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
-    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
+    FPNumber dx = (x1 - x0)/(FPNumber)(nx);
+    FPNumber dy = (y1 - y0)/(FPNumber)(ny);
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dx*dx) + (FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
+    FPNumber x_j = (x0 + x1)/(FPNumber)2.0;
+    FPNumber y_j = (y0 + y1)/(FPNumber)2.0;
+    FPNumber z_j = (z0 + z1)/(FPNumber)2.0;
     std::size_t indxJ = std::round(std::real((x_j - x0)/dx));
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
@@ -1401,21 +1405,21 @@ void test_run_fdtd_3d_from_json() {
 }
 
 void test_run_fdtd_dielectric_1d_from_json() {
-    RealNumber z0 = 0.0;
-    RealNumber z1 = 10.0;
+    FPNumber z0 = 0.0;
+    FPNumber z1 = 10.0;
     std::size_t nz = 600;
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = dz*stabilityFactor;
-    RealNumber z_j = 5.0;
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = dz*stabilityFactor;
+    FPNumber z_j = 5.0;
     std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 600;
 
-    RealNumber cube_z0 = 7.0;
-    RealNumber cube_z1 = 9.0;
-    RealNumber cube_dz = 0.5;
+    FPNumber cube_z0 = 7.0;
+    FPNumber cube_z1 = 9.0;
+    FPNumber cube_dz = 0.5;
 
-    RealNumber epsilon = 4.0;
+    FPNumber epsilon = 4.0;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
@@ -1431,7 +1435,7 @@ void test_run_fdtd_dielectric_1d_from_json() {
             {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
             {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
             {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
-            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real((RealNumber)1.0/epsilon))},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real((FPNumber)1.0/epsilon))},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_dielectric.json",
@@ -1442,28 +1446,28 @@ void test_run_fdtd_dielectric_1d_from_json() {
 }
 
 void test_run_fdtd_dielectric_pml_1d_from_json() {
-    RealNumber z0 = 0.0;
-    RealNumber z1 = 15.0;
+    FPNumber z0 = 0.0;
+    FPNumber z1 = 15.0;
     std::size_t nz = 600;
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.95;
-    RealNumber dt = dz*stabilityFactor;
-    RealNumber z_j = 5.0;
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.95;
+    FPNumber dt = dz*stabilityFactor;
+    FPNumber z_j = 5.0;
     std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 800;
 
-    RealNumber cube_z0 = 9.0;
-    RealNumber cube_z1 = 15.0;
-    RealNumber cube_dz = 0.0;
+    FPNumber cube_z0 = 9.0;
+    FPNumber cube_z1 = 15.0;
+    FPNumber cube_dz = 0.0;
 
-    RealNumber epsilon = 4.0;
+    FPNumber epsilon = 4.0;
 
-    RealNumber pml_z0 = 3.0;
-    RealNumber pml_z1 = 12.0;
-    RealNumber pml_dz = 1.0;
+    FPNumber pml_z0 = 3.0;
+    FPNumber pml_z1 = 12.0;
+    FPNumber pml_dz = 1.0;
 
-    RealNumber sig_e = 1.0;
-    RealNumber sig_h = 1.0;
+    FPNumber sig_e = 1.0;
+    FPNumber sig_h = 1.0;
 
 
     std::unordered_map<std::string, std::string> str_replacewith{
@@ -1481,7 +1485,7 @@ void test_run_fdtd_dielectric_pml_1d_from_json() {
             {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(cube_z0))},
             {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(cube_z1))},
             {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(cube_dz))},
-            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real((RealNumber)1.0/epsilon))},
+            {"\"_eps_inv_\"", boost::lexical_cast<std::string>(std::real((FPNumber)1.0/epsilon))},
             {"\"_pml_z0_\"", boost::lexical_cast<std::string>(std::real(pml_z0))},
             {"\"_pml_z1_\"", boost::lexical_cast<std::string>(std::real(pml_z1))},
             {"\"_pml_dz_\"", boost::lexical_cast<std::string>(std::real(pml_dz))},
@@ -1497,22 +1501,22 @@ void test_run_fdtd_dielectric_pml_1d_from_json() {
 }
 
 void test_run_fdtd_plasma_1d_from_json() {
-    RealNumber z0 = 0.0;
-    RealNumber z1 = 10.0;
+    FPNumber z0 = 0.0;
+    FPNumber z1 = 10.0;
     std::size_t nz = 1000;
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = dz*stabilityFactor;
-    RealNumber z_j = 5.0;
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = dz*stabilityFactor;
+    FPNumber z_j = 5.0;
     std::size_t indJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 3000;
 
-    RealNumber cube_z0 = 7.0;
-    RealNumber cube_z1 = 10.0;
-    RealNumber cube_dz = 0.0;
+    FPNumber cube_z0 = 7.0;
+    FPNumber cube_z1 = 10.0;
+    FPNumber cube_dz = 0.0;
 
-    RealNumber gamma = 0.0;
-    RealNumber wp = 2.0*M_PI*3.0;
+    FPNumber gamma = 0.0;
+    FPNumber wp = 2.0*M_PI*3.0;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_z0_\"", boost::lexical_cast<std::string>(std::real(z0))},
@@ -1541,28 +1545,28 @@ void test_run_fdtd_plasma_1d_from_json() {
 }
 
 void test_run_fdtd_gaussian_plasma_2d_from_json() {
-    RealNumber y0 = -5.0;
-    RealNumber y1 = 5.0;
-    RealNumber z0 = -5.0;
-    RealNumber z1 = 5.0;
+    FPNumber y0 = -5.0;
+    FPNumber y1 = 5.0;
+    FPNumber z0 = -5.0;
+    FPNumber z1 = 5.0;
     std::size_t ny = 800;
     std::size_t nz = 800;
-    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
-    RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
+    FPNumber dy = (y1 - y0)/(FPNumber)(ny);
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
+    FPNumber y_j = (y0 + y1)/(FPNumber)2.0;
+    FPNumber z_j = (z0 + z1)/(FPNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 601;
 
-    RealNumber gamma = 1.0;
-    RealNumber wp = 2.0*M_PI*5.0;
-    RealNumber wp2_decayrate_y = 2.0;
-    RealNumber wp2_decayrate_z = 2.0;
-    RealNumber wp2_center_y = 2.0;
-    RealNumber wp2_center_z = 2.0;
+    FPNumber gamma = 1.0;
+    FPNumber wp = 2.0*M_PI*5.0;
+    FPNumber wp2_decayrate_y = 2.0;
+    FPNumber wp2_decayrate_z = 2.0;
+    FPNumber wp2_center_y = 2.0;
+    FPNumber wp2_center_z = 2.0;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -1604,28 +1608,28 @@ void test_run_fdtd_gaussian_plasma_2d_from_json() {
 }
 
 void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
-    RealNumber y0 = -0.5;
-    RealNumber y1 = 0.5;
-    RealNumber z0 = -8.0;
-    RealNumber z1 = 5.0;
+    FPNumber y0 = -0.5;
+    FPNumber y1 = 0.5;
+    FPNumber z0 = -8.0;
+    FPNumber z1 = 5.0;
     std::size_t ny = 100;
     std::size_t nz = 1300;
-    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.95;
-    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (y0 + y1)/(RealNumber)2.0;
-    //RealNumber z_j = (z0 + z1)/(RealNumber)2.0;
+    FPNumber dy = (y1 - y0)/(FPNumber)(ny);
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.95;
+    FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
+    FPNumber y_j = (y0 + y1)/(FPNumber)2.0;
+    //FPNumber z_j = (z0 + z1)/(FPNumber)2.0;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = 1; //std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 2000;
 
-    RealNumber gamma = 1.0;
-    RealNumber wp = 2.0*M_PI*5.0;
-    RealNumber wp2_decayrate_y = 3.0;
-    RealNumber wp2_decayrate_z = 3.0;
-    RealNumber wp2_center_y = 0.5;
-    RealNumber wp2_center_z = 0.5;
+    FPNumber gamma = 1.0;
+    FPNumber wp = 2.0*M_PI*5.0;
+    FPNumber wp2_decayrate_y = 3.0;
+    FPNumber wp2_decayrate_z = 3.0;
+    FPNumber wp2_center_y = 0.5;
+    FPNumber wp2_center_z = 0.5;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -1668,7 +1672,7 @@ void test_run_fdtd_periodic_gaussian_plasma_2d_from_json() {
 
 #include "boost/lexical_cast.hpp"
 #include "DemotableComplex.hpp"
-std::string CastComplexToJSONString(RealNumber complxNum) {
+std::string CastComplexToJSONString(FPNumber complxNum) {
     DemotableComplex<double> c(complxNum);
     std::string stringCast = std::string("[") +
                             boost::lexical_cast<std::string>(c.real()) +
@@ -1678,8 +1682,8 @@ std::string CastComplexToJSONString(RealNumber complxNum) {
     return stringCast;
 };
 
-RealNumber FWHMtoDecayRate(RealNumber FWHM) {
-    return (RealNumber)(2.0*std::sqrt(std::log(2)))/FWHM;
+FPNumber FWHMtoDecayRate(FPNumber FWHM) {
+    return (FPNumber)(2.0*std::sqrt(std::log(2)))/FWHM;
 };
 
 void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json(
@@ -1688,51 +1692,51 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json(
             std::string fileNamePostfix = "-GX-",
             int fileInd = 0
             ) {
-    assert(typeid(RealNumber) == typeid(std::complex<double>) || typeid(RealNumber) == typeid(std::complex<float>));
+    assert(typeid(FPNumber) == typeid(std::complex<double>) || typeid(FPNumber) == typeid(std::complex<float>));
 
-    RealNumber pitch = 127.0;
-    RealNumber FWHM = 62.0;
-    RealNumber eps_r = 11.7;
+    FPNumber pitch = 127.0;
+    FPNumber FWHM = 62.0;
+    FPNumber eps_r = 11.7;
 
-    RealNumber y0 = -0.5;
-    RealNumber y1 = 0.5;
-    RealNumber z0 = -0.5;
-    RealNumber z1 = 0.5;
+    FPNumber y0 = -0.5;
+    FPNumber y1 = 0.5;
+    FPNumber z0 = -0.5;
+    FPNumber z1 = 0.5;
     std::size_t ny = 110;
     std::size_t nz = 110;
-    RealNumber dy = (y1 - y0)/(RealNumber)(ny);
-    RealNumber dz = (z1 - z0)/(RealNumber)(nz);
-    RealNumber stabilityFactor = 0.99;
-    RealNumber dt = (RealNumber)1.0/std::sqrt((RealNumber)1.0/(dy*dy) + (RealNumber)1.0/(dz*dz))*stabilityFactor;
-    RealNumber y_j = (RealNumber)0.5*y0 + (RealNumber)0.5*y1;
-    RealNumber z_j = (RealNumber)0.9*z0 + (RealNumber)0.1*z1;
+    FPNumber dy = (y1 - y0)/(FPNumber)(ny);
+    FPNumber dz = (z1 - z0)/(FPNumber)(nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
+    FPNumber y_j = (FPNumber)0.5*y0 + (FPNumber)0.5*y1;
+    FPNumber z_j = (FPNumber)0.9*z0 + (FPNumber)0.1*z1;
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     std::size_t numOfTimeSamples = 1500;
 
-    RealNumber gamma = 0.0;
-    RealNumber wp = 5.0*1.0e12/(3.0e8/(pitch*1.0e-6));
+    FPNumber gamma = 0.0;
+    FPNumber wp = 5.0*1.0e12/(3.0e8/(pitch*1.0e-6));
     std::cout << "wp : " << wp << std::endl;
 
-    RealNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
-    RealNumber wp2_decayrate_z = FWHMtoDecayRate(FWHM/pitch);
-    RealNumber wp2_center_y = 0.0;
-    RealNumber wp2_center_z = 0.0;
+    FPNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
+    FPNumber wp2_decayrate_z = FWHMtoDecayRate(FWHM/pitch);
+    FPNumber wp2_center_y = 0.0;
+    FPNumber wp2_center_z = 0.0;
     std::cout << "wp2_decayrate_y : " << wp2_decayrate_y << std::endl;
     std::cout << "wp2_decayrate_z : " << wp2_decayrate_z << std::endl;
 
-    RealNumber ky_max = (RealNumber)(2.0*M_PI)/(y1 - y0);
-    RealNumber kz_max = (RealNumber)(2.0*M_PI)/(z1 - z0);
-    RealNumber k_y = (RealNumber)ky_kymax*ky_max;
-    RealNumber k_z = (RealNumber)kz_kzmax*kz_max;
+    FPNumber ky_max = (FPNumber)(2.0*M_PI)/(y1 - y0);
+    FPNumber kz_max = (FPNumber)(2.0*M_PI)/(z1 - z0);
+    FPNumber k_y = (FPNumber)ky_kymax*ky_max;
+    FPNumber k_z = (FPNumber)kz_kzmax*kz_max;
 
 
-    RealNumber _j = (RealNumber)(DemotableComplex<double>(0.0, 1.0));
+    FPNumber _j = (FPNumber)(DemotableComplex<double>(0.0, 1.0));
 
-    RealNumber _m_dt_dy_exp_jky_y10_eps_ = -dt/dy*std::exp(_j*k_y*(y1 - y0))/eps_r;
-    RealNumber _dt_dz_exp_jkz_z10_eps_  = dt/dz*std::exp(_j*k_z*(z1 - z0))/eps_r;
-    RealNumber _exp_mjky_y10_ = std::exp(-_j*k_y*(y1 - y0));
-    RealNumber _exp_mjkz_z10_ = std::exp(-_j*k_z*(z1 - z0));
+    FPNumber _m_dt_dy_exp_jky_y10_eps_ = -dt/dy*std::exp(_j*k_y*(y1 - y0))/eps_r;
+    FPNumber _dt_dz_exp_jkz_z10_eps_  = dt/dz*std::exp(_j*k_z*(z1 - z0))/eps_r;
+    FPNumber _exp_mjky_y10_ = std::exp(-_j*k_y*(y1 - y0));
+    FPNumber _exp_mjkz_z10_ = std::exp(-_j*k_z*(z1 - z0));
 
     std::string ExFilename = std::string("\"") +
                              "GaussianPlasmaPBC/E-x" +
@@ -1802,6 +1806,52 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json(
     fileTranslator.Translate();
 }
 
+void test_run_fdtd_1d_collection_from_json() {
+    FPNumber grid0_z0 = 0.0;
+    FPNumber grid0_z1 = 10.0;
+    std::size_t grid0_nz = 300;
+    FPNumber grid0_dz = (grid0_z1 - grid0_z0)/(FPNumber)(grid0_nz);
+    FPNumber stabilityFactor = 0.99;
+    FPNumber grid0_dt = grid0_dz*stabilityFactor;
+    FPNumber grid0_z_j = 5.0;
+    std::size_t grid0_indJ = std::round(std::real((grid0_z_j - grid0_z0)/grid0_dz));
+
+    FPNumber grid1_z0 = 10.0;
+    FPNumber grid1_z1 = 20.0;
+    std::size_t grid1_nz = 300;
+    FPNumber grid1_dz = (grid1_z1 - grid1_z0)/(FPNumber)(grid1_nz);
+    FPNumber grid1_dt = grid1_dz*stabilityFactor;
+
+    std::size_t numOfTimeSamples = 600;
+
+    std::unordered_map<std::string, std::string> str_replacewith{
+            {"\"_g0_z0_\"", boost::lexical_cast<std::string>(std::real(grid0_z0))},
+            {"\"_g0_z1_\"", boost::lexical_cast<std::string>(std::real(grid0_z1))},
+            {"\"_g0_nz_\"", boost::lexical_cast<std::string>(grid0_nz)},
+            {"\"_g0_nz_m1_\"", boost::lexical_cast<std::string>(grid0_nz - 1)},
+            {"\"_g0_dz_\"", boost::lexical_cast<std::string>(std::real(grid0_dz))},
+            {"\"_g0_dt_\"", boost::lexical_cast<std::string>(std::real(grid0_dt))},
+            {"\"_g0_dt_dz_\"", boost::lexical_cast<std::string>(std::real(grid0_dt/grid0_dz))},
+            {"\"_g0_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-grid0_dt/grid0_dz))},
+            {"\"_g0_indJ_\"", boost::lexical_cast<std::string>(grid0_indJ)},
+            {"\"_g0_indJ_p1_\"", boost::lexical_cast<std::string>(grid0_indJ + 1)},
+            {"\"_g1_z0_\"", boost::lexical_cast<std::string>(std::real(grid1_z0))},
+            {"\"_g1_z1_\"", boost::lexical_cast<std::string>(std::real(grid1_z1))},
+            {"\"_g1_nz_\"", boost::lexical_cast<std::string>(grid1_nz)},
+            {"\"_g1_nz_m1_\"", boost::lexical_cast<std::string>(grid1_nz - 1)},
+            {"\"_g1_dz_\"", boost::lexical_cast<std::string>(std::real(grid1_dz))},
+            {"\"_g1_dt_\"", boost::lexical_cast<std::string>(std::real(grid1_dt))},
+            {"\"_g1_dt_dz_\"", boost::lexical_cast<std::string>(std::real(grid1_dt/grid1_dz))},
+            {"\"_g1_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-grid1_dt/grid1_dz))},
+            {"\"_gall_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            };
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_GridCollection.json",
+                "instructions/MaxwellYee1D_GridCollection_processed.json", str_replacewith);
+
+    ParamFileTranslator fileTranslator("instructions/MaxwellYee1D_GridCollection_processed.json");
+    fileTranslator.Translate();
+}
+
 void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_sweep_over_BZ(int n_pts = 100) {
     for(int i = 0; i < n_pts; ++i) {
         double ky_kymax = 0.0;
@@ -1813,14 +1863,15 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_sweep_over_BZ(int 
 #include <typeinfo>
 int main(int argc, char** argv) {
     //test_yeegrid_1d();
-   // test_read_json();
+    //test_read_json();
     //test_run_fdtd_1d_from_json();
 
-    test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
+    //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json();
     //test_run_fdtd_periodic_gaussian_plasma_2d_from_json();
 
     //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_sweep_over_BZ(100);
 
+    test_run_fdtd_1d_collection_from_json();
 }
 
 

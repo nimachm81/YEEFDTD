@@ -19,8 +19,8 @@ class YeeGridCollectionParallel : public YeeGridCollection {
 
 
     private:
-    std::unordered_map<std::string, RealNumber*> inBuffers;
-    std::unordered_map<std::string, RealNumber*> outBuffers;
+    std::unordered_map<std::string, FPNumber*> inBuffers;
+    std::unordered_map<std::string, FPNumber*> outBuffers;
 };
 
 

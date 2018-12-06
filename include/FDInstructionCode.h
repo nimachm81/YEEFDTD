@@ -12,7 +12,7 @@ enum class FDInstructionCode {
                 // std::tuple<std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,      // summation range
                 //            std::string,                    // A array names
                 //            int,                            // 0:A_x, 1:A_y, 2:A_z
-                //            std::vector<RealNumber>,        // b scalars
+                //            std::vector<FPNumber>,        // b scalars
                 //            std::vector<std::string>,       // C arrays names
                 //            std::vector<int>,               // C arrays components : 0:C_x, 1:C_y, 2:C_z
                 //            std::vector<int, 3>>>    // [i0,j0,k0], ...

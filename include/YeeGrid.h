@@ -25,16 +25,16 @@ class YeeGrid3D {
     YeeGrid3D& operator=(YeeGrid3D&& other) = default;
     ~YeeGrid3D();
 
-    void SetCornerCoordinates(std::array<RealNumber, 3> r_0, std::array<RealNumber, 3> r_1);
+    void SetCornerCoordinates(std::array<FPNumber, 3> r_0, std::array<FPNumber, 3> r_1);
     void SetNumOfCells(std::array<std::size_t, 3>& nCells);
-    void SetTimeResolution(const RealNumber dt);
+    void SetTimeResolution(const FPNumber dt);
     void SetTimeIndex(const std::size_t ind);
-    const std::array<RealNumber, 3>& GetCornerR0() const;
-    const std::array<RealNumber, 3>& GetCornerR1() const;
+    const std::array<FPNumber, 3>& GetCornerR0() const;
+    const std::array<FPNumber, 3>& GetCornerR1() const;
     const std::array<std::size_t, 3>& GetNumberOfCells() const;
-    RealNumber GetTimeResolution() const;
-    RealNumber GetSpaceResolution(int i) const;
-    const std::array<RealNumber, 3>& GetSpaceResolution() const;
+    FPNumber GetTimeResolution() const;
+    FPNumber GetSpaceResolution(int i) const;
+    const std::array<FPNumber, 3>& GetSpaceResolution() const;
 
     // a grid array that spans over the entire Yee grid
     void AddEntireGridElement(const std::string name, ElementType elemType);
@@ -61,7 +61,7 @@ class YeeGrid3D {
                                     std::array<std::size_t, 3> ind_end_A,
                                     std::string arrayA_name,
                                     int arrayA_component,
-                                    std::vector<RealNumber> bValues,
+                                    std::vector<FPNumber> bValues,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
@@ -71,7 +71,7 @@ class YeeGrid3D {
                                     std::array<std::size_t, 3> ind_end_A,
                                     std::string arrayA_name,
                                     int arrayA_component,
-                                    std::vector<RealNumber> bValues,
+                                    std::vector<FPNumber> bValues,
                                     std::vector<std::string> arrayB_names,
                                     std::vector<int> arrayB_components,
                                     std::vector<std::array<std::size_t, 3>> arrayB_indsStart,
@@ -89,54 +89,54 @@ class YeeGrid3D {
                                     std::array<std::size_t, 3> ind_end_A,
                                     std::string arrayA_name,
                                     int arrayA_component,
-                                    std::vector<RealNumber> bValues,
+                                    std::vector<FPNumber> bValues,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
                                     std::vector<std::array<std::size_t, 3>> arrayC_indsStart
                                     ) const;
 
-    std::array<RealNumber, 3> GetCoordinatesOfFirstElementOfGridDataArray(const std::string& gridDataName, int direction);
+    std::array<FPNumber, 3> GetCoordinatesOfFirstElementOfGridDataArray(const std::string& gridDataName, int direction);
 
     void AddGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
-            int direction, RealNumber amplitude,
-            RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-            RealNumber modulatioPhase, RealNumber timeOffsetFraction
+            int direction, FPNumber amplitude,
+            FPNumber t_center, FPNumber t_decay, FPNumber modulationFrequecy,
+            FPNumber modulatioPhase, FPNumber timeOffsetFraction
             );
     void AddGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
             int direction,
             std::array<std::size_t, 3> indStart,    // The manipulator only operates on a slice of the array starting from indStart
             std::array<std::size_t, 3> indEnd,      // and ending at indEnd-1
-            RealNumber amplitude,
-            RealNumber t_center, RealNumber t_decay, RealNumber modulationFrequecy,
-            RealNumber modulatioPhase, RealNumber timeOffsetFraction
+            FPNumber amplitude,
+            FPNumber t_center, FPNumber t_decay, FPNumber modulationFrequecy,
+            FPNumber modulatioPhase, FPNumber timeOffsetFraction
             );
     void AddSpatialCubeGridArrayManipulator(const std::string name,
             const std::string gridDataName,     // name of the gridDataObject whose data is manipulated by this point source
             int direction, // 0:x-component 1:y-component 2-z-component
-            std::array<RealNumber, 3> boxCornerR0, std::array<RealNumber, 3> boxCornerR1, // corners of the cube
-            std::array<RealNumber, 3> edgeThickness,    // thickness of the smooth edge
-            RealNumber insideValue, RealNumber outsideValue // inside the cube set the array value to insideValue and...
+            std::array<FPNumber, 3> boxCornerR0, std::array<FPNumber, 3> boxCornerR1, // corners of the cube
+            std::array<FPNumber, 3> edgeThickness,    // thickness of the smooth edge
+            FPNumber insideValue, FPNumber outsideValue // inside the cube set the array value to insideValue and...
             );
     void AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
-            RealNumber amplitude,
-            std::array<RealNumber, 4> st_center,
-            std::array<RealNumber, 4> st_decay_rate,
-            std::array<RealNumber, 4> st_modulationFrequecy,
-            std::array<RealNumber, 4> st_modulatioPhase,
-            RealNumber timeOffsetFraction
+            FPNumber amplitude,
+            std::array<FPNumber, 4> st_center,
+            std::array<FPNumber, 4> st_decay_rate,
+            std::array<FPNumber, 4> st_modulationFrequecy,
+            std::array<FPNumber, 4> st_modulatioPhase,
+            FPNumber timeOffsetFraction
             );
     void AddPeriodicGaussianGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
-            RealNumber amplitude,
-            std::array<RealNumber, 3> center,
-            std::array<RealNumber, 3> decay_rate,
-            std::array<RealNumber, 3> unitCellOrigin,
-            std::array<std::array<RealNumber, 3>, 3> primitiveVectors
+            FPNumber amplitude,
+            std::array<FPNumber, 3> center,
+            std::array<FPNumber, 3> decay_rate,
+            std::array<FPNumber, 3> unitCellOrigin,
+            std::array<std::array<FPNumber, 3>, 3> primitiveVectors
             );
 
     void PrintAllGridData();
@@ -156,10 +156,10 @@ class YeeGrid3D {
 
     protected:
     std::size_t timeIndex = 0;
-    RealNumber dt;                  // time resolution
-    std::array<RealNumber, 3> dr;   // spatial resolution
-    std::array<RealNumber, 3> r_0{0, 0, 0};  // coordinates of the lower left corner
-    std::array<RealNumber, 3> r_1{0, 0, 0};  // coordinates of the upper right corner
+    FPNumber dt;                  // time resolution
+    std::array<FPNumber, 3> dr;   // spatial resolution
+    std::array<FPNumber, 3> r_0{0, 0, 0};  // coordinates of the lower left corner
+    std::array<FPNumber, 3> r_1{0, 0, 0};  // coordinates of the upper right corner
     std::array<std::size_t, 3> nCells;      // number of Yee cells
     std::unordered_map<std::string, std::shared_ptr<YeeGridData3D>> gridElements;
     std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;

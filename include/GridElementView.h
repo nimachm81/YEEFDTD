@@ -16,7 +16,7 @@ class GridElementView {
     void SetSaveOnDiskFrequency(const std::size_t eachNSamples);
     std::size_t GetSaveOnDiskFrequency() const;
     void SetName(std::string name);
-    void SetNumArray(const NumberArray3D<RealNumber>& numArray);
+    void SetNumArray(const NumberArray3D<FPNumber>& numArray);
     void OpenFileToWrite();
     void CloseFile();
     void StoreData(std::size_t iterationIndex);
@@ -24,7 +24,7 @@ class GridElementView {
 
     private:
     std::size_t saveOnDiskFrequency = 1;
-    std::unique_ptr<NumberArray3D<RealNumber>> numArray;
+    std::unique_ptr<NumberArray3D<FPNumber>> numArray;
     std::string viewName;
     std::string viewFolder;
     std::string viewFileExtension;

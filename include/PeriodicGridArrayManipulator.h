@@ -10,20 +10,20 @@
 class PeriodicGridArrayManipulator : public GridArrayManipulator {
     public:
     virtual ~PeriodicGridArrayManipulator() { };
-    void SetUnitCellOrigin(const std::array<RealNumber, 3> origin);
-    void SetPrimitiveVectors(const std::array<RealNumber, 3> v0,
-                             const std::array<RealNumber, 3> v1,
-                             const std::array<RealNumber, 3> v2);
+    void SetUnitCellOrigin(const std::array<FPNumber, 3> origin);
+    void SetPrimitiveVectors(const std::array<FPNumber, 3> v0,
+                             const std::array<FPNumber, 3> v1,
+                             const std::array<FPNumber, 3> v2);
 
-    std::array<RealNumber, 3> BringPointInsideUnitCell(const std::array<RealNumber, 3>& r);
+    std::array<FPNumber, 3> BringPointInsideUnitCell(const std::array<FPNumber, 3>& r);
 
-    void UpdateArray(const RealNumber t);
+    void UpdateArray(const FPNumber t);
 
-    virtual RealNumber Func(const std::array<RealNumber, 3> r, const RealNumber t) = 0;
+    virtual FPNumber Func(const std::array<FPNumber, 3> r, const FPNumber t) = 0;
 
     protected:
-    std::array<RealNumber, 3> unitCellOrigin;       // the unit cell starts at this point and ends at the end of
-    std::array<std::array<RealNumber, 3>, 3> primitiveVectors;     // the primitive vectors
+    std::array<FPNumber, 3> unitCellOrigin;       // the unit cell starts at this point and ends at the end of
+    std::array<std::array<FPNumber, 3>, 3> primitiveVectors;     // the primitive vectors
 };
 
 

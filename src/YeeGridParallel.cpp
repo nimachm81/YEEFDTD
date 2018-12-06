@@ -15,7 +15,7 @@ YeeGrid3DParallel::~YeeGrid3DParallel() {
                         std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                         std::string,    // 1
                         int,    // 2
-                        RealNumber*,   // 3
+                        FPNumber*,   // 3
                         std::size_t,    // 4
                         std::size_t     // 5
                     >*
@@ -25,11 +25,11 @@ YeeGrid3DParallel::~YeeGrid3DParallel() {
     }
 }
 
-void YeeGrid3DParallel::SetInBuffers(std::unordered_map<std::string, RealNumber*>* buffers) {
+void YeeGrid3DParallel::SetInBuffers(std::unordered_map<std::string, FPNumber*>* buffers) {
     inBuffers = buffers;
 }
 
-void YeeGrid3DParallel::SetOutBuffers(std::unordered_map<std::string, RealNumber*>* buffers) {
+void YeeGrid3DParallel::SetOutBuffers(std::unordered_map<std::string, FPNumber*>* buffers) {
     outBuffers = buffers;
 }
 
@@ -38,7 +38,7 @@ void* YeeGrid3DParallel::ConstructParams_A_to_buffer(
                             std::array<std::size_t, 3> ind_end_A,
                             std::string arrayA_name,
                             int arrayA_component,
-                            RealNumber* buffer,
+                            FPNumber* buffer,
                             std::size_t bufferSize,
                             std::size_t ind_start_buffer
                             ) const {
@@ -47,7 +47,7 @@ void* YeeGrid3DParallel::ConstructParams_A_to_buffer(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
             std::string,    // 1
             int,    // 2
-            RealNumber*,   // 3
+            FPNumber*,   // 3
             std::size_t,    // 4
             std::size_t     // 5
         >(
@@ -72,7 +72,7 @@ void YeeGrid3DParallel::ApplyUpdateInstruction(FDInstructionCode instructionCode
                     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
                     std::string,    // 1
                     int,    // 2
-                    RealNumber*,    // 3
+                    FPNumber*,    // 3
                     std::size_t,    // 4
                     std::size_t     // 5
                 >*
@@ -81,12 +81,12 @@ void YeeGrid3DParallel::ApplyUpdateInstruction(FDInstructionCode instructionCode
         std::array<std::size_t, 3>& ind_end_A = std::get<0>(params_tuple).second;
         std::string& arrayA_name = std::get<1>(params_tuple);
         int arrayA_component = std::get<2>(params_tuple);
-        RealNumber* buffer = std::get<3>(params_tuple);
+        FPNumber* buffer = std::get<3>(params_tuple);
         std::size_t bufferSize = std::get<4>(params_tuple);
         std::size_t ind_start_buffer = std::get<5>(params_tuple);
 
-        NumberArray3D<RealNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<RealNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
 
         if(instructionCode == FDInstructionCode::A_to_buffer) {
             arrayASlice.WriteArrayDataToBuffer(buffer, bufferSize, ind_start_buffer);

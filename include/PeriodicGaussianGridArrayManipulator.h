@@ -10,17 +10,17 @@
 class PeriodicGaussianGridArrayManipulator : public PeriodicGridArrayManipulator {
     public:
     virtual ~PeriodicGaussianGridArrayManipulator() { };
-    void SetGaussianAmplitude(RealNumber amplitude);
-    void SetGaussianCenter(std::array<RealNumber, 3>& center);
-    void SetGaussianDecayRate(std::array<RealNumber, 3>& decayRate);
+    void SetGaussianAmplitude(FPNumber amplitude);
+    void SetGaussianCenter(std::array<FPNumber, 3>& center);
+    void SetGaussianDecayRate(std::array<FPNumber, 3>& decayRate);
 
-    RealNumber Func(const std::array<RealNumber, 3> r, const RealNumber t);
-    RealNumber CalculateTime(const RealNumber dt, const std::size_t timeIndex);
+    FPNumber Func(const std::array<FPNumber, 3> r, const FPNumber t);
+    FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex);
 
     private:
-    RealNumber gaussianAmplitude;
-    std::array<RealNumber, 3> gaussianCenter;
-    std::array<RealNumber, 3> gaussianDecayRate;
+    FPNumber gaussianAmplitude;
+    std::array<FPNumber, 3> gaussianCenter;
+    std::array<FPNumber, 3> gaussianDecayRate;
 };
 
 
