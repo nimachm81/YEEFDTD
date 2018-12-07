@@ -2,18 +2,18 @@
 {
 "simulationType":"gridCollection",
 "simulationParameters":{
-"variables":600,
+"variables":1000,
 "grids":{
 "grid0":{
-    "variables":[0, 10, 300, 299, 0.033333333333333333, 0.033000000000000002, 150, 151, 0.9900000000000001, -0.9900000000000001],
+    "variables":[0, 10, 400, 399, 0.0250000004, 0.0247499999, 200, 201, 0.99000001, -0.99000001],
     "dimensions":{
         "r0":[0.0, 0.0, 0],
         "r1":[0.1, 0.1, 10],
-        "nCells":[1, 1, 300],
-        "dt":0.033000000000000002 
+        "nCells":[1, 1, 400],
+        "dt":0.0247499999 
     },
     "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
-    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, 150], "nCells":[1, 1, 0]}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, 200], "nCells":[1, 1, 0]}],
     "girdArrayManipulators":[
         {
         "type":"GaussianGridArrayManipulator",
@@ -38,8 +38,8 @@
             "A":"E",
             "A_direction":"x",
             "A_indStart":[0, 0, 1],
-            "A_indEnd":[1, 1, 300],
-            "b":[0.9900000000000001, -0.9900000000000001],
+            "A_indEnd":[1, 1, 400],
+            "b":[0.99000001, -0.99000001],
             "C":["H", "H"],
             "C_direction":["y", "y"],
             "C_indStart":[[0, 0, 0], [0, 0, 1]]
@@ -52,8 +52,8 @@
             "A":"H",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, 1, 299],
-            "b":[0.9900000000000001, -0.9900000000000001],
+            "A_indEnd":[1, 1, 399],
+            "b":[0.99000001, -0.99000001],
             "C":["E", "E"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 1]]
@@ -65,12 +65,12 @@
             "name":"H_last_pe_m_curl_E_inside",
             "A":"H",
             "A_direction":"y",
-            "A_indStart":[0, 0, 299],
-            "A_indEnd":[1, 1, 300],
-            "b":[0.9900000000000001],
+            "A_indStart":[0, 0, 399],
+            "A_indEnd":[1, 1, 400],
+            "b":[0.99000001],
             "C":["E"],
             "C_direction":["x"],
-            "C_indStart":[[0, 0, 299]]
+            "C_indStart":[[0, 0, 399]]
             }
         },
         {
@@ -80,9 +80,9 @@
             "neighborGrid":"grid1",
             "A":"H",
             "A_direction":"y",
-            "A_indStart":[0, 0, 299],
-            "A_indEnd":[1, 1, 300],
-            "b":[-0.9900000000000001],
+            "A_indStart":[0, 0, 399],
+            "A_indEnd":[1, 1, 400],
+            "b":[-0.99000001],
             "C":["E"],
             "C_direction":["x"],
             "C_indStart":[[0, 0, 0]]
@@ -94,9 +94,9 @@
             "name":"E_me_J",
             "A":"E",
             "A_direction":"x",
-            "A_indStart":[0, 0, 150],
-            "A_indEnd":[1, 1, 151],
-            "b":[-0.9900000000000001],
+            "A_indStart":[0, 0, 200],
+            "A_indEnd":[1, 1, 201],
+            "b":[-0.99000001],
             "C":["J"],
             "C_direction":["x"],
             "C_indStart":[[0, 0, 0]]
@@ -116,7 +116,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"E-x",
+            "name":"E-x-l",
             "array":"E",
             "direction":"x",
             "saveRate":1
@@ -125,7 +125,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"H-y",
+            "name":"H-y-l",
             "array":"H",
             "direction":"y",
             "saveRate":1
@@ -134,7 +134,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"J-x",
+            "name":"J-x-l",
             "array":"J",
             "direction":"x",
             "saveRate":1
@@ -143,12 +143,12 @@
     ]
 },
 "grid1":{
-    "variables":[10, 20, 300, 299, 0.033333333333333333, 0.033000000000000002, 0.9900000000000001, -0.9900000000000001],
+    "variables":[10, 20, 400, 399, 0.0250000004, 0.0247499999, 0.99000001, -0.99000001],
     "dimensions":{
         "r0":[0.0, 0.0, 10],
         "r1":[0.1, 0.1, 20],
-        "nCells":[1, 1, 300],
-        "dt":0.033000000000000002
+        "nCells":[1, 1, 400],
+        "dt":0.0247499999
     },
     "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
     "partialGridArrays":[],
@@ -161,8 +161,8 @@
             "A":"E",
             "A_direction":"x",
             "A_indStart":[0, 0, 1],
-            "A_indEnd":[1, 1, 300],
-            "b":[0.9900000000000001, -0.9900000000000001],
+            "A_indEnd":[1, 1, 400],
+            "b":[0.99000001, -0.99000001],
             "C":["H", "H"],
             "C_direction":["y", "y"],
             "C_indStart":[[0, 0, 0], [0, 0, 1]]
@@ -176,7 +176,7 @@
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
             "A_indEnd":[1, 1, 1],
-            "b":[-0.9900000000000001],
+            "b":[-0.99000001],
             "C":["H"],
             "C_direction":["y"],
             "C_indStart":[[0, 0, 0]]
@@ -191,10 +191,10 @@
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
             "A_indEnd":[1, 1, 1],
-            "b":[0.9900000000000001],
+            "b":[0.99000001],
             "C":["H"],
             "C_direction":["y"],
-            "C_indStart":[[0, 0, 299]]
+            "C_indStart":[[0, 0, 399]]
             }
         },
         {
@@ -204,8 +204,8 @@
             "A":"H",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, 1, 299],
-            "b":[0.9900000000000001, -0.9900000000000001],
+            "A_indEnd":[1, 1, 400],
+            "b":[0.99000001, -0.99000001],
             "C":["E", "E"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 1]]
@@ -218,7 +218,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"E-x",
+            "name":"E-x-r",
             "array":"E",
             "direction":"x",
             "saveRate":1
@@ -227,7 +227,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"H-y",
+            "name":"H-y-r",
             "array":"H",
             "direction":"y",
             "saveRate":1
@@ -236,7 +236,7 @@
     ]
 }
 },
-"runSequence":[{"timeIndStart":0, "timeIndEnd":600, "sequence":[["grid0", "update-E"], ["grid1", "update-E"], 
+"runSequence":[{"timeIndStart":0, "timeIndEnd":1000, "sequence":[["grid0", "update-E"], ["grid1", "update-E"], 
                                                                         ["grid0", "update-H"], ["grid1", "update-H"]]}]
 }
 }

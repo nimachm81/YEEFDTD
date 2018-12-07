@@ -3,6 +3,7 @@
 #include <map>
 
 #include "YeeGrid.h"
+#include "YeeGridCollection.h"
 #include "ParamFileTranslator.h"
 
 ParamFileTranslator::ParamFileTranslator(const std::string filename) {
@@ -25,7 +26,7 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
 
     SingleGridParameterExtractor singleGridRoot(node);
     YeeGrid3D yee;
-    std::map<std::string, YeeGrid3D> grids;     // not used. but it should be defined to pass to SetSingleGridUpddateInstructions
+    std::map<std::string, YeeGrid3D*> grids;     // not used. but it should be defined to pass to SetSingleGridUpddateInstructions
 
     SetSingleGridDimensions(yee, singleGridRoot);
     SetSingleGridGridArrays(yee, singleGridRoot);
@@ -41,19 +42,26 @@ void ParamFileTranslator::TranslateGridCollection(boost::property_tree::ptree no
     ParameterExtractor gridsRoot(simulationParamsRoot.GetSubTreeRootNode("grids"));     // TODO: assert "grids" exists
 
     std::size_t numOfGrids = gridsRoot.GetSize();
+    YeeGridCollection gridCollection;
     // initialize grids
-    std::map<std::string, YeeGrid3D> gridsMap;
+    std::map<std::string, YeeGrid3D*> gridsMap;
+    std::map<std::string, std::size_t> gridsInds;
+    for(auto& it : gridsRoot.GetPropertyTreeRoot()) {
+        std::size_t gridInd = gridCollection.AddGrid();
+        std::string gridName = it.first;
+        gridsInds[gridName] = gridInd;
+    }
     for(auto& it : gridsRoot.GetPropertyTreeRoot()) {
         std::string gridName = it.first;
-        std::cout << gridName << std::endl;
-        gridsMap[gridName] = YeeGrid3D();
+        std::size_t gridInd = gridsInds[gridName];
+        gridsMap[gridName] = &gridCollection.GetGrid(gridInd);
     }
 
     for(auto& it : gridsRoot.GetPropertyTreeRoot()) {
         std::string gridName = it.first;
         SingleGridParameterExtractor singleGridRoot(it.second);
 
-        YeeGrid3D& grid_i = gridsMap[gridName];
+        YeeGrid3D& grid_i = *gridsMap[gridName];
 
         SetSingleGridDimensions(grid_i, singleGridRoot);
         SetSingleGridGridArrays(grid_i, singleGridRoot);
@@ -64,7 +72,7 @@ void ParamFileTranslator::TranslateGridCollection(boost::property_tree::ptree no
     }
 
     GridCollectionParameterExtractor gridCollectionRoot(node);
-    SetAndRunGridCollectionRunSequencs(gridsMap, gridCollectionRoot);
+    SetAndRunGridCollectionRunSequencs(gridCollection, gridsMap, gridsInds, gridCollectionRoot);
 }
 
 
@@ -182,7 +190,7 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
 
 void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                                                            SingleGridParameterExtractor& singleGridRoot,
-                                                           std::map<std::string, YeeGrid3D>& gridsMap) {
+                                                           std::map<std::string, YeeGrid3D*>& gridsMap) {
     auto updateInstructions = singleGridRoot.GetTypeStringAndParameterSubtree("updateInstructions");
     for(auto& updateTypeandParams : updateInstructions) {
         auto& updateType = std::get<0>(updateTypeandParams);
@@ -230,7 +238,7 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
             }
 
             void* updateParamsPtr = yee.ConstructParams_A_plusequal_sum_b_C_neighbor(
-                &gridsMap[updateParams.GetStringProperty("neighborGrid")],
+                gridsMap[updateParams.GetStringProperty("neighborGrid")],
                 updateParams.Get3VecUintProperty("A_indStart"),  // indStart
                 updateParams.Get3VecUintProperty("A_indEnd"), // indEnd
                 updateParams.GetStringProperty("A"),        // A name
@@ -318,6 +326,7 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
 
 void ParamFileTranslator::SetSingleGridUpdateSequences(YeeGrid3D& yee,
                                                              SingleGridParameterExtractor& singleGridRoot) {
+
     auto updateSequences = singleGridRoot.GetUpdateSequences("updateSequences");
     for(auto& updateNameAndSequence : updateSequences) {
         yee.AddInstructionSequence(
@@ -376,7 +385,35 @@ void ParamFileTranslator::SetAndRunSingleGridRunSequencs(YeeGrid3D& yee,
     }
 }
 
-void ParamFileTranslator::SetAndRunGridCollectionRunSequencs(std::map<std::string, YeeGrid3D>& gridsMap,
+void ParamFileTranslator::SetAndRunGridCollectionRunSequencs(YeeGridCollection& gridCollection,
+                                                             std::map<std::string, YeeGrid3D*>& gridsMap,
+                                                             std::map<std::string, std::size_t>& gridsInds,
                                                              GridCollectionParameterExtractor& gridCollectionRoot) {
+
     auto runSequence = gridCollectionRoot.GetRunSequence("runSequence");
+    for(auto& it : runSequence) {
+        std::size_t indStart = std::get<0>(it);
+        std::size_t indEnd = std::get<1>(it);
+        auto& name_sequence_vec = std::get<2>(it);
+
+        std::cout << "Running sequence: " << std::endl;
+        std::cout << indStart << " " << indEnd << std::endl;
+
+        // convert names in name_sequence_vec to indices and save them in the new vector index_sequence_vec
+        std::vector<std::pair<std::size_t, std::string>> index_sequence_vec;
+
+        for(auto& name_sequence : name_sequence_vec) {
+            std::string& gridName = name_sequence.first;
+            std::string& sequenceName = name_sequence.second;
+            std::cout << gridName << " " << sequenceName << std::endl;
+
+            index_sequence_vec.emplace_back(gridsInds[gridName], sequenceName);
+        }
+
+        gridCollection.RunInstructionsPeriodically(indStart, indEnd, index_sequence_vec);
+    }
 }
+
+
+
+

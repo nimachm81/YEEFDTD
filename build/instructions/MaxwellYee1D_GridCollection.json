@@ -116,7 +116,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"E-x",
+            "name":"E-x-l",
             "array":"E",
             "direction":"x",
             "saveRate":1
@@ -125,7 +125,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"H-y",
+            "name":"H-y-l",
             "array":"H",
             "direction":"y",
             "saveRate":1
@@ -134,7 +134,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"J-x",
+            "name":"J-x-l",
             "array":"J",
             "direction":"x",
             "saveRate":1
@@ -204,7 +204,7 @@
             "A":"H",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, 1, "_g1_nz_m1_"],
+            "A_indEnd":[1, 1, "_g1_nz_"],
             "b":["_g1_dt_dz_", "_g1_m_dt_dz_"],
             "C":["E", "E"],
             "C_direction":["x", "x"],
@@ -218,7 +218,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"E-x",
+            "name":"E-x-r",
             "array":"E",
             "direction":"x",
             "saveRate":1
@@ -227,7 +227,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"H-y",
+            "name":"H-y-r",
             "array":"H",
             "direction":"y",
             "saveRate":1

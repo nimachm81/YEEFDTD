@@ -507,11 +507,14 @@ void YeeGrid3D::ApplySingleRunInstructions() {
     }
 }
 
-void YeeGrid3D::ApplyInstructions(std::string name, std::size_t timeIndStart, std::size_t timeIndEnd) {
+void YeeGrid3D::ApplyInstructions(std::string name, std::size_t timeIndStart, std::size_t timeIndEnd,
+                                  bool writeToFile) {
     for(std::size_t i = timeIndStart; i < timeIndEnd; ++i) {
         timeIndex = i;
         ApplyInstructionsOnce(name);
-        WriteAllGridElemViewsToFile();
+        if(writeToFile) {
+            WriteAllGridElemViewsToFile();
+        }
     }
     //CloseGridViewFiles();
 }

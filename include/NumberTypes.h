@@ -14,7 +14,7 @@
 #include <cstdint>    // std::int64_t
 #include <complex>
 
-using FPNumber = std::complex<double>;  // floating point number. could be float, double, complex<float>, complex<double>
+using FPNumber = float; // floating point number. could be float, double, complex<float>, complex<double>
 using BigIntNumber = std::int64_t;
 
 

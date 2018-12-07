@@ -20,7 +20,9 @@ void YeeGridCollection::RunInstructionsPeriodically(std::size_t timeIndStart, st
         for(auto& instruction : instructions) {
             YeeGrid3D& grid = grids[instruction.first];
             grid.SetTimeIndex(timeInd);
-            grid.ApplyInstructions(instruction.second, timeInd, timeInd + 1);
+            grid.ApplyInstructions(instruction.second, timeInd, timeInd + 1, /*writeToFile = */ false);
+        }
+        for(auto& grid : grids) {
             grid.WriteAllGridElemViewsToFile();
         }
     }

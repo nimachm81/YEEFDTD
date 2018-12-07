@@ -54,7 +54,7 @@ class YeeGrid3D {
     void ApplyIterativeInstructionsOnce();
     void ApplySingleRunInstructions();
     void ApplyInstructionsOnce(std::string name);
-    void ApplyInstructions(std::string name, std::size_t timeIndStart, std::size_t timeIndEnd);
+    void ApplyInstructions(std::string name, std::size_t timeIndStart, std::size_t timeIndEnd, bool writeToFile = true);
 
     void* ConstructParams_A_plusequal_sum_b_C(
                                     std::array<std::size_t, 3> ind_start_A,

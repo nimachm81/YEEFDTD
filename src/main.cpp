@@ -1809,7 +1809,7 @@ void test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_from_json(
 void test_run_fdtd_1d_collection_from_json() {
     FPNumber grid0_z0 = 0.0;
     FPNumber grid0_z1 = 10.0;
-    std::size_t grid0_nz = 300;
+    std::size_t grid0_nz = 400;
     FPNumber grid0_dz = (grid0_z1 - grid0_z0)/(FPNumber)(grid0_nz);
     FPNumber stabilityFactor = 0.99;
     FPNumber grid0_dt = grid0_dz*stabilityFactor;
@@ -1818,11 +1818,11 @@ void test_run_fdtd_1d_collection_from_json() {
 
     FPNumber grid1_z0 = 10.0;
     FPNumber grid1_z1 = 20.0;
-    std::size_t grid1_nz = 300;
+    std::size_t grid1_nz = 400;
     FPNumber grid1_dz = (grid1_z1 - grid1_z0)/(FPNumber)(grid1_nz);
     FPNumber grid1_dt = grid1_dz*stabilityFactor;
 
-    std::size_t numOfTimeSamples = 600;
+    std::size_t numOfTimeSamples = 1000;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_g0_z0_\"", boost::lexical_cast<std::string>(std::real(grid0_z0))},
@@ -1871,6 +1871,7 @@ int main(int argc, char** argv) {
 
     //test_run_fdtd_gaussian_plasma_2d_periodic_square_lattice_sweep_over_BZ(100);
 
+    //test_yeegrid_1d_collection();
     test_run_fdtd_1d_collection_from_json();
 }
 

@@ -26,7 +26,7 @@ class ParamFileTranslator {
     void SetSingleGridGridArrayManipulators(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
     void SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                                           SingleGridParameterExtractor& singleGridRoot,
-                                          std::map<std::string, YeeGrid3D>& gridsMap       // maps grid names to grids
+                                          std::map<std::string, YeeGrid3D*>& gridsMap       // maps grid names to grids
                                                                                            // in a grid-collection simulation
                                                                                            // in a single grid simulation it
                                                                                            // is not used
@@ -34,7 +34,9 @@ class ParamFileTranslator {
     void SetSingleGridUpdateSequences(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
     void SetSingleGridGridViews(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
     void SetAndRunSingleGridRunSequencs(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
-    void SetAndRunGridCollectionRunSequencs(std::map<std::string, YeeGrid3D>& gridsMap,
+    void SetAndRunGridCollectionRunSequencs(YeeGridCollection& gridCollection,
+                                            std::map<std::string, YeeGrid3D*>& gridsMap,        // grids names --> grids data
+                                            std::map<std::string, std::size_t>& gridsInds,      // grids names --> grids indices
                                             GridCollectionParameterExtractor& gridCollectionRoot);
 
     private:
