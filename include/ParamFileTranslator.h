@@ -11,6 +11,8 @@
 #include "ParameterExtractor.h"
 #include "SingleGridParameterExtractor.h"
 #include "GridCollectionParameterExtractor.h"
+#include "YeeGrid.h"
+#include "YeeGridCollection.h"
 
 
 class ParamFileTranslator {

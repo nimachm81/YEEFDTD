@@ -8,12 +8,8 @@
 		<Option virtualFolders="CMake Files/;" />
 		<Build>
 			<Target title="all">
-				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
-				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
-				<Option type="1" />
+				<Option type="4" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<MakeCommands>
 					<Build command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all' />
 					<CompileFile command='/usr/bin/make -j8 -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
@@ -43,6 +39,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/include" />
+					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/test" />
 					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi" />
 					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent" />
 					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent/include" />
@@ -73,6 +70,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/include" />
+					<Add directory="/home/nima/Documents/GitProjects/YEEFDTD/test" />
 					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi" />
 					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent" />
 					<Add directory="/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi/opal/mca/event/libevent2022/libevent/include" />
@@ -132,6 +130,7 @@
 		<Unit filename="../include/PeriodicGridArrayManipulator.h" />
 		<Unit filename="../include/SingleGridParameterExtractor.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
+		<Unit filename="../include/UtilityFunctions.hpp" />
 		<Unit filename="../include/Vector.hpp" />
 		<Unit filename="../include/YeeGrid.h" />
 		<Unit filename="../include/YeeGridCollection.h" />
@@ -192,6 +191,28 @@
 		<Unit filename="../src/main.cpp">
 			<Option target="main" />
 		</Unit>
+		<Unit filename="../test/Test_FDTD_1D.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Collection.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Collection_JSON.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Dielectric.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Dielectric_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Dielectric_PML.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Dielectric_PML_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_PML.hpp" />
+		<Unit filename="../test/Test_FDTD_1D_Plasma_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_GaussianPlasma_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_PBC_SquareLattice_GaussianPlasma_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_PML.hpp" />
+		<Unit filename="../test/Test_FDTD_3D.hpp" />
+		<Unit filename="../test/Test_FDTD_3D_Json.hpp" />
+		<Unit filename="../test/Test_MultiDimArray.hpp" />
+		<Unit filename="../test/Test_MultiDimArray_FileIO.hpp" />
+		<Unit filename="../test/Test_ParameterExtractor.hpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
