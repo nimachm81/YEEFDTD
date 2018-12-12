@@ -306,17 +306,26 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 assert(false);
             }
 
-        } else if(updateType == "A=frt") {
+        } else if(updateType == "A=frt" || updateType == "A*=frt") {
             ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
 
             void* updateParamsPtr = yee.ConstructParams_A_equal_func_r_t(
                     updateParams.GetStringProperty("girdArrayManipulator")
                     );
 
-            yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
-                    FDInstructionCode::A_equal_func_r_t,
-                    updateParamsPtr
-                    );
+            if(updateType == "A=frt") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_equal_func_r_t,
+                        updateParamsPtr
+                        );
+            } else if(updateType == "A*=frt") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_multequal_func_r_t,
+                        updateParamsPtr
+                        );
+            } else {
+                assert(false);
+            }
         } else {
             std::cout << "Unknown update instruction: " << updateType << std::endl;
             assert(false);

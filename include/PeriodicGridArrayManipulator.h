@@ -17,7 +17,7 @@ class PeriodicGridArrayManipulator : public GridArrayManipulator {
 
     std::array<FPNumber, 3> BringPointInsideUnitCell(const std::array<FPNumber, 3>& r);
 
-    void UpdateArray(const FPNumber t);
+    void UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction);
 
     virtual FPNumber Func(const std::array<FPNumber, 3> r, const FPNumber t) = 0;
 

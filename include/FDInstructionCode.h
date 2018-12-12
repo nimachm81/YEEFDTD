@@ -27,13 +27,15 @@ enum class FDInstructionCode {
     ,A_equal_sum_bB_C    // Sets array A as:     A = Sum{b_n*B_n*C_n}
                 // same parameters as in A_plusequal_sum_b_C except B is a grid array with the same shape as A and C
 
-    ,A_equal_func_r_t   // update array A as a function of space and time
+    ,A_equal_func_r_t   // update array A as a function of space and time        A = f(r, t)
                 // The function takes the array A and time t as parameters and calculates the parameter r (position)
                 // based on the location of the origin of the array eith respect to the corners of the Yee grid, and
                 // then sets the elements of A based on their positions and time.
                 // parameters : tuple{A, f, t}
                 // std::tuple<std::string     // name of GridArrayManipulator (it has a pointer to A) and a method to
                 //           >                // calculate time
+    ,A_multequal_func_r_t   // update array A as a function of space and time    A *= f(r, t)
+                // same parameters as in A_equal_func_r_t
 
     ,A_plusequal_sum_b_C_neighbor    // Sets array A from a neighbor grid as:     A += Sum{b_n*C_n}
                 // same parameters as A_plusequal_sum_b_C, except it takes an extra argument as a refrence to the

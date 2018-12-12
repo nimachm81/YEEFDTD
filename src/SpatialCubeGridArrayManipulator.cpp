@@ -58,13 +58,21 @@ std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>
     return indexPair;
 }
 
-void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
-    gridArray.SetToNumber(0.0);
+void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
+
+    NumberArray3D<FPNumber> rhsArray;
 
     std::array<std::size_t, 3> shape = gridArray.GetShape();
     FPNumber dx = dr[0];
     FPNumber dy = dr[1];
     FPNumber dz = dr[2];
+
+    if(instruction == GAManipulatorInstructionCode::Equal) {
+        rhsArray.MakeThisASliceOf(gridArray);
+        rhsArray = (FPNumber)0.0;
+    } else {
+        rhsArray.ReInitialize(shape, (FPNumber)0.0);
+    }
 
     // get an slice on the cube and set its value to insideValue
     std::array<FPNumber, 3> cubeR0_p{cubeR0[0] + smoothEdgeThickness[0]/(FPNumber)2,
@@ -93,8 +101,8 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
     assert(indStart_m[0] <= indEnd_p[0] && indStart_m[1] <= indEnd_p[1] && indStart_m[2] <= indEnd_p[2]);
     assert(indStart_m[0] < indEnd_p[0] || indStart_m[1] < indEnd_p[1] || indStart_m[2] < indEnd_p[2]);
 
-    NumberArray3D slice = gridArray.GetSlice(indStart_p, indEnd_m);
-    slice.SetToNumber(1.0);
+    NumberArray3D slice = rhsArray.GetSlice(indStart_p, indEnd_m);
+    slice = (FPNumber)1.0;
 
     // set the edge frames to 1.0
     if(std::real(smoothEdgeThickness[0]) > 0.0) {
@@ -105,10 +113,10 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         std::array<std::size_t, 3> indStart_xp{indEnd_m[0], indStart_m[1], indStart_m[2]};
         std::array<std::size_t, 3> indEnd_xp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
 
-        NumberArray3D slice_xm = gridArray.GetSlice(indStart_xm, indEnd_xm);
-        slice_xm.SetToNumber(1.0);
-        NumberArray3D slice_xp = gridArray.GetSlice(indStart_xp, indEnd_xp);
-        slice_xp.SetToNumber(1.0);
+        NumberArray3D slice_xm = rhsArray.GetSlice(indStart_xm, indEnd_xm);
+        slice_xm = 1.0;
+        NumberArray3D slice_xp = rhsArray.GetSlice(indStart_xp, indEnd_xp);
+        slice_xp = (FPNumber)1.0;
     }
     if(std::real(smoothEdgeThickness[1]) > 0.0) {
     // get an slice for the cube face with normal along +y or -y
@@ -118,10 +126,10 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         std::array<std::size_t, 3> indStart_yp{indStart_m[0], indEnd_m[1], indStart_m[2]};
         std::array<std::size_t, 3> indEnd_yp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
 
-        NumberArray3D slice_ym = gridArray.GetSlice(indStart_ym, indEnd_ym);
-        slice_ym.SetToNumber(1.0);
-        NumberArray3D slice_yp = gridArray.GetSlice(indStart_yp, indEnd_yp);
-        slice_yp.SetToNumber(1.0);
+        NumberArray3D slice_ym = rhsArray.GetSlice(indStart_ym, indEnd_ym);
+        slice_ym = (FPNumber)1.0;
+        NumberArray3D slice_yp = rhsArray.GetSlice(indStart_yp, indEnd_yp);
+        slice_yp = (FPNumber)1.0;
     }
     if(std::real(smoothEdgeThickness[2]) > 0.0) {
     // get an slice for the cube face with normal along +z or -z
@@ -131,10 +139,10 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         std::array<std::size_t, 3> indStart_zp{indStart_m[0], indStart_m[1], indEnd_m[2]};
         std::array<std::size_t, 3> indEnd_zp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
 
-        NumberArray3D slice_zm = gridArray.GetSlice(indStart_zm, indEnd_zm);
-        slice_zm.SetToNumber(1.0);
-        NumberArray3D slice_zp = gridArray.GetSlice(indStart_zp, indEnd_zp);
-        slice_zp.SetToNumber(1.0);
+        NumberArray3D slice_zm = rhsArray.GetSlice(indStart_zm, indEnd_zm);
+        slice_zm = (FPNumber)1.0;
+        NumberArray3D slice_zp = rhsArray.GetSlice(indStart_zp, indEnd_zp);
+        slice_zp = (FPNumber)1.0;
     }
 
     // smoothen the edges
@@ -146,8 +154,8 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         std::array<std::size_t, 3> indStart_xp{indEnd_m[0], indStart_m[1], indStart_m[2]};
         std::array<std::size_t, 3> indEnd_xp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
 
-        NumberArray3D slice_xm = gridArray.GetSlice(indStart_xm, indEnd_xm);
-        NumberArray3D slice_xp = gridArray.GetSlice(indStart_xp, indEnd_xp);
+        NumberArray3D slice_xm = rhsArray.GetSlice(indStart_xm, indEnd_xm);
+        NumberArray3D slice_xp = rhsArray.GetSlice(indStart_xp, indEnd_xp);
 
         // create meshgrid
         std::array<FPNumber, 3> r0_xm{(FPNumber)(indStart_xm[0])*dx,
@@ -178,8 +186,8 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         std::array<std::size_t, 3> indStart_yp{indStart_m[0], indEnd_m[1], indStart_m[2]};
         std::array<std::size_t, 3> indEnd_yp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
 
-        NumberArray3D slice_ym = gridArray.GetSlice(indStart_ym, indEnd_ym);
-        NumberArray3D slice_yp = gridArray.GetSlice(indStart_yp, indEnd_yp);
+        NumberArray3D slice_ym = rhsArray.GetSlice(indStart_ym, indEnd_ym);
+        NumberArray3D slice_yp = rhsArray.GetSlice(indStart_yp, indEnd_yp);
         // create meshgrid
         std::array<FPNumber, 3> r0_ym{(FPNumber)(indStart_ym[0])*dx,
                                         (FPNumber)(indStart_ym[1])*dy,
@@ -211,8 +219,8 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         std::array<std::size_t, 3> indStart_zp{indStart_m[0], indStart_m[1], indEnd_m[2]};
         std::array<std::size_t, 3> indEnd_zp{indEnd_p[0], indEnd_p[1], indEnd_p[2]};
 
-        NumberArray3D slice_zm = gridArray.GetSlice(indStart_zm, indEnd_zm);
-        NumberArray3D slice_zp = gridArray.GetSlice(indStart_zp, indEnd_zp);
+        NumberArray3D slice_zm = rhsArray.GetSlice(indStart_zm, indEnd_zm);
+        NumberArray3D slice_zp = rhsArray.GetSlice(indStart_zp, indEnd_zp);
         // create meshgrid
         std::array<FPNumber, 3> r0_zm{(FPNumber)(indStart_zm[0])*dx,
                                         (FPNumber)(indStart_zm[1])*dy,
@@ -234,8 +242,18 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t) {
         slice_zp *= 0.5*NumberArray3D<FPNumber>::cos((zp - r0_zp[2])*M_PI/(r1_zp[2] - r0_zp[2])) + 0.5;
     }
 
-    gridArray *= (insideValue - outsideValue);
-    gridArray += outsideValue;
+    rhsArray *= (insideValue - outsideValue);
+    rhsArray += outsideValue;
+
+    if(instruction == GAManipulatorInstructionCode::PlusEqual) {
+        gridArray += rhsArray;
+    } else if(instruction == GAManipulatorInstructionCode::MultiplyEqual) {
+        gridArray *= rhsArray;
+    } else {
+        std::cout << "Not implemented!!!" << std::endl;
+        assert(false);
+    }
+
 }
 
 FPNumber SpatialCubeGridArrayManipulator::CalculateTime(const FPNumber dt, const std::size_t timeIndex) {

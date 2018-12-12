@@ -17,7 +17,7 @@ void PeriodicGridArrayManipulator::SetPrimitiveVectors(const std::array<FPNumber
 }
 
 
-void PeriodicGridArrayManipulator::UpdateArray(const FPNumber t) {
+void PeriodicGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
     FPNumber*** arrayData = gridArray.GetArrayData();
     std::array<std::size_t, 3>& arrayShape = gridArray.GetShape();
     std::array<std::size_t, 3>& arrayIndStart = gridArray.GetIndStart();
@@ -38,6 +38,11 @@ void PeriodicGridArrayManipulator::UpdateArray(const FPNumber t) {
     FPNumber dz = dr[2];
 
     FPNumber x, y, z;
+
+    if(instruction != GAManipulatorInstructionCode::Equal) {
+        std::cout << "Not implemented!!!" << std::endl;
+        assert(false);
+    }
 
     for(std::size_t i0 = 0; i0 < n0; ++i0) {
         x = x0 + (FPNumber)i0*dx;

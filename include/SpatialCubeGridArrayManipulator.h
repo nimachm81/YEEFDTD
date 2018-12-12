@@ -16,7 +16,7 @@ class SpatialCubeGridArrayManipulator : public GridArrayManipulator{
     std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>
         GetArrayIndicesBetweenTwoCorners(std::array<FPNumber, 3>& r0, std::array<FPNumber, 3>& r1);
 
-    void UpdateArray(const FPNumber t);
+    void UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction);
     FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex);
 
     private:

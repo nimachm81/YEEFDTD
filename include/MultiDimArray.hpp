@@ -152,6 +152,25 @@ class NumberArray3D {
         return *this;
     }
 
+    // Sets all array elements to num
+    NumberArray3D& operator=(const T num) {
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+        std::size_t ind0 = indStart[0];
+        std::size_t ind1 = indStart[1];
+        std::size_t ind2 = indStart[2];
+
+        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = num;
+                }
+            }
+        }
+        return *this;
+    }
+
     friend NumberArray3D operator+(const NumberArray3D& numArrA, const NumberArray3D& numArrB) {
         const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
         T*** a_arrayData = numArrA.GetArrayData();
@@ -634,23 +653,23 @@ class NumberArray3D {
 
     //------------------------- in-place math functions ----------------------------------
 
-    NumberArray3D& SetToNumber(const T num) {
-        std::size_t n0 = shape[0];
-        std::size_t n1 = shape[1];
-        std::size_t n2 = shape[2];
-        std::size_t ind0 = indStart[0];
-        std::size_t ind1 = indStart[1];
-        std::size_t ind2 = indStart[2];
-
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = num;
-                }
-            }
-        }
-        return *this;
-    }
+//    NumberArray3D& SetToNumber(const T num) {
+//        std::size_t n0 = shape[0];
+//        std::size_t n1 = shape[1];
+//        std::size_t n2 = shape[2];
+//        std::size_t ind0 = indStart[0];
+//        std::size_t ind1 = indStart[1];
+//        std::size_t ind2 = indStart[2];
+//
+//        for(std::size_t i0 = 0; i0 < n0; ++i0) {
+//            for(std::size_t i1 = 0; i1 < n1; ++i1) {
+//                for(std::size_t i2 = 0; i2 < n2; ++i2) {
+//                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = num;
+//                }
+//            }
+//        }
+//        return *this;
+//    }
 
     //------------------------- mathematical functions -----------------------------------
 

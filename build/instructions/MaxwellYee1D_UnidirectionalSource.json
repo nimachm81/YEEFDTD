@@ -1,0 +1,154 @@
+
+{
+"simulationType":"singleGrid",
+"simulationParameters":{
+    "variables":["_z0_", "_z1_", "_nz_", "_dz_", "_dt_", "_nt_", "_z_j_", "_indJ_", "_indJ_p1_", "_indJ_m1_", "_dt_dz_", "_m_dt_dz_", "_dt_dz_eps_", "_m_dt_dz_eps_", "_Je_t_center_", "_Jm_t_center_", "_Jm_amp_", "_J_mod_freq_", "_J_mod_phase_"],
+    "dimensions":{
+        "r0":[0.0, 0.0, "_z0_"],
+        "r1":[0.1, 0.1, "_z1_"],
+        "nCells":[1, 1, "_nz_"],
+        "dt":"_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, "_indJ_"], "nCells":[1, 1, 0]},
+                         {"name":"Jm", "type":"EdgeH", "indStart":[0, 0, "_indJ_m1_"], "nCells":[1, 1, 1]}],
+    "girdArrayManipulators":[
+        {
+        "type":"GaussianGridArrayManipulator",
+        "parameters":{
+            "name":"Jupdater",
+            "array":"J",
+            "direction":"x",
+            "amplitude":1.0,
+            "t_center":"_Je_t_center_",
+            "t_decay":0.2,
+            "modulationFrequency":"_J_mod_freq_",
+            "modulationPhase":"_J_mod_phase_",
+            "timeOffsetFraction":-0.5
+            }
+        },
+        {
+        "type":"GaussianGridArrayManipulator",
+        "parameters":{
+            "name":"Jmupdater",
+            "array":"Jm",
+            "direction":"y",
+            "amplitude":"_Jm_amp_",
+            "t_center":"_Jm_t_center_",
+            "t_decay":0.2,
+            "modulationFrequency":"_J_mod_freq_",
+            "modulationPhase":"_J_mod_phase_",
+            "timeOffsetFraction":0.0
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 1],
+            "A_indEnd":[1, 1, "_nz_"],
+            "b":["_dt_dz_eps_", "_m_dt_dz_eps_"],
+            "C":["H", "H"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, 1, "_nz_"],
+            "b":["_dt_dz_", "_m_dt_dz_"],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_me_J",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, "_indJ_"],
+            "A_indEnd":[1, 1, "_indJ_p1_"],
+            "b":["_m_dt_dz_"],
+            "C":["J"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_me_Jm",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, "_indJ_m1_"],
+            "A_indEnd":[1, 1, "_indJ_"],
+            "b":["_m_dt_dz_"],
+            "C":["Jm"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"J_update",
+            "girdArrayManipulator":"Jupdater"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"Jm_update",
+            "girdArrayManipulator":"Jmupdater"
+            }
+        }
+    ],
+    "updateSequences":[{"name":"iterative", "sequence":["J_update", 
+                                                        "E_me_J", "E_pe_curl_H",
+                                                        "Jm_update", 
+                                                        "H_me_Jm", "H_pe_m_curl_E"]}],
+    "runSequence":[{"name":"iterative", "timeIndStart":0, "timeIndEnd":"_nt_"}],
+    "gridViews":[
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"1D/E-x",
+            "array":"E",
+            "direction":"x",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"1D/H-y",
+            "array":"H",
+            "direction":"y",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"1D/J-x",
+            "array":"J",
+            "direction":"x",
+            "saveRate":1
+            }
+        }
+    ]
+}
+}
+
+

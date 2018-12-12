@@ -34,9 +34,18 @@ FPNumber GaussianGridArrayManipulator::CalculateTime(const FPNumber dt, const st
     return ((FPNumber)timeIndex + timeOffsetFraction) * dt;
 }
 
-void GaussianGridArrayManipulator::UpdateArray(const FPNumber t) {
+void GaussianGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
     FPNumber gaussianValue = amplitude * std::exp(-(t - t_center)*(t - t_center) / (t_decay*t_decay)) *
                                std::cos((FPNumber)(2.0*M_PI)*modulationFrequency*t + modulationPhase);
-    gridArray.SetToNumber(gaussianValue);
+    if(instruction == GAManipulatorInstructionCode::Equal) {
+        gridArray = gaussianValue;
+    } else if(instruction == GAManipulatorInstructionCode::PlusEqual) {
+        gridArray += gaussianValue;
+    } else if(instruction == GAManipulatorInstructionCode::MultiplyEqual) {
+        gridArray *= gaussianValue;
+    } else {
+        std::cout << "Not implemented!!!" << std::endl;
+        assert(false);
+    }
 }
 

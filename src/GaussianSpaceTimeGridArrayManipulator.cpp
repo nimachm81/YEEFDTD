@@ -44,7 +44,7 @@ FPNumber GaussianSaceTimeGridArrayManipulator::CalculateTime(const FPNumber dt, 
     return ((FPNumber)timeIndex + timeOffsetFraction) * dt;
 }
 
-void GaussianSaceTimeGridArrayManipulator::UpdateArray(const FPNumber t) {
+void GaussianSaceTimeGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
     FPNumber gaussianValue_t = amplitude * std::exp(-(t - st_center[3])*(t - st_center[3]) *
                                                      (st_decay_rate[3]*st_decay_rate[3]))
                                            * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[3]*t + st_modulationPhase[3]);
@@ -69,6 +69,11 @@ void GaussianSaceTimeGridArrayManipulator::UpdateArray(const FPNumber t) {
     FPNumber dz = dr[2];
 
     FPNumber x, y, z;
+
+    if(instruction != GAManipulatorInstructionCode::Equal) {
+        std::cout << "Not implemented!!!" << std::endl;
+        assert(false);
+    }
 
     for(std::size_t i0 = 0; i0 < n0; ++i0) {
         x = x0 + (FPNumber)i0*dx;

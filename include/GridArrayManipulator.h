@@ -8,6 +8,14 @@
 #include "YeeGridDataTypes.h"
 
 
+enum class GAManipulatorInstructionCode {
+    Equal,
+    PlusEqual,
+    MinusEqual,
+    MultiplyEqual,
+    DevideEqual
+};
+
 class GridArrayManipulator {
     public:
     virtual ~GridArrayManipulator() { };
@@ -16,7 +24,7 @@ class GridArrayManipulator {
     void SetGridArrayTo(NumberArray3D<FPNumber>& gridData);
     void SetGridArrayTo(NumberArray3D<FPNumber>&& gridData);
 
-    virtual void UpdateArray(const FPNumber t) = 0;
+    virtual void UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) = 0;
     virtual FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex) = 0;
 
     protected:

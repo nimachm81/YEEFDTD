@@ -52,7 +52,8 @@ YeeGrid3D::~YeeGrid3D() {
                     >*
                 >(params);
             delete params_tuple;
-        }else if(instructionCode == FDInstructionCode::A_equal_func_r_t) {
+        }else if(instructionCode == FDInstructionCode::A_equal_func_r_t ||
+                 instructionCode == FDInstructionCode::A_multequal_func_r_t) {
             auto* params_tuple =
                 static_cast<
                     std::tuple<
@@ -61,7 +62,7 @@ YeeGrid3D::~YeeGrid3D() {
                 >(params);
             delete params_tuple;
         } else if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor ||
-           instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
+                  instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
             auto* params_tuple =
                 static_cast<
                     std::tuple<
@@ -412,7 +413,8 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 }
             }
         }
-    } else if(instructionCode == FDInstructionCode::A_equal_func_r_t) {
+    } else if(instructionCode == FDInstructionCode::A_equal_func_r_t ||
+              instructionCode == FDInstructionCode::A_multequal_func_r_t) {
         auto& params_tuple =
             *static_cast<
                 std::tuple<
@@ -426,7 +428,11 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
 
         GridArrayManipulator& gridManipulator = *gridArrayManipulators[gridManipulator_name];
         FPNumber t = gridManipulator.CalculateTime(dt, timeIndex);
-        gridManipulator.UpdateArray(t);
+        if(instructionCode == FDInstructionCode::A_equal_func_r_t) {
+            gridManipulator.UpdateArray(t, GAManipulatorInstructionCode::Equal);
+        } else if(instructionCode == FDInstructionCode::A_multequal_func_r_t) {
+            gridManipulator.UpdateArray(t, GAManipulatorInstructionCode::MultiplyEqual);
+        }
     } else if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor ||
        instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
         auto& params_tuple =

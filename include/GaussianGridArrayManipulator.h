@@ -17,7 +17,7 @@ class GaussianGridArrayManipulator : public GridArrayManipulator {
     void SetModulationPhase(const FPNumber modulationPhase);
     void SetTimeOffsetFraction(const FPNumber offsetFraction);
 
-    void UpdateArray(const FPNumber t);
+    void UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction);
     FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex);
 
     private:
