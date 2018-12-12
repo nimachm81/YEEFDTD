@@ -2,7 +2,7 @@
 {
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":[-5, 5, -8, 5, 1000, 1001, 999, 1300, 1301, 1299, 0.00999999978, 0.00999999978, 0.00671751471, -0.00671751471, 2400, 250, 251, 249, 0.671751499, 0.671751499, -0.671751499, -0.671751499, 4.48027754, 0.5, 0.5, 3.4107883, 3.4107883, -0.00284374808, -5, 5, -5, 5, 0, 0.10000000000000001, 0, 0.5, 1.5, 1.51148868, 0.0574146584, -0.0574146584, -0.0574146584, 0.0574146584, 3.42052627, 1, 1.57079637],
+    "variables":[-5, 5, -8, 5, 1000, 1001, 999, 1300, 1301, 1299, 0.00999999978, 0.00999999978, 0.00671751471, -0.00671751471, 240, 250, 251, 249, 0.671751499, 0.671751499, -0.671751499, -0.671751499, 6.74466848, 0.5, 0.5, 3.82358432, 3.82358432, -0.00277657271, -5, 5, -5, 5, 0, 0.10000000000000001, 0, 0.5, 1.5, 1.51148868, 0.0574146584, -0.0574146584, -0.0574146584, 0.0574146584, 3.42052627, 0.300000012, 1.57079637, 248, 249],
     "dimensions":{
         "r0":[0.0, -5, -8],
         "r1":[0.1, 5, 5],
@@ -22,7 +22,7 @@
             "amplitude":1.0,
             "st_center":[0.0, 0, 0.0, 1.5],
             "st_decay_rate":[0.0, 0.5, 0.0, 2.0],
-            "st_modulationFrequency":[0.0, 0.0, 0.0, 1],
+            "st_modulationFrequency":[0.0, 0.0, 0.0, 0.300000012],
             "st_modulationPhase":[0.0, 0.0, 0.0, 1.57079637],
             "timeOffsetFraction":-0.5
             }
@@ -36,7 +36,7 @@
             "amplitude":3.42052627,
             "st_center":[0.0, 0, 0.0, 1.51148868],
             "st_decay_rate":[0.0, 0.5, 0.0, 2.0],
-            "st_modulationFrequency":[0.0, 0.0, 0.0, 1],
+            "st_modulationFrequency":[0.0, 0.0, 0.0, 0.300000012],
             "st_modulationPhase":[0.0, 0.0, 0.0, 1.57079637],
             "timeOffsetFraction":0.0
             }
@@ -47,9 +47,9 @@
             "name":"Wpupdater",
             "array":"Wp_sq",
             "direction":"x",
-            "amplitude":4.48027754,
+            "amplitude":6.74466848,
             "center":[0.0, 0.5, 0.5],
-            "decay_rate":[0.0, 3.4107883, 3.4107883],
+            "decay_rate":[0.0, 3.82358432, 3.82358432],
             "unitCellOrigin":[0.0, 0.0, 0.0],
             "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
             }
@@ -108,7 +108,7 @@
             "A_direction":"x",
             "A_indStart":[0, 1, 1],
             "A_indEnd":[1, 1000, 1300],
-            "b":[-0.00284374808],
+            "b":[-0.00277657271],
             "C":["Jp"],
             "C_direction":["x"],
             "C_indStart":[[0, 1, 1]]
@@ -220,33 +220,26 @@
                                                         "H_me_Jm", "Hy_pe_m_curl_E", "Hz_pe_m_curl_E"
                                                         ]}],
     "runSequence":[{"name":"materialSetup", "timeIndStart":0, "timeIndEnd":1},
-                   {"name":"iterative", "timeIndStart":0, "timeIndEnd":2400}],
+                   {"name":"iterative", "timeIndStart":0, "timeIndEnd":240}],
     "gridViews":[
         {
-        "type":"entire",
+        "type":"partial",
         "parameters":{
-            "name":"E-x",
+            "name":"2D/E-x",
             "array":"E",
             "direction":"x",
-            "saveRate":10
+            "indStart":[0, 0, 248],
+            "indEnd":[1, 1001, 249],
+            "saveRate":1
             }
         },
         {
         "type":"entire",
         "parameters":{
-            "name":"H-y",
-            "array":"H",
-            "direction":"y",
-            "saveRate":10
-            }
-        },
-        {
-        "type":"entire",
-        "parameters":{
-            "name":"Wp2-x",
+            "name":"2D/Wp2-x",
             "array":"Wp_sq",
             "direction":"x",
-            "saveRate":100
+            "saveRate":1000
             }
         }
     ]

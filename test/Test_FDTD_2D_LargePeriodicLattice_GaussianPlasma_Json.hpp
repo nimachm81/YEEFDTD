@@ -8,8 +8,8 @@
 
 void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
 
-    FPNumber pitch = 127.0;
-    FPNumber FWHM = 62.0;
+    FPNumber pitch = 124.0;
+    FPNumber FWHM = 54.0;
     FPNumber eps_r = 11.7;
 
 
@@ -30,14 +30,14 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
     FPNumber j_center_t = 1.5;
     FPNumber jm_center_t = j_center_t + dt/(FPNumber)2.0*std::sqrt(eps_r);
     FPNumber jm_amplitude = std::sqrt(eps_r);
-    FPNumber j_mod_freq = 1.0;
+    FPNumber j_mod_freq = 0.3;
     FPNumber j_mod_phase = M_PI/2.0;
 
 
-    std::size_t numOfTimeSamples = 2400;
+    std::size_t numOfTimeSamples = 240;
 
     FPNumber gamma = 1.0e12/(3.0e8/(pitch*1.0e-6));
-    FPNumber wp = 5.0e12/(3.0e8/(pitch*1.0e-6));
+    FPNumber wp = 1.0e12*(2.0*M_PI)/(3.0e8/(pitch*1.0e-6));
     std::cout << "wp : " << wp << std::endl;
 
     FPNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
@@ -46,6 +46,8 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
     FPNumber wp2_center_z = 0.5;
 
     FPNumber wp2_mask_z0 = -5.0;
+
+    std::size_t indz_record = indzJ - 2;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -92,6 +94,8 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
             {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
             {"\"_cube_dy_\"", boost::lexical_cast<std::string>(std::real(0.0))},
             {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(0.1))},
+            {"\"_ind_z_record_\"", boost::lexical_cast<std::string>(indz_record)},
+            {"\"_ind_z_record_p1_\"", boost::lexical_cast<std::string>(indz_record + 1)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_LargePeriodicGaussianPlasma.json",

@@ -834,6 +834,34 @@ class NumberArray3D {
         return Write3DNumberArrayData(fileOut, shape, indStart, arrayData, dataTypeCode, writeShape, writeDataTypeSize);
     }
 
+    void WriteArrayDataToMemory(char* buffer,
+                              std::size_t& bufferInd,  //start writing to buffer from this index
+                              bool writeShape = false,
+                              bool writeDataTypeSize = false) {
+        assert(arrayData != nullptr);
+        int dataTypeCode = -1;
+        if(typeid(T) == typeid(float)) {
+            dataTypeCode = 1;
+        } else if(typeid(T) == typeid(double)) {
+            dataTypeCode = 2;
+        } else if(typeid(T) == typeid(std::complex<float>)) {
+            dataTypeCode = 3;
+        } else if(typeid(T) == typeid(std::complex<double>)) {
+            dataTypeCode = 4;
+        }
+
+        return Write3DNumberArrayDataToMemory(buffer, bufferInd,
+                    shape, indStart, arrayData, dataTypeCode, writeShape, writeDataTypeSize);
+    }
+
+    // This function should take into account all the possible preambles that could be added during output writes
+    std::size_t GetMaxDataSizeInBytes() {
+        return  sizeof(int)             // datatype code
+                + sizeof(std::size_t)   // datatype size
+                + 3*sizeof(std::size_t)     // shape
+                + shape[0]*shape[1]*shape[2]*sizeof(T);     // data array
+    }
+
     void ReadArrayDataFromFile(std::ifstream* fileIn) {
         assert(arrayData != nullptr);
         return Read3DNumberArrayData(fileIn, shape, indStart, arrayData);
