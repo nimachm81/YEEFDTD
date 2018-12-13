@@ -2,7 +2,7 @@
 {
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_p1_", "_nz_m1_", "_dy_", "_dz_", "_dt_", "_m_dt_", "_nt_", "_indzJ_", "_indzJ_p1_", "_indzJ_m1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_wp_sq_", "_wp_sq_center_y_", "_wp_sq_center_z_", "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_", "_m_dt_tau_", "_cube_y0_", "_cube_y1_", "_cube_z0_", "_cube_z1_", "_cube_dy_", "_cube_dz_", "_J_center_y_", "_J_decayrate_y_", "_J_center_t_", "_Jm_center_t_", "_dt_dz_eps_", "_m_dt_dz_eps_", "_m_dt_dy_eps_", "_dt_dy_eps_", "_Jm_amp_", "_J_mod_freq_", "_J_mod_phase_", "_ind_z_record_", "_ind_z_record_p1_"],
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_p1_", "_nz_m1_", "_dy_", "_dz_", "_dt_", "_m_dt_", "_nt_", "_indzJ_", "_indzJ_p1_", "_indzJ_m1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_wp_sq_", "_wp_sq_center_y_", "_wp_sq_center_z_", "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_", "_m_dt_tau_", "_cube_y0_", "_cube_y1_", "_cube_z0_", "_cube_z1_", "_cube_dy_", "_cube_dz_", "_J_center_y_", "_J_decayrate_y_", "_J_center_t_", "_Jm_center_t_", "_dt_dz_eps_", "_m_dt_dz_eps_", "_m_dt_dy_eps_", "_dt_dy_eps_", "_Jm_amp_", "_J_mod_freq_", "_J_mod_phase_", "_ind_z_record_", "_ind_z_record_p1_", "_a1_y_", "_a1_z_", "_a2_y_", "_a2_z_", "_Eslice_name_", "_E_name_", "_Wp2_name_"],
     "dimensions":{
         "r0":[0.0, "_y0_", "_z0_"],
         "r1":[0.1, "_y1_", "_z1_"],
@@ -51,7 +51,7 @@
             "center":[0.0, "_wp_sq_center_y_", "_wp_sq_center_z_"],
             "decay_rate":[0.0, "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_"],
             "unitCellOrigin":[0.0, 0.0, 0.0],
-            "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
+            "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, "_a1_y_", "_a1_z_"], [0.0, "_a2_y_", "_a2_z_"]]
             }
         },
         {
@@ -225,7 +225,7 @@
         {
         "type":"partial",
         "parameters":{
-            "name":"2D/E-x",
+            "name":"_Eslice_name_",
             "array":"E",
             "direction":"x",
             "indStart":[0, 0, "_ind_z_record_"],
@@ -236,7 +236,16 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"2D/Wp2-x",
+            "name":"_E_name_",
+            "array":"E",
+            "direction":"x",
+            "saveRate":100
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"_Wp2_name_",
             "array":"Wp_sq",
             "direction":"x",
             "saveRate":1000

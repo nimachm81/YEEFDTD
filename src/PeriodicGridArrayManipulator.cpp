@@ -60,37 +60,46 @@ void PeriodicGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorIn
 
 std::array<FPNumber, 3> PeriodicGridArrayManipulator::BringPointInsideUnitCell(const std::array<FPNumber, 3>& r) {
     std::array<FPNumber, 3>& v0 = primitiveVectors[0];
-    FPNumber r_dot_v0 = (r[0] - unitCellOrigin[0])*v0[0] +
-                          (r[1] - unitCellOrigin[1])*v0[1] +
-                          (r[2] - unitCellOrigin[2])*v0[2];
+    FPNumber r_dot_v0 = (r[0])*v0[0] +
+                        (r[1])*v0[1] +
+                        (r[2])*v0[2];
     FPNumber v0_len = std::sqrt(v0[0]*v0[0] + v0[1]*v0[1] + v0[2]*v0[2]);
     FPNumber rem_0 = std::fmod(std::real(r_dot_v0), std::real(v0_len));
-    if(std::real(rem_0) < 0.0) {
+    if(std::real(rem_0) < -0.5*v0_len) {
         rem_0 += v0_len;
+    }
+    if(std::real(rem_0) > 0.5*v0_len) {
+        rem_0 -= v0_len;
     }
 
     std::array<FPNumber, 3>& v1 = primitiveVectors[1];
-    FPNumber r_dot_v1 = (r[0] - unitCellOrigin[0])*v1[0] +
-                          (r[1] - unitCellOrigin[1])*v1[1] +
-                          (r[2] - unitCellOrigin[2])*v1[2];
+    FPNumber r_dot_v1 = (r[0])*v1[0] +
+                        (r[1])*v1[1] +
+                        (r[2])*v1[2];
     FPNumber v1_len = std::sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]);
     FPNumber rem_1 = std::fmod(std::real(r_dot_v1), std::real(v1_len));
-    if(std::real(rem_1) < 0.0) {
+    if(std::real(rem_1) < -0.5*v1_len) {
         rem_1 += v1_len;
+    }
+    if(std::real(rem_1) > 0.5*v1_len) {
+        rem_1 -= v1_len;
     }
 
     std::array<FPNumber, 3>& v2 = primitiveVectors[2];
-    FPNumber r_dot_v2 = (r[0] - unitCellOrigin[0])*v2[0] +
-                          (r[1] - unitCellOrigin[1])*v2[1] +
-                          (r[2] - unitCellOrigin[2])*v2[2];
+    FPNumber r_dot_v2 = (r[0])*v2[0] +
+                        (r[1])*v2[1] +
+                        (r[2])*v2[2];
     FPNumber v2_len = std::sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
     FPNumber rem_2 = std::fmod(std::real(r_dot_v2), std::real(v2_len));
-    if(std::real(rem_2) < 0.0) {
+    if(std::real(rem_2) < -0.5*v2_len) {
         rem_2 += v2_len;
+    }
+    if(std::real(rem_2) > 0.5*v2_len) {
+        rem_2 -= v2_len;
     }
 
     return std::array<FPNumber, 3>{rem_0*v0[0] + rem_1*v1[0] + rem_2*v2[0],
-                                     rem_0*v0[1] + rem_1*v1[1] + rem_2*v2[1],
-                                     rem_0*v0[2] + rem_1*v1[2] + rem_2*v2[2]};
+                                   rem_0*v0[1] + rem_1*v1[1] + rem_2*v2[1],
+                                   rem_0*v0[2] + rem_1*v1[2] + rem_2*v2[2]};
 }
 

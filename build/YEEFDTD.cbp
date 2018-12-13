@@ -9,7 +9,6 @@
 		<Build>
 			<Target title="all">
 				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
 				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
 				<Option type="1" />
 				<Option compiler="gcc" />
@@ -210,6 +209,7 @@
 		<Unit filename="../test/Test_FDTD_2D_GaussianPlasma_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_MPI_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_PMC_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PBC_SquareLattice_GaussianPlasma_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PML.hpp" />

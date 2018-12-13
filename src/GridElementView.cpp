@@ -9,7 +9,7 @@ GridElementView::GridElementView() {
     viewFileExtension = ".data";
     saveOnDiskFrequency = 1;
 
-    bufferSize = 1024*1024*100;
+    bufferSize = 1024*1024*200;
 
     //buffer = std::make_unique<char>(bufferSize);
     maxArraySizeInBytes = NumberArray3D<FPNumber>().GetMaxDataSizeInBytes();
@@ -56,6 +56,8 @@ void GridElementView::OpenFileToWrite() {
         } else {
             assert(false);
         }
+    } else {
+        assert(false);
     }
 
     // TODO: control file synchronization and buffering

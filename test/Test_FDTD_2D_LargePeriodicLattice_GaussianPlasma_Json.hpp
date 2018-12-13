@@ -1,4 +1,6 @@
 
+#ifndef TEST_FDTD_2D_LARGEPERIODICLATTICE_GAUSSIANPLASMA_JSON
+#define TEST_FDTD_2D_LARGEPERIODICLATTICE_GAUSSIANPLASMA_JSON
 
 #include "boost/lexical_cast.hpp"
 #include "NumberTypes.h"
@@ -6,7 +8,7 @@
 #include "ParamFileTranslator.h"
 #include "UtilityFunctions.hpp"
 
-void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
+void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json(FPNumber theta_deg = 0.0) {
 
     FPNumber pitch = 124.0;
     FPNumber FWHM = 54.0;
@@ -16,14 +18,14 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
     FPNumber y0 = -5.0;
     FPNumber y1 = 5.0;
     FPNumber z0 = -8.0;
-    FPNumber z1 = 5.0;
+    FPNumber z1 = 2.0;
     std::size_t ny = 1000;
-    std::size_t nz = 1300;
+    std::size_t nz = 1000;
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
     FPNumber dz = (z1 - z0)/(FPNumber)(nz);
     FPNumber stabilityFactor = 0.95;
     FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
-    FPNumber z_j = -5.5;
+    FPNumber z_j = -6.0;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     FPNumber j_center_y = (y0 + y1)/(FPNumber)2.0;
     FPNumber j_decay_rate_y = 0.5;
@@ -34,7 +36,7 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
     FPNumber j_mod_phase = M_PI/2.0;
 
 
-    std::size_t numOfTimeSamples = 240;
+    std::size_t numOfTimeSamples = 2400;
 
     FPNumber gamma = 1.0e12/(3.0e8/(pitch*1.0e-6));
     FPNumber wp = 1.0e12*(2.0*M_PI)/(3.0e8/(pitch*1.0e-6));
@@ -42,12 +44,26 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
 
     FPNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
     FPNumber wp2_decayrate_z = FWHMtoDecayRate(FWHM/pitch);
-    FPNumber wp2_center_y = 0.5;
-    FPNumber wp2_center_z = 0.5;
+    FPNumber wp2_center_y = 0.0;
+    FPNumber wp2_center_z = 0.0;
 
-    FPNumber wp2_mask_z0 = -5.0;
+    FPNumber wp2_mask_z0 = -5.5;
 
     std::size_t indz_record = indzJ - 2;
+
+    FPNumber theta = theta_deg/180.0*M_PI;
+    FPNumber a1_y = std::cos(theta);
+    FPNumber a1_z = -std::sin(theta);
+    FPNumber a2_y = std::sin(theta);
+    FPNumber a2_z = std::cos(theta);
+
+    std::string e_slice_name = std::string("\"") + "2D/E-x-slice-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
+                               std::string("\"");
+    std::string e_name = std::string("\"") + "2D/E-x-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
+                               std::string("\"");
+    std::string wp2_name = std::string("\"") + "2D/Wp2-x-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
+                               std::string("\"");
+
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -96,13 +112,26 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json() {
             {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(0.1))},
             {"\"_ind_z_record_\"", boost::lexical_cast<std::string>(indz_record)},
             {"\"_ind_z_record_p1_\"", boost::lexical_cast<std::string>(indz_record + 1)},
-            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
+            {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)},
+            {"\"_a1_y_\"", boost::lexical_cast<std::string>(std::real(a1_y))},
+            {"\"_a1_z_\"", boost::lexical_cast<std::string>(std::real(a1_z))},
+            {"\"_a2_y_\"", boost::lexical_cast<std::string>(std::real(a2_y))},
+            {"\"_a2_z_\"", boost::lexical_cast<std::string>(std::real(a2_z))},
+            {"\"_Eslice_name_\"", e_slice_name},
+            {"\"_E_name_\"", e_name},
+            {"\"_Wp2_name_\"", wp2_name}
             };
+
+    std::string processedFileName =
+            std::string("instructions/processed/MaxwellYee2D_LargePeriodicGaussianPlasma_processed_") +
+            boost::lexical_cast<std::string>(std::real(theta_deg)) + ".json";
+
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_LargePeriodicGaussianPlasma.json",
-                "instructions/MaxwellYee2D_LargePeriodicGaussianPlasma_processed.json", str_replacewith);
+                processedFileName, str_replacewith);
 
-    ParamFileTranslator fileTranslator("instructions/MaxwellYee2D_LargePeriodicGaussianPlasma_processed.json");
+    ParamFileTranslator fileTranslator(processedFileName);
     fileTranslator.Translate();
-}
+};
 
+#endif // TEST_FDTD_2D_LARGEPERIODICLATTICE_GAUSSIANPLASMA_JSON
 
