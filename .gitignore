@@ -8,8 +8,8 @@ install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
 
-# python 
-build/data/__pycache__/
+# data file folder 
+build/data/
 
 # raw data files
 *.data
