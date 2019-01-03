@@ -10,11 +10,11 @@ CTestTestfile.cmake
 
 # python 
 */__pycache__/
-#build/visualisation/__pycache__/
+build/visualisation/__pycache__/
 
 # Jupyter notebook
 */.ipynb_checkpoints/
-#build/visualisation/.ipynb_checkpoints/
+build/visualisation/.ipynb_checkpoints/
 
 # data file folder 
 build/data/
