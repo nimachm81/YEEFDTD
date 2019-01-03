@@ -12,6 +12,7 @@
 #include "SpatialCubeGridArrayManipulator.h"
 #include "GaussianSpaceTimeGridArrayManipulator.h"
 #include "PeriodicGaussianGridArrayManipulator.h"
+#include "SpaceTimeCubeGridArrayManipulator.h"
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -593,6 +594,33 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
     modifier->SetEdgeThickness(edgeThickness);
     modifier->SetInsideValue(insideValue);
     modifier->SetOutsideValue(outsideValue);
+
+    // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddSpaceTimeCubeGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction,
+        std::array<FPNumber, 4> boxCornerR0, std::array<FPNumber, 4> boxCornerR1,
+        std::array<FPNumber, 4> edgeThickness,
+        FPNumber insideValue, FPNumber outsideValue,
+        FPNumber timeOffsetFraction
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<SpaceTimeCubeGridArrayManipulator> modifier(new SpaceTimeCubeGridArrayManipulator);
+    modifier->SetCubeCorners(boxCornerR0, boxCornerR1);
+    modifier->SetEdgeThickness(edgeThickness);
+    modifier->SetInsideValue(insideValue);
+    modifier->SetOutsideValue(outsideValue);
+    modifier->SetTimeOffsetFraction(timeOffsetFraction);
 
     // find the coordinates of the first element of the array
     std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);

@@ -119,6 +119,14 @@ class YeeGrid3D {
             std::array<FPNumber, 3> edgeThickness,    // thickness of the smooth edge
             FPNumber insideValue, FPNumber outsideValue // inside the cube set the array value to insideValue and...
             );
+    void AddSpaceTimeCubeGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            std::array<FPNumber, 4> boxCornerR0, std::array<FPNumber, 4> boxCornerR1,   // space-time corners of the hypercube, index [3]->time
+            std::array<FPNumber, 4> edgeThickness,      // space-time edge thickness. [0..2] -> space, [3] -> time
+            FPNumber insideValue, FPNumber outsideValue,
+            FPNumber timeOffsetFraction
+            );
     void AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,

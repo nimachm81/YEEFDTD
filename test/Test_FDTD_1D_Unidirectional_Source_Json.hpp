@@ -48,9 +48,9 @@ void test_run_fdtd_1d_unidirectional_source_from_json() {
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee1D_UnidirectionalSource.json",
-                "instructions/MaxwellYee1D_UnidirectionalSource_processed.json", str_replacewith);
+                "instructions/processed/MaxwellYee1D_UnidirectionalSource_processed.json", str_replacewith);
 
-    ParamFileTranslator fileTranslator("instructions/MaxwellYee1D_UnidirectionalSource_processed.json");
+    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee1D_UnidirectionalSource_processed.json");
     fileTranslator.Translate();
 }
 

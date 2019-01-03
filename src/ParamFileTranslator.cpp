@@ -182,6 +182,20 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetRealProperty("valueOutside")
                     );
 
+        } else if(std::get<0>(manipulatorNameAndParams) == "SpaceTimeCubeGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddSpaceTimeCubeGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.Get4VecRealProperty("cornerR0"),
+                    manipulatorParams.Get4VecRealProperty("cornerR1"),
+                    manipulatorParams.Get4VecRealProperty("edgeThickness"),
+                    manipulatorParams.GetRealProperty("valueInside"),
+                    manipulatorParams.GetRealProperty("valueOutside"),
+                    manipulatorParams.GetRealProperty("timeOffsetFraction")
+                    );
+
         } else {
             assert(false);
         }

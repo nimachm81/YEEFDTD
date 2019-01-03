@@ -45,9 +45,10 @@ FPNumber GaussianSaceTimeGridArrayManipulator::CalculateTime(const FPNumber dt, 
 }
 
 void GaussianSaceTimeGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
-    FPNumber gaussianValue_t = amplitude * std::exp(-(t - st_center[3])*(t - st_center[3]) *
+    FPNumber gaussianValue_t =
+            amplitude * std::exp(-(t - st_center[3])*(t - st_center[3]) *
                                                      (st_decay_rate[3]*st_decay_rate[3]))
-                                           * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[3]*t + st_modulationPhase[3]);
+            * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[3]*(t - st_center[3]) + st_modulationPhase[3]);
 
     FPNumber*** arrayData = gridArray.GetArrayData();
     std::array<std::size_t, 3>& arrayShape = gridArray.GetShape();
@@ -79,24 +80,23 @@ void GaussianSaceTimeGridArrayManipulator::UpdateArray(const FPNumber t, GAManip
         x = x0 + (FPNumber)i0*dx;
         FPNumber gaussianValue_x = std::exp(-(x - st_center[0])*(x - st_center[0]) *
                                             (st_decay_rate[0]*st_decay_rate[0]))
-                                     * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[0]*x + st_modulationPhase[0]);
+                * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[0]*(x - st_center[0]) + st_modulationPhase[0]);
         for(std::size_t i1 = 0; i1 < n1; ++i1) {
             y = y0 + (FPNumber)i1*dy;
             FPNumber gaussianValue_y = std::exp(-(y - st_center[1])*(y - st_center[1]) *
                                                 (st_decay_rate[1]*st_decay_rate[1]))
-                                         * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[1]*y + st_modulationPhase[1]);
+                * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[1]*(y - st_center[1]) + st_modulationPhase[1]);
             for(std::size_t i2 = 0; i2 < n2; ++i2) {
                 z = z0 + (FPNumber)i2*dz;
                 FPNumber gaussianValue_z = std::exp(-(z - st_center[2])*(z - st_center[2]) *
                                                     (st_decay_rate[2]*st_decay_rate[2]))
-                                             * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[2]*z + st_modulationPhase[2]);
+                * std::cos((FPNumber)(2.0*M_PI)*st_modulationFrequency[2]*(z - st_center[2]) + st_modulationPhase[2]);
 
                 arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = gaussianValue_t*
                                                              gaussianValue_x*gaussianValue_y*gaussianValue_z;
             }
         }
     }
-
 }
 
 

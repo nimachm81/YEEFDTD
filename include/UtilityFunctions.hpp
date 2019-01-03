@@ -1,3 +1,6 @@
+#ifndef FDTD_UTILITYFUNCTIONS
+#define FDTD_UTILITYFUNCTIONS
+
 
 #include "boost/lexical_cast.hpp"
 #include "DemotableComplex.hpp"
@@ -19,4 +22,5 @@ std::string CastComplexToJSONString(FPNumber complxNum) {
 };
 
 
+#endif // FDTD_UTILITYFUNCTIONS
 
