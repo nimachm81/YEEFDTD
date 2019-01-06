@@ -21,6 +21,5 @@ std::string CastComplexToJSONString(FPNumber complxNum) {
     return stringCast;
 };
 
-
 #endif // FDTD_UTILITYFUNCTIONS
 

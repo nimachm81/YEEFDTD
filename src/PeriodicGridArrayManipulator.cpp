@@ -65,10 +65,10 @@ std::array<FPNumber, 3> PeriodicGridArrayManipulator::BringPointInsideUnitCell(c
                         (r[2])*v0[2];
     FPNumber v0_len = std::sqrt(v0[0]*v0[0] + v0[1]*v0[1] + v0[2]*v0[2]);
     FPNumber rem_0 = std::fmod(std::real(r_dot_v0), std::real(v0_len));
-    if(std::real(rem_0) < -0.5*v0_len) {
+    if(std::real(rem_0) < -0.5*std::real(v0_len)) {
         rem_0 += v0_len;
     }
-    if(std::real(rem_0) > 0.5*v0_len) {
+    if(std::real(rem_0) > 0.5*std::real(v0_len)) {
         rem_0 -= v0_len;
     }
 
@@ -78,10 +78,10 @@ std::array<FPNumber, 3> PeriodicGridArrayManipulator::BringPointInsideUnitCell(c
                         (r[2])*v1[2];
     FPNumber v1_len = std::sqrt(v1[0]*v1[0] + v1[1]*v1[1] + v1[2]*v1[2]);
     FPNumber rem_1 = std::fmod(std::real(r_dot_v1), std::real(v1_len));
-    if(std::real(rem_1) < -0.5*v1_len) {
+    if(std::real(rem_1) < -0.5*std::real(v1_len)) {
         rem_1 += v1_len;
     }
-    if(std::real(rem_1) > 0.5*v1_len) {
+    if(std::real(rem_1) > 0.5*std::real(v1_len)) {
         rem_1 -= v1_len;
     }
 
@@ -91,10 +91,10 @@ std::array<FPNumber, 3> PeriodicGridArrayManipulator::BringPointInsideUnitCell(c
                         (r[2])*v2[2];
     FPNumber v2_len = std::sqrt(v2[0]*v2[0] + v2[1]*v2[1] + v2[2]*v2[2]);
     FPNumber rem_2 = std::fmod(std::real(r_dot_v2), std::real(v2_len));
-    if(std::real(rem_2) < -0.5*v2_len) {
+    if(std::real(rem_2) < -0.5*std::real(v2_len)) {
         rem_2 += v2_len;
     }
-    if(std::real(rem_2) > 0.5*v2_len) {
+    if(std::real(rem_2) > 0.5*std::real(v2_len)) {
         rem_2 -= v2_len;
     }
 

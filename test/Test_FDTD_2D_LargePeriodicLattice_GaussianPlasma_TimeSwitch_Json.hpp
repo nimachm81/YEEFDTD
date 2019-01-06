@@ -2,24 +2,34 @@
 #ifndef TEST_FDTD_2D_LARGEPERIODICLATTICE_GAUSSIANPLASMA_TIMESWITCH_JSON
 #define TEST_FDTD_2D_LARGEPERIODICLATTICE_GAUSSIANPLASMA_TIMESWITCH_JSON
 
+#include<typeinfo>
+
 #include "boost/lexical_cast.hpp"
 #include "NumberTypes.h"
 #include "ParameterExtractor.h"
 #include "ParamFileTranslator.h"
 #include "UtilityFunctions.hpp"
 
-void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(FPNumber theta_deg = 0.0) {
 
-    FPNumber pitch = 124.0;
-    FPNumber FWHM = 2000.0;//54.0;
-    FPNumber eps_r = 11.7;
+void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
+                        FPNumber theta_deg = 0.0,   // roration angle of the periodic plasma
+                        FPNumber pitch_to_unitlength = 1.0,  // periodicity in natural units
+                        FPNumber fwhm_to_pitch = 54.0/124.0,    // fwhm/pitch
+                        FPNumber wp_2p_thz = 4.0,   // wp/2pi
+                        FPNumber gamma_thz = 1.0,   // scattering rate
+                        FPNumber wp_switch_dt = 0.1          // switch time in natural units
+                        ) {
+    FPNumber unit_length_si = 124.0e-6;     // unit length in SI
+    FPNumber pitch_um = pitch_to_unitlength*unit_length_si;
 
-    std::size_t numOfSamplesPerUnitLength = 100;
+    FPNumber eps_r = 11.7;      // silicon
 
-    FPNumber y0 = -5.0;
-    FPNumber y1 = 5.0;
-    FPNumber z0 = -6.0;
-    FPNumber z1 = 6.0;
+    std::size_t numOfSamplesPerUnitLength = 50;
+
+    FPNumber y0 = -7.0;
+    FPNumber y1 = 7.0;
+    FPNumber z0 = -7.0;
+    FPNumber z1 = 7.0;
     std::size_t ny = static_cast<std::size_t>(std::real(y1 - y0) * numOfSamplesPerUnitLength);;
     std::size_t nz = static_cast<std::size_t>(std::real(z1 - z0) * numOfSamplesPerUnitLength);
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
@@ -30,30 +40,39 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(FPNum
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     FPNumber j_center_y = (y0 + y1)/(FPNumber)2.0;
     FPNumber j_decay_rate_y = 0.5;
-    FPNumber j_center_t = 2.5;
+    FPNumber j_center_t = 3.5;
     FPNumber j_decay_rate_t = 0.8;
     FPNumber jm_center_t = j_center_t + dt/(FPNumber)2.0*std::sqrt(eps_r);
     FPNumber jm_amplitude = std::sqrt(eps_r);
     FPNumber j_mod_freq = 0.1;
     FPNumber j_mod_phase = M_PI/2.0;
 
-    FPNumber gamma = 1.0e12/(3.0e8/(pitch*1.0e-6));
-    FPNumber wp = 1.0e12*(2.0*M_PI)/(3.0e8/(pitch*1.0e-6));
+    FPNumber gamma = gamma_thz*(FPNumber)1.0e12/((FPNumber)3.0e8/unit_length_si);
+    FPNumber wp = wp_2p_thz*(FPNumber)1.0e12
+                  *((FPNumber)2.0*(FPNumber)M_PI)
+                  /((FPNumber)3.0e8/unit_length_si);
     std::cout << "wp : " << wp << std::endl;
 
-    FPNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
-    FPNumber wp2_decayrate_z = FWHMtoDecayRate(FWHM/pitch);
+    FPNumber wp2_decayrate_y = FWHMtoDecayRate(fwhm_to_pitch);
+    FPNumber wp2_decayrate_z = FWHMtoDecayRate(fwhm_to_pitch);
     FPNumber wp2_center_y = 0.0;
     FPNumber wp2_center_z = 0.0;
 
-    FPNumber wp2_mask_z0 = -6.0;
+    FPNumber wp2_mask_z0 = z0;
     FPNumber wp2_mask_t0 = -z_j*std::sqrt(eps_r) + j_center_t;
-    FPNumber wp2_mask_t1 = 100.0;
-    FPNumber wp2_mask_dt = 0.1;
+    FPNumber wp2_mask_t1 = 1000.0;
+    FPNumber wp2_mask_dt = wp_switch_dt;
 
-    std::size_t numOfTimeSamplesBeforeSwitch = static_cast<std::size_t>((wp2_mask_t0 - wp2_mask_dt)/dt);
-    std::size_t numOfTimeSamplesDuringSwitch = static_cast<std::size_t>(2.0*wp2_mask_dt/dt);
-    std::size_t numOfTimeSamplesAfterSwitch = 2000;
+    std::size_t numOfTimeSamplesBeforeSwitch = static_cast<std::size_t>(std::real((wp2_mask_t0 - wp2_mask_dt)/dt));
+    std::size_t numOfTimeSamplesDuringSwitch = static_cast<std::size_t>(std::real((FPNumber)2.0*wp2_mask_dt/dt));
+    std::size_t numOfTimeSamplesAfterSwitch = static_cast<std::size_t>(std::real(
+            numOfTimeSamplesBeforeSwitch*(1.4 + std::real(wp)*0.2)
+            ));
+    if(std::real(fwhm_to_pitch) <= 1.0) {
+        numOfTimeSamplesAfterSwitch = static_cast<std::size_t>(std::real(
+            (FPNumber)numOfTimeSamplesBeforeSwitch*((FPNumber)1.4 + std::real(wp)*(FPNumber)0.2*fwhm_to_pitch)
+            ));
+    }
 
     std::size_t nt_0 = numOfTimeSamplesBeforeSwitch;
     std::size_t nt_1 = nt_0 + numOfTimeSamplesDuringSwitch;
@@ -70,24 +89,41 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(FPNum
     std::size_t et_indz_record = std::round(std::real((et_z_record - z0)/dz));
     std::size_t wp2_indz_record = std::round(std::real((wp2_z_record - z0)/dz));
 
-    FPNumber theta = theta_deg/180.0*M_PI;
-    FPNumber a1_y = std::cos(theta);
-    FPNumber a1_z = -std::sin(theta);
-    FPNumber a2_y = std::sin(theta);
-    FPNumber a2_z = std::cos(theta);
+    FPNumber theta = theta_deg/(FPNumber)180.0*(FPNumber)M_PI;
+    FPNumber a1_y = pitch_to_unitlength*std::cos(theta);
+    FPNumber a1_z = -pitch_to_unitlength*std::sin(theta);
+    FPNumber a2_y = pitch_to_unitlength*std::sin(theta);
+    FPNumber a2_z = pitch_to_unitlength*std::cos(theta);
 
-    std::string e_slice_i_name = std::string("\"") + "2D/Ei-x-slice-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                               std::string("\"");
-    std::string e_slice_r_name = std::string("\"") + "2D/Er-x-slice-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                               std::string("\"");
-    std::string e_slice_t_name = std::string("\"") + "2D/Et-x-slice-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                               std::string("\"");
-    std::string e_name = std::string("\"") + "2D/E-x-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                               std::string("\"");
-    std::string wp2_name = std::string("\"") + "2D/Wp2-x-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                               std::string("\"");
-    std::string wp2_slice_name = std::string("\"") + "2D/Wp2-slice-x-" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                               std::string("\"");
+    FPNumber wp_switch_dt_si = wp_switch_dt/((FPNumber)3.0e8/unit_length_si);
+
+    std::string outputFolder = "LargePeriodicLattice-GaussianPlasma-TimeSwitched/";
+
+    std::string file_suffix = std::string("-rot=") + boost::lexical_cast<std::string>(std::real(theta_deg)) +
+                 "-fp=" + boost::lexical_cast<std::string>(std::real(wp_2p_thz)) +
+                 "-gamma=" + boost::lexical_cast<std::string>(std::real(gamma_thz)) +
+                 "-pitch=" + boost::lexical_cast<std::string>(std::real(pitch_um*(FPNumber)1.0e6)) +
+                 "-fwhmToPitch=" + boost::lexical_cast<std::string>(std::real(fwhm_to_pitch)) +
+                 "-swithTime=" + boost::lexical_cast<std::string>(std::real(wp_switch_dt));
+
+    std::string e_slice_i_name = std::string("\"") + outputFolder + "Ei-x-slice" +
+                                 file_suffix +
+                                 std::string("\"");
+    std::string e_slice_r_name = std::string("\"") + outputFolder + "Er-x-slice" +
+                                 file_suffix +
+                                 std::string("\"");
+    std::string e_slice_t_name = std::string("\"") + outputFolder + "Et-x-slice" +
+                                 file_suffix +
+                                 std::string("\"");
+    std::string e_name = std::string("\"") + outputFolder + "E-x" +
+                                 file_suffix +
+                                 std::string("\"");
+    std::string wp2_name = std::string("\"") + outputFolder + "Wp2-x" +
+                                 file_suffix +
+                                 std::string("\"");
+    std::string wp2_slice_name = std::string("\"") + outputFolder + "Wp2-slice-x" +
+                                 file_suffix +
+                                 std::string("\"");
 
 
     std::unordered_map<std::string, std::string> str_replacewith{
@@ -173,6 +209,31 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(FPNum
 
     ParamFileTranslator fileTranslator(processedFileName);
     fileTranslator.Translate();
+
+    std::string parametersFileName =
+            std::string("data/LargePeriodicLattice-GaussianPlasma-TimeSwitched/params") +
+            file_suffix +
+            ".param";
+    std::ofstream paramFileOut(parametersFileName.c_str(), std::ios::out | std::ios::binary);
+    char dtype;
+    if(typeid(FPNumber)==typeid(float)) {
+        dtype = 'f';
+    } else if(typeid(FPNumber)==typeid(double)) {
+        dtype = 'd';
+    } else {
+        std::cout << "error: unexpected data type." << std::endl;
+    }
+    paramFileOut.write(&dtype, sizeof(dtype));
+
+    paramFileOut.write((char*)&dt, sizeof(FPNumber));                   // 0
+    paramFileOut.write((char*)&dy, sizeof(FPNumber));                   // 1
+    paramFileOut.write((char*)&dz, sizeof(FPNumber));                   // 2
+    paramFileOut.write((char*)&unit_length_si, sizeof(FPNumber));       // 3
+    paramFileOut.write((char*)&pitch_to_unitlength, sizeof(FPNumber));
+    paramFileOut.write((char*)&wp_2p_thz, sizeof(FPNumber));            // 5
+    paramFileOut.write((char*)&gamma_thz, sizeof(FPNumber));
+    paramFileOut.write((char*)&wp_switch_dt, sizeof(FPNumber));
+    paramFileOut.close();
 };
 
 #endif // TEST_FDTD_2D_LARGEPERIODICLATTICE_GAUSSIANPLASMA_TIMESWITCH_JSON

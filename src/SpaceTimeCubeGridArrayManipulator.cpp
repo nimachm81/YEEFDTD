@@ -67,12 +67,12 @@ std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>
 
 void SpaceTimeCubeGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
 
-    FPNumber t0_m = cubeR0[3] - smoothEdgeThickness[3]/2.0;
-    FPNumber t0_p = cubeR0[3] + smoothEdgeThickness[3]/2.0;
-    FPNumber t1_m = cubeR1[3] - smoothEdgeThickness[3]/2.0;
-    FPNumber t1_p = cubeR1[3] + smoothEdgeThickness[3]/2.0;
+    FPNumber t0_m = cubeR0[3] - smoothEdgeThickness[3]/(FPNumber)2.0;
+    FPNumber t0_p = cubeR0[3] + smoothEdgeThickness[3]/(FPNumber)2.0;
+    FPNumber t1_m = cubeR1[3] - smoothEdgeThickness[3]/(FPNumber)2.0;
+    FPNumber t1_p = cubeR1[3] + smoothEdgeThickness[3]/(FPNumber)2.0;
 
-    assert(t0_p <= t1_m);   // otherwise array recalculation conditions may lead to unpredicted results
+    assert(std::real(t0_p) <= std::real(t1_m));   // otherwise array recalculation conditions may lead to unpredicted results
 
     /* If array is modified elsewhere everything has to be recalculated
     if(t < t0_m && temporalState == 0) {
@@ -267,18 +267,18 @@ void SpaceTimeCubeGridArrayManipulator::UpdateArray(const FPNumber t, GAManipula
 
     //std::cout << temporalState << " ";
     temporalState = 2;
-    if(t <= t0_m || t >= t1_p) {
+    if(std::real(t) <= std::real(t0_m) || std::real(t) >= std::real(t1_p)) {
         rhsArray *= (FPNumber)0.0;
-        if(t <= t0_m) {
+        if(std::real(t) <= std::real(t0_m)) {
             temporalState = 0;
-        } else if(t >= t1_p) {
+        } else if(std::real(t) >= std::real(t1_p)) {
             temporalState = 4;
         }
-    } else if(t > t0_m && t < t0_p) {
-        rhsArray *= 0.5*std::sin((t - t0_m)*M_PI/(t0_p - t0_m) - M_PI/2) + 0.5;
+    } else if(std::real(t) > std::real(t0_m) && std::real(t) < std::real(t0_p)) {
+        rhsArray *= (FPNumber)0.5*std::sin((t - t0_m)*(FPNumber)(M_PI)/(t0_p - t0_m) - (FPNumber)(M_PI/2)) + (FPNumber)0.5;
         temporalState = 1;
-    } else if(t > t1_m && t < t1_p) {
-        rhsArray *= 0.5*std::cos((t - t1_m)*M_PI/(t1_p - t1_m)) + 0.5;
+    } else if(std::real(t) > std::real(t1_m) && std::real(t) < std::real(t1_p)) {
+        rhsArray *= (FPNumber)0.5*std::cos((t - t1_m)*(FPNumber)(M_PI)/(t1_p - t1_m)) + (FPNumber)0.5;
         temporalState = 3;
     }
     //std::cout << temporalState << std::endl;
