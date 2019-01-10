@@ -2,16 +2,16 @@
 {
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_p1_", "_nz_m1_", "_dy_", "_dz_", "_dt_", "_m_dt_", "_indzJ_", "_indzJ_p1_", "_indzJ_m1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_wp_sq_", "_wp_sq_center_y_", "_wp_sq_center_z_", "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_", "_m_dt_tau_", "_cube_y0_", "_cube_y1_", "_cube_z0_", "_cube_z1_", "_cube_t0_", "_cube_t1_", "_cube_dy_", "_cube_dz_", "_cube_dt_", "_J_center_y_", "_J_decayrate_y_", "_J_center_t_", "_Jm_center_t_", "_J_decayrate_t_", "_dt_dz_eps_", "_m_dt_dz_eps_", "_m_dt_dy_eps_", "_dt_dy_eps_", "_Jm_amp_", "_J_mod_freq_", "_J_mod_phase_", "_a1_y_", "_a1_z_", "_a2_y_", "_a2_z_", "_Eslice_name_i_", "_Eslice_name_r_", "_Eslice_name_t_", "_E_name_", "_Wp2_name_", "_Wp2Slice_name_", "_nt_0_", "_nt_1_", "_nt_2_", "_e_ind_z_record_i_", "_e_ind_z_record_i_p1_", "_e_ind_z_record_r_", "_e_ind_z_record_r_p1_", "_e_ind_z_record_t_", "_e_ind_z_record_t_p1_", "_wp2_ind_z_record_", "_wp2_ind_z_record_p1_", "_sample_rate_", "_e_entire_ind_ym_record_", "_e_entire_ind_zm_record_", "_e_entire_ind_yp_record_", "_e_entire_ind_zp_record_"],
+    "variables":[-8, 8, -8, 8, 800, 801, 799, 800, 801, 799, 0.0199999996, 0.0199999996, 0.0134350294, -0.0134350294, 300, 301, 299, 0.671751499, 0.671751499, -0.671751499, -0.671751499, 26.9786739, 0, 0, 1.85012138, 1.85012138, -0.00555314589, -8, 8, -8, 8, 10.341053, 1000, 0, 0, 0.100000001, 0, 0.5, 3.5, 3.52297735, 0.800000012, 0.0574146584, -0.0574146584, -0.0574146584, 0.0574146584, 3.42052627, 0.100000001, 1.57079637, 3, -0, 0, 3, "LargePeriodicLattice-GaussianPlasma-TimeSwitched/Ei-x-slice-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50", "LargePeriodicLattice-GaussianPlasma-TimeSwitched/Er-x-slice-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50", "LargePeriodicLattice-GaussianPlasma-TimeSwitched/Et-x-slice-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50", "LargePeriodicLattice-GaussianPlasma-TimeSwitched/E-x-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50", "LargePeriodicLattice-GaussianPlasma-TimeSwitched/Wp2-x-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50", "LargePeriodicLattice-GaussianPlasma-TimeSwitched/Wp2-slice-x-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50", 762, 776, 2537, 325, 326, 275, 276, 525, 526, 400, 401, 30, 100, 100, 700, 700],
     "dimensions":{
-        "r0":[0.0, "_y0_", "_z0_"],
-        "r1":[0.1, "_y1_", "_z1_"],
-        "nCells":[1, "_ny_", "_nz_"],
-        "dt":"_dt_"
+        "r0":[0.0, -8, -8],
+        "r1":[0.1, 8, 8],
+        "nCells":[1, 800, 800],
+        "dt":0.0134350294
     },
     "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"Jp", "type":"EdgeE"}, {"name":"Wp_sq", "type":"EdgeE"}],
-    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, "_indzJ_"], "nCells":[1, "_ny_", 0]}, 
-                         {"name":"Jm", "type":"EdgeH", "indStart":[0, 0, "_indzJ_m1_"], "nCells":[1, "_ny_", 1]}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, 300], "nCells":[1, 800, 0]}, 
+                         {"name":"Jm", "type":"EdgeH", "indStart":[0, 0, 299], "nCells":[1, 800, 1]}],
     "girdArrayManipulators":[
         {
         "type":"GaussianSpaceTimeGridArrayManipulator",
@@ -20,10 +20,10 @@
             "array":"J",
             "direction":"x",
             "amplitude":1.0,
-            "st_center":[0.0, "_J_center_y_", 0.0, "_J_center_t_"],
-            "st_decay_rate":[0.0, "_J_decayrate_y_", 0.0,  "_J_decayrate_t_"],
-            "st_modulationFrequency":[0.0, 0.0, 0.0, "_J_mod_freq_"],
-            "st_modulationPhase":[0.0, 0.0, 0.0, "_J_mod_phase_"],
+            "st_center":[0.0, 0, 0.0, 3.5],
+            "st_decay_rate":[0.0, 0.5, 0.0,  0.800000012],
+            "st_modulationFrequency":[0.0, 0.0, 0.0, 0.100000001],
+            "st_modulationPhase":[0.0, 0.0, 0.0, 1.57079637],
             "timeOffsetFraction":-0.5
             }
         },
@@ -33,11 +33,11 @@
             "name":"Jmupdater",
             "array":"Jm",
             "direction":"y",
-            "amplitude":"_Jm_amp_",
-            "st_center":[0.0, "_J_center_y_", 0.0, "_Jm_center_t_"],
-            "st_decay_rate":[0.0, "_J_decayrate_y_", 0.0,  "_J_decayrate_t_"],
-            "st_modulationFrequency":[0.0, 0.0, 0.0, "_J_mod_freq_"],
-            "st_modulationPhase":[0.0, 0.0, 0.0, "_J_mod_phase_"],
+            "amplitude":3.42052627,
+            "st_center":[0.0, 0, 0.0, 3.52297735],
+            "st_decay_rate":[0.0, 0.5, 0.0,  0.800000012],
+            "st_modulationFrequency":[0.0, 0.0, 0.0, 0.100000001],
+            "st_modulationPhase":[0.0, 0.0, 0.0, 1.57079637],
             "timeOffsetFraction":0.0
             }
         },
@@ -47,11 +47,11 @@
             "name":"Wpupdater",
             "array":"Wp_sq",
             "direction":"x",
-            "amplitude":"_wp_sq_",
-            "center":[0.0, "_wp_sq_center_y_", "_wp_sq_center_z_"],
-            "decay_rate":[0.0, "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_"],
+            "amplitude":26.9786739,
+            "center":[0.0, 0, 0],
+            "decay_rate":[0.0, 1.85012138, 1.85012138],
             "unitCellOrigin":[0.0, 0.0, 0.0],
-            "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, "_a1_y_", "_a1_z_"], [0.0, "_a2_y_", "_a2_z_"]]
+            "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, 3, -0], [0.0, 0, 3]]
             }
         },
         {
@@ -60,9 +60,9 @@
             "name":"Wpmasker",
             "array":"Wp_sq",
             "direction":"x",
-            "cornerR0":[-0.1, "_cube_y0_", "_cube_z0_", "_cube_t0_"],
-            "cornerR1":[0.2, "_cube_y1_", "_cube_z1_", "_cube_t1_"],
-            "edgeThickness":[0.0, "_cube_dy_", "_cube_dz_", "_cube_dt_"],
+            "cornerR0":[-0.1, -8, -8, 10.341053],
+            "cornerR1":[0.2, 8, 8, 1000],
+            "edgeThickness":[0.0, 0, 0, 0.100000001],
             "valueInside":1.0,
             "valueOutside":0.0,
             "timeOffsetFraction":0.0
@@ -77,8 +77,8 @@
             "A":"E",
             "A_direction":"x",
             "A_indStart":[0, 1, 1],
-            "A_indEnd":[1, "_ny_", "_nz_"],
-            "b":["_dt_dz_eps_", "_m_dt_dz_eps_", "_m_dt_dy_eps_", "_dt_dy_eps_"],
+            "A_indEnd":[1, 800, 800],
+            "b":[0.0574146584, -0.0574146584, -0.0574146584, 0.0574146584],
             "C":["H", "H", "H", "H"],
             "C_direction":["y", "y", "z", "z"],
             "C_indStart":[[0, 1, 0], [0, 1, 1], [0, 0, 1], [0, 1, 1]]
@@ -91,8 +91,8 @@
             "A":"Jp",
             "A_direction":"x",
             "A_indStart":[0, 1, 1],
-            "A_indEnd":[1, "_ny_", "_nz_"],
-            "b":["_dt_"],
+            "A_indEnd":[1, 800, 800],
+            "b":[0.0134350294],
             "B":["Wp_sq"],
             "B_direction":["x"],
             "B_indStart":[[0, 1, 1]],
@@ -108,8 +108,8 @@
             "A":"Jp",
             "A_direction":"x",
             "A_indStart":[0, 1, 1],
-            "A_indEnd":[1, "_ny_", "_nz_"],
-            "b":["_m_dt_tau_"],
+            "A_indEnd":[1, 800, 800],
+            "b":[-0.00555314589],
             "C":["Jp"],
             "C_direction":["x"],
             "C_indStart":[[0, 1, 1]]
@@ -122,8 +122,8 @@
             "A":"H",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, "_ny_p1_", "_nz_"],
-            "b":["_dt_dz_", "_m_dt_dz_"],
+            "A_indEnd":[1, 801, 800],
+            "b":[0.671751499, -0.671751499],
             "C":["E", "E"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 1]]
@@ -136,8 +136,8 @@
             "A":"H",
             "A_direction":"z",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, "_ny_", "_nz_p1_"],
-            "b":["_m_dt_dy_", "_dt_dy_"],
+            "A_indEnd":[1, 800, 801],
+            "b":[-0.671751499, 0.671751499],
             "C":["E", "E"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 1, 0]]
@@ -149,9 +149,9 @@
             "name":"E_me_J",
             "A":"E",
             "A_direction":"x",
-            "A_indStart":[0, 1, "_indzJ_"],
-            "A_indEnd":[1, "_ny_", "_indzJ_p1_"],
-            "b":["_m_dt_dz_"],
+            "A_indStart":[0, 1, 300],
+            "A_indEnd":[1, 800, 301],
+            "b":[-0.671751499],
             "C":["J"],
             "C_direction":["x"],
             "C_indStart":[[0, 0, 0]]
@@ -163,9 +163,9 @@
             "name":"H_me_Jm",
             "A":"H",
             "A_direction":"y",
-            "A_indStart":[0, 0, "_indzJ_m1_"],
-            "A_indEnd":[1, "_ny_p1_", "_indzJ_"],
-            "b":["_m_dt_dz_"],
+            "A_indStart":[0, 0, 299],
+            "A_indEnd":[1, 801, 300],
+            "b":[-0.671751499],
             "C":["Jm"],
             "C_direction":["y"],
             "C_indStart":[[0, 0, 0]]
@@ -178,8 +178,8 @@
             "A":"E",
             "A_direction":"x",
             "A_indStart":[0, 1, 1],
-            "A_indEnd":[1, "_ny_", "_nz_"],
-            "b":["_m_dt_"],
+            "A_indEnd":[1, 800, 800],
+            "b":[-0.0134350294],
             "C":["Jp"],
             "C_direction":["x"],
             "C_indStart":[[0, 1, 1]]
@@ -228,74 +228,74 @@
                                                         "H_me_Jm", "Hy_pe_m_curl_E", "Hz_pe_m_curl_E"
                                                         ]}],
     "runSequence":[{"name":"materialSetup", "timeIndStart":0, "timeIndEnd":1},
-                   {"name":"beforeAndAfterSwitching", "timeIndStart":0, "timeIndEnd":"_nt_0_"},
-                   {"name":"duringSwitching", "timeIndStart":"_nt_0_", "timeIndEnd":"_nt_1_"},
-                   {"name":"beforeAndAfterSwitching", "timeIndStart":"_nt_1_", "timeIndEnd":"_nt_2_"}
+                   {"name":"beforeAndAfterSwitching", "timeIndStart":0, "timeIndEnd":762},
+                   {"name":"duringSwitching", "timeIndStart":762, "timeIndEnd":776},
+                   {"name":"beforeAndAfterSwitching", "timeIndStart":776, "timeIndEnd":2537}
                    ],
     "gridViews":[
         {
         "type":"partial",
         "parameters":{
-            "name":"_Eslice_name_i_",
+            "name":"LargePeriodicLattice-GaussianPlasma-TimeSwitched/Ei-x-slice-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50",
             "array":"E",
             "direction":"x",
-            "indStart":[0, 0, "_e_ind_z_record_i_"],
-            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_i_p1_"],
+            "indStart":[0, 0, 325],
+            "indEnd":[1, 801, 326],
             "saveRate":1
             }
         },
         {
         "type":"partial",
         "parameters":{
-            "name":"_Eslice_name_r_",
+            "name":"LargePeriodicLattice-GaussianPlasma-TimeSwitched/Er-x-slice-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50",
             "array":"E",
             "direction":"x",
-            "indStart":[0, 0, "_e_ind_z_record_r_"],
-            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_r_p1_"],
+            "indStart":[0, 0, 275],
+            "indEnd":[1, 801, 276],
             "saveRate":1
             }
         },
         {
         "type":"partial",
         "parameters":{
-            "name":"_Eslice_name_t_",
+            "name":"LargePeriodicLattice-GaussianPlasma-TimeSwitched/Et-x-slice-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50",
             "array":"E",
             "direction":"x",
-            "indStart":[0, 0, "_e_ind_z_record_t_"],
-            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_t_p1_"],
+            "indStart":[0, 0, 525],
+            "indEnd":[1, 801, 526],
             "saveRate":1
             }
         },
         {
         "type":"partial",
         "parameters":{
-            "name":"_E_name_",
+            "name":"LargePeriodicLattice-GaussianPlasma-TimeSwitched/E-x-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50",
             "array":"E",
             "direction":"x",
-            "indStart":[0, "_e_entire_ind_ym_record_", "_e_entire_ind_zm_record_"],
-            "indEnd":[1, "_e_entire_ind_yp_record_", "_e_entire_ind_zp_record_"],
-            "saveRate":"_sample_rate_"
+            "indStart":[0, 100, 100],
+            "indEnd":[1, 700, 700],
+            "saveRate":30
             }
         },
         {
         "type":"partial",
         "parameters":{
-            "name":"_Wp2_name_",
+            "name":"LargePeriodicLattice-GaussianPlasma-TimeSwitched/Wp2-x-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50",
             "array":"Wp_sq",
             "direction":"x",
-            "indStart":[0, "_e_entire_ind_ym_record_", "_e_entire_ind_zm_record_"],
-            "indEnd":[1, "_e_entire_ind_yp_record_", "_e_entire_ind_zp_record_"],
-            "saveRate":"_sample_rate_"
+            "indStart":[0, 100, 100],
+            "indEnd":[1, 700, 700],
+            "saveRate":30
             }
         },
         {
         "type":"partial",
         "parameters":{
-            "name":"_Wp2Slice_name_",
+            "name":"LargePeriodicLattice-GaussianPlasma-TimeSwitched/Wp2-slice-x-rot=0-fp=2-gamma=1-pitch=371.999969-fwhmToPitch=0.300000012-swithTime=0.100000001-res=50",
             "array":"Wp_sq",
             "direction":"x",
-            "indStart":[0, 0, "_wp2_ind_z_record_"],
-            "indEnd":[1, "_ny_p1_", "_wp2_ind_z_record_p1_"],
+            "indStart":[0, 0, 400],
+            "indEnd":[1, 801, 401],
             "saveRate":1
             }
         }

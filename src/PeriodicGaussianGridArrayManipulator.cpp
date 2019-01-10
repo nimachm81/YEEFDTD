@@ -14,6 +14,7 @@ void PeriodicGaussianGridArrayManipulator::SetGaussianDecayRate(std::array<FPNum
     gaussianDecayRate = decayRate;
 }
 
+// TODO: use reference typr for r
 FPNumber PeriodicGaussianGridArrayManipulator::Func(const std::array<FPNumber, 3> r, const FPNumber t) {
     return gaussianAmplitude * std::exp( -(
         (r[0] - gaussianCenter[0])*(r[0] - gaussianCenter[0])*(gaussianDecayRate[0]*gaussianDecayRate[0]) +

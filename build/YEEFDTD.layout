@@ -2,31 +2,6 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="main" />
-	<File name="../src/ParameterExtractor.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5029" topLine="141" />
-		</Cursor>
-	</File>
-	<File name="../src/SpaceTimeCubeGridArrayManipulator.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3422" topLine="62" />
-		</Cursor>
-	</File>
-	<File name="../src/YeeGridCollection.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="933" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../src/FDInstructionFactory.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10389" topLine="252" />
-		</Cursor>
-	</File>
-	<File name="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_Json.hpp" open="1" top="1" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1135" topLine="9" />
-		</Cursor>
-	</File>
 	<File name="../src/SingleGridParameterExtractor.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="4664" topLine="62" />
@@ -47,19 +22,24 @@
 			<Cursor1 position="50" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="../CMakeLists.txt" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="142" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../include/PeriodicGaussianGridArrayManipulator.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="253" topLine="4" />
+		</Cursor>
+	</File>
 	<File name="../src/main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="561" topLine="0" />
+			<Cursor1 position="443" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../src/YeeGridDataTypes.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="1150" topLine="18" />
-		</Cursor>
-	</File>
-	<File name="../CMakeLists.txt" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="142" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../src/YeeGridParallel.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -77,14 +57,19 @@
 			<Cursor1 position="1301" topLine="5" />
 		</Cursor>
 	</File>
+	<File name="../include/PeriodicGridArrayManipulator.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="656" topLine="9" />
+		</Cursor>
+	</File>
 	<File name="../src/GaussianSpaceTimeGridArrayManipulator.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="4214" topLine="76" />
 		</Cursor>
 	</File>
-	<File name="../src/PeriodicGaussianGridArrayManipulator.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/PeriodicGaussianGridArrayManipulator.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="81" topLine="0" />
+			<Cursor1 position="80" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../src/GridElementView.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -92,14 +77,19 @@
 			<Cursor1 position="197" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="../include/UtilityFunctions.hpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="255" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="../src/YeeGrid.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="374" topLine="48" />
 		</Cursor>
 	</File>
-	<File name="../src/PeriodicGridArrayManipulator.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/PeriodicGridArrayManipulator.cpp" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3368" topLine="79" />
+			<Cursor1 position="2010" topLine="52" />
 		</Cursor>
 	</File>
 	<File name="../src/SpatialCubeGridArrayManipulator.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -107,9 +97,39 @@
 			<Cursor1 position="2641" topLine="240" />
 		</Cursor>
 	</File>
-	<File name="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_MPI_Json.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_MPI_Json.hpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4460" topLine="81" />
+			<Cursor1 position="2353" topLine="48" />
+		</Cursor>
+	</File>
+	<File name="../src/ParameterExtractor.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5029" topLine="141" />
+		</Cursor>
+	</File>
+	<File name="../src/SpaceTimeCubeGridArrayManipulator.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3422" topLine="62" />
+		</Cursor>
+	</File>
+	<File name="../include/GridArrayManipulator.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="286" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="../src/YeeGridCollection.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="933" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../src/FDInstructionFactory.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="10389" topLine="252" />
+		</Cursor>
+	</File>
+	<File name="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_Json.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6112" topLine="126" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

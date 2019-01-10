@@ -51,14 +51,14 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json_paral
     MPI_Comm_rank(MPI_COMM_WORLD, &processRank);
     MPI_Get_processor_name(processorName, &processorNameLen);
 
-    const std::size_t n_theta = 1;
-    FPNumber theta_deg[n_theta] = {0.0};
+    const std::size_t n_theta = 3;
+    FPNumber theta_deg[n_theta] = {0.0, 22.5, 45.0};
     const std::size_t n_pitch_to_unitlength = 3;
-    FPNumber pitch_to_unitlength[n_pitch_to_unitlength] = {0.1, 1.0, 5.0};
-    const std::size_t n_fwhm_to_pitch = 3;
-    FPNumber fwhm_to_pitch[n_fwhm_to_pitch] = {0.1, 0.5, 1.0};
-    const std::size_t n_wp_2p_thz = 3;
-    FPNumber wp_2p_thz[n_wp_2p_thz] = {2.0, 3.0, 4.0};
+    FPNumber pitch_to_unitlength[n_pitch_to_unitlength] = {0.2, 1.0, 2.0};
+    const std::size_t n_fwhm_to_pitch = 2;
+    FPNumber fwhm_to_pitch[n_fwhm_to_pitch] = {0.3, 0.6};
+    const std::size_t n_wp_2p_thz = 2;
+    FPNumber wp_2p_thz[n_wp_2p_thz] = {1.0, 1.5};
     const std::size_t n_gamma_thz = 1;
     FPNumber gamma_thz[n_gamma_thz] = {1.0};
     const std::size_t n_wp_switch_dt = 2;
