@@ -10,34 +10,15 @@
 #include "ParamFileTranslator.h"
 #include "UtilityFunctions.hpp"
 
-template<typename T>
-int WriteParamToFile(std::ofstream& paramFileOut, T& param, std::string paramName) {
-    char dtype;
-    if(typeid(T)==typeid(float)) {
-        dtype = 'f';
-    } else if(typeid(T)==typeid(double)) {
-        dtype = 'd';
-    } else if(typeid(T)==typeid(std::size_t)) {
-        dtype = 'u';
-    } else if(typeid(T)==typeid(int)) {
-        dtype = 'i';
-    } else {
-        std::cout << "error: unexpected data type." << std::endl;
-    }
-    paramFileOut.write(&dtype, sizeof(dtype));
-    paramFileOut.write((char*)&param, sizeof(T));
-    std::size_t nameLength = paramName.size();
-    paramFileOut.write((char*)&nameLength, sizeof(std::size_t));
-    paramFileOut.write((char*)&paramName, sizeof(nameLength));
-}
 
 void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
                         FPNumber theta_deg = 0.0,   // roration angle of the periodic plasma
                         FPNumber pitch_to_unitlength = 1.0,  // periodicity in natural units
                         FPNumber fwhm_to_pitch = 54.0/124.0,    // fwhm/pitch
-                        FPNumber wp_2p_thz = 4.0,   // wp/2pi
+                        FPNumber wp_2p_thz = 2.0,   // wp/2pi
                         FPNumber gamma_thz = 1.0,   // scattering rate
-                        FPNumber wp_switch_dt = 0.1          // switch time in natural units
+                        FPNumber wp_switch_dt = 0.1,          // switch time in natural units
+                        FPNumber celldisplacement_to_pitch = 0.5     // the structure is shifted by celldisplacement_to_pitch*pitch_to_unitlength
                         ) {
     FPNumber unit_length_si = 124.0e-6;     // unit length in SI
     FPNumber pitch_um = pitch_to_unitlength*unit_length_si;
@@ -46,10 +27,10 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
 
     std::size_t numOfSamplesPerUnitLength = 50;
 
-    FPNumber y0 = -7.0;
-    FPNumber y1 = 7.0;
-    FPNumber z0 = -7.0;
-    FPNumber z1 = 7.0;
+    FPNumber y0 = -10.0;
+    FPNumber y1 = 10.0;
+    FPNumber z0 = -12.0;
+    FPNumber z1 = 12.0;
     std::size_t ny = static_cast<std::size_t>(std::real(y1 - y0) * numOfSamplesPerUnitLength);
     std::size_t nz = static_cast<std::size_t>(std::real(z1 - z0) * numOfSamplesPerUnitLength);
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
@@ -76,9 +57,10 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
     FPNumber wp2_decayrate_y = FWHMtoDecayRate(fwhm_to_pitch*pitch_to_unitlength);
     FPNumber wp2_decayrate_z = FWHMtoDecayRate(fwhm_to_pitch*pitch_to_unitlength);
     FPNumber wp2_center_y = 0.0;
-    FPNumber wp2_center_z = pitch_to_unitlength/2.0;
+    FPNumber wp2_center_z = celldisplacement_to_pitch*pitch_to_unitlength;
 
-    FPNumber wp2_mask_z0 = z0;
+    FPNumber wp2_mask_z0 = -5.0;
+    FPNumber wp2_mask_z1 = +5.0;
     FPNumber wp2_mask_t0 = -z_j*std::sqrt(eps_r) + j_center_t;
     FPNumber wp2_mask_t1 = 1000.0;
     FPNumber wp2_mask_dt = wp_switch_dt;
@@ -86,11 +68,11 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
     std::size_t numOfTimeSamplesBeforeSwitch = static_cast<std::size_t>(std::real((wp2_mask_t0 - wp2_mask_dt)/dt));
     std::size_t numOfTimeSamplesDuringSwitch = static_cast<std::size_t>(std::real((FPNumber)2.0*wp2_mask_dt/dt));
     std::size_t numOfTimeSamplesAfterSwitch = static_cast<std::size_t>(std::real(
-            numOfTimeSamplesBeforeSwitch*(2.0 + std::real(wp)*0.2)
+            numOfTimeSamplesBeforeSwitch*(4.0 + std::real(wp)*0.2)
             ));
     if(std::real(fwhm_to_pitch) <= 1.0) {
         numOfTimeSamplesAfterSwitch = static_cast<std::size_t>(std::real(
-            (FPNumber)numOfTimeSamplesBeforeSwitch*((FPNumber)2.0 + std::real(wp)*(FPNumber)0.2*fwhm_to_pitch)
+            (FPNumber)numOfTimeSamplesBeforeSwitch*((FPNumber)4.0 + std::real(wp)*(FPNumber)0.2*fwhm_to_pitch)
             ));
     }
 
@@ -101,8 +83,8 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
     std::cout << "Nt : " << nt_2 << std::endl;
 
     FPNumber ei_z_record = -1.5;
-    FPNumber er_z_record = -2.5;
-    FPNumber et_z_record = +2.5;
+    FPNumber er_z_record = -5.5;
+    FPNumber et_z_record = +5.5;
     FPNumber wp2_z_record = 0;
     std::size_t ei_indz_record = std::round(std::real((ei_z_record - z0)/dz));
     std::size_t er_indz_record = std::round(std::real((er_z_record - z0)/dz));
@@ -130,12 +112,12 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
     std::string outputFolder = "LargePeriodicLattice-GaussianPlasma-TimeSwitched/";
 
     std::string file_suffix = std::string("-rot=") + boost::lexical_cast<std::string>(std::real(theta_deg)) +
-                 "-theta=" + boost::lexical_cast<std::string>(std::real(theta_deg)) +
                  "-fp=" + boost::lexical_cast<std::string>(std::real(wp_2p_thz)) +
                  "-gamma=" + boost::lexical_cast<std::string>(std::real(gamma_thz)) +
                  "-pitch=" + boost::lexical_cast<std::string>(std::real(pitch_um*(FPNumber)1.0e6)) +
                  "-fwhmToPitch=" + boost::lexical_cast<std::string>(std::real(fwhm_to_pitch)) +
                  "-swithTime=" + boost::lexical_cast<std::string>(std::real(wp_switch_dt)) +
+                 "-displacementFactor=" + boost::lexical_cast<std::string>(std::real(celldisplacement_to_pitch)) +
                  "-res=" + boost::lexical_cast<std::string>(numOfSamplesPerUnitLength)
                  ;
 
@@ -203,11 +185,11 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
             {"\"_cube_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
             {"\"_cube_y1_\"", boost::lexical_cast<std::string>(std::real(y1))},
             {"\"_cube_z0_\"", boost::lexical_cast<std::string>(std::real(wp2_mask_z0))},
-            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(z1))},
+            {"\"_cube_z1_\"", boost::lexical_cast<std::string>(std::real(wp2_mask_z1))},
             {"\"_cube_t0_\"", boost::lexical_cast<std::string>(std::real(wp2_mask_t0))},
             {"\"_cube_t1_\"", boost::lexical_cast<std::string>(std::real(wp2_mask_t1))},
             {"\"_cube_dy_\"", boost::lexical_cast<std::string>(std::real(0.0))},
-            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(0.0))},
+            {"\"_cube_dz_\"", boost::lexical_cast<std::string>(std::real(0.1))},
             {"\"_cube_dt_\"", boost::lexical_cast<std::string>(std::real(wp2_mask_dt))},
             {"\"_e_ind_z_record_i_\"", boost::lexical_cast<std::string>(ei_indz_record)},
             {"\"_e_ind_z_record_i_p1_\"", boost::lexical_cast<std::string>(ei_indz_record + 1)},
@@ -267,6 +249,7 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
     WriteParamToFile<FPNumber>(paramFileOut, er_z_record, "er_z_record");   // 10
     WriteParamToFile<FPNumber>(paramFileOut, et_z_record, "et_z_record");   // 11
     WriteParamToFile<FPNumber>(paramFileOut, theta_deg, "theta_deg");   // 12
+    WriteParamToFile<FPNumber>(paramFileOut, celldisplacement_to_pitch, "celldisplacement_to_pitch");   // 13
     paramFileOut.close();
 };
 

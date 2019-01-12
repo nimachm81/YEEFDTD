@@ -50,7 +50,7 @@
             "amplitude":107.914696,
             "center":[0.0, 0, 0.5],
             "decay_rate":[0.0, 3.82358432, 3.82358432],
-            "unitCellOrigin":[0.0, 0.0, 0.0],
+            "unitCellOrigin":[0.0, 0, 0.5],
             "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, 1, -0], [0.0, 0, 1]]
             }
         },

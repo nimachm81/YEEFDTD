@@ -50,7 +50,7 @@
             "amplitude":"_wp_sq_",
             "center":[0.0, "_wp_sq_center_y_", "_wp_sq_center_z_"],
             "decay_rate":[0.0, "_wp_sq_decayrate_y_", "_wp_sq_decayrate_z_"],
-            "unitCellOrigin":[0.0, 0.0, 0.0],
+            "unitCellOrigin":[0.0, "_wp_sq_center_y_", "_wp_sq_center_z_"],
             "primitiveVectors":[[1.0, 0.0, 0.0], [0.0, "_a1_y_", "_a1_z_"], [0.0, "_a2_y_", "_a2_z_"]]
             }
         },
@@ -239,8 +239,8 @@
             "name":"_Eslice_name_i_",
             "array":"E",
             "direction":"x",
-            "indStart":[0, 0, "_e_ind_z_record_i_"],
-            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_i_p1_"],
+            "indStart":[0, "_e_entire_ind_ym_record_", "_e_ind_z_record_i_"],
+            "indEnd":[1, "_e_entire_ind_yp_record_", "_e_ind_z_record_i_p1_"],
             "saveRate":1
             }
         },
@@ -250,8 +250,8 @@
             "name":"_Eslice_name_r_",
             "array":"E",
             "direction":"x",
-            "indStart":[0, 0, "_e_ind_z_record_r_"],
-            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_r_p1_"],
+            "indStart":[0, "_e_entire_ind_ym_record_", "_e_ind_z_record_r_"],
+            "indEnd":[1, "_e_entire_ind_yp_record_", "_e_ind_z_record_r_p1_"],
             "saveRate":1
             }
         },
@@ -261,8 +261,8 @@
             "name":"_Eslice_name_t_",
             "array":"E",
             "direction":"x",
-            "indStart":[0, 0, "_e_ind_z_record_t_"],
-            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_t_p1_"],
+            "indStart":[0, "_e_entire_ind_ym_record_", "_e_ind_z_record_t_"],
+            "indEnd":[1, "_e_entire_ind_yp_record_", "_e_ind_z_record_t_p1_"],
             "saveRate":1
             }
         },
@@ -294,8 +294,8 @@
             "name":"_Wp2Slice_name_",
             "array":"Wp_sq",
             "direction":"x",
-            "indStart":[0, 0, "_wp2_ind_z_record_"],
-            "indEnd":[1, "_ny_p1_", "_wp2_ind_z_record_p1_"],
+            "indStart":[0, "_e_entire_ind_ym_record_", "_wp2_ind_z_record_"],
+            "indEnd":[1, "_e_entire_ind_yp_record_", "_wp2_ind_z_record_p1_"],
             "saveRate":1
             }
         }
