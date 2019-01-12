@@ -18,6 +18,7 @@ build/visualisation/.ipynb_checkpoints/
 
 # data file folder 
 build/data/
+build/instructions/processed/
 
 # raw data files
 *.data
