@@ -14,8 +14,8 @@
 void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
                         FPNumber theta_deg = 0.0,   // roration angle of the periodic plasma
                         FPNumber pitch_to_unitlength = 1.0,  // periodicity in natural units
-                        FPNumber fwhm_to_pitch = 54.0/124.0,    // fwhm/pitch
-                        FPNumber wp_2p_thz = 2.0,   // wp/2pi
+                        FPNumber fwhm_to_pitch = 0.3,    // fwhm/pitch
+                        FPNumber wp_2p_thz = 1.0,   // wp/2pi
                         FPNumber gamma_thz = 1.0,   // scattering rate
                         FPNumber wp_switch_dt = 0.1,          // switch time in natural units
                         FPNumber celldisplacement_to_pitch = 0.5     // the structure is shifted by celldisplacement_to_pitch*pitch_to_unitlength

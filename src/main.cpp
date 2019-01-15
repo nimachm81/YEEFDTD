@@ -16,7 +16,7 @@ int main(int argc, char** argv) {
 
     //test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json_parallel();
 
-    test_run_fdtd_2d_monopulse_charge_from_json();
+    test_run_fdtd_2d_monopole_charge_from_json();
 }
 
 

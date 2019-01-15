@@ -1,7 +1,7 @@
 
 
 
-void test_run_fdtd_2d_monopulse_charge_from_json() {
+void test_run_fdtd_2d_monopole_charge_from_json() {
     FPNumber y0 = -3.0;
     FPNumber y1 = 3.0;
     FPNumber z0 = -3.0;
