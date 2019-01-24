@@ -21,7 +21,8 @@ YeeGrid3D::~YeeGrid3D() {
         auto& instructionCode = instructCode_param_pair.first;
         void* params = instructCode_param_pair.second;
         if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
-           instructionCode == FDInstructionCode::A_equal_sum_b_C) {
+           instructionCode == FDInstructionCode::A_equal_sum_b_C ||
+           instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
             auto* params_tuple =
                 static_cast<
                     std::tuple<
@@ -303,7 +304,8 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
 
 void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params) {
     if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
-       instructionCode == FDInstructionCode::A_equal_sum_b_C) {
+       instructionCode == FDInstructionCode::A_equal_sum_b_C ||
+       instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
         auto& params_tuple =
             *static_cast<
                 std::tuple<
@@ -341,7 +343,20 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                                                  ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
             NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
 
-            if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C) {
+            if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
+                std::array<std::size_t, 3>& indOriginA = (*(gridElements[arrayA_name])).GetIndexOfOrigin();
+                std::array<std::size_t, 3>& indOriginC = (*(gridElements[arrayC_names[i]])).GetIndexOfOrigin();
+                std::array<std::size_t, 3> ind_start_A_rel{ind_start_A[0] + indOriginC[0] - indOriginA[0],
+                                                           ind_start_A[1] + indOriginC[1] - indOriginA[1],
+                                                           ind_start_A[2] + indOriginC[2] - indOriginA[2]};
+                std::array<std::size_t, 3> ind_end_A_rel{ind_end_A[0] + indOriginC[0] - indOriginA[0],
+                                                         ind_end_A[1] + indOriginC[1] - indOriginA[1],
+                                                         ind_end_A[2] + indOriginC[2] - indOriginA[2]};
+                arrayASlice.MakeThisASliceOf(arrayA.GetSlice(ind_start_A_rel, ind_end_A_rel));
+            }
+
+            if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
+                    instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
                 arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C) {
                 if(i == 0) {
@@ -530,10 +545,14 @@ void YeeGrid3D::ApplyInstructionsOnce(std::string name) {
     auto found = instructionSequences.find(name);
     assert(found != instructionSequences.end());  // name is valid
 
+    //std::cout << name << std::endl;
+
     std::vector<std::string>& sequence = instructionSequences[name];
     for(std::string& updateName : sequence) {
         auto& instructCode_param_pair = updateInstructions[updateName];
+        //std::cout << updateName << std::endl;
         ApplyUpdateInstruction(instructCode_param_pair.first, instructCode_param_pair.second);
+        //std::cout << "Done!" << std::endl;
     }
 }
 

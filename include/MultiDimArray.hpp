@@ -651,6 +651,10 @@ class NumberArray3D {
         return *this;
     }
 
+    T& operator[](const std::array<std::size_t, 3> indx) {
+        return arrayData[indStart[0] + indx[0]][indStart[1] + indx[1]][indStart[2] + indx[2]];
+    }
+
     //------------------------- in-place math functions ----------------------------------
 
 //    NumberArray3D& SetToNumber(const T num) {

@@ -8,11 +8,8 @@
 		<Option virtualFolders="CMake Files/;" />
 		<Build>
 			<Target title="all">
-				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
-				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
-				<Option type="1" />
+				<Option type="4" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<MakeCommands>
 					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all' />
 					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
@@ -96,7 +93,9 @@
 		<Unit filename="../CMakeLists.txt">
 			<Option virtualFolder="CMake Files/" />
 		</Unit>
+		<Unit filename="../include/ChargedParticlesTracer.h" />
 		<Unit filename="../include/DemotableComplex.hpp" />
+		<Unit filename="../include/DiscretePointsGridArrayManipulator.h" />
 		<Unit filename="../include/ElementType.h" />
 		<Unit filename="../include/FDInstructionCode.h" />
 		<Unit filename="../include/FDInstructionFactory.h" />
@@ -113,6 +112,7 @@
 		<Unit filename="../include/NumberTypes.h" />
 		<Unit filename="../include/ParamFileTranslator.h" />
 		<Unit filename="../include/ParameterExtractor.h" />
+		<Unit filename="../include/ParticlesTracer.h" />
 		<Unit filename="../include/PeriodicGaussianGridArrayManipulator.h" />
 		<Unit filename="../include/PeriodicGridArrayManipulator.h" />
 		<Unit filename="../include/SingleGridParameterExtractor.h" />
@@ -125,6 +125,12 @@
 		<Unit filename="../include/YeeGridCollectionParallel.h" />
 		<Unit filename="../include/YeeGridDataTypes.h" />
 		<Unit filename="../include/YeeGridParallel.h" />
+		<Unit filename="../src/ChargedParticlesTracer.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/DiscretePointsGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
 		<Unit filename="../src/FDInstructionFactory.cpp">
 			<Option target="main" />
 		</Unit>
@@ -147,6 +153,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/ParameterExtractor.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/ParticlesTracer.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/PeriodicGaussianGridArrayManipulator.cpp">
@@ -199,6 +208,7 @@
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_MPI_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_PMC_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_MPI_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_MonopoleCharge_Json.hpp" />

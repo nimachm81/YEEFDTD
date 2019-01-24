@@ -245,7 +245,9 @@ void SpatialCubeGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulato
     rhsArray *= (insideValue - outsideValue);
     rhsArray += outsideValue;
 
-    if(instruction == GAManipulatorInstructionCode::PlusEqual) {
+    if(instruction == GAManipulatorInstructionCode::Equal) {
+        // nothing to do. all good.
+    } else if(instruction == GAManipulatorInstructionCode::PlusEqual) {
         gridArray += rhsArray;
     } else if(instruction == GAManipulatorInstructionCode::MultiplyEqual) {
         gridArray *= rhsArray;

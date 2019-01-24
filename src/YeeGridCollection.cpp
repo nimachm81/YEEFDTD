@@ -24,6 +24,7 @@ void YeeGridCollection::RunInstructionsPeriodically(std::size_t timeIndStart, st
         }
         for(auto& grid : grids) {
             grid.WriteAllGridElemViewsToFile();
+            //std::cout << "wrote to file." << std::endl;
         }
     }
 }

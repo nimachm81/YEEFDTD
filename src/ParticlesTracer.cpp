@@ -1,0 +1,54 @@
+
+
+#include "ParticlesTracer.h"
+
+void ParticlesTracer::AddParticle(const FPNumber mass,
+                 const std::array<FPNumber, 3>& position,
+                 const std::array<FPNumber, 3>& velocity,
+                 const std::array<FPNumber, 3>& force) {
+    FPNumber velocitySquared = velocity[0]*velocity[0] + velocity[1]*velocity[1] + velocity[2]*velocity[2];
+    FPNumber gamma = 1.0/std::sqrt(1 - velocitySquared);
+    std::array<FPNumber, 3> momentum{gamma*mass*velocity[0],
+                                     gamma*mass*velocity[1],
+                                     gamma*mass*velocity[2]};
+    masses.push_back(mass);
+    positions.push_back(position);
+    velocities.push_back(velocity);
+    momentums.push_back(momentum);
+    forces.push_back(force);
+}
+
+
+void ParticlesTracer::UpdateParticlesPositions(const FPNumber dt) {
+    for(std::size_t i = 0; i < positions.size(); ++i) {
+        std::array<FPNumber, 3>& r = positions[i];
+        std::array<FPNumber, 3>& v = velocities[i];
+        r[0] += v[0]*dt;
+        r[1] += v[1]*dt;
+        r[2] += v[2]*dt;
+    }
+}
+
+void ParticlesTracer::UpdateParticlesMomentumsAndVelocities(const FPNumber dt) {
+    for(std::size_t i = 0; i < positions.size(); ++i) {
+        std::array<FPNumber, 3>& p = momentums[i];
+        std::array<FPNumber, 3>& f = forces[i];
+        p[0] += f[0]*dt;
+        p[1] += f[1]*dt;
+        p[2] += f[2]*dt;
+
+        FPNumber mSquared = masses[i]*masses[i];
+        FPNumber pSquared = p[0]*p[0] + p[1]*p[1] + p[2]*p[2];
+        std::array<FPNumber, 3>& v = velocities[i];
+        FPNumber mRel = std::sqrt(mSquared + pSquared);
+        v[0] = p[0]/mRel;
+        v[1] = p[1]/mRel;
+        v[2] = p[2]/mRel;
+    }
+}
+
+void ParticlesTracer::SetForce(std::size_t index, std::array<FPNumber, 3>& force) {
+    forces[index] = force;
+}
+
+

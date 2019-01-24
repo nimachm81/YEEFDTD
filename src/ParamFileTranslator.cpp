@@ -208,7 +208,7 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
     auto updateInstructions = singleGridRoot.GetTypeStringAndParameterSubtree("updateInstructions");
     for(auto& updateTypeandParams : updateInstructions) {
         auto& updateType = std::get<0>(updateTypeandParams);
-        if(updateType == "A+=sumbC" || updateType == "A=sumbC") {
+        if(updateType == "A+=sumbC" || updateType == "A=sumbC" || updateType == "A+=sumbC_shifted") {
             ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
 
             auto C_directions_str = updateParams.GetStringArray("C_direction");
@@ -236,6 +236,11 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
             }else if(updateType == "A=sumbC") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_equal_sum_b_C,
+                        updateParamsPtr
+                        );
+            } else if(updateType == "A+=sumbC_shifted") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_plusequal_sum_b_C_shifted,
                         updateParamsPtr
                         );
             } else {
