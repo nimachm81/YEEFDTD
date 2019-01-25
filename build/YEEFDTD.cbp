@@ -118,6 +118,7 @@
 		<Unit filename="../include/SingleGridParameterExtractor.h" />
 		<Unit filename="../include/SpaceTimeCubeGridArrayManipulator.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
+		<Unit filename="../include/SpherialShellGaussianGridArrayManipulator.h" />
 		<Unit filename="../include/UtilityFunctions.hpp" />
 		<Unit filename="../include/Vector.hpp" />
 		<Unit filename="../include/YeeGrid.h" />
@@ -171,6 +172,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/SpatialCubeGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/SphericalShellGaussianGridArrayManipulator.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/YeeGrid.cpp">

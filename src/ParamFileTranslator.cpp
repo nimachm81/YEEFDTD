@@ -196,6 +196,19 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetRealProperty("timeOffsetFraction")
                     );
 
+        } else if(std::get<0>(manipulatorNameAndParams) == "SpherialShellGaussianGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddSpherialShellGaussianGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.GetRealProperty("amplitude"),
+                    manipulatorParams.Get3VecRealProperty("centerPoint"),
+                    manipulatorParams.GetRealProperty("radius"),
+                    manipulatorParams.GetRealProperty("r_decay_rate"),
+                    manipulatorParams.GetRealProperty("r_modulationFrequency"),
+                    manipulatorParams.GetRealProperty("r_modulationPhase")
+                    );
         } else {
             assert(false);
         }

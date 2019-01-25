@@ -15,7 +15,7 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_grid_collection_2d
                         FPNumber theta_deg = 0.0,   // roration angle of the periodic plasma
                         FPNumber pitch_to_unitlength = 1.0,  // periodicity in natural units
                         FPNumber fwhm_to_pitch = 0.3,    // fwhm/pitch
-                        FPNumber wp_2p_thz = 0.0,   // wp/2pi
+                        FPNumber wp_2p_thz = 1.0,   // wp/2pi
                         FPNumber gamma_thz = 1.0,   // scattering rate
                         FPNumber wp_switch_dt = 0.1,          // switch time in natural units
                         FPNumber celldisplacement_to_pitch = 0.5     // the structure is shifted by celldisplacement_to_pitch*pitch_to_unitlength
@@ -27,20 +27,24 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_grid_collection_2d
 
     std::size_t numOfSamplesPerUnitLength = 50;
 
-    FPNumber y0 = -7.0;
-    FPNumber y1 = 7.0;
+    FPNumber y0 = -8.0;
+    FPNumber y1 = 8.0;
     FPNumber z0 = -6.0;
     FPNumber z1 = 6.0;
     FPNumber pml_r_z0 = z1;
     FPNumber pml_r_z1 = z1 + 2.0;
+    FPNumber pml_l_z0 = z0 - 2.0;
+    FPNumber pml_l_z1 = z0;
 
     std::size_t ny = static_cast<std::size_t>(std::real(y1 - y0) * numOfSamplesPerUnitLength);
     std::size_t nz = static_cast<std::size_t>(std::real(z1 - z0) * numOfSamplesPerUnitLength);
     std::size_t pml_r_nz = static_cast<std::size_t>(std::real(pml_r_z1 - pml_r_z0) * numOfSamplesPerUnitLength);
+    std::size_t pml_l_nz = static_cast<std::size_t>(std::real(pml_l_z1 - pml_l_z0) * numOfSamplesPerUnitLength);
 
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
     FPNumber dz = (z1 - z0)/(FPNumber)(nz);
     FPNumber pml_r_dz = (pml_r_z1 - pml_r_z0)/(FPNumber)(pml_r_nz);
+    FPNumber pml_l_dz = (pml_l_z1 - pml_l_z0)/(FPNumber)(pml_l_nz);
 
     FPNumber pml_r_cube_dz = 1.0;
     FPNumber pml_r_cube_sige_z0 = z0;
@@ -48,8 +52,16 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_grid_collection_2d
     FPNumber pml_r_cube_sigh_z0 = pml_r_cube_sige_z0;
     FPNumber pml_r_cube_sigh_z1 = pml_r_cube_sige_z1 + pml_r_dz/2.0;
 
+    FPNumber pml_l_cube_dz = 1.0;
+    FPNumber pml_l_cube_sige_z0 = z0 - pml_l_cube_dz/2.0 - 0.1;
+    FPNumber pml_l_cube_sige_z1 = z1;
+    FPNumber pml_l_cube_sigh_z0 = pml_l_cube_sige_z0 - pml_l_dz/2.0;
+    FPNumber pml_l_cube_sigh_z1 = pml_l_cube_sige_z1;
+
     FPNumber pml_r_sig_E = 2.0;
     FPNumber pml_r_sig_H = 2.0;
+    FPNumber pml_l_sig_E = 2.0;
+    FPNumber pml_l_sig_H = 2.0;
 
     FPNumber stabilityFactor = 0.95;
     FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
@@ -83,7 +95,7 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_grid_collection_2d
 
     std::size_t numOfTimeSamplesBeforeSwitch = static_cast<std::size_t>(std::real((wp2_mask_t0 - wp2_mask_dt)/dt));
     std::size_t numOfTimeSamplesDuringSwitch = static_cast<std::size_t>(std::real((FPNumber)2.0*wp2_mask_dt/dt));
-    std::size_t numOfTimeSamplesAfterSwitch = 5000;
+    std::size_t numOfTimeSamplesAfterSwitch = 4000;
 
     std::size_t nt_0 = numOfTimeSamplesBeforeSwitch;
     std::size_t nt_1 = nt_0 + numOfTimeSamplesDuringSwitch;
@@ -149,6 +161,9 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_grid_collection_2d
                                  file_suffix +
                                  std::string("\"");
     std::string pml_r_e_name = std::string("\"") + outputFolder + "pml-r-E-x" +
+                                 file_suffix +
+                                 std::string("\"");
+    std::string pml_l_e_name = std::string("\"") + outputFolder + "pml-l-E-x" +
                                  file_suffix +
                                  std::string("\"");
 
@@ -247,7 +262,24 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_grid_collection_2d
             {"\"_gr_m_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(-dt/pml_r_dz/eps_r))},
             {"\"_gr_sig_e_\"", boost::lexical_cast<std::string>(std::real(pml_r_sig_E))},
             {"\"_gr_sig_h_\"", boost::lexical_cast<std::string>(std::real(pml_r_sig_H))},
-            {"\"_gr_E_name_\"", pml_r_e_name}
+            {"\"_gr_E_name_\"", pml_r_e_name},
+            {"\"_gl_z0_\"", boost::lexical_cast<std::string>(std::real(pml_l_z0))},
+            {"\"_gl_z1_\"", boost::lexical_cast<std::string>(std::real(pml_l_z1))},
+            {"\"_gl_nz_\"", boost::lexical_cast<std::string>(pml_l_nz)},
+            {"\"_gl_nz_p1_\"", boost::lexical_cast<std::string>(pml_l_nz + 1)},
+            {"\"_gl_nz_m1_\"", boost::lexical_cast<std::string>(pml_l_nz - 1)},
+            {"\"_gl_cube_sige_z0_\"", boost::lexical_cast<std::string>(std::real(pml_l_cube_sige_z0))},
+            {"\"_gl_cube_sige_z1_\"", boost::lexical_cast<std::string>(std::real(pml_l_cube_sige_z1))},
+            {"\"_gl_cube_sigh_z0_\"", boost::lexical_cast<std::string>(std::real(pml_l_cube_sigh_z0))},
+            {"\"_gl_cube_sigh_z1_\"", boost::lexical_cast<std::string>(std::real(pml_l_cube_sigh_z1))},
+            {"\"_gl_cube_dz_\"", boost::lexical_cast<std::string>(std::real(pml_l_cube_dz))},
+            {"\"_gl_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/pml_l_dz))},
+            {"\"_gl_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/pml_l_dz))},
+            {"\"_gl_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(dt/pml_l_dz/eps_r))},
+            {"\"_gl_m_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(-dt/pml_l_dz/eps_r))},
+            {"\"_gl_sig_e_\"", boost::lexical_cast<std::string>(std::real(pml_l_sig_E))},
+            {"\"_gl_sig_h_\"", boost::lexical_cast<std::string>(std::real(pml_l_sig_H))},
+            {"\"_gl_E_name_\"", pml_l_e_name}
             };
 
     // for parallel processing this file's name should be unique to the processor. Here the suffix theta is supposes to

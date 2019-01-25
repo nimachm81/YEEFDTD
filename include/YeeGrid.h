@@ -146,6 +146,16 @@ class YeeGrid3D {
             std::array<FPNumber, 3> unitCellOrigin,
             std::array<std::array<FPNumber, 3>, 3> primitiveVectors
             );
+    void AddSpherialShellGaussianGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            FPNumber amplitude,
+            std::array<FPNumber, 3> centerPoint,
+            FPNumber radius,
+            FPNumber r_decay_rate,
+            FPNumber r_modulationFrequecy,
+            FPNumber r_modulatioPhase
+            );
 
     void PrintAllGridData();
 

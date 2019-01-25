@@ -13,6 +13,7 @@
 #include "GaussianSpaceTimeGridArrayManipulator.h"
 #include "PeriodicGaussianGridArrayManipulator.h"
 #include "SpaceTimeCubeGridArrayManipulator.h"
+#include "SpherialShellGaussianGridArrayManipulator.h"
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -699,6 +700,37 @@ void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
     modifier->SetGaussianDecayRate(decay_rate);
     modifier->SetUnitCellOrigin(unitCellOrigin);
     modifier->SetPrimitiveVectors(primitiveVectors[0], primitiveVectors[1], primitiveVectors[2]);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+
+        // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddSpherialShellGaussianGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction,
+        FPNumber amplitude,
+        std::array<FPNumber, 3> centerPoint,
+        FPNumber radius,
+        FPNumber r_decay_rate,
+        FPNumber r_modulationFrequecy,
+        FPNumber r_modulatioPhase
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<SpherialShellGaussianGridArrayManipulator> modifier(new SpherialShellGaussianGridArrayManipulator);
+    modifier->SetAmplitude(amplitude);
+    modifier->SetCenterPoint(centerPoint);
+    modifier->SetRadius(radius);
+    modifier->SetDecayRate(r_decay_rate);
+    modifier->SetModulationFrequency(r_modulationFrequecy);
+    modifier->SetModulationPhase(r_modulatioPhase);
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
 
         // find the coordinates of the first element of the array
