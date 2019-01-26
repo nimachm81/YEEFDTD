@@ -58,11 +58,6 @@ void SpherialShellGaussianGridArrayManipulator::UpdateArray(const FPNumber t, GA
 
     FPNumber x, y, z, r;
 
-    if(instruction != GAManipulatorInstructionCode::Equal) {
-        std::cout << "Not implemented!!!" << std::endl;
-        assert(false);
-    }
-
     for(std::size_t i0 = 0; i0 < n0; ++i0) {
         x = x0 + (FPNumber)i0*dx - centerPoint[0];
         for(std::size_t i1 = 0; i1 < n1; ++i1) {
@@ -70,11 +65,19 @@ void SpherialShellGaussianGridArrayManipulator::UpdateArray(const FPNumber t, GA
             for(std::size_t i2 = 0; i2 < n2; ++i2) {
                 z = z0 + (FPNumber)i2*dz - centerPoint[2];
                 r = std::sqrt(x*x + y*y + z*z);
-                FPNumber gaussianValue_r = std::exp(-(r - radius)*(r - radius) *
-                                                    (r_decay_rate*r_decay_rate))
+                FPNumber gaussianValue_r = amplitude *
+                                           std::exp(-(r - radius)*(r - radius) *
+                                                     (r_decay_rate*r_decay_rate))
                 * std::cos((FPNumber)(2.0*M_PI)*r_modulationFrequency*(r - radius) + r_modulationPhase);
 
-                arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = gaussianValue_r;
+                if(instruction == GAManipulatorInstructionCode::Equal) {
+                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = gaussianValue_r;
+                } else if(instruction == GAManipulatorInstructionCode::PlusEqual) {
+                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] += gaussianValue_r;
+                } else {
+                    std::cout << "Not implemented!!!" << std::endl;
+                    assert(false);
+                }
             }
         }
     }

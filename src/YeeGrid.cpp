@@ -56,6 +56,7 @@ YeeGrid3D::~YeeGrid3D() {
                 >(params);
             delete params_tuple;
         }else if(instructionCode == FDInstructionCode::A_equal_func_r_t ||
+                 instructionCode == FDInstructionCode::A_plusequal_func_r_t ||
                  instructionCode == FDInstructionCode::A_multequal_func_r_t) {
             auto* params_tuple =
                 static_cast<
@@ -185,7 +186,10 @@ void YeeGrid3D::AddInstructionSequence(std::string name, std::vector<std::string
     for(auto instructionName : sequence) {
         // make sure sequence instruction names are valid.
         auto found = updateInstructions.find(instructionName);
-        assert(found != updateInstructions.end());
+        if(found == updateInstructions.end()) {
+            std::cout << "Instruction not defined: " << instructionName << std::endl;
+            assert(false);
+        }
     }
     instructionSequences[name] = sequence;
 }
@@ -431,6 +435,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
             }
         }
     } else if(instructionCode == FDInstructionCode::A_equal_func_r_t ||
+              instructionCode == FDInstructionCode::A_plusequal_func_r_t ||
               instructionCode == FDInstructionCode::A_multequal_func_r_t) {
         auto& params_tuple =
             *static_cast<
@@ -447,7 +452,9 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         FPNumber t = gridManipulator.CalculateTime(dt, timeIndex);
         if(instructionCode == FDInstructionCode::A_equal_func_r_t) {
             gridManipulator.UpdateArray(t, GAManipulatorInstructionCode::Equal);
-        } else if(instructionCode == FDInstructionCode::A_multequal_func_r_t) {
+        } else if(instructionCode == FDInstructionCode::A_plusequal_func_r_t) {
+            gridManipulator.UpdateArray(t, GAManipulatorInstructionCode::PlusEqual);
+        }else if(instructionCode == FDInstructionCode::A_multequal_func_r_t) {
             gridManipulator.UpdateArray(t, GAManipulatorInstructionCode::MultiplyEqual);
         }
     } else if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor ||

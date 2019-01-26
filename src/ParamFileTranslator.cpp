@@ -203,7 +203,7 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetStringProperty("array"),
                     stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
                     manipulatorParams.GetRealProperty("amplitude"),
-                    manipulatorParams.Get3VecRealProperty("centerPoint"),
+                    manipulatorParams.Get3VecRealProperty("center"),
                     manipulatorParams.GetRealProperty("radius"),
                     manipulatorParams.GetRealProperty("r_decay_rate"),
                     manipulatorParams.GetRealProperty("r_modulationFrequency"),
@@ -338,7 +338,7 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 assert(false);
             }
 
-        } else if(updateType == "A=frt" || updateType == "A*=frt") {
+        } else if(updateType == "A=frt" || updateType == "A+=frt" || updateType == "A*=frt") {
             ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
 
             void* updateParamsPtr = yee.ConstructParams_A_equal_func_r_t(
@@ -348,6 +348,11 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
             if(updateType == "A=frt") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_equal_func_r_t,
+                        updateParamsPtr
+                        );
+            } else if(updateType == "A+=frt") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_plusequal_func_r_t,
                         updateParamsPtr
                         );
             } else if(updateType == "A*=frt") {

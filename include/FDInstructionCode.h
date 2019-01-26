@@ -34,6 +34,8 @@ enum class FDInstructionCode {
                 // parameters : tuple{A, f, t}
                 // std::tuple<std::string     // name of GridArrayManipulator (it has a pointer to A) and a method to
                 //           >                // calculate time
+    ,A_plusequal_func_r_t   // update array A as a function of space and time    A += f(r, t)
+                // same parameters as in A_equal_func_r_t
     ,A_multequal_func_r_t   // update array A as a function of space and time    A *= f(r, t)
                 // same parameters as in A_equal_func_r_t
 

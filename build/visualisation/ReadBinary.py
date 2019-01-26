@@ -1,6 +1,6 @@
 
 
-__all__ = ["GetArrayInfo", "GetArrays"]
+__all__ = ["GetArrayInfo", "GetArrays", "ReadParamsFile"]
 
 import struct
 import numpy as np
@@ -95,4 +95,43 @@ def GetArrays(fileName, indStart=0, indEnd=None):
                 A[n, i, j, :] = data_ij
     file.close()
     return A
+    
+    
+    
+def ReadParamsFile(filename_params):
+    paramfile = open(filename_params, mode='rb')
+    paramsfileContent = paramfile.read()
+    paramfile.close()
+    ind_st = 0
+    params = {}
+    while ind_st < len(paramsfileContent):
+        dsize = 0
+        dtype = (struct.unpack("c", paramsfileContent[ind_st:ind_st+1])[0]).decode("utf-8") 
+        dcode = None
+        if dtype=='f':
+            dsize = 4
+            dcode = 'f'
+        if dtype=='u':
+            dsize = 8
+            dcode = 'Q'
+
+        #print('dtype: ', dtype)
+        assert dsize > 0 and dcode != None
+        ind_data = ind_st + 1
+        data_i = struct.unpack(dcode, paramsfileContent[ind_data: ind_data + dsize])[0]
+        ind_st += dsize + 1
+        
+        nameLenSize = 8
+        nameLen = struct.unpack("Q", paramsfileContent[ind_st:ind_st+nameLenSize])[0]
+        #print('nameLen: ', nameLen)
+        ind_st += nameLenSize
+        
+        name = (struct.unpack("{}s".format(nameLen), paramsfileContent[ind_st:ind_st+nameLen])[0]).decode('utf-8')
+        #print('name: ', name)
+        ind_st += nameLen
+        
+        params[name] = data_i
+        
+    return params
+
 
