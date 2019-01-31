@@ -2,19 +2,69 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="main" />
+	<File name="../include/ChargedParticlesTracer.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="163" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../src/YeeGridCollection.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="742" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="../test/Test_FDTD_2D_MonopoleCharge_Json.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="148" topLine="9" />
+		</Cursor>
+	</File>
+	<File name="../include/DiscretePointsGAMDataUpdater.h" open="1" top="1" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../src/DiscretePointsGridArrayManipulator.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="478" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../src/ParameterExtractor.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5029" topLine="141" />
+		</Cursor>
+	</File>
+	<File name="../src/YeeGridCollectionParallel.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="772" topLine="5" />
+		</Cursor>
+	</File>
+	<File name="../test/Test_FDTD_2D_SwitchedPlasma_CurvedLines_GridCollection_Json.hpp" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5284" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="../include/FDInstructionCode.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2438" topLine="20" />
+		</Cursor>
+	</File>
+	<File name="../include/DiscretePointsGridArrayManipulator.h" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="122" topLine="6" />
+		</Cursor>
+	</File>
 	<File name="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_GridCollection_Json.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="20037" topLine="297" />
 		</Cursor>
 	</File>
-	<File name="../src/main.cpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/main.cpp" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="572" topLine="0" />
+			<Cursor1 position="688" topLine="4" />
 		</Cursor>
 	</File>
 	<File name="../src/YeeGridDataTypes.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="172" topLine="0" />
+			<Cursor1 position="1630" topLine="21" />
 		</Cursor>
 	</File>
 	<File name="../src/YeeGridParallel.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -27,7 +77,7 @@
 			<Cursor1 position="1126" topLine="10" />
 		</Cursor>
 	</File>
-	<File name="../src/SphericalShellGaussianGridArrayManipulator.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/SphericalShellGaussianGridArrayManipulator.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2219" topLine="49" />
 		</Cursor>
@@ -62,6 +112,21 @@
 			<Cursor1 position="273" topLine="0" />
 		</Cursor>
 	</File>
+	<File name="../include/YeeGridDataTypes.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="584" topLine="11" />
+		</Cursor>
+	</File>
+	<File name="../include/GridArrayManipulator.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="10" />
+		</Cursor>
+	</File>
+	<File name="../include/ParticlesTracer.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="409" topLine="0" />
+		</Cursor>
+	</File>
 	<File name="../src/FDInstructionFactory.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="10389" topLine="252" />
@@ -72,12 +137,22 @@
 			<Cursor1 position="3422" topLine="62" />
 		</Cursor>
 	</File>
-	<File name="../src/YeeGrid.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../CMakeLists.txt" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="7270" topLine="169" />
+			<Cursor1 position="143" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../src/ParamFileTranslator.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../test/Test_FDTD_2D.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../src/YeeGrid.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="36024" topLine="749" />
+		</Cursor>
+	</File>
+	<File name="../src/ParamFileTranslator.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="11731" topLine="191" />
 		</Cursor>
@@ -92,9 +167,14 @@
 			<Cursor1 position="4214" topLine="7" />
 		</Cursor>
 	</File>
-	<File name="../CMakeLists.txt" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../test/Test_FDTD_2D_Json.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="143" topLine="0" />
+			<Cursor1 position="2251" topLine="30" />
+		</Cursor>
+	</File>
+	<File name="../test/Test_FDTD_2D_TM_Json.hpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="112" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_Json.hpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -107,9 +187,9 @@
 			<Cursor1 position="4664" topLine="62" />
 		</Cursor>
 	</File>
-	<File name="../src/ParticlesTracer.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/ParticlesTracer.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1398" topLine="16" />
+			<Cursor1 position="2172" topLine="50" />
 		</Cursor>
 	</File>
 	<File name="../src/GridElementView.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -117,39 +197,9 @@
 			<Cursor1 position="197" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="../src/ChargedParticlesTracer.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/ChargedParticlesTracer.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6166" topLine="151" />
-		</Cursor>
-	</File>
-	<File name="../src/YeeGridCollection.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="742" topLine="9" />
-		</Cursor>
-	</File>
-	<File name="../include/FDInstructionCode.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="2438" topLine="20" />
-		</Cursor>
-	</File>
-	<File name="../src/DiscretePointsGridArrayManipulator.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4246" topLine="77" />
-		</Cursor>
-	</File>
-	<File name="../src/ParameterExtractor.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5029" topLine="141" />
-		</Cursor>
-	</File>
-	<File name="../src/YeeGridCollectionParallel.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="772" topLine="5" />
-		</Cursor>
-	</File>
-	<File name="../test/Test_FDTD_2D_SwitchedPlasma_CurvedLines_GridCollection_Json.hpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5284" topLine="6" />
+			<Cursor1 position="7764" topLine="196" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

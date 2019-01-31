@@ -1,0 +1,129 @@
+
+{
+"simulationType":"singleGrid",
+"simulationParameters":{
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_nt_", "_y_j_", "_z_j_", "_indyJ_", "_indzJ_", "_indyJ_p1_", "_indzJ_p1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_m_dt_dydz_"],
+    "dimensions":{
+        "r0":[0.0, "_y0_", "_z0_"],
+        "r1":[0.1, "_y1_", "_z1_"],
+        "nCells":[1, "_ny_", "_nz_"],
+        "dt":"_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, "_indyJ_", "_indzJ_"], "nCells":[0, 0, 1]}],
+    "girdArrayManipulators":[
+        {
+        "type":"GaussianGridArrayManipulator",
+        "parameters":{
+            "name":"Jupdater",
+            "array":"J",
+            "direction":"z",
+            "amplitude":1.0,
+            "t_center":1.0,
+            "t_decay":0.2,
+            "modulationFrequency":0.0,
+            "modulationPhase":0.0,
+            "timeOffsetFraction":-0.5
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_me_curl_E",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, "_ny_", "_nz_"],
+            "b":["_m_dt_dz_", "_dt_dz_", "_dt_dy_", "_m_dt_dy_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 1],
+            "A_indEnd":[1, "_ny_", "_nz_"],
+            "b":["_m_dt_dz_", "_dt_dz_"],
+            "C":["H", "H"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_pe_curl_H",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":[1, "_ny_", "_nz_"],
+            "b":["_dt_dy_", "_m_dt_dy_"],
+            "C":["H", "H"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_me_J",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[0, "_indyJ_", "_indzJ_"],
+            "A_indEnd":[1, "_indyJ_p1_", "_indzJ_p1_"],
+            "b":["_m_dt_dydz_"],
+            "C":["J"],
+            "C_direction":["z"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"J_update",
+            "girdArrayManipulator":"Jupdater"
+            }
+        }
+    ],
+    "updateSequences":[{"name":"iterative", "sequence":["J_update", "E_me_J", "Ey_pe_curl_H", "Ez_pe_curl_H", "H_me_curl_E"]}],
+    "runSequence":[{"name":"iterative", "timeIndStart":0, "timeIndEnd":"_nt_"}],
+    "gridViews":[
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"2D/E-z",
+            "array":"E",
+            "direction":"z",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"2D/E-y",
+            "array":"E",
+            "direction":"y",
+            "saveRate":1
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"2D/J-z",
+            "array":"J",
+            "direction":"z",
+            "saveRate":1
+            }
+        }
+    ]
+}
+}
+
+
