@@ -41,3 +41,4 @@ std::ostream& operator<<(std::ostream& out, YeeGridData3D& gridData) {
     out << "z component : " << std::endl << gridData.GetNumArray(2);
     return out;
 }
+

@@ -18,7 +18,7 @@ class DiscretePointsGridArrayManipulator : public GridArrayManipulator {
     void UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction);
     FPNumber CalculateTime(const FPNumber dt, const std::size_t timeIndex);
 
-    private:
+    protected:
     std::vector<std::array<FPNumber, 3>>* positions;
     std::vector<FPNumber>* values;
     FPNumber timeOffsetFraction = 0.0;

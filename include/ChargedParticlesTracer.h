@@ -4,10 +4,9 @@
 
 #include "YeeGridDataTypes.h"
 #include "NumberTypes.h"
-#include "DiscretePointsGridArrayManipulator.h"
 #include "ParticlesTracer.h"
 
-class ChargedParticlesTracer : ParticlesTracer {
+class ChargedParticlesTracer : public ParticlesTracer {
     public:
     void AddParticle(const FPNumber charge,
                      const FPNumber mass,
@@ -17,20 +16,29 @@ class ChargedParticlesTracer : ParticlesTracer {
     void SetElectricFieldGrid(YeeGridData3D* eField);
     void SetMagneticFieldGrid(YeeGridData3D* bField);
 
-    void AttachCurrentToDiscreteGridArrayManipulator(DiscretePointsGridArrayManipulator& discreteGAM, int direction);
-    void UpdateElectricForce(int direction, // x, y or z component. Directiion of the electric field
-                             std::array<FPNumber, 3>& r0,   // coordinates of the first component of the electric field grid
-                             std::array<FPNumber, 3>& dr
+    void SetElectricFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
+    void SetMagneticFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
+
+    void UpdateElectricForce(int direction // x, y or z component. Directiion of the electric field
                              );
-    void UpdateMagneticForce(int direction, // 0=x, 1=y or 2=z component. Directiion of the magnetic field
-                             std::array<FPNumber, 3>& r0,   // coordinates of the first component of the electric field grid
-                             std::array<FPNumber, 3>& dr
+    void UpdateMagneticForce(int direction // 0=x, 1=y or 2=z component. Directiion of the magnetic field
                              );
+
+    void UpdateParticlesCurrents();  // updates currents using particles velocities
+
+    void AttachDataToGAMPositions(std::vector<std::array<FPNumber, 3>>*& positions);
+    void AttachDataToGAMValues(std::vector<FPNumber>*& values, std::string dataName, int direction);
+    void UpdateGAMValues(const FPNumber t);
+
     private:
     std::vector<FPNumber> charges;
     std::array<std::vector<FPNumber>, 3> currentComponents;
     YeeGridData3D* electricField;       // E
+    std::array<std::array<FPNumber, 3>, 3> electricFieldConponentsOrigin;
     YeeGridData3D* magneticField;       // B
+    std::array<std::array<FPNumber, 3>, 3> magneticFieldConponentsOrigin;
+    std::array<FPNumber, 3> gridSpacing;
+
 };
 
 #endif // FDTD_CHARGEDPARTICLESTRACER_H_

@@ -47,8 +47,27 @@ void ParticlesTracer::UpdateParticlesMomentumsAndVelocities(const FPNumber dt) {
     }
 }
 
+void ParticlesTracer::UpdateTime(const FPNumber newTime) {
+    time = newTime;
+}
+
+void ParticlesTracer::UpdateParticlesMomentumVelocityPosition(const FPNumber newTime) {
+    const FPNumber dt = newTime - time;
+    UpdateParticlesMomentumsAndVelocities(dt);
+    UpdateParticlesPositions(dt);
+    time = newTime;
+}
+
+
 void ParticlesTracer::SetForce(std::size_t index, std::array<FPNumber, 3>& force) {
     forces[index] = force;
 }
 
+void ParticlesTracer::ResetForces() {
+    for(std::size_t i = 0; i < positions.size(); ++i) {
+        forces[i][0] = 0.0;
+        forces[i][1] = 0.0;
+        forces[i][2] = 0.0;
+    }
+}
 

@@ -22,14 +22,18 @@ void ChargedParticlesTracer::SetMagneticFieldGrid(YeeGridData3D* bField) {
     magneticField = bField;
 }
 
-void ChargedParticlesTracer::AttachCurrentToDiscreteGridArrayManipulator(
-        DiscretePointsGridArrayManipulator& discreteGAM, int direction) {
-    assert(direction >= 0 && direction <= 2);
-    discreteGAM.SetPositions(&positions);
-    discreteGAM.SetValues(&currentComponents[direction]);
+void ChargedParticlesTracer::SetElectricFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin) {
+    electricFieldConponentsOrigin[direction] = origin;
 }
 
-void ChargedParticlesTracer::UpdateElectricForce(int direction, std::array<FPNumber, 3>& r0, std::array<FPNumber, 3>& dr) {
+void ChargedParticlesTracer::SetMagneticFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin) {
+    magneticFieldConponentsOrigin[direction] = origin;
+}
+
+void ChargedParticlesTracer::UpdateElectricForce(int direction) {
+    const std::array<FPNumber, 3>& r0 = electricFieldConponentsOrigin[direction];
+    const std::array<FPNumber, 3>& dr = gridSpacing;
+
     std::size_t numOfParticles = charges.size();
     NumberArray3D e_direction = electricField->GetNumArray(direction);
     for(std::size_t i = 0; i < numOfParticles; ++i) {
@@ -50,9 +54,9 @@ void ChargedParticlesTracer::UpdateElectricForce(int direction, std::array<FPNum
 
         std::array<std::size_t, 3> indx;
         std::array<FPNumber, 3> vol_ratio;
-        //FPNumber[2][2][2] wights;
+        //FPNumber[2][2][2] weights;
 
-        FPNumber eInterp = 0.0;
+        FPNumber eInterp = 0.0;     // interpolated electric field
 
         for(int i_x = 0; i_x < 2; ++i_x) {
             indx[0] = lowerIndx[0] + i_x;
@@ -95,7 +99,10 @@ void ChargedParticlesTracer::UpdateElectricForce(int direction, std::array<FPNum
 }
 
 
-void ChargedParticlesTracer::UpdateMagneticForce(int direction, std::array<FPNumber, 3>& r0, std::array<FPNumber, 3>& dr) {
+void ChargedParticlesTracer::UpdateMagneticForce(int direction) {
+    const std::array<FPNumber, 3>& r0 = magneticFieldConponentsOrigin[direction];
+    const std::array<FPNumber, 3>& dr = gridSpacing;
+
     std::size_t numOfParticles = charges.size();
     NumberArray3D b_direction = magneticField->GetNumArray(direction);
     for(std::size_t i = 0; i < numOfParticles; ++i) {
@@ -173,5 +180,47 @@ void ChargedParticlesTracer::UpdateMagneticForce(int direction, std::array<FPNum
             }
         }
     }
+}
+
+void ChargedParticlesTracer::UpdateParticlesCurrents() {
+    const std::array<FPNumber, 3>& dr = gridSpacing;
+
+    std::size_t numOfParticles = charges.size();
+    std::vector<FPNumber>& Jx = currentComponents[0];
+    std::vector<FPNumber>& Jy = currentComponents[1];
+    std::vector<FPNumber>& Jz = currentComponents[2];
+    FPNumber dA_xy = dr[0]*dr[1];
+    FPNumber dA_yz = dr[1]*dr[2];
+    FPNumber dA_xz = dr[0]*dr[2];
+    for(std::size_t i = 0; i < numOfParticles; ++i) {
+        std::array<FPNumber, 3>& v = velocities[i];
+        Jx[i] = v[0]/dA_yz;
+        Jy[i] = v[1]/dA_xz;
+        Jz[i] = v[2]/dA_xy;
+    }
+}
+
+
+void ChargedParticlesTracer::AttachDataToGAMPositions(std::vector<std::array<FPNumber, 3>>*& positions) {
+    positions = &(this->positions);
+}
+
+void ChargedParticlesTracer::AttachDataToGAMValues(std::vector<FPNumber>*& values, std::string dataName, int direction) {
+    if(dataName == "current") {
+        values = &currentComponents[direction];
+    } else {
+        std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
+        assert(false);
+    }
+}
+
+void ChargedParticlesTracer::UpdateGAMValues(const FPNumber t) {
+    ResetForces();
+    for(int direction = 0; direction < 3; ++direction) {
+        UpdateElectricForce(direction);
+        UpdateMagneticForce(direction);
+    }
+    UpdateParticlesMomentumVelocityPosition(t);
+    UpdateParticlesCurrents();
 }
 

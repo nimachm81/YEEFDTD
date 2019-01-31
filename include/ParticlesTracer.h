@@ -6,8 +6,9 @@
 #include <array>
 
 #include "NumberTypes.h"
+#include "DiscretePointsGAMDataUpdater.h"
 
-class ParticlesTracer {
+class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     public:
     void AddParticle(const FPNumber mass,
                      const std::array<FPNumber, 3>& position,
@@ -15,9 +16,15 @@ class ParticlesTracer {
                      const std::array<FPNumber, 3>& force);
     void UpdateParticlesPositions(const FPNumber dt);
     void UpdateParticlesMomentumsAndVelocities(const FPNumber dt);
-    inline void SetForce(std::size_t index, std::array<FPNumber, 3>& force);
+    void UpdateTime(const FPNumber newTime);
+
+    void UpdateParticlesMomentumVelocityPosition(const FPNumber newTime);
+
+    void SetForce(std::size_t index, std::array<FPNumber, 3>& force);
+    void ResetForces();
 
     protected:
+    FPNumber time = 0.0;
     std::vector<FPNumber> masses;
     std::vector<std::array<FPNumber, 3>> positions;
     std::vector<std::array<FPNumber, 3>> velocities;
