@@ -14,6 +14,10 @@ void ChargedParticlesTracer::AddParticle(const FPNumber charge,
     currentComponents[2].push_back(charge*velocity[2]);
 }
 
+void ChargedParticlesTracer::SetGridSpacing(std::array<FPNumber, 3>& dr) {
+    gridSpacing = dr;
+}
+
 void ChargedParticlesTracer::SetElectricFieldGrid(YeeGridData3D* eField) {
     electricField = eField;
 }
@@ -193,10 +197,11 @@ void ChargedParticlesTracer::UpdateParticlesCurrents() {
     FPNumber dA_yz = dr[1]*dr[2];
     FPNumber dA_xz = dr[0]*dr[2];
     for(std::size_t i = 0; i < numOfParticles; ++i) {
+        const FPNumber& q = charges[i];
         std::array<FPNumber, 3>& v = velocities[i];
-        Jx[i] = v[0]/dA_yz;
-        Jy[i] = v[1]/dA_xz;
-        Jz[i] = v[2]/dA_xy;
+        Jx[i] = q*v[0]/dA_yz;
+        Jy[i] = q*v[1]/dA_xz;
+        Jz[i] = q*v[2]/dA_xy;
     }
 }
 
@@ -215,12 +220,14 @@ void ChargedParticlesTracer::AttachDataToGAMValues(std::vector<FPNumber>*& value
 }
 
 void ChargedParticlesTracer::UpdateGAMValues(const FPNumber t) {
-    ResetForces();
-    for(int direction = 0; direction < 3; ++direction) {
-        UpdateElectricForce(direction);
-        UpdateMagneticForce(direction);
+    if( t > time ) {
+        ResetForces();
+        for(int direction = 0; direction < 3; ++direction) {
+            UpdateElectricForce(direction);
+            UpdateMagneticForce(direction);
+        }
+        UpdateParticlesMomentumVelocityPosition(t);
+        UpdateParticlesCurrents();
     }
-    UpdateParticlesMomentumVelocityPosition(t);
-    UpdateParticlesCurrents();
 }
 

@@ -14,6 +14,8 @@
 #include "PeriodicGaussianGridArrayManipulator.h"
 #include "SpaceTimeCubeGridArrayManipulator.h"
 #include "SpherialShellGaussianGridArrayManipulator.h"
+#include "ChargedParticlesTracer.h"
+#include "DiscretePointsGridArrayManipulator.h"
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -741,6 +743,88 @@ void YeeGrid3D::AddSpherialShellGaussianGridArrayManipulator(const std::string n
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
 
         // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
+            const std::string eFieldName,
+            const std::string bFieldName,
+            std::vector<FPNumber> particlesCharges,
+            std::vector<FPNumber> particlesMasses,
+           std::vector<std::array<FPNumber, 3>> particlesInitialPositions,
+            std::vector<std::array<FPNumber, 3>> particlesInitialVelocities
+            ) {
+    auto found = gamDataUpdaters.find(name);
+    assert(found == gamDataUpdaters.end()); // make sure name does not already exist.
+
+    std::shared_ptr<ChargedParticlesTracer> updater(new ChargedParticlesTracer);
+
+    auto foundEField = gridElements.find(eFieldName);
+    assert(foundEField != gridElements.end());
+    updater->SetElectricFieldGrid(gridElements[eFieldName].get());
+
+    auto foundBField = gridElements.find(bFieldName);
+    assert(foundBField != gridElements.end());
+    updater->SetMagneticFieldGrid(gridElements[bFieldName].get());
+
+    // add particles
+    std::size_t numOfParticles = particlesCharges.size();
+    assert(particlesMasses.size() == numOfParticles &&
+           particlesInitialPositions.size() == numOfParticles &&
+           particlesInitialVelocities.size() == numOfParticles);
+    const std::array<FPNumber, 3> force{0.0, 0.0, 0.0};
+    for(std::size_t i = 0; i < numOfParticles; ++i) {
+        updater->AddParticle(particlesCharges[i],
+                             particlesMasses[i],
+                             particlesInitialPositions[i],
+                             particlesInitialVelocities[i],
+                             force
+                             );
+    }
+
+    // set field orgins
+    for(int direction = 0; direction < 3; ++direction) {
+        std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(eFieldName, direction);
+        updater->SetElectricFieldGridOrigin(direction, arrayR0);
+    }
+    for(int direction = 0; direction < 3; ++direction) {
+        std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(bFieldName, direction);
+        updater->SetMagneticFieldGridOrigin(direction, arrayR0);
+    }
+
+    // set grid spacing
+    updater->SetGridSpacing(dr);
+
+    gamDataUpdaters[name] = updater;
+}
+
+
+void YeeGrid3D::AddDiscretePointsGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            const std::string dataUpdaterName,
+            const std::string dataUpdaterDataName,      // name of the array inside the dataUpdater to associate with gridData
+            int dataUpdaterDataDirection                // direction of the array inside dataUpdater
+    ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<DiscretePointsGridArrayManipulator> modifier(new DiscretePointsGridArrayManipulator);
+
+    // attach updater
+    modifier->AddDataUpdater(gamDataUpdaters[dataUpdaterName].get(),
+                             dataUpdaterDataName,
+                             dataUpdaterDataDirection
+                             );
+
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+
+    // Set origin
     std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
 
     modifier->SetCornerCoordinate(arrayR0);

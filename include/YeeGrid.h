@@ -16,6 +16,7 @@
 #include "ElementType.h"
 #include "GridArrayManipulator.h"
 #include "GridElementView.h"
+#include "DiscretePointsGAMDataUpdater.h"
 
 class YeeGrid3D {
     public:
@@ -157,6 +158,22 @@ class YeeGrid3D {
             FPNumber r_modulatioPhase
             );
 
+    void AddChargedParticlesTracer(const std::string name,
+            const std::string eFieldName,
+            const std::string bFieldName,
+            std::vector<FPNumber> particlesCharges,
+            std::vector<FPNumber> particlesMasses,
+            std::vector<std::array<FPNumber, 3>> particlesInitialPositions,
+            std::vector<std::array<FPNumber, 3>> particlesInitialVelocities
+            );
+    void AddDiscretePointsGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            const std::string dataUpdaterName,
+            const std::string dataUpdaterDataName,      // name of the array inside the dataUpdater to associate with gridData
+            int dataUpdaterDataDirection                // direction of the array inside dataUpdater
+    );
+
     void PrintAllGridData();
 
     void AddGridElementView(std::string gridElemViewName,   // name of the gridView
@@ -179,13 +196,14 @@ class YeeGrid3D {
     std::array<FPNumber, 3> r_0{0, 0, 0};  // coordinates of the lower left corner
     std::array<FPNumber, 3> r_1{0, 0, 0};  // coordinates of the upper right corner
     std::array<std::size_t, 3> nCells;      // number of Yee cells
-    std::unordered_map<std::string, std::shared_ptr<YeeGridData3D>> gridElements;
-    std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;
+    std::unordered_map<std::string, std::shared_ptr<YeeGridData3D>> gridElements;   // TODO: pointer is unnecessary here
+    std::unordered_map<std::string, std::shared_ptr<GridArrayManipulator>> gridArrayManipulators;   // using pointer since GridArrayManipulator is virtual and cannot be instantiated
     std::unordered_map<std::string, std::pair<FDInstructionCode, void*>> updateInstructions;  // field update instructions
     std::vector<std::string> iterativeSequence;     // sequence in which to apply the field update instructions
     std::vector<std::string> singleRunSequence;     // sequence in which to apply the field update instructions
     std::unordered_map<std::string, std::vector<std::string>> instructionSequences;
     std::unordered_map<std::string, GridElementView> gridElementViews;  // a slice of gridElements for printing to output
+    std::unordered_map<std::string, std::shared_ptr<DiscretePointsGAMDataUpdater>> gamDataUpdaters;  // data updaters for (some) grid array manipulators
 };
 
 

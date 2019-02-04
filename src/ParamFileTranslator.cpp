@@ -30,6 +30,7 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
 
     SetSingleGridDimensions(yee, singleGridRoot);
     SetSingleGridGridArrays(yee, singleGridRoot);
+    SetSingleGridGirdArrayManipulatorUpdaters(yee, singleGridRoot);
     SetSingleGridGridArrayManipulators(yee, singleGridRoot);
     SetSingleGridUpddateInstructions(yee, singleGridRoot, grids);
     SetSingleGridUpdateSequences(yee, singleGridRoot);
@@ -65,6 +66,7 @@ void ParamFileTranslator::TranslateGridCollection(boost::property_tree::ptree no
 
         SetSingleGridDimensions(grid_i, singleGridRoot);
         SetSingleGridGridArrays(grid_i, singleGridRoot);
+        SetSingleGridGirdArrayManipulatorUpdaters(grid_i, singleGridRoot);
         SetSingleGridGridArrayManipulators(grid_i, singleGridRoot);
         SetSingleGridUpddateInstructions(grid_i, singleGridRoot, gridsMap);
         SetSingleGridUpdateSequences(grid_i, singleGridRoot);
@@ -103,6 +105,46 @@ void ParamFileTranslator::SetSingleGridGridArrays(YeeGrid3D& yee, SingleGridPara
                                   std::get<2>(arrayParams),
                                   std::get<3>(arrayParams)
                                   );
+    }
+}
+
+void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& yee,
+                                                                    SingleGridParameterExtractor& singleGridRoot) {
+    if(singleGridRoot.GetCount("girdArrayManipulatorUpdaters") <= 0) {
+        return;
+    }
+    auto gamUpdaters = singleGridRoot.GetTypeStringAndParameterSubtree("girdArrayManipulatorUpdaters");
+    for(auto& updaterNameAndParams : gamUpdaters) {
+        if(std::get<0>(updaterNameAndParams) == "ChargedParticlesTracer") {
+            ParameterExtractor updaterParams(std::get<1>(updaterNameAndParams));
+            ParameterExtractor particleInjectorParams(updaterParams.GetSubTreeRootNode("particleInjector"));
+            if(particleInjectorParams.GetStringProperty("type") == "manual") {
+                ParameterExtractor particlesParams(particleInjectorParams.GetSubTreeRootNode("particles"));
+                std::size_t numOfParticles = particlesParams.GetSize();
+                std::vector<FPNumber> charges;
+                std::vector<FPNumber> masses;
+                std::vector<std::array<FPNumber, 3>> positions;
+                std::vector<std::array<FPNumber, 3>> velocities;
+
+                for(std::size_t i = 0; i < numOfParticles; ++i) {
+                    ParameterExtractor particle_i_Params(particlesParams.GetSubTreeByIndex(i));
+                    charges.push_back(particle_i_Params.GetRealProperty("charge"));
+                    masses.push_back(particle_i_Params.GetRealProperty("mass"));
+                    positions.push_back(particle_i_Params.Get3VecRealProperty("position"));
+                    velocities.push_back(particle_i_Params.Get3VecRealProperty("velocity"));
+                }
+
+                yee.AddChargedParticlesTracer(
+                        updaterParams.GetStringProperty("name"),
+                        updaterParams.GetStringProperty("eField"),
+                        updaterParams.GetStringProperty("bField"),
+                        charges,
+                        masses,
+                        positions,
+                        velocities
+                );
+            }
+        }
     }
 }
 
@@ -208,6 +250,17 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetRealProperty("r_decay_rate"),
                     manipulatorParams.GetRealProperty("r_modulationFrequency"),
                     manipulatorParams.GetRealProperty("r_modulationPhase")
+                    );
+        } else if(std::get<0>(manipulatorNameAndParams) == "DiscretePointsGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            ParameterExtractor dataUpdaterParams(manipulatorParams.GetSubTreeRootNode("dataUpdater"));
+            yee.AddDiscretePointsGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    dataUpdaterParams.GetStringProperty("name"),
+                    dataUpdaterParams.GetStringProperty("dataName"),
+                    stringDirectionToIntDirectionMap[dataUpdaterParams.GetStringProperty("direction")]
                     );
         } else {
             assert(false);

@@ -25,6 +25,7 @@ class ParamFileTranslator {
 
     void SetSingleGridDimensions(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
     void SetSingleGridGridArrays(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
+    void SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
     void SetSingleGridGridArrayManipulators(YeeGrid3D& yee, SingleGridParameterExtractor& singleGridRoot);
     void SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                                           SingleGridParameterExtractor& singleGridRoot,

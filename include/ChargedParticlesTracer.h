@@ -8,6 +8,9 @@
 
 class ChargedParticlesTracer : public ParticlesTracer {
     public:
+    virtual ~ChargedParticlesTracer() { };
+
+    void SetGridSpacing(std::array<FPNumber, 3>& dr);
     void AddParticle(const FPNumber charge,
                      const FPNumber mass,
                      const std::array<FPNumber, 3>& position,
