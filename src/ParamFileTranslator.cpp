@@ -262,6 +262,19 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     dataUpdaterParams.GetStringProperty("dataName"),
                     stringDirectionToIntDirectionMap[dataUpdaterParams.GetStringProperty("direction")]
                     );
+        } else if(std::get<0>(manipulatorNameAndParams) == "WedgeGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddWedgeGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.GetRealProperty("wedgeAngle"),
+                    manipulatorParams.GetRealProperty("tipRadius"),
+                    manipulatorParams.GetRealProperty("wedgeHeight"),
+                    manipulatorParams.Get3VecRealProperty("tipPosition"),
+                    manipulatorParams.GetRealProperty("valueInside"),
+                    manipulatorParams.GetRealProperty("valueOutside")
+                    );
         } else {
             assert(false);
         }

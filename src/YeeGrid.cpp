@@ -16,6 +16,7 @@
 #include "SpherialShellGaussianGridArrayManipulator.h"
 #include "ChargedParticlesTracer.h"
 #include "DiscretePointsGridArrayManipulator.h"
+#include "WedgeGridArrayManipulator.h"
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -740,6 +741,38 @@ void YeeGrid3D::AddSpherialShellGaussianGridArrayManipulator(const std::string n
     modifier->SetDecayRate(r_decay_rate);
     modifier->SetModulationFrequency(r_modulationFrequecy);
     modifier->SetModulationPhase(r_modulatioPhase);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+
+        // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddWedgeGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction,
+        FPNumber wedgeAngle,
+        FPNumber tipRadius,
+        FPNumber wedgeHeight,
+        std::array<FPNumber, 3> tipPosition,
+        FPNumber valueInside,
+        FPNumber valueOutside
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<WedgeGridArrayManipulator> modifier(new WedgeGridArrayManipulator);
+    modifier->SetTipAngle(wedgeAngle);
+    modifier->SetTipRadius(tipRadius);
+    modifier->SetWedgeHeight(wedgeHeight);
+    modifier->SetTipPosition(tipPosition);
+    modifier->SetInsideValue(valueInside);
+    modifier->SetOutsideValue(valueOutside);
+
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
 
         // find the coordinates of the first element of the array

@@ -157,6 +157,16 @@ class YeeGrid3D {
             FPNumber r_modulationFrequecy,
             FPNumber r_modulatioPhase
             );
+    void AddWedgeGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            FPNumber wedgeAngle,
+            FPNumber tipRadius,
+            FPNumber wedgeHeight,
+            std::array<FPNumber, 3> tipPosition,
+            FPNumber valueInside,
+            FPNumber valueOutside
+            );
 
     void AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
