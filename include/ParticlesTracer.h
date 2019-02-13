@@ -4,9 +4,11 @@
 
 #include <vector>
 #include <array>
+#include <cassert>
 
 #include "NumberTypes.h"
 #include "DiscretePointsGAMDataUpdater.h"
+#include "ParticleEmitter.h"
 
 class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     public:
@@ -16,6 +18,9 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
                      const std::array<FPNumber, 3>& position,
                      const std::array<FPNumber, 3>& velocity,
                      const std::array<FPNumber, 3>& force);
+    void SetParticleEmitter(ParticleEmitter* emitter);
+    void AddParticlesEmittedByTheParticleEmitter(FPNumber t,  bool bunchParticlesAsOne = true);   // adds the particles emitted at time t to the collection of particles
+
     void UpdateParticlesPositions(const FPNumber dt);
     void UpdateParticlesMomentumsAndVelocities(const FPNumber dt);
     void UpdateTime(const FPNumber newTime);
@@ -32,6 +37,8 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     std::vector<std::array<FPNumber, 3>> velocities;
     std::vector<std::array<FPNumber, 3>> momentums;
     std::vector<std::array<FPNumber, 3>> forces;
+
+    ParticleEmitter* particleEmitter = nullptr;
 };
 
 #endif  // FDTD_PARTICLESTRACER_H_

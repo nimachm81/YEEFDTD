@@ -16,7 +16,10 @@
 #include "SpherialShellGaussianGridArrayManipulator.h"
 #include "ChargedParticlesTracer.h"
 #include "DiscretePointsGridArrayManipulator.h"
-#include "WedgeGridArrayManipulator.h"
+#include "BivalueGridArrayManipulator.h"
+#include "WedgeGeometry.h"
+#include "ChargedParticleEmitter.h"
+#include "ManualChargedParticleEmitter.h"
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -752,28 +755,27 @@ void YeeGrid3D::AddSpherialShellGaussianGridArrayManipulator(const std::string n
     gridArrayManipulators[name] = modifier;
 }
 
-void YeeGrid3D::AddWedgeGridArrayManipulator(const std::string name,
+void YeeGrid3D::AddBivalueGridArrayManipulator(const std::string name,
         const std::string gridDataName,
         int direction,
-        FPNumber wedgeAngle,
-        FPNumber tipRadius,
-        FPNumber wedgeHeight,
-        std::array<FPNumber, 3> tipPosition,
+        const std::string geometryName,
         FPNumber valueInside,
         FPNumber valueOutside
         ) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
-    std::shared_ptr<WedgeGridArrayManipulator> modifier(new WedgeGridArrayManipulator);
-    modifier->SetTipAngle(wedgeAngle);
-    modifier->SetTipRadius(tipRadius);
-    modifier->SetWedgeHeight(wedgeHeight);
-    modifier->SetTipPosition(tipPosition);
+    std::shared_ptr<BivalueGridArrayManipulator> modifier(new BivalueGridArrayManipulator);
+
+    auto foundGeometry = geometries.find(geometryName);
+    assert(foundGeometry != geometries.end()); // geometry name exists
+
+    modifier->SetGeometry(geometries[geometryName]);
     modifier->SetInsideValue(valueInside);
     modifier->SetOutsideValue(valueOutside);
 
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    modifier->SetupConditionArray();
 
         // find the coordinates of the first element of the array
     std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
@@ -784,13 +786,106 @@ void YeeGrid3D::AddWedgeGridArrayManipulator(const std::string name,
     gridArrayManipulators[name] = modifier;
 }
 
+void YeeGrid3D::AddWedgeGeometry(const std::string name,
+            const FPNumber wedgeAngle,
+            const FPNumber tipRadius,
+            const FPNumber apexToBaseDistance,
+            const std::array<FPNumber, 3> apexPosition
+            ) {
+    auto found = geometries.find(name);
+    assert(found == geometries.end()); // make sure name does not already exist.
+
+    std::shared_ptr<WedgeGeometry> geometry(new WedgeGeometry);
+
+    geometry->SetWedgeAngle(wedgeAngle);
+    geometry->SetTipRadius(tipRadius);
+    geometry->SetApexToBaseDistance(apexToBaseDistance);
+    geometry->SetApexPosition(apexPosition);
+
+    geometries[name] = geometry;
+}
+
+void YeeGrid3D::AddManualChargedParticleEmitter(const std::string name,
+        FPNumber particleCharge,
+        FPNumber particleMasse,
+        const std::vector<FPNumber>& emissionTimes,        // particles are emitted at these times
+        const std::vector<FPNumber>& emissionNumbers,      // number of particles emitted at emissionTimes[i]
+        const std::vector<std::array<FPNumber, 3>>& particlesInitialPositions,
+        const std::vector<std::array<FPNumber, 3>>& particlesInitialVelocities
+        ) {
+    auto found = particleEmitters.find(name);
+    assert(found == particleEmitters.end()); // make sure name does not already exist.
+
+    std::shared_ptr<ManualChargedParticleEmitter> emitter(new ManualChargedParticleEmitter);
+
+    emitter->SetElementaryCharge(particleCharge);
+    emitter->SetElementaryMass(particleMasse);
+    emitter->SetEmissionTimes(emissionTimes);
+    emitter->SetNumberOfParticlesToEmitAtEachSpecifiedTime(emissionNumbers);
+    emitter->SetInitialPositions(particlesInitialPositions);
+    emitter->SetInitialVelocities(particlesInitialVelocities);
+
+    particleEmitters[name] = emitter;
+}
+
+void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
+            FPNumber particleCharge,
+            FPNumber particleMasse,
+            const std::string geometryName,
+            int dimensions,
+            FPNumber maxElemSize,
+            const std::string eFieldName
+            ) {
+    auto found = particleEmitters.find(name);
+    assert(found == particleEmitters.end()); // make sure name does not already exist.
+
+    std::shared_ptr<ChargedParticleEmitter> emitter(new ChargedParticleEmitter);
+
+    emitter->SetElementaryCharge(particleCharge);
+    emitter->SetElementaryMass(particleMasse);
+
+    //--- set up geometry surface
+    auto foundGeometry = geometries.find(geometryName);
+    assert(foundGeometry != geometries.end()); // make sure name does not already exist.
+
+    std::vector<std::array<FPNumber, 3>> centerPoints;     // the point at the middle of each patch
+    std::vector<std::array<FPNumber, 3>> normalVecs;   // normal unit vector pointing outwards
+    std::vector<FPNumber> arcLenghts;
+
+    if(dimensions == 2) {
+        geometries[geometryName]->SubdevideSurface2D(0.0,     // x_cut
+                                maxElemSize,      // maximum length of each subdevision
+                                centerPoints,     // the point at the middle of each patch
+                                normalVecs,   // normal unit vector pointing outwards
+                                arcLenghts      // patch area
+                                );
+    } else {
+        std::cout << "error: 3D subdivision not implemented" << std::endl;
+        assert(false);
+    }
+
+    emitter->SetEmissionPoints(centerPoints);
+    emitter->SetNormalVectors(normalVecs);
+    emitter->SetSurfaceAreas(arcLenghts);
+
+    // set up electric field
+    auto foundEField = gridElements.find(eFieldName);
+    assert(foundEField != gridElements.end());
+
+    emitter->SetElectricField(gridElements[eFieldName].get());
+    for(int direction = 0; direction < 3; ++direction) {
+        std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(eFieldName, direction);
+        emitter->SetElectricFieldGridOrigin(direction, arrayR0);
+    }
+    emitter->SetGridSpacing(dr);
+
+    particleEmitters[name] = emitter;
+}
+
 void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
-            std::vector<FPNumber> particlesCharges,
-            std::vector<FPNumber> particlesMasses,
-           std::vector<std::array<FPNumber, 3>> particlesInitialPositions,
-            std::vector<std::array<FPNumber, 3>> particlesInitialVelocities
+            const std::string particleEmitterName
             ) {
     auto found = gamDataUpdaters.find(name);
     assert(found == gamDataUpdaters.end()); // make sure name does not already exist.
@@ -806,19 +901,9 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     updater->SetMagneticFieldGrid(gridElements[bFieldName].get());
 
     // add particles
-    std::size_t numOfParticles = particlesCharges.size();
-    assert(particlesMasses.size() == numOfParticles &&
-           particlesInitialPositions.size() == numOfParticles &&
-           particlesInitialVelocities.size() == numOfParticles);
-    const std::array<FPNumber, 3> force{0.0, 0.0, 0.0};
-    for(std::size_t i = 0; i < numOfParticles; ++i) {
-        updater->AddParticle(particlesCharges[i],
-                             particlesMasses[i],
-                             particlesInitialPositions[i],
-                             particlesInitialVelocities[i],
-                             force
-                             );
-    }
+    auto foundEmitter = particleEmitters.find(particleEmitterName);
+    assert(foundEmitter != particleEmitters.end());
+    updater->SetParticleEmitter(particleEmitters[particleEmitterName].get());
 
     // set field orgins
     for(int direction = 0; direction < 3; ++direction) {

@@ -72,12 +72,7 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
                 std::array<std::intmax_t, 3> indx;
                 std::array<FPNumber, 3> vol_ratio;
                 FPNumber value = (*values)[i];
-//                std::cout << "-------------------------------------" << std::endl;
-//                std::cout << "r0:" << r0[0] << ", " << r0[1] << ", " << r0[2] << std::endl;
-//                std::cout << "dr:" << dr[0] << ", " << dr[1] << ", " << dr[2] << std::endl;
-//                std::cout << "r:" << position[0] << ", " << position[1] << ", " << position[2] << ", v: " << value << std::endl;
-//                std::cout << "li:" << lowerIndx[0] << ", " << lowerIndx[1] << ", " << lowerIndx[2] << std::endl;
-//                std::cout << "shape:" << gridArrayShape[0] << ", " << gridArrayShape[1] << ", " << gridArrayShape[2] << std::endl;
+
                 for(int i_x = 0; i_x < 2; ++i_x) {
                     indx[0] = lowerIndx[0] + i_x;
                     if(indx[0] < 0 || indx[0] >= gridArrayShape[0]) {
@@ -113,8 +108,6 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
                                                                         (std::size_t)indx[1],
                                                                         (std::size_t)indx[2]};
                             gridArray[indx_sizet] += value*vol_ratio[0]*vol_ratio[1]*vol_ratio[2];
-                            //std::cout << indx[0] << ", " << indx[1] << ", " << indx[2] << ", j:" << gridArray[indx_sizet] << std::endl;
-
                         }
                     }
                 }

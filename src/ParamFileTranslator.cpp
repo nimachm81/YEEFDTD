@@ -30,6 +30,8 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
 
     SetSingleGridDimensions(yee, singleGridRoot);
     SetSingleGridGridArrays(yee, singleGridRoot);
+    SetSingleGridGeometries(yee, singleGridRoot);
+    SetSingleGridParticleEmitters(yee, singleGridRoot);
     SetSingleGridGirdArrayManipulatorUpdaters(yee, singleGridRoot);
     SetSingleGridGridArrayManipulators(yee, singleGridRoot);
     SetSingleGridUpddateInstructions(yee, singleGridRoot, grids);
@@ -66,6 +68,8 @@ void ParamFileTranslator::TranslateGridCollection(boost::property_tree::ptree no
 
         SetSingleGridDimensions(grid_i, singleGridRoot);
         SetSingleGridGridArrays(grid_i, singleGridRoot);
+        SetSingleGridGeometries(grid_i, singleGridRoot);
+        SetSingleGridParticleEmitters(grid_i, singleGridRoot);
         SetSingleGridGirdArrayManipulatorUpdaters(grid_i, singleGridRoot);
         SetSingleGridGridArrayManipulators(grid_i, singleGridRoot);
         SetSingleGridUpddateInstructions(grid_i, singleGridRoot, gridsMap);
@@ -108,6 +112,84 @@ void ParamFileTranslator::SetSingleGridGridArrays(YeeGrid3D& yee, SingleGridPara
     }
 }
 
+void ParamFileTranslator::SetSingleGridGeometries(YeeGrid3D& yee,
+                                                  SingleGridParameterExtractor& singleGridRoot) {
+    if(singleGridRoot.GetCount("geometries") <= 0) {
+        return;
+    }
+    auto geometries = singleGridRoot.GetTypeStringAndParameterSubtree("geometries");
+    for(auto& geometryNameAndParams : geometries) {
+        if(std::get<0>(geometryNameAndParams) == "wedge") {
+            ParameterExtractor geometryParams(std::get<1>(geometryNameAndParams));
+            yee.AddWedgeGeometry(
+                    geometryParams.GetStringProperty("name"),
+                    geometryParams.GetRealProperty("wedgeAngle"),
+                    geometryParams.GetRealProperty("tipRadius"),
+                    geometryParams.GetRealProperty("apexToBaseDistance"),
+                    geometryParams.Get3VecRealProperty("apexPosition")
+                    );
+        } else {
+            std::cout << "error: geometry name not recognized" << std::endl;
+            assert(false);
+        }
+    }
+}
+
+void ParamFileTranslator::SetSingleGridParticleEmitters(YeeGrid3D& yee,
+                                                                    SingleGridParameterExtractor& singleGridRoot) {
+    if(singleGridRoot.GetCount("particleEmitters") <= 0) {
+        return;
+    }
+    auto particleEmitters = singleGridRoot.GetTypeStringAndParameterSubtree("particleEmitters");
+    for(auto& emitterNameAndParams : particleEmitters) {
+        if(std::get<0>(emitterNameAndParams) == "ManualChargedParticleEmitter") {
+            ParameterExtractor emitterParams(std::get<1>(emitterNameAndParams));
+            ParameterExtractor particlesParams(emitterParams.GetSubTreeRootNode("emissions"));
+
+            std::size_t numOfEmissions = particlesParams.GetSize();
+            std::vector<FPNumber> emissionTimes;
+            std::vector<FPNumber> emissionNumbers;
+            std::vector<std::array<FPNumber, 3>> positions;
+            std::vector<std::array<FPNumber, 3>> velocities;
+
+            for(std::size_t i = 0; i < numOfEmissions; ++i) {
+                ParameterExtractor particle_i_Params(particlesParams.GetSubTreeByIndex(i));
+                emissionTimes.push_back(particle_i_Params.GetRealProperty("time"));
+                emissionNumbers.push_back(particle_i_Params.GetRealProperty("number"));
+                positions.push_back(particle_i_Params.Get3VecRealProperty("position"));
+                velocities.push_back(particle_i_Params.Get3VecRealProperty("velocity"));
+            }
+
+            yee.AddManualChargedParticleEmitter(
+                    emitterParams.GetStringProperty("name"),
+                    emitterParams.GetRealProperty("charge"),
+                    emitterParams.GetRealProperty("mass"),
+                    emissionTimes,
+                    emissionNumbers,
+                    positions,
+                    velocities
+                    );
+        } else if(std::get<0>(emitterNameAndParams) == "ChargedParticleEmitter") {
+            ParameterExtractor emitterParams(std::get<1>(emitterNameAndParams));
+
+            yee.AddChargedParticleEmitter(
+                    emitterParams.GetStringProperty("name"),
+                    emitterParams.GetRealProperty("charge"),
+                    emitterParams.GetRealProperty("mass"),
+                    emitterParams.GetStringProperty("emitterSurface"),
+                    emitterParams.GetUintProperty("dimensions"),
+                    emitterParams.GetRealProperty("maxSurfaceElementSize"),
+                    emitterParams.GetStringProperty("eField")
+            );
+
+        } else {
+            std::cout << "error: emitter name not found" << std::endl;
+            assert(false);
+        }
+    }
+
+}
+
 void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& yee,
                                                                     SingleGridParameterExtractor& singleGridRoot) {
     if(singleGridRoot.GetCount("girdArrayManipulatorUpdaters") <= 0) {
@@ -117,33 +199,16 @@ void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& y
     for(auto& updaterNameAndParams : gamUpdaters) {
         if(std::get<0>(updaterNameAndParams) == "ChargedParticlesTracer") {
             ParameterExtractor updaterParams(std::get<1>(updaterNameAndParams));
-            ParameterExtractor particleInjectorParams(updaterParams.GetSubTreeRootNode("particleInjector"));
-            if(particleInjectorParams.GetStringProperty("type") == "manual") {
-                ParameterExtractor particlesParams(particleInjectorParams.GetSubTreeRootNode("particles"));
-                std::size_t numOfParticles = particlesParams.GetSize();
-                std::vector<FPNumber> charges;
-                std::vector<FPNumber> masses;
-                std::vector<std::array<FPNumber, 3>> positions;
-                std::vector<std::array<FPNumber, 3>> velocities;
+            yee.AddChargedParticlesTracer(
+                    updaterParams.GetStringProperty("name"),
+                    updaterParams.GetStringProperty("eField"),
+                    updaterParams.GetStringProperty("bField"),
+                    updaterParams.GetStringProperty("particleEmitter")
+            );
 
-                for(std::size_t i = 0; i < numOfParticles; ++i) {
-                    ParameterExtractor particle_i_Params(particlesParams.GetSubTreeByIndex(i));
-                    charges.push_back(particle_i_Params.GetRealProperty("charge"));
-                    masses.push_back(particle_i_Params.GetRealProperty("mass"));
-                    positions.push_back(particle_i_Params.Get3VecRealProperty("position"));
-                    velocities.push_back(particle_i_Params.Get3VecRealProperty("velocity"));
-                }
-
-                yee.AddChargedParticlesTracer(
-                        updaterParams.GetStringProperty("name"),
-                        updaterParams.GetStringProperty("eField"),
-                        updaterParams.GetStringProperty("bField"),
-                        charges,
-                        masses,
-                        positions,
-                        velocities
-                );
-            }
+        } else {
+            std::cout << "error: updater name not found" << std::endl;
+            assert(false);
         }
     }
 }
@@ -262,16 +327,13 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     dataUpdaterParams.GetStringProperty("dataName"),
                     stringDirectionToIntDirectionMap[dataUpdaterParams.GetStringProperty("direction")]
                     );
-        } else if(std::get<0>(manipulatorNameAndParams) == "WedgeGridArrayManipulator") {
+        } else if(std::get<0>(manipulatorNameAndParams) == "BivalueGridArrayManipulator") {
             ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
-            yee.AddWedgeGridArrayManipulator(
+            yee.AddBivalueGridArrayManipulator(
                     manipulatorParams.GetStringProperty("name"),
                     manipulatorParams.GetStringProperty("array"),
                     stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
-                    manipulatorParams.GetRealProperty("wedgeAngle"),
-                    manipulatorParams.GetRealProperty("tipRadius"),
-                    manipulatorParams.GetRealProperty("wedgeHeight"),
-                    manipulatorParams.Get3VecRealProperty("tipPosition"),
+                    manipulatorParams.GetStringProperty("geometry"),
                     manipulatorParams.GetRealProperty("valueInside"),
                     manipulatorParams.GetRealProperty("valueOutside")
                     );

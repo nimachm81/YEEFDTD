@@ -8,8 +8,11 @@
 		<Option virtualFolders="CMake Files/;" />
 		<Build>
 			<Target title="all">
-				<Option type="4" />
+				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
+				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<MakeCommands>
 					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all' />
 					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
@@ -93,6 +96,8 @@
 		<Unit filename="../CMakeLists.txt">
 			<Option virtualFolder="CMake Files/" />
 		</Unit>
+		<Unit filename="../include/BivalueGridArrayManipulator.h" />
+		<Unit filename="../include/ChargedParticleEmitter.h" />
 		<Unit filename="../include/ChargedParticlesTracer.h" />
 		<Unit filename="../include/DemotableComplex.hpp" />
 		<Unit filename="../include/DiscretePointsGAMDataUpdater.h" />
@@ -102,9 +107,11 @@
 		<Unit filename="../include/FDInstructionFactory.h" />
 		<Unit filename="../include/GaussianGridArrayManipulator.h" />
 		<Unit filename="../include/GaussianSpaceTimeGridArrayManipulator.h" />
+		<Unit filename="../include/Geometry.h" />
 		<Unit filename="../include/GridArrayManipulator.h" />
 		<Unit filename="../include/GridCollectionParameterExtractor.h" />
 		<Unit filename="../include/GridElementView.h" />
+		<Unit filename="../include/ManualChargedParticleEmitter.h" />
 		<Unit filename="../include/MultiDimArray.hpp" />
 		<Unit filename="../include/MultiDimArrayAllocator.hpp" />
 		<Unit filename="../include/MultiDimArrayBufferIO.hpp" />
@@ -113,6 +120,7 @@
 		<Unit filename="../include/NumberTypes.h" />
 		<Unit filename="../include/ParamFileTranslator.h" />
 		<Unit filename="../include/ParameterExtractor.h" />
+		<Unit filename="../include/ParticleEmitter.h" />
 		<Unit filename="../include/ParticlesTracer.h" />
 		<Unit filename="../include/PeriodicGaussianGridArrayManipulator.h" />
 		<Unit filename="../include/PeriodicGridArrayManipulator.h" />
@@ -120,14 +128,21 @@
 		<Unit filename="../include/SpaceTimeCubeGridArrayManipulator.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
 		<Unit filename="../include/SpherialShellGaussianGridArrayManipulator.h" />
+		<Unit filename="../include/UniformGridInterpolator.hpp" />
 		<Unit filename="../include/UtilityFunctions.hpp" />
 		<Unit filename="../include/Vector.hpp" />
-		<Unit filename="../include/WedgeGridArrayManipulator.h" />
+		<Unit filename="../include/WedgeGeometry.h" />
 		<Unit filename="../include/YeeGrid.h" />
 		<Unit filename="../include/YeeGridCollection.h" />
 		<Unit filename="../include/YeeGridCollectionParallel.h" />
 		<Unit filename="../include/YeeGridDataTypes.h" />
 		<Unit filename="../include/YeeGridParallel.h" />
+		<Unit filename="../src/BivalueGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/ChargedParticleEmitter.cpp">
+			<Option target="main" />
+		</Unit>
 		<Unit filename="../src/ChargedParticlesTracer.cpp">
 			<Option target="main" />
 		</Unit>
@@ -150,6 +165,9 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GridElementView.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/ManualChargedParticleEmitter.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/ParamFileTranslator.cpp">
@@ -179,7 +197,7 @@
 		<Unit filename="../src/SphericalShellGaussianGridArrayManipulator.cpp">
 			<Option target="main" />
 		</Unit>
-		<Unit filename="../src/WedgeGridArrayManipulator.cpp">
+		<Unit filename="../src/WedgeGeometry.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/YeeGrid.cpp">
@@ -224,6 +242,7 @@
 		<Unit filename="../test/Test_FDTD_2D_MovingCharge_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PBC_SquareLattice_GaussianPlasma_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PEC_Wedge_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_PEC_Wedge_electron_emitter_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PML.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_SwitchedPlasma_CurvedLines_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_TM_Json.hpp" />

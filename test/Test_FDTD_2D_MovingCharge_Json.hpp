@@ -22,7 +22,7 @@ void test_run_fdtd_2d_moving_charge_from_json() {
     FPNumber vy0_q = 0.0;
     FPNumber vz0_q = 0.5;
 
-    std::size_t numOfTimeSamples = 501;
+    std::size_t numOfTimeSamples = 401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -44,8 +44,10 @@ void test_run_fdtd_2d_moving_charge_from_json() {
             {"\"_m_dt_dy_eps_\"", boost::lexical_cast<std::string>(std::real(-dt/dy/epsilon_r))},
             {"\"_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(dt/dz/epsilon_r))},
             {"\"_m_dt_dz_eps_\"", boost::lexical_cast<std::string>(std::real(-dt/dz/epsilon_r))},
-            {"\"_p0_q_\"", boost::lexical_cast<std::string>(std::real(q))},
-            {"\"_p0_m_\"", boost::lexical_cast<std::string>(std::real(m))},
+            {"\"_q_\"", boost::lexical_cast<std::string>(std::real(q))},
+            {"\"_m_\"", boost::lexical_cast<std::string>(std::real(m))},
+            {"\"_p0_t0_\"", boost::lexical_cast<std::string>(std::real(0.0))},
+            {"\"_p0_n_\"", boost::lexical_cast<std::string>(std::real(1.0))},
             {"\"_p0_r0_y_\"", boost::lexical_cast<std::string>(std::real(y0_q))},
             {"\"_p0_r0_z_\"", boost::lexical_cast<std::string>(std::real(z0_q))},
             {"\"_p0_v0_y_\"", boost::lexical_cast<std::string>(std::real(vy0_q))},

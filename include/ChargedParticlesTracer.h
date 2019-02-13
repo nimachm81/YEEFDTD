@@ -16,6 +16,8 @@ class ChargedParticlesTracer : public ParticlesTracer {
                      const std::array<FPNumber, 3>& position,
                      const std::array<FPNumber, 3>& velocity,
                      const std::array<FPNumber, 3>& force);
+    void AddParticlesEmittedByTheParticleEmitter(FPNumber t,  bool bunchParticlesAsOne = true);
+
     void SetElectricFieldGrid(YeeGridData3D* eField);
     void SetMagneticFieldGrid(YeeGridData3D* bField);
 

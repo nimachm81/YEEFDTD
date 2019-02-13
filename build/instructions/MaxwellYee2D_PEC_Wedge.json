@@ -12,6 +12,18 @@
     "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
     "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":[0, 0, "_indzJ_"], "nCells":[1, "_ny_", 0]}, 
                          {"name":"Jm", "type":"EdgeH", "indStart":[0, 0, "_indzJ_m1_"], "nCells":[1, "_ny_", 1]}],
+    "geometries":[
+        {
+        "type":"wedge",
+        "parameters":{
+        "name":"pecWedge",
+        "wedgeAngle":"_wedge_angle_",
+        "tipRadius":"_wedge_tip_radius_",
+        "apexToBaseDistance":"_wedge_height_",
+        "apexPosition":[0.0, "_wedge_tip_y_", "_wedge_tip_z"]
+        }
+        }
+    ],
     "girdArrayManipulators":[
         {
         "type":"GaussianSpaceTimeGridArrayManipulator",
@@ -42,29 +54,23 @@
             }
         },
         {
-        "type":"WedgeGridArrayManipulator",
+        "type":"BivalueGridArrayManipulator",
         "parameters":{
             "name":"PECWedge_Ez",
             "array":"E",
             "direction":"z",
-            "wedgeAngle":"_wedge_angle_",
-            "tipRadius":"_wedge_tip_radius_",
-            "wedgeHeight":"_wedge_height_",
-            "tipPosition":[0.0, "_wedge_tip_y_", "_wedge_tip_z"],
+            "geometry":"pecWedge",
             "valueInside":0.0,
             "valueOutside":1.0
             }
         },
         {
-        "type":"WedgeGridArrayManipulator",
+        "type":"BivalueGridArrayManipulator",
         "parameters":{
             "name":"PECWedge_Ey",
             "array":"E",
             "direction":"y",
-            "wedgeAngle":"_wedge_angle_",
-            "tipRadius":"_wedge_tip_radius_",
-            "wedgeHeight":"_wedge_height_",
-            "tipPosition":[0.0, "_wedge_tip_y_", "_wedge_tip_z"],
+            "geometry":"pecWedge",
             "valueInside":0.0,
             "valueOutside":1.0
             }

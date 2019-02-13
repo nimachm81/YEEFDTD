@@ -18,6 +18,30 @@ void ParticlesTracer::AddParticle(const FPNumber mass,
     forces.push_back(force);
 }
 
+void ParticlesTracer::SetParticleEmitter(ParticleEmitter* emitter) {
+    particleEmitter = emitter;
+}
+
+
+void ParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t, bool bunchParticlesAsOne) {
+    if(particleEmitter == nullptr) {
+        return;
+    }
+
+    std::unordered_map<std::string, FPNumber> particleParams = particleEmitter->GetParticleParameters();
+    const FPNumber mass = particleParams["mass"];
+    const std::vector<FPNumber>& numOfEmittedParticles = particleEmitter->GetEmissionNumber(t);
+    const std::vector<std::array<FPNumber, 3>>& emissionPoints = particleEmitter->GetEmissionPoints();
+    const std::vector<std::array<FPNumber, 3>>& emissionVelocities = particleEmitter->GetEmissionVelocities();
+
+    std::size_t numEmissions = numOfEmittedParticles.size();
+    assert(emissionPoints.size() == numEmissions && emissionVelocities.size() == numEmissions);
+    std::array<FPNumber, 3> force{0.0, 0.0, 0.0};
+
+    for(std::size_t i = 0; i < numEmissions; ++i) {
+        AddParticle(mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
+    }
+}
 
 void ParticlesTracer::UpdateParticlesPositions(const FPNumber dt) {
     for(std::size_t i = 0; i < positions.size(); ++i) {

@@ -17,6 +17,8 @@
 #include "GridArrayManipulator.h"
 #include "GridElementView.h"
 #include "DiscretePointsGAMDataUpdater.h"
+#include "ParticleEmitter.h"
+#include "Geometry.h"
 
 class YeeGrid3D {
     public:
@@ -157,24 +159,43 @@ class YeeGrid3D {
             FPNumber r_modulationFrequecy,
             FPNumber r_modulatioPhase
             );
-    void AddWedgeGridArrayManipulator(const std::string name,
+    void AddBivalueGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
-            FPNumber wedgeAngle,
-            FPNumber tipRadius,
-            FPNumber wedgeHeight,
-            std::array<FPNumber, 3> tipPosition,
+            const std::string geometryName,
             FPNumber valueInside,
             FPNumber valueOutside
+            );
+
+    void AddWedgeGeometry(const std::string name,
+            const FPNumber wedgeAngle,
+            const FPNumber tipRadius,
+            const FPNumber apexToBaseDistance,
+            const std::array<FPNumber, 3> apexPosition
+            );
+
+    void AddManualChargedParticleEmitter(const std::string name,
+            FPNumber particleCharge,
+            FPNumber particleMasse,
+            const std::vector<FPNumber>& emissionTimes,        // particles are emitted at these times
+            const std::vector<FPNumber>& emissionNumbers,      // number of particles emitted at emissionTimes[i]
+            const std::vector<std::array<FPNumber, 3>>& particlesInitialPositions,
+            const std::vector<std::array<FPNumber, 3>>& particlesInitialVelocities
+            );
+
+    void AddChargedParticleEmitter(const std::string name,
+            FPNumber particleCharge,
+            FPNumber particleMasse,
+            const std::string geometryName,
+            int dimensions,
+            FPNumber maxElemSize,
+            const std::string eFieldName
             );
 
     void AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
-            std::vector<FPNumber> particlesCharges,
-            std::vector<FPNumber> particlesMasses,
-            std::vector<std::array<FPNumber, 3>> particlesInitialPositions,
-            std::vector<std::array<FPNumber, 3>> particlesInitialVelocities
+            const std::string particleEmitterName
             );
     void AddDiscretePointsGridArrayManipulator(const std::string name,
             const std::string gridDataName,
@@ -214,6 +235,8 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::vector<std::string>> instructionSequences;
     std::unordered_map<std::string, GridElementView> gridElementViews;  // a slice of gridElements for printing to output
     std::unordered_map<std::string, std::shared_ptr<DiscretePointsGAMDataUpdater>> gamDataUpdaters;  // data updaters for (some) grid array manipulators
+    std::unordered_map<std::string, std::shared_ptr<Geometry>> geometries;
+    std::unordered_map<std::string, std::shared_ptr<ParticleEmitter>> particleEmitters;
 };
 
 

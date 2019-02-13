@@ -1,13 +1,13 @@
 
-#include "WedgeGridArrayManipulator.h"
+#include "BivalueGridArrayManipulator.h"
 
 void test_run_fdtd_2d_pec_wedge_from_json() {
     FPNumber y0 = -3.0;
     FPNumber y1 = 3.0;
     FPNumber z0 = -3.0;
     FPNumber z1 = 3.0;
-    std::size_t ny = 600;
-    std::size_t nz = 600;
+    std::size_t ny = 400;
+    std::size_t nz = 400;
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
     FPNumber dz = (z1 - z0)/(FPNumber)(nz);
     FPNumber stabilityFactor = 0.99;
@@ -27,14 +27,11 @@ void test_run_fdtd_2d_pec_wedge_from_json() {
 
 
     FPNumber wedgeAngle = 10.0/180.0*M_PI;
-    FPNumber wedgeTipRadius = 0.01;
+    FPNumber wedgeTipRadius = 0.1;
     FPNumber wedgeHeight = 5.0;
-    std::array<FPNumber, 3> wedgeTipPosition = WedgeGridArrayManipulator::GetTipPositionGivenRoundedTipPosition(
-                                                    wedgeAngle,
-                                                    wedgeTipRadius,
-                                                    {0.0, 0.0, 0.0});
+    std::array<FPNumber, 3> wedgeTipPosition{0.0, 0.0, 0.0};
 
-    std::size_t numOfTimeSamples = 501;
+    std::size_t numOfTimeSamples = 401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
