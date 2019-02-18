@@ -10,14 +10,17 @@ class ChargedParticlesTracer : public ParticlesTracer {
     public:
     virtual ~ChargedParticlesTracer() { };
 
-    void SetGridSpacing(std::array<FPNumber, 3>& dr);
+    void ReserveMemory(std::size_t numberOfElements);
     void AddParticle(const FPNumber charge,
                      const FPNumber mass,
                      const std::array<FPNumber, 3>& position,
                      const std::array<FPNumber, 3>& velocity,
                      const std::array<FPNumber, 3>& force);
-    void AddParticlesEmittedByTheParticleEmitter(FPNumber t,  bool bunchParticlesAsOne = true);
+    void AddParticlesEmittedByTheParticleEmitter(FPNumber t,
+                                                 std::size_t bunchSize = 10 // emitted particles are bunched to bunches with this number of elementary particles
+                                                 );
 
+    void SetGridSpacing(std::array<FPNumber, 3>& dr);
     void SetElectricFieldGrid(YeeGridData3D* eField);
     void SetMagneticFieldGrid(YeeGridData3D* bField);
 
@@ -38,11 +41,12 @@ class ChargedParticlesTracer : public ParticlesTracer {
     private:
     std::vector<FPNumber> charges;
     std::array<std::vector<FPNumber>, 3> currentComponents;
+
     YeeGridData3D* electricField;       // E
     std::array<std::array<FPNumber, 3>, 3> electricFieldConponentsOrigin;
     YeeGridData3D* magneticField;       // B
     std::array<std::array<FPNumber, 3>, 3> magneticFieldConponentsOrigin;
-    std::array<FPNumber, 3> gridSpacing;
+    std::array<FPNumber, 3> gridSpacing;    // grid spacing for the electric and magnetic grids
 
 };
 

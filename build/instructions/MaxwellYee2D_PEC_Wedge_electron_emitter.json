@@ -2,7 +2,7 @@
 {
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_nt_", "_indzJ_", "_indzJ_p1_", "_indzJ_m1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_m_dt_dydz_", "_Jm_amp_", "_J_amp_", "_J_center_t_", "_J_center_y_", "_J_decayrate_y_", "_J_mod_freq_", "_J_mod_phase_", "_q_", "_m_", "_surf_dl_", "_save_rate_"],
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_nt_", "_indzJ_", "_indzJ_p1_", "_indzJ_m1_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_m_dt_dydz_", "_Jm_amp_", "_J_amp_", "_J_center_t_", "_J_center_y_", "_J_decayrate_y_", "_J_mod_freq_", "_J_mod_phase_", "_q_", "_m_", "_surf_dl_", "_fdtd_unit_length_", "_save_rate_"],
     "dimensions":{
         "r0":[0.0, "_y0_", "_z0_"],
         "r1":[0.1, "_y1_", "_z1_"],
@@ -34,7 +34,8 @@
             "emitterSurface":"pecWedge",
             "dimensions":2,
             "maxSurfaceElementSize":"_surf_dl_",
-            "eField":"E"
+            "eField":"E",
+            "unitLength":"_fdtd_unit_length_"
         }
         }
     ],
@@ -45,7 +46,8 @@
             "name":"chargeEmissionTracer",
             "eField":"E",
             "bField":"H",
-            "particleEmitter":"fnEmitter"
+            "particleEmitter":"fnEmitter",
+            "numberOfReservedParticles":1000000
             }
         }
     ],

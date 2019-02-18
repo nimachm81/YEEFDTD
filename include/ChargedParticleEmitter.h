@@ -3,6 +3,8 @@
 
 #include "NumberTypes.h"
 #include "YeeGridDataTypes.h"
+#include "PhysicalUnits.hpp"
+#include "FowlerNordheimEmission.hpp"
 #include "ParticleEmitter.h"
 
 class ChargedParticleEmitter : public ParticleEmitter {
@@ -10,6 +12,8 @@ class ChargedParticleEmitter : public ParticleEmitter {
     virtual ~ChargedParticleEmitter() {};
     void SetElementaryCharge(FPNumber charge);
     void SetElementaryMass(FPNumber mass);
+    void SetUnitLength(FPNumber length);        // used to convert between FDTD and Si units
+    void SetWorkFunction(FPNumber workFunction);        // used to calculate emission rate
 
     void SetEmissionPoints(std::vector<std::array<FPNumber, 3>>& emissionPts);
     void SetNormalVectors(std::vector<std::array<FPNumber, 3>>& normalVecs);
@@ -18,6 +22,11 @@ class ChargedParticleEmitter : public ParticleEmitter {
     void SetElectricField(YeeGridData3D* eField);
     void SetElectricFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
     void SetGridSpacing(std::array<FPNumber, 3>& dr);
+
+    FPNumber GetFowlerNordheimEmissionNumber(FPNumber eFieldNormal, // in FDTD units
+                                         FPNumber surfaceArea,  // in FDTD units
+                                         FPNumber timeInterval  // in FDTD units
+                                         );
 
     // override ParticleEmitter's virtual functions
     const std::vector<FPNumber>& GetEmissionNumber(FPNumber t);       // get number of emitted particles per surface area at time t
@@ -41,7 +50,8 @@ class ChargedParticleEmitter : public ParticleEmitter {
                                                                 // {"charge": q, "mass": m}
 
     //FPNumber temperature;
-    //FPNumber workFunction;
+    PhysicalUnits unitConverter;      // used to convert between FDTD units and SI units
+    FowlerNordheimEmission fnEmitter;       // used to calculate Fowler-Nordheim field emission
     YeeGridData3D* electricField;       // E
     std::array<std::array<FPNumber, 3>, 3> electricFieldConponentsOrigin;
     std::array<FPNumber, 3> gridSpacing;

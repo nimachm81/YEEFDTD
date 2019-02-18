@@ -12,6 +12,7 @@
 #include "Test_FDTD_2D_TM_Json.hpp"
 #include "Test_FDTD_2D_PEC_Wedge_Json.hpp"
 #include "Test_FDTD_2D_PEC_Wedge_electron_emitter_Json.hpp"
+#include "Test_Fowler_Nordheim.hpp"
 
 int main(int argc, char** argv) {
     //test_run_fdtd_2d_TM_from_json();
@@ -30,6 +31,9 @@ int main(int argc, char** argv) {
 
     //test_run_fdtd_2d_pec_wedge_from_json();
     test_run_fdtd_2d_pec_wedge_electron_emitter_from_json();
+
+    //test_Fowler_Nordheim();
+
 }
 
 

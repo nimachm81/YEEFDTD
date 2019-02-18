@@ -1,8 +1,12 @@
 
 
-
+#include "NumberTypes.h"
+#include "PhysicalUnits.hpp"
 
 void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
+    FPNumber fdtd_unit_length = 100.0e-6;
+    PhysicalUnits units(fdtd_unit_length);
+
     FPNumber y0 = -2.0;
     FPNumber y1 = 2.0;
     FPNumber z0 = -2.0;
@@ -16,15 +20,18 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
 
     const FPNumber eps_r = 1.0;     // json file should be updated for eps_r != 1
 
+    FPNumber eFieldMax_SI = 3.0e7;     // V/m
+    FPNumber eFieldMax_FD = units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
+
     FPNumber z_j = -1.5;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     FPNumber j_center_y = (y0 + y1)/(FPNumber)2.0;
     FPNumber j_decay_rate_y = 1.0;
     FPNumber j_center_t = 1.5;
     FPNumber jm_center_t = j_center_t + dt/(FPNumber)2.0*std::sqrt(eps_r);
-    FPNumber j_amplitude = -1.0e4;
+    FPNumber j_amplitude = -eFieldMax_FD;
     FPNumber jm_amplitude = -j_amplitude*std::sqrt(eps_r);
-    FPNumber j_mod_freq = 0.3;
+    FPNumber j_mod_freq = 1.0;
     FPNumber j_mod_phase = M_PI/2.0;
 
 
@@ -33,18 +40,20 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
     FPNumber wedgeHeight = 2.0;
     std::array<FPNumber, 3> wedgeTipPosition{0.0, 0.0, 0.0};
 
-    FPNumber maxSurfElemSize = 0.01;
+    FPNumber maxSurfElemSize = 0.003;
 
 
-    FPNumber q = -1.0;//1.602e-19;
-    FPNumber m = 1.0e4;
+    FPNumber q = -units.GetElectronChargeInFDUnits();
+    FPNumber m = units.GetElectronMassInFDUnits();
     FPNumber y0_q = (FPNumber)0.5*y0 + (FPNumber)0.5*y1;
     FPNumber z0_q = z0 - 2.0*dz;
     FPNumber vy0_q = 0.0;
     FPNumber vz0_q = 0.5;
 
-    std::size_t data_save_rate = 10;
-    std::size_t numOfTimeSamples = 1401;
+    std::cout << "q: " << q << " , m: " << m << std::endl;
+
+    std::size_t data_save_rate = 50;
+    std::size_t numOfTimeSamples = 3401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -87,6 +96,7 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
             {"\"_wedge_height_\"", boost::lexical_cast<std::string>(std::real(wedgeHeight))},
             {"\"_wedge_tip_y_\"", boost::lexical_cast<std::string>(std::real(wedgeTipPosition[1]))},
             {"\"_wedge_tip_z\"", boost::lexical_cast<std::string>(std::real(wedgeTipPosition[2]))},
+            {"\"_fdtd_unit_length_\"", boost::lexical_cast<std::string>(std::real(fdtd_unit_length))},
             {"\"_save_rate_\"", boost::lexical_cast<std::string>(data_save_rate)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };

@@ -2,6 +2,14 @@
 
 #include "ParticlesTracer.h"
 
+void ParticlesTracer::ReserveMemory(std::size_t numberOfElements) {
+    masses.reserve(numberOfElements);
+    positions.reserve(numberOfElements);
+    velocities.reserve(numberOfElements);
+    momentums.reserve(numberOfElements);
+    forces.reserve(numberOfElements);
+}
+
 void ParticlesTracer::AddParticle(const FPNumber mass,
                  const std::array<FPNumber, 3>& position,
                  const std::array<FPNumber, 3>& velocity,

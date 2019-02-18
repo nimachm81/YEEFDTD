@@ -10,6 +10,14 @@ void ChargedParticleEmitter::SetElementaryMass(FPNumber mass) {
     particleElementaryParameters["mass"] = mass;
 }
 
+void ChargedParticleEmitter::SetUnitLength(FPNumber length) {
+    unitConverter.SetFDLengthInSIUnits(length);
+}
+
+void ChargedParticleEmitter::SetWorkFunction(FPNumber workFunction) {
+    fnEmitter.SetWorkFunction(workFunction);
+}
+
 void ChargedParticleEmitter::SetEmissionPoints(std::vector<std::array<FPNumber, 3>>& emissionPts) {
     emissionPoints = emissionPts;
 }
@@ -33,6 +41,23 @@ void ChargedParticleEmitter::SetElectricFieldGridOrigin(int direction, std::arra
 void ChargedParticleEmitter::SetGridSpacing(std::array<FPNumber, 3>& dr) {
     gridSpacing = dr;
 }
+
+FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eFieldNormal, FPNumber surfaceArea,
+                                                             FPNumber timeInterval) {
+    FPNumber eFieldNormal_SI = unitConverter.ConvertFDElectricFieldToSIUnits(eFieldNormal);
+    FPNumber surfaceArea_SI = unitConverter.ConvertSILengthToFDUnits(surfaceArea);  // TODO: good for 2D.. 3D should be treated using area instead of arc length
+    FPNumber timeInterval_SI = unitConverter.ConvertFDTimeToSIUnits(timeInterval);
+
+    fnEmitter.SetEfield(eFieldNormal_SI);
+    FPNumber numOfParticles = fnEmitter.GetNumberOfEmittedElectrons(surfaceArea_SI, timeInterval_SI);
+
+    //if(eFieldNormal > 1.0e9) {
+    //    std::cout << "eFieldNormal_SI: " << eFieldNormal_SI << " , surfaceArea_SI: " << surfaceArea_SI << " , timeInterval_SI: " << timeInterval_SI << " , numOfParticles : " <<  numOfParticles << std::endl;
+    //}
+
+    return numOfParticles;
+}
+
 
 const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber t) {
     assert(t > time);
@@ -60,7 +85,7 @@ const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber 
         FPNumber e_normal = ex_interp[i]*v_norm[0] + ey_interp[i]*v_norm[1] + ez_interp[i]*v_norm[2];
 
         if(e_normal < 0) {
-            emissionNumbers[i] = 10.0*std::abs(e_normal)*surfaceAreas[i]*dt;
+            emissionNumbers[i] = GetFowlerNordheimEmissionNumber(std::abs(e_normal), surfaceAreas[i], dt);
         } else {
             emissionNumbers[i] = 0.0;
         }

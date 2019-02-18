@@ -189,13 +189,15 @@ class YeeGrid3D {
             const std::string geometryName,
             int dimensions,
             FPNumber maxElemSize,
-            const std::string eFieldName
+            const std::string eFieldName,
+            FPNumber unitLength
             );
 
     void AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
-            const std::string particleEmitterName
+            const std::string particleEmitterName,
+            const std::size_t numberOfReservedParticles = 1000
             );
     void AddDiscretePointsGridArrayManipulator(const std::string name,
             const std::string gridDataName,

@@ -105,6 +105,7 @@
 		<Unit filename="../include/ElementType.h" />
 		<Unit filename="../include/FDInstructionCode.h" />
 		<Unit filename="../include/FDInstructionFactory.h" />
+		<Unit filename="../include/FowlerNordheimEmission.hpp" />
 		<Unit filename="../include/GaussianGridArrayManipulator.h" />
 		<Unit filename="../include/GaussianSpaceTimeGridArrayManipulator.h" />
 		<Unit filename="../include/Geometry.h" />
@@ -124,6 +125,8 @@
 		<Unit filename="../include/ParticlesTracer.h" />
 		<Unit filename="../include/PeriodicGaussianGridArrayManipulator.h" />
 		<Unit filename="../include/PeriodicGridArrayManipulator.h" />
+		<Unit filename="../include/PhysicalConstants.hpp" />
+		<Unit filename="../include/PhysicalUnits.hpp" />
 		<Unit filename="../include/SingleGridParameterExtractor.h" />
 		<Unit filename="../include/SpaceTimeCubeGridArrayManipulator.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
@@ -248,6 +251,7 @@
 		<Unit filename="../test/Test_FDTD_2D_TM_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_3D.hpp" />
 		<Unit filename="../test/Test_FDTD_3D_Json.hpp" />
+		<Unit filename="../test/Test_Fowler_Nordheim.hpp" />
 		<Unit filename="../test/Test_MultiDimArray.hpp" />
 		<Unit filename="../test/Test_MultiDimArray_FileIO.hpp" />
 		<Unit filename="../test/Test_ParameterExtractor.hpp" />

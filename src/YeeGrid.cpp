@@ -834,7 +834,8 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
             const std::string geometryName,
             int dimensions,
             FPNumber maxElemSize,
-            const std::string eFieldName
+            const std::string eFieldName,
+            FPNumber unitLength
             ) {
     auto found = particleEmitters.find(name);
     assert(found == particleEmitters.end()); // make sure name does not already exist.
@@ -843,6 +844,8 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
 
     emitter->SetElementaryCharge(particleCharge);
     emitter->SetElementaryMass(particleMasse);
+
+    emitter->SetUnitLength(unitLength);
 
     //--- set up geometry surface
     auto foundGeometry = geometries.find(geometryName);
@@ -885,7 +888,8 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
 void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
-            const std::string particleEmitterName
+            const std::string particleEmitterName,
+            const std::size_t numberOfReservedParticles
             ) {
     auto found = gamDataUpdaters.find(name);
     assert(found == gamDataUpdaters.end()); // make sure name does not already exist.
@@ -904,6 +908,8 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     auto foundEmitter = particleEmitters.find(particleEmitterName);
     assert(foundEmitter != particleEmitters.end());
     updater->SetParticleEmitter(particleEmitters[particleEmitterName].get());
+
+    updater->ReserveMemory(numberOfReservedParticles);
 
     // set field orgins
     for(int direction = 0; direction < 3; ++direction) {

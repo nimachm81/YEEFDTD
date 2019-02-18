@@ -3,6 +3,14 @@
 #include "UniformGridInterpolator.hpp"
 #include "ChargedParticlesTracer.h"
 
+void ChargedParticlesTracer::ReserveMemory(std::size_t numberOfElements) {
+    ParticlesTracer::ReserveMemory(numberOfElements);
+    charges.reserve(numberOfElements);
+    currentComponents[0].reserve(numberOfElements);
+    currentComponents[1].reserve(numberOfElements);
+    currentComponents[2].reserve(numberOfElements);
+}
+
 void ChargedParticlesTracer::AddParticle(const FPNumber charge,
                                          const FPNumber mass,
                                          const std::array<FPNumber, 3>& position,
@@ -15,7 +23,9 @@ void ChargedParticlesTracer::AddParticle(const FPNumber charge,
     currentComponents[2].push_back(charge*velocity[2]);
 }
 
-void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t,  bool bunchParticlesAsOne) {
+void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t,
+                                                                    std::size_t bunchSize
+                                                                    ) {
     if(particleEmitter == nullptr) {
         return;
     }
@@ -33,8 +43,9 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t,
 
     for(std::size_t i = 0; i < numEmissions; ++i) {
         if(numOfEmittedParticles[i] > 1.0) {
-            AddParticle(charge*numOfEmittedParticles[i],
-                        mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
+            for(std::size_t i_p = 0; i_p < numOfEmittedParticles[i]/bunchSize; ++i_p) {
+                AddParticle(charge*bunchSize, mass*bunchSize, emissionPoints[i], emissionVelocities[i], force);
+            }
         }
     }
 }

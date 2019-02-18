@@ -14,6 +14,7 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     public:
     virtual ~ParticlesTracer() { };
 
+    void ReserveMemory(std::size_t numberOfElements);
     void AddParticle(const FPNumber mass,
                      const std::array<FPNumber, 3>& position,
                      const std::array<FPNumber, 3>& velocity,

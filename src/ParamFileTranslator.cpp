@@ -179,7 +179,8 @@ void ParamFileTranslator::SetSingleGridParticleEmitters(YeeGrid3D& yee,
                     emitterParams.GetStringProperty("emitterSurface"),
                     emitterParams.GetUintProperty("dimensions"),
                     emitterParams.GetRealProperty("maxSurfaceElementSize"),
-                    emitterParams.GetStringProperty("eField")
+                    emitterParams.GetStringProperty("eField"),
+                    emitterParams.GetRealProperty("unitLength")
             );
 
         } else {
@@ -203,7 +204,8 @@ void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& y
                     updaterParams.GetStringProperty("name"),
                     updaterParams.GetStringProperty("eField"),
                     updaterParams.GetStringProperty("bField"),
-                    updaterParams.GetStringProperty("particleEmitter")
+                    updaterParams.GetStringProperty("particleEmitter"),
+                    updaterParams.GetUintProperty("numberOfReservedParticles")
             );
 
         } else {
