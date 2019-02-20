@@ -43,8 +43,14 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t,
 
     for(std::size_t i = 0; i < numEmissions; ++i) {
         if(numOfEmittedParticles[i] > 1.0) {
-            for(std::size_t i_p = 0; i_p < numOfEmittedParticles[i]/bunchSize; ++i_p) {
-                AddParticle(charge*bunchSize, mass*bunchSize, emissionPoints[i], emissionVelocities[i], force);
+            if(bunchSize > 1) {
+                for(std::size_t i_p = 0; i_p < numOfEmittedParticles[i]/bunchSize; ++i_p) {
+                    AddParticle(charge*bunchSize, mass*bunchSize, emissionPoints[i], emissionVelocities[i], force);
+                    //AddParticle(-charge*bunchSize, mass*bunchSize, emissionPoints[i], emissionVelocities[i], force);
+                }
+            } else {    // bunch all to 1 particle
+                AddParticle(charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
+                //AddParticle(-charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
             }
         }
     }

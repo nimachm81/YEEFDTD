@@ -17,7 +17,8 @@ class ChargedParticlesTracer : public ParticlesTracer {
                      const std::array<FPNumber, 3>& velocity,
                      const std::array<FPNumber, 3>& force);
     void AddParticlesEmittedByTheParticleEmitter(FPNumber t,
-                                                 std::size_t bunchSize = 10 // emitted particles are bunched to bunches with this number of elementary particles
+                                                 std::size_t bunchSize = 0  // emitted particles are bunched to bunches with this number of elementary particles
+                                                                            // bunchSize < 1 --> bunch all particles to a single particle
                                                  );
 
     void SetGridSpacing(std::array<FPNumber, 3>& dr);

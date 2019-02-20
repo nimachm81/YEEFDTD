@@ -245,6 +245,7 @@
 		<Unit filename="../test/Test_FDTD_2D_MovingCharge_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PBC_SquareLattice_GaussianPlasma_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PEC_Wedge_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_PEC_Wedge_electron_emitter_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PEC_Wedge_electron_emitter_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PML.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_SwitchedPlasma_CurvedLines_GridCollection_Json.hpp" />

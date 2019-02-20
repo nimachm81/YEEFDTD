@@ -45,15 +45,11 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
 
     FPNumber q = -units.GetElectronChargeInFDUnits();
     FPNumber m = units.GetElectronMassInFDUnits();
-    FPNumber y0_q = (FPNumber)0.5*y0 + (FPNumber)0.5*y1;
-    FPNumber z0_q = z0 - 2.0*dz;
-    FPNumber vy0_q = 0.0;
-    FPNumber vz0_q = 0.5;
 
     std::cout << "q: " << q << " , m: " << m << std::endl;
 
     std::size_t data_save_rate = 50;
-    std::size_t numOfTimeSamples = 3401;
+    std::size_t numOfTimeSamples = 4401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -74,12 +70,6 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
             {"\"_q_\"", boost::lexical_cast<std::string>(std::real(q))},
             {"\"_m_\"", boost::lexical_cast<std::string>(std::real(m))},
             {"\"_surf_dl_\"", boost::lexical_cast<std::string>(std::real(maxSurfElemSize))},
-            {"\"_p0_t0_\"", boost::lexical_cast<std::string>(std::real(0.0))},
-            {"\"_p0_n_\"", boost::lexical_cast<std::string>(std::real(1.0))},
-            {"\"_p0_r0_y_\"", boost::lexical_cast<std::string>(std::real(y0_q))},
-            {"\"_p0_r0_z_\"", boost::lexical_cast<std::string>(std::real(z0_q))},
-            {"\"_p0_v0_y_\"", boost::lexical_cast<std::string>(std::real(vy0_q))},
-            {"\"_p0_v0_z_\"", boost::lexical_cast<std::string>(std::real(vz0_q))},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
             {"\"_indzJ_m1_\"", boost::lexical_cast<std::string>(indzJ - 1)},
