@@ -121,12 +121,19 @@ void ParamFileTranslator::SetSingleGridGeometries(YeeGrid3D& yee,
     for(auto& geometryNameAndParams : geometries) {
         if(std::get<0>(geometryNameAndParams) == "wedge") {
             ParameterExtractor geometryParams(std::get<1>(geometryNameAndParams));
+            bool closeBase = true;
+            if(geometryParams.GetCount("closeBase") > 0) {
+                if(geometryParams.GetStringProperty("closeBase") == "no") {
+                    closeBase = false;
+                }
+            }
             yee.AddWedgeGeometry(
                     geometryParams.GetStringProperty("name"),
                     geometryParams.GetRealProperty("wedgeAngle"),
                     geometryParams.GetRealProperty("tipRadius"),
                     geometryParams.GetRealProperty("apexToBaseDistance"),
-                    geometryParams.Get3VecRealProperty("apexPosition")
+                    geometryParams.Get3VecRealProperty("apexPosition"),
+                    closeBase
                     );
         } else {
             std::cout << "error: geometry name not recognized" << std::endl;
@@ -200,14 +207,18 @@ void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& y
     for(auto& updaterNameAndParams : gamUpdaters) {
         if(std::get<0>(updaterNameAndParams) == "ChargedParticlesTracer") {
             ParameterExtractor updaterParams(std::get<1>(updaterNameAndParams));
+            std::string scatteringFieldName = "";
+            if(updaterParams.GetCount("srField") > 0) {
+                scatteringFieldName = updaterParams.GetStringProperty("srField");
+            };
             yee.AddChargedParticlesTracer(
                     updaterParams.GetStringProperty("name"),
                     updaterParams.GetStringProperty("eField"),
                     updaterParams.GetStringProperty("bField"),
+                    scatteringFieldName,
                     updaterParams.GetStringProperty("particleEmitter"),
                     updaterParams.GetUintProperty("numberOfReservedParticles")
             );
-
         } else {
             std::cout << "error: updater name not found" << std::endl;
             assert(false);

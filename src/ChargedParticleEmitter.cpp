@@ -45,15 +45,15 @@ void ChargedParticleEmitter::SetGridSpacing(std::array<FPNumber, 3>& dr) {
 FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eFieldNormal, FPNumber surfaceArea,
                                                              FPNumber timeInterval) {
     FPNumber eFieldNormal_SI = unitConverter.ConvertFDElectricFieldToSIUnits(eFieldNormal);
-    FPNumber surfaceArea_SI = unitConverter.ConvertSILengthToFDUnits(surfaceArea);  // TODO: good for 2D.. 3D should be treated using area instead of arc length
+    FPNumber surfaceArea_SI = unitConverter.ConvertFDLengthToSIUnits(surfaceArea);  // TODO: good for 2D.. 3D should be treated using area instead of arc length
     FPNumber timeInterval_SI = unitConverter.ConvertFDTimeToSIUnits(timeInterval);
 
     fnEmitter.SetEfield(eFieldNormal_SI);
     FPNumber numOfParticles = fnEmitter.GetNumberOfEmittedElectrons(surfaceArea_SI, timeInterval_SI);
 
-    //if(eFieldNormal > 1.0e9) {
-    //    std::cout << "eFieldNormal_SI: " << eFieldNormal_SI << " , surfaceArea_SI: " << surfaceArea_SI << " , timeInterval_SI: " << timeInterval_SI << " , numOfParticles : " <<  numOfParticles << std::endl;
-    //}
+    if(numOfParticles > 1) {
+        std::cout << "E_SI: " << eFieldNormal_SI << " , dA_SI: " << surfaceArea_SI << " , dt_SI: " << timeInterval_SI << " , n_e : " <<  numOfParticles << std::endl;
+    }
 
     return numOfParticles;
 }
@@ -62,7 +62,6 @@ FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eField
 const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber t) {
     assert(t > time);
     FPNumber dt = t - time;
-    time = t;
 
     std::size_t numOfPoints = emissionPoints.size();
     emissionNumbers.resize(numOfPoints);
@@ -86,6 +85,7 @@ const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber 
 
         if(e_normal < 0) {
             emissionNumbers[i] = GetFowlerNordheimEmissionNumber(std::abs(e_normal), surfaceAreas[i], dt);
+            if(emissionNumbers[i]>1) {std::cout << "E: " << std::abs(e_normal) << " , dA: " << surfaceAreas[i] << " , dt: " << dt << " , n_e: " << emissionNumbers[i] << std::endl;}
         } else {
             emissionNumbers[i] = 0.0;
         }

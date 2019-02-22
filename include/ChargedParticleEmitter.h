@@ -37,7 +37,6 @@ class ChargedParticleEmitter : public ParticleEmitter {
 
 
     protected:
-    FPNumber time = 0.0;
     std::vector<FPNumber> emissionNumbers;          // number of emitted particles
 
     std::vector<std::array<FPNumber, 3>> emissionPoints;     // point on the surface of the object

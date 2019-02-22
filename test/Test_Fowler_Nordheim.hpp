@@ -29,4 +29,15 @@ void test_Fowler_Nordheim() {
     double numOfElectrons = fn.GetNumberOfEmittedElectrons(1.0e-7, 1.0e-12);
     std::cout << "numOfElectrons : " << numOfElectrons << std::endl;
 
+    std::cout << "-----------------------------------" << std::endl;
+    double eField_si_start = 1.0e7; // v/m
+    double eField_si_end = 1.0e10; // v/m
+    int n_field = 100;
+    for(int i = 0; i < n_field; ++i) {
+        double eField_si_i = eField_si_start + (double)i/n_field * (eField_si_end - eField_si_start);
+        fn.SetEfield(eField_si_i);
+        numOfElectrons = fn.GetNumberOfEmittedElectrons(1.0e-7, 1.0e-12);
+        std::cout << "eField_si_i: " << eField_si_i << " , numOfElectrons: " << numOfElectrons << std::endl;
+    }
+
 };

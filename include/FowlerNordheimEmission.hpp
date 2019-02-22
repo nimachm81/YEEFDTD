@@ -13,6 +13,17 @@ class FowlerNordheimEmission {
     FowlerNordheimEmission(double eField_v_m = 0.0, double workFunction_eV = 1.0) {
         eField_voltsPerCentimeter = eField_v_m * 1.0e-2;
         workFunction_electronVolts = workFunction_eV;
+
+        SetYandVyTable();
+    };
+
+    void SetYandVyTable() {
+        for(std::size_t i = 0; i < fn_ny; ++i) {
+            fn_y[i] = (double)i / (fn_ny - 1);   // subdevide [0, 1]
+            fn_vy[i] = GetParameterVy(fn_y[i]);
+        }
+        fn_dy = 1.0 / (fn_ny - 1);
+        vyIsSet = true;
     };
 
     void SetWorkFunction(double workFunction_eV) {
@@ -33,8 +44,7 @@ class FowlerNordheimEmission {
         double v = std::sqrt((1.0 + _1_y2_sq) / 2.0) *
                    (ellipInt_2 - y*y*ellipInt_1/(1.0 + _1_y2_sq));
         if(y == 0.0) {
-            v = std::sqrt((1.0 + _1_y2_sq) / 2.0) *
-                   (ellipInt_2);
+            v = 1.0; //std::sqrt((1.0 + _1_y2_sq) / 2.0) * (ellipInt_2);
         } else if(y >= 1.0) {
             v = 0.0;
         }
@@ -42,9 +52,29 @@ class FowlerNordheimEmission {
         return v;
     };
 
-    double GetEmissionCurrent() {
+    double InterpolateParameterVy(double y) {
+        assert(vyIsSet);
+        assert(y >= 0.0);
+        if(y >= 1.0) {
+            return 0.0;
+        }
+        std::size_t ind_y = (std::size_t)(y * (fn_ny - 1));
+        assert(ind_y >= 0 && ind_y < fn_ny - 1);
+        double alpha = (y - fn_y[ind_y]) / fn_dy;
+        assert(alpha >= 0.0 && alpha < 1.0);
+        return fn_vy[ind_y]*(1.0 - alpha) + alpha*fn_vy[ind_y + 1];
+    };
+
+    double GetEmissionCurrent(bool useInterpolation = true) {
+        assert(eField_voltsPerCentimeter >= 0.0);
         double y = fn_c * std::sqrt(eField_voltsPerCentimeter) / workFunction_electronVolts;
-        double v_y = GetParameterVy(y);
+        double v_y;
+        if(useInterpolation) {
+            v_y = InterpolateParameterVy(y);
+            // if(v_y < 0.9) { std::cout << v_y << " " << GetParameterVy(y) << std::endl; }
+        } else {
+            v_y = GetParameterVy(y);
+        }
         double current_A_cm2 = fn_a * eField_voltsPerCentimeter*eField_voltsPerCentimeter / workFunction_electronVolts
             * std::exp(-fn_b * workFunction_electronVolts*std::sqrt(workFunction_electronVolts)
                              / eField_voltsPerCentimeter * v_y);
@@ -68,6 +98,12 @@ class FowlerNordheimEmission {
 
     double eField_voltsPerCentimeter;
     double workFunction_electronVolts;
+
+    constexpr static std::size_t fn_ny = 100;
+    double fn_dy;
+    double fn_y[fn_ny];
+    double fn_vy[fn_ny];
+    bool vyIsSet = false;
 
 };
 

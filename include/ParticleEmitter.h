@@ -17,6 +17,14 @@ class ParticleEmitter {
     virtual const std::vector<std::array<FPNumber, 3>>& GetEmissionVelocities() = 0;
 
     virtual const std::unordered_map<std::string, FPNumber>& GetParticleParameters() = 0;
+
+    void UpdateTime(FPNumber t) {
+        time = t;
+    }
+
+    protected:
+    FPNumber time = 0.0;
+
 };
 
 #endif // FDTD_PARTICLEEMITTER_H_

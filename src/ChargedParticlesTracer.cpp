@@ -23,9 +23,7 @@ void ChargedParticlesTracer::AddParticle(const FPNumber charge,
     currentComponents[2].push_back(charge*velocity[2]);
 }
 
-void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t,
-                                                                    std::size_t bunchSize
-                                                                    ) {
+void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t) {
     if(particleEmitter == nullptr) {
         return;
     }
@@ -43,21 +41,10 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t,
 
     for(std::size_t i = 0; i < numEmissions; ++i) {
         if(numOfEmittedParticles[i] > 1.0) {
-            if(bunchSize > 1) {
-                for(std::size_t i_p = 0; i_p < numOfEmittedParticles[i]/bunchSize; ++i_p) {
-                    AddParticle(charge*bunchSize, mass*bunchSize, emissionPoints[i], emissionVelocities[i], force);
-                    //AddParticle(-charge*bunchSize, mass*bunchSize, emissionPoints[i], emissionVelocities[i], force);
-                }
-            } else {    // bunch all to 1 particle
-                AddParticle(charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
-                //AddParticle(-charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
-            }
+            AddParticle(charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
+            AddParticle(-charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
         }
     }
-}
-
-void ChargedParticlesTracer::SetGridSpacing(std::array<FPNumber, 3>& dr) {
-    gridSpacing = dr;
 }
 
 void ChargedParticlesTracer::SetElectricFieldGrid(YeeGridData3D* eField) {
@@ -77,6 +64,10 @@ void ChargedParticlesTracer::SetMagneticFieldGridOrigin(int direction, std::arra
 }
 
 void ChargedParticlesTracer::UpdateElectricForce(int direction) {
+    if(electricField == nullptr) {
+        return;
+    }
+
     const std::array<FPNumber, 3>& r0 = electricFieldConponentsOrigin[direction];
     const std::array<FPNumber, 3>& dr = gridSpacing;
 
@@ -93,6 +84,10 @@ void ChargedParticlesTracer::UpdateElectricForce(int direction) {
 
 
 void ChargedParticlesTracer::UpdateMagneticForce(int direction) {
+    if(magneticField == nullptr) {
+        return;
+    }
+
     const std::array<FPNumber, 3>& r0 = magneticFieldConponentsOrigin[direction];
     const std::array<FPNumber, 3>& dr = gridSpacing;
 
@@ -163,13 +158,18 @@ void ChargedParticlesTracer::AttachDataToGAMValues(std::vector<FPNumber>*& value
 void ChargedParticlesTracer::UpdateGAMValues(const FPNumber t) {
     if( t > time ) {
         AddParticlesEmittedByTheParticleEmitter(t);
+
         ResetForces();
         for(int direction = 0; direction < 3; ++direction) {
+            UpdateScatteringForce(direction);
             UpdateElectricForce(direction);
             UpdateMagneticForce(direction);
         }
         UpdateParticlesMomentumVelocityPosition(t);
         UpdateParticlesCurrents();
+
+        UpdateTime(t);
+        particleEmitter->UpdateTime(t);
     }
 }
 

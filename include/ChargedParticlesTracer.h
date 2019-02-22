@@ -16,12 +16,8 @@ class ChargedParticlesTracer : public ParticlesTracer {
                      const std::array<FPNumber, 3>& position,
                      const std::array<FPNumber, 3>& velocity,
                      const std::array<FPNumber, 3>& force);
-    void AddParticlesEmittedByTheParticleEmitter(FPNumber t,
-                                                 std::size_t bunchSize = 0  // emitted particles are bunched to bunches with this number of elementary particles
-                                                                            // bunchSize < 1 --> bunch all particles to a single particle
-                                                 );
+    void AddParticlesEmittedByTheParticleEmitter(FPNumber t);
 
-    void SetGridSpacing(std::array<FPNumber, 3>& dr);
     void SetElectricFieldGrid(YeeGridData3D* eField);
     void SetMagneticFieldGrid(YeeGridData3D* bField);
 
@@ -43,11 +39,10 @@ class ChargedParticlesTracer : public ParticlesTracer {
     std::vector<FPNumber> charges;
     std::array<std::vector<FPNumber>, 3> currentComponents;
 
-    YeeGridData3D* electricField;       // E
+    YeeGridData3D* electricField = nullptr;       // E
     std::array<std::array<FPNumber, 3>, 3> electricFieldConponentsOrigin;
-    YeeGridData3D* magneticField;       // B
+    YeeGridData3D* magneticField = nullptr;       // B
     std::array<std::array<FPNumber, 3>, 3> magneticFieldConponentsOrigin;
-    std::array<FPNumber, 3> gridSpacing;    // grid spacing for the electric and magnetic grids
 
 };
 

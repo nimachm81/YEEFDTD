@@ -43,7 +43,7 @@ class NumberArray3D {
             isSlice(numArray.IsSlice()),
             shape(std::move(numArray.GetShape())),
             indStart(std::move(numArray.GetIndStart())) {
-        std::cout << "inside the move constructor" << std::endl;
+        //std::cout << "inside the move constructor" << std::endl;
         //arrayData = std::move(numArray.GetArrayData());
     }
 

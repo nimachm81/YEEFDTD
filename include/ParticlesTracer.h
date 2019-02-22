@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include "NumberTypes.h"
+#include "YeeGridDataTypes.h"
 #include "DiscretePointsGAMDataUpdater.h"
 #include "ParticleEmitter.h"
 
@@ -19,11 +20,17 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
                      const std::array<FPNumber, 3>& position,
                      const std::array<FPNumber, 3>& velocity,
                      const std::array<FPNumber, 3>& force);
+
+    void SetGridSpacing(std::array<FPNumber, 3>& dr);
+    void SetScatteringRateFieldGrid(YeeGridData3D* srField);
+    void SetScatteringRateFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
+
     void SetParticleEmitter(ParticleEmitter* emitter);
-    void AddParticlesEmittedByTheParticleEmitter(FPNumber t,  bool bunchParticlesAsOne = true);   // adds the particles emitted at time t to the collection of particles
+    void AddParticlesEmittedByTheParticleEmitter(FPNumber t);   // adds the particles emitted at time t to the collection of particles
 
     void UpdateParticlesPositions(const FPNumber dt);
     void UpdateParticlesMomentumsAndVelocities(const FPNumber dt);
+    void UpdateScatteringForce(int direction);
     void UpdateTime(const FPNumber newTime);
 
     void UpdateParticlesMomentumVelocityPosition(const FPNumber newTime);
@@ -38,6 +45,10 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     std::vector<std::array<FPNumber, 3>> velocities;
     std::vector<std::array<FPNumber, 3>> momentums;
     std::vector<std::array<FPNumber, 3>> forces;
+
+    YeeGridData3D* scatteringRateField = nullptr;       // gamma as a field. dp_x = -gamma_x*px*dt where gamma_x is scattering rate at the position of the particle
+    std::array<std::array<FPNumber, 3>, 3> scatteringRateFieldConponentsOrigin;
+    std::array<FPNumber, 3> gridSpacing;    // grid spacing for the fields
 
     ParticleEmitter* particleEmitter = nullptr;
 };

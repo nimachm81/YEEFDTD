@@ -171,7 +171,8 @@ class YeeGrid3D {
             const FPNumber wedgeAngle,
             const FPNumber tipRadius,
             const FPNumber apexToBaseDistance,
-            const std::array<FPNumber, 3> apexPosition
+            const std::array<FPNumber, 3> apexPosition,
+            const bool closeBase = true
             );
 
     void AddManualChargedParticleEmitter(const std::string name,
@@ -196,6 +197,7 @@ class YeeGrid3D {
     void AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
+            const std::string srFieldName,
             const std::string particleEmitterName,
             const std::size_t numberOfReservedParticles = 1000
             );

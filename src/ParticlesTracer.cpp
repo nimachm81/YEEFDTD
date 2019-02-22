@@ -1,5 +1,6 @@
 
 
+#include "UniformGridInterpolator.hpp"
 #include "ParticlesTracer.h"
 
 void ParticlesTracer::ReserveMemory(std::size_t numberOfElements) {
@@ -26,12 +27,25 @@ void ParticlesTracer::AddParticle(const FPNumber mass,
     forces.push_back(force);
 }
 
+void ParticlesTracer::SetScatteringRateFieldGrid(YeeGridData3D* srField) {
+    scatteringRateField = srField;
+}
+
+void ParticlesTracer::SetScatteringRateFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin) {
+    scatteringRateFieldConponentsOrigin[direction] = origin;
+}
+
+
+void ParticlesTracer::SetGridSpacing(std::array<FPNumber, 3>& dr) {
+    gridSpacing = dr;
+}
+
 void ParticlesTracer::SetParticleEmitter(ParticleEmitter* emitter) {
     particleEmitter = emitter;
 }
 
 
-void ParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t, bool bunchParticlesAsOne) {
+void ParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t) {
     if(particleEmitter == nullptr) {
         return;
     }
@@ -79,6 +93,26 @@ void ParticlesTracer::UpdateParticlesMomentumsAndVelocities(const FPNumber dt) {
     }
 }
 
+void ParticlesTracer::UpdateScatteringForce(int direction) {
+    if(scatteringRateField == nullptr) {
+        return;
+    }
+
+    const std::array<FPNumber, 3>& r0 = scatteringRateFieldConponentsOrigin[direction];
+    const std::array<FPNumber, 3>& dr = gridSpacing;
+
+    const std::size_t numOfParticles = masses.size();
+    const NumberArray3D<FPNumber>& sr_direction = scatteringRateField->GetNumArray(direction);
+
+    std::vector<FPNumber> sr_interpolated(numOfParticles);
+    UniformGridInterpolator::InterpolateGridOnPoints(sr_direction, r0, dr, positions, sr_interpolated);
+
+    for(std::size_t i = 0; i < numOfParticles; ++i) {
+          forces[i][direction] -= momentums[i][direction]*sr_interpolated[i];
+    }
+}
+
+
 void ParticlesTracer::UpdateTime(const FPNumber newTime) {
     time = newTime;
 }
@@ -87,7 +121,7 @@ void ParticlesTracer::UpdateParticlesMomentumVelocityPosition(const FPNumber new
     const FPNumber dt = newTime - time;
     UpdateParticlesMomentumsAndVelocities(dt);
     UpdateParticlesPositions(dt);
-    time = newTime;
+    // time must be updated at the end by the calling object using UpdateTime..
 }
 
 

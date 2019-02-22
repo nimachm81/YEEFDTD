@@ -51,6 +51,10 @@ void WedgeGeometry::SetApexPosition(const std::array<FPNumber, 3> pos) {
                                           pos[2]};
 }
 
+void WedgeGeometry::CloseBase(bool close) {
+    closeBase = close;
+}
+
 bool WedgeGeometry::IsPointInsideOrOn(std::array<FPNumber, 3> point) {
     FPNumber x_tip = tipPosition[0];
     FPNumber y_tip = tipPosition[1];
@@ -274,7 +278,7 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
         ind_start += 2*n_side;
     }
 
-    if(n_base > 0) {
+    if(n_base > 0 && closeBase) {
         FPNumber y0_base = y_tip - wedgeHeight;      // y coordinate of the lower left point of the base
         FPNumber z0_base = z_tip - base_halfWidth;   // z coordinate of the lower left point of the base
 

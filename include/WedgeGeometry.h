@@ -16,6 +16,7 @@ class WedgeGeometry : public Geometry{
     void SetTipRadius(const FPNumber radius);
     void SetApexToBaseDistance(const FPNumber apexToBaseDistance);
     void SetApexPosition(const std::array<FPNumber, 3> pos);
+    void CloseBase(bool close);
 
     bool IsPointInsideOrOn(std::array<FPNumber, 3> point);
     void AreGridPointsInsideOrOn(const NumberArray3D<FPNumber>& gridArray,
@@ -39,6 +40,7 @@ class WedgeGeometry : public Geometry{
     std::array<FPNumber, 3> apexPosition;    // position of the rounded tip (apex)
     FPNumber apexToBaseDistance = 1.0;
     FPNumber wedgeHeight = 1.0;         // distance from unrounded tip to base of the wedge
+    bool closeBase = true;
 
 };
 

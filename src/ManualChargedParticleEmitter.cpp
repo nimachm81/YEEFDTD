@@ -26,7 +26,6 @@ void ManualChargedParticleEmitter::SetInitialVelocities(const std::vector<std::a
 }
 
 const std::vector<FPNumber>& ManualChargedParticleEmitter::GetEmissionNumber(FPNumber t) {
-    time = t;
     std::size_t numOfParticles = emissionTimes.size();
     emissionPoints.clear();
     emissionVelocities.clear();

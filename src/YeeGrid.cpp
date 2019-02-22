@@ -790,7 +790,8 @@ void YeeGrid3D::AddWedgeGeometry(const std::string name,
             const FPNumber wedgeAngle,
             const FPNumber tipRadius,
             const FPNumber apexToBaseDistance,
-            const std::array<FPNumber, 3> apexPosition
+            const std::array<FPNumber, 3> apexPosition,
+            const bool closeBase
             ) {
     auto found = geometries.find(name);
     assert(found == geometries.end()); // make sure name does not already exist.
@@ -801,6 +802,7 @@ void YeeGrid3D::AddWedgeGeometry(const std::string name,
     geometry->SetTipRadius(tipRadius);
     geometry->SetApexToBaseDistance(apexToBaseDistance);
     geometry->SetApexPosition(apexPosition);
+    geometry->CloseBase(closeBase);
 
     geometries[name] = geometry;
 }
@@ -888,6 +890,7 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
 void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
+            const std::string srFieldName,
             const std::string particleEmitterName,
             const std::size_t numberOfReservedParticles
             ) {
@@ -904,6 +907,12 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     assert(foundBField != gridElements.end());
     updater->SetMagneticFieldGrid(gridElements[bFieldName].get());
 
+    if(srFieldName != "") {
+        auto foundSRField = gridElements.find(srFieldName);
+        assert(foundSRField != gridElements.end());
+        updater->SetScatteringRateFieldGrid(gridElements[srFieldName].get());
+    }
+
     // add particles
     auto foundEmitter = particleEmitters.find(particleEmitterName);
     assert(foundEmitter != particleEmitters.end());
@@ -919,6 +928,10 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     for(int direction = 0; direction < 3; ++direction) {
         std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(bFieldName, direction);
         updater->SetMagneticFieldGridOrigin(direction, arrayR0);
+    }
+    for(int direction = 0; direction < 3; ++direction) {
+        std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(srFieldName, direction);
+        updater->SetScatteringRateFieldGridOrigin(direction, arrayR0);
     }
 
     // set grid spacing
