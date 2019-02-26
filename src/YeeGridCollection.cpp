@@ -23,7 +23,7 @@ void YeeGridCollection::RunInstructionsPeriodically(std::size_t timeIndStart, st
             grid.ApplyInstructions(instruction.second, timeInd, timeInd + 1, /*writeToFile = */ false);
         }
         for(auto& grid : grids) {
-            grid.WriteAllGridElemViewsToFile();
+            grid.WriteAllGridElemViewsToFile();             // TODO: if a grid is not involved in the iteration its time index remains zero, writing out the gread views at each time step
             //std::cout << "wrote to file." << std::endl;
         }
     }

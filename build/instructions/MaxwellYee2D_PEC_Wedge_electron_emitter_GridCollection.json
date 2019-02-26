@@ -143,11 +143,40 @@
             "A":"H",
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, "_ny_", "_nz_"],
+            "A_indEnd":[1, "_ny_", "_nz_m1_"],
             "b":["_m_dt_dz_", "_dt_dz_", "_dt_dy_", "_m_dt_dy_"],
             "C":["E", "E", "E", "E"],
             "C_direction":["y", "y", "z", "z"],
             "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_z1_me_curl_E_inside",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, "_nz_m1_"],
+            "A_indEnd":[1, "_ny_", "_nz_"],
+            "b":["_m_dt_dz_", "_dt_dy_", "_m_dt_dy_"],
+            "C":["E", "E", "E"],
+            "C_direction":["y", "z", "z"],
+            "C_indStart":[[0, 0, "_nz_m1_"], [0, 0, "_nz_m1_"], [0, 1, "_nz_m1_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"H_z1_me_curl_E_outside",
+            "neighborGrid":"grid-pml-right",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, "_nz_m1_"],
+            "A_indEnd":[1, "_ny_", "_nz_"],
+            "b":["_dt_dz_"],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
             }
         },
         {
@@ -191,35 +220,6 @@
             "C":["H"],
             "C_direction":["x"],
             "C_indStart":[[0, 0, "_gl_nz_m1_"]]
-            }
-        },
-        {
-        "type":"A+=sumbC",
-        "parameters":{
-            "name":"Ey_z1_pe_curl_H_inside",
-            "A":"E",
-            "A_direction":"y",
-            "A_indStart":[0, 0, "_nz_"],
-            "A_indEnd":[1, "_ny_", "_nz_p1_"],
-            "b":["_m_dt_dz_"],
-            "C":["H"],
-            "C_direction":["x"],
-            "C_indStart":[[0, 0, "_nz_m1_"]]
-            }
-        },
-        {
-        "type":"A+=sumbC::NB",
-        "parameters":{
-            "name":"Ey_z1_pe_curl_H_outside",
-            "neighborGrid":"grid-pml-right",
-            "A":"E",
-            "A_direction":"y",
-            "A_indStart":[0, 0, "_nz_"],
-            "A_indEnd":[1, "_ny_", "_nz_p1_"],
-            "b":["_dt_dz_"],
-            "C":["H"],
-            "C_direction":["x"],
-            "C_indStart":[[0, 0, 0]]
             }
         },
         {
@@ -347,10 +347,10 @@
                         {"name":"update-E", "sequence":["J_update", "Jy_spacecharge_update", "Jz_spacecharge_update",
                                                         "E_me_J", "Ey_me_Jey", "Ez_me_Jez",
                                                         "Ey_pe_curl_H", "Ey_z0_pe_curl_H_inside", "Ey_z0_pe_curl_H_outside",
-                                                        "Ey_z1_pe_curl_H_inside", "Ey_z1_pe_curl_H_outside", "Ez_pe_curl_H",
+                                                        "Ez_pe_curl_H",
                                                         "PECMask_Ey_update", "PECMask_Ez_update"]},
                         {"name":"update-H", "sequence":["Jm_update",
-                                                        "H_me_Jm", "H_me_curl_E"]}],
+                                                        "H_me_Jm", "H_me_curl_E", "H_z1_me_curl_E_inside", "H_z1_me_curl_E_outside"]}],
     "gridViews":[
         {
         "type":"entire",
@@ -416,7 +416,7 @@
         "nCells":[1, "_ny_", "_gr_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeH"}, {"name":"dD", "type":"EdgeH"},
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
                         {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
     "partialGridArrays":[],
     "girdArrayManipulators":[
@@ -615,12 +615,12 @@
         
     ],
     "updateSequences":[{"name":"materialSetup", "sequence":["sigEz_update", "sigHz_update"]},
-                       {"name":"update-E", "sequence":[
-                                                       "Ey_pe_curl_H", "Ey_z0_pe_curl_H_inside", "Ey_z0_pe_curl_H_outside", "Ey_me_sigEz_Ey",
+                       {"name":"update-E", "sequence":["Ey_me_sigEz_Ey",
+                                                       "Ey_pe_curl_H", "Ey_z0_pe_curl_H_inside", "Ey_z0_pe_curl_H_outside",
                                                        "dDz_e_curl_H", "Dz_pe_dDz", "Ez_pe_dDz", "Ez_pe_sigEz_Dz"
                                                        ]},
                        {"name":"update-H", "sequence":[
-                                                       "H_me_curl_E", "H_me_sigHz_H" 
+                                                       "H_me_sigHz_H" , "H_me_curl_E"
                                                        ]}],
     "gridViews":[
         {
@@ -670,7 +670,7 @@
         "nCells":[1, "_ny_", "_gl_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeH"}, {"name":"dD", "type":"EdgeH"},
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
                         {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
     "partialGridArrays":[],
     "girdArrayManipulators":[
@@ -709,11 +709,40 @@
             "A":"H",
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
-            "A_indEnd":[1, "_ny_", "_gl_nz_"],
+            "A_indEnd":[1, "_ny_", "_gl_nz_m1_"],
             "b":["_gl_m_dt_dz_", "_gl_dt_dz_", "_dt_dy_", "_m_dt_dy_"],
             "C":["E", "E", "E", "E"],
             "C_direction":["y", "y", "z", "z"],
             "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"H_z1_me_curl_E_inside",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, "_gl_nz_m1_"],
+            "A_indEnd":[1, "_ny_", "_gl_nz_"],
+            "b":["_gl_m_dt_dz_", "_dt_dy_", "_m_dt_dy_"],
+            "C":["E", "E", "E"],
+            "C_direction":["y", "z", "z"],
+            "C_indStart":[[0, 0, "_gl_nz_m1_"], [0, 0, "_gl_nz_m1_"], [0, 1, "_gl_nz_m1_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"H_z1_me_curl_E_outside",
+            "neighborGrid":"grid-middle",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, "_gl_nz_m1_"],
+            "A_indEnd":[1, "_ny_", "_gl_nz_"],
+            "b":["_dt_dz_"],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
             }
         },
         {
@@ -745,35 +774,6 @@
             "C":["H", "H"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 1]]
-            }
-        },
-        {
-        "type":"A+=sumbC",
-        "parameters":{
-            "name":"Ey_z1_pe_curl_H_inside",
-            "A":"E",
-            "A_direction":"y",
-            "A_indStart":[0, 0, "_gl_nz_"],
-            "A_indEnd":[1, "_ny_", "_gl_nz_p1_"],
-            "b":["_gl_m_dt_dz_"],
-            "C":["H"],
-            "C_direction":["x"],
-            "C_indStart":[[0, 0, "_gl_nz_m1_"]]
-            }
-        },
-        {
-        "type":"A+=sumbC::NB",
-        "parameters":{
-            "name":"Ey_z1_pe_curl_H_outside",
-            "neighborGrid":"grid-middle",
-            "A":"E",
-            "A_direction":"y",
-            "A_indStart":[0, 0, "_gl_nz_"],
-            "A_indEnd":[1, "_ny_", "_gl_nz_p1_"],
-            "b":["_gl_dt_dz_"],
-            "C":["H"],
-            "C_direction":["x"],
-            "C_indStart":[[0, 0, 0]]
             }
         },
         {
@@ -869,12 +869,12 @@
         
     ],
     "updateSequences":[{"name":"materialSetup", "sequence":["sigEz_update", "sigHz_update"]},
-                       {"name":"update-E", "sequence":[
-                                                       "Ey_pe_curl_H", "Ey_z1_pe_curl_H_inside", "Ey_z1_pe_curl_H_outside", "Ey_me_sigEz_Ey",
+                       {"name":"update-E", "sequence":["Ey_me_sigEz_Ey",
+                                                       "Ey_pe_curl_H", 
                                                        "dDz_e_curl_H", "Dz_pe_dDz", "Ez_pe_dDz", "Ez_pe_sigEz_Dz"
                                                        ]},
                        {"name":"update-H", "sequence":[
-                                                       "H_me_curl_E", "H_me_sigHz_H" 
+                                                       "H_me_sigHz_H", "H_me_curl_E", "H_z1_me_curl_E_inside", "H_z1_me_curl_E_outside" 
                                                        ]}],
     "gridViews":[
         {

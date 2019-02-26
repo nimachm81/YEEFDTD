@@ -61,7 +61,7 @@ YeeGrid3D::~YeeGrid3D() {
                     >*
                 >(params);
             delete params_tuple;
-        }else if(instructionCode == FDInstructionCode::A_equal_func_r_t ||
+        } else if(instructionCode == FDInstructionCode::A_equal_func_r_t ||
                  instructionCode == FDInstructionCode::A_plusequal_func_r_t ||
                  instructionCode == FDInstructionCode::A_multequal_func_r_t) {
             auto* params_tuple =
@@ -929,9 +929,11 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
         std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(bFieldName, direction);
         updater->SetMagneticFieldGridOrigin(direction, arrayR0);
     }
-    for(int direction = 0; direction < 3; ++direction) {
-        std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(srFieldName, direction);
-        updater->SetScatteringRateFieldGridOrigin(direction, arrayR0);
+    if(srFieldName != "") {
+        for(int direction = 0; direction < 3; ++direction) {
+            std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(srFieldName, direction);
+            updater->SetScatteringRateFieldGridOrigin(direction, arrayR0);
+        }
     }
 
     // set grid spacing

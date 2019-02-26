@@ -53,7 +53,7 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_gridCollection_from_json() {
     const FPNumber eps_r = 1.0;     // only to set jm_amplitude... for eps_r != 1 json file should be updated
 
     FPNumber eFieldMax_SI = 1.0e7;     // V/m
-    FPNumber eFieldMax_FD = units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
+    FPNumber eFieldMax_FD = 1.0;//units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
 
     FPNumber z_j = -0.5;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
@@ -70,7 +70,7 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber wedgeAngle = 4.0/180.0*M_PI;
     FPNumber wedgeTipRadius = 0.005;
     FPNumber wedgeHeight = 1.0;
-    std::array<FPNumber, 3> wedgeTipPosition{0.0, 0.0, 0.0};
+    std::array<FPNumber, 3> wedgeTipPosition{0.0, -3.0, 0.0};
 
     FPNumber maxSurfElemSize = 0.0005;
 
@@ -81,7 +81,7 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_gridCollection_from_json() {
     std::cout << "q: " << q << " , m: " << m << std::endl;
 
     std::size_t data_save_rate = 50;
-    std::size_t numOfTimeSamples = 4401;
+    std::size_t numOfTimeSamples = 6401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
