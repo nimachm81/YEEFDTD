@@ -11,7 +11,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber y1 = 1.0;
     FPNumber z0 = -1.0;
     FPNumber z1 = 1.0;
-    FPNumber pml_thickness = 0.6;
+    FPNumber pml_thickness = 0.5;
     FPNumber pml_r_z0 = z1;
     FPNumber pml_r_z1 = z1 + pml_thickness;
     FPNumber pml_l_z0 = z0 - pml_thickness;
@@ -19,7 +19,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber pml_t_y0 = y1;
     FPNumber pml_t_y1 = y1 + pml_thickness;
 
-    std::size_t numOfSamplesPerUnitLength = 300;
+    std::size_t numOfSamplesPerUnitLength = 400;
 
     std::size_t ny = static_cast<std::size_t>(std::real(y1 - y0) * numOfSamplesPerUnitLength);
     std::size_t nz = static_cast<std::size_t>(std::real(z1 - z0) * numOfSamplesPerUnitLength);
@@ -51,7 +51,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber pml_t_cube_sigh_y0 = pml_t_cube_sige_y0;
     FPNumber pml_t_cube_sigh_y1 = pml_t_cube_sige_y1 + pml_t_dy/2.0;
 
-    FPNumber sig_eh = 6.0;
+    FPNumber sig_eh = 8.0;
     FPNumber pml_r_sig_E = sig_eh;
     FPNumber pml_r_sig_H = sig_eh;
     FPNumber pml_l_sig_E = sig_eh;
@@ -66,7 +66,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     const FPNumber eps_r = 1.0;     // only to set jm_amplitude... for eps_r != 1 json file should be updated
 
     FPNumber eFieldMax_SI = 5.0e7;     // V/m
-    FPNumber eFieldMax_FD = 1.0;//units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
+    FPNumber eFieldMax_FD = units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
 
     FPNumber z_j = -0.5;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
@@ -83,7 +83,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber wedgeAngle = 4.0/180.0*M_PI;
     FPNumber wedgeTipRadius = 0.01;
     FPNumber wedgeHeight = 1.0;
-    std::array<FPNumber, 3> wedgeTipPosition{0.0, -2.0, 0.0};
+    std::array<FPNumber, 3> wedgeTipPosition{0.0, 0.0, 0.0};
     FPNumber wedgeTopHeight = 2.0*wedgeTipRadius;  // only this part of the wedge is discretized for the emitter
 
     FPNumber maxSurfElemSize = 0.00001;
@@ -93,12 +93,12 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
 
     std::cout << "q: " << q << " , m: " << m << std::endl;
 
-    FPNumber plasmaFrequency = 10.0;
-    FPNumber gamma = 2.0;   // scattering rate
+    FPNumber plasmaFrequency = 100.0;
+    FPNumber gamma = 5.0;   // scattering rate
 
 
     std::size_t data_save_rate = 50;
-    std::size_t numOfTimeSamples = 2601;
+    std::size_t numOfTimeSamples = 4401;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -151,6 +151,8 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
             {"\"_gl_cube_dz_\"", boost::lexical_cast<std::string>(std::real(pml_l_cube_dz))},
             {"\"_gl_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/pml_l_dz))},
             {"\"_gl_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/pml_l_dz))},
+            {"\"_gl_1_dz_\"", boost::lexical_cast<std::string>(std::real(1.0/pml_l_dz))},
+            {"\"_gl_m_1_dz_\"", boost::lexical_cast<std::string>(std::real(-1.0/pml_l_dz))},
             {"\"_gl_sig_e_\"", boost::lexical_cast<std::string>(std::real(pml_l_sig_E))},
             {"\"_gl_sig_h_\"", boost::lexical_cast<std::string>(std::real(pml_l_sig_H))},
             {"\"_gt_y0_\"", boost::lexical_cast<std::string>(std::real(pml_t_y0))},

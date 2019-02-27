@@ -983,13 +983,18 @@ std::array<FPNumber, 3> YeeGrid3D::GetCoordinatesOfFirstElementOfGridDataArray(
     ElementType& elemType = gridElements[gridDataName]->GetElemType();
     if(elemType == ElementType::EdgeE) {
         arrayR0[direction] += dr[direction]/(FPNumber)2.0;
-    }else if(elemType == ElementType::EdgeH) {
+    } else if(elemType == ElementType::EdgeH) {
         for(int i = 0; i < 3; ++i) {
             if(i != direction) {
                 arrayR0[i] += dr[i]/(FPNumber)2.0;
             }
         }
-    }else{
+    } else if(elemType == ElementType::NodeScalar) {
+        assert(direction == 0);
+        // do nothing
+    } else if(elemType == ElementType::NodeVector) {
+        // do nothing
+    } else{
         assert(false);
     }
 

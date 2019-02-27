@@ -427,7 +427,7 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                         FDInstructionCode::A_plusequal_sum_b_C_neighbor,
                         updateParamsPtr
                         );
-            }else if(updateType == "A=sumbC::NB") {
+            } else if(updateType == "A=sumbC::NB") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_equal_sum_b_C_neighbor,
                         updateParamsPtr

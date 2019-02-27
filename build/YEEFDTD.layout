@@ -2,9 +2,24 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="main" />
-	<File name="../src/YeeGrid.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/SingleGridParameterExtractor.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1138" topLine="18" />
+			<Cursor1 position="4664" topLine="62" />
+		</Cursor>
+	</File>
+	<File name="../src/ParticlesTracer.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1052" topLine="21" />
+		</Cursor>
+	</File>
+	<File name="../include/FDInstructionCode.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3485" topLine="40" />
+		</Cursor>
+	</File>
+	<File name="../src/YeeGrid.cpp" open="1" top="1" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="45520" topLine="978" />
 		</Cursor>
 	</File>
 	<File name="../src/DiscretePointsGridArrayManipulator.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -14,12 +29,12 @@
 	</File>
 	<File name="../src/ChargedParticlesTracer.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2521" topLine="44" />
+			<Cursor1 position="2521" topLine="32" />
 		</Cursor>
 	</File>
-	<File name="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_GridCollection_Json.hpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../CMakeLists.txt" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2555" topLine="42" />
+			<Cursor1 position="111" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../src/ParameterExtractor.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -42,24 +57,14 @@
 			<Cursor1 position="1315" topLine="32" />
 		</Cursor>
 	</File>
-	<File name="../include/YeeGrid.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../include/YeeGrid.h" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2507" topLine="52" />
-		</Cursor>
-	</File>
-	<File name="../CMakeLists.txt" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="111" topLine="0" />
+			<Cursor1 position="1316" topLine="32" />
 		</Cursor>
 	</File>
 	<File name="../src/YeeGridCollectionParallel.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="772" topLine="5" />
-		</Cursor>
-	</File>
-	<File name="../include/GaussianGridArrayManipulator.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="645" topLine="6" />
 		</Cursor>
 	</File>
 	<File name="../src/GaussianGridArrayManipulator.cpp" open="0" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -92,9 +97,14 @@
 			<Cursor1 position="1887" topLine="20" />
 		</Cursor>
 	</File>
-	<File name="../src/YeeGridDataTypes.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/YeeGridDataTypes.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1237" topLine="21" />
+			<Cursor1 position="1306" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="../include/GaussianGridArrayManipulator.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="645" topLine="6" />
 		</Cursor>
 	</File>
 	<File name="../src/PeriodicGridArrayManipulator.cpp" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -122,9 +132,19 @@
 			<Cursor1 position="10389" topLine="252" />
 		</Cursor>
 	</File>
+	<File name="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_GridCollection_Json.hpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3882" topLine="84" />
+		</Cursor>
+	</File>
 	<File name="../src/YeeGridParallel.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="3647" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../include/ElementType.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="387" topLine="4" />
 		</Cursor>
 	</File>
 	<File name="../src/SpaceTimeCubeGridArrayManipulator.cpp" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -132,9 +152,9 @@
 			<Cursor1 position="3422" topLine="62" />
 		</Cursor>
 	</File>
-	<File name="../src/ParamFileTranslator.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../src/ParamFileTranslator.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="23145" topLine="420" />
+			<Cursor1 position="4237" topLine="90" />
 		</Cursor>
 	</File>
 	<File name="../src/GridCollectionParameterExtractor.cpp" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -147,19 +167,9 @@
 			<Cursor1 position="4205" topLine="79" />
 		</Cursor>
 	</File>
-	<File name="../src/SingleGridParameterExtractor.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../include/YeeGridDataTypes.h" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4664" topLine="62" />
-		</Cursor>
-	</File>
-	<File name="../src/ParticlesTracer.cpp" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1052" topLine="21" />
-		</Cursor>
-	</File>
-	<File name="../include/FDInstructionCode.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3485" topLine="40" />
+			<Cursor1 position="301" topLine="10" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

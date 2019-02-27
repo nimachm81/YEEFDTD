@@ -15,10 +15,15 @@ YeeGridData3D::YeeGridData3D(ElementType elemType, std::array<std::size_t, 3>& n
         numArray[0].ReInitialize({nCells[0]    , nCells[1] + 1, nCells[2] + 1}, 0.0);
         numArray[1].ReInitialize({nCells[0] + 1, nCells[1]    , nCells[2] + 1}, 0.0);
         numArray[2].ReInitialize({nCells[0] + 1, nCells[1] + 1, nCells[2]    }, 0.0);
-    }else if(elemType==ElementType::EdgeH) {
+    } else if(elemType==ElementType::EdgeH) {
         numArray[0].ReInitialize({nCells[0] + 1, nCells[1]    , nCells[2]    }, 0.0);
         numArray[1].ReInitialize({nCells[0]    , nCells[1] + 1, nCells[2]    }, 0.0);
         numArray[2].ReInitialize({nCells[0]    , nCells[1]    , nCells[2] + 1}, 0.0);
+    } else if(elemType==ElementType::NodeScalar) {
+        numArray[0].ReInitialize({nCells[0] + 1, nCells[1] + 1   , nCells[2] + 1}, 0.0);
+    } else {
+        std::cout << "error: element type not implemented" << std::endl;
+        assert(false);
     }
 }
 
