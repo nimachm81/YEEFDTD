@@ -53,7 +53,7 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_gridCollection_from_json() {
     const FPNumber eps_r = 1.0;     // only to set jm_amplitude... for eps_r != 1 json file should be updated
 
     FPNumber eFieldMax_SI = 1.0e7;     // V/m
-    FPNumber eFieldMax_FD = 1.0;//units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
+    FPNumber eFieldMax_FD = 1.0;//units.ConvertSIElectricFieldToFDUnits(eFieldMax_SI);
 
     FPNumber z_j = -0.5;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));

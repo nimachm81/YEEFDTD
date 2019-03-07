@@ -44,6 +44,9 @@ class ChargedParticlesTracer : public ParticlesTracer {
     YeeGridData3D* magneticField = nullptr;       // B
     std::array<std::array<FPNumber, 3>, 3> magneticFieldConponentsOrigin;
 
+    std::size_t maxChargedParticleBunchSize = 10;  // tries to bunch several particles into 1 with this number of particles
+    std::vector<FPNumber> chargeParticleEmissionNumberTracker;
+
 };
 
 #endif // FDTD_CHARGEDPARTICLESTRACER_H_

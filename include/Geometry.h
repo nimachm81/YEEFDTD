@@ -12,6 +12,8 @@ class Geometry {
     virtual ~Geometry() { };
 
     virtual bool IsPointInsideOrOn(std::array<FPNumber, 3> point) = 0;
+    virtual void ArePointsInsideOrOn(std::vector<std::array<FPNumber, 3>>& points,
+                             std::vector<bool>& areInside) = 0;
     virtual void AreGridPointsInsideOrOn(const NumberArray3D<FPNumber>& gridArray,
                                          const std::array<FPNumber, 3>& r0,
                                          const std::array<FPNumber, 3>& dr,
@@ -21,7 +23,9 @@ class Geometry {
                             FPNumber maxArcLength,      // with maximum length maxArcLength
                             std::vector<std::array<FPNumber, 3>>& centerPoints,     // output: the point at the middle of each patch
                             std::vector<std::array<FPNumber, 3>>& normalVecs,   // output: normal unit vector pointing outwards
-                            std::vector<FPNumber>& arcLenghts      // output: patch area
+                            std::vector<FPNumber>& arcLenghts,      // output: patch area
+                            std::vector<std::vector<std::array<FPNumber, 3>>>* arcSubdivisionPoints = nullptr,    // if defined, provides
+                            std::size_t numSubSubdivisionPoints = 1     // this many equaly spaced points on each subsection
                             ) = 0;
 
 };

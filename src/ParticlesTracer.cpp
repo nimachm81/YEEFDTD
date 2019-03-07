@@ -65,13 +65,40 @@ void ParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t) {
     }
 }
 
-void ParticlesTracer::UpdateParticlesPositions(const FPNumber dt) {
+void ParticlesTracer::SetConstrainingGeometry(Geometry* geometry, bool keepInside) {
+    constrainingGeometry = geometry;
+    keepInsideGeometry = keepInside;
+}
+
+
+void ParticlesTracer::UpdateParticlesConstraintStatus() {
+    if(constrainingGeometry != nullptr) {
+        constrainingGeometry->ArePointsInsideOrOn(positions, arePointsInside);
+    }
+}
+
+void ParticlesTracer::UpdateParticlesPositions(const FPNumber dt, bool applyConstraints) {
     for(std::size_t i = 0; i < positions.size(); ++i) {
         std::array<FPNumber, 3>& r = positions[i];
         std::array<FPNumber, 3>& v = velocities[i];
         r[0] += v[0]*dt;
         r[1] += v[1]*dt;
         r[2] += v[2]*dt;
+    }
+    if(applyConstraints) {
+        UpdateParticlesConstraintStatus();
+        for(std::size_t i = 0; i < positions.size(); ++i) {
+            if(arePointsInside[i] != keepInsideGeometry) {
+                std::array<FPNumber, 3>& r = positions[i];
+                std::array<FPNumber, 3>& v = velocities[i];
+                r[0] -= v[0]*dt;
+                r[1] -= v[1]*dt;
+                r[2] -= v[2]*dt;
+                v[0] = 0.0;
+                v[1] = 0.0;
+                v[2] = 0.0;
+            }
+        }
     }
 }
 
@@ -102,10 +129,15 @@ void ParticlesTracer::UpdateScatteringForce(int direction) {
     const std::array<FPNumber, 3>& dr = gridSpacing;
 
     const std::size_t numOfParticles = masses.size();
-    const NumberArray3D<FPNumber>& sr_direction = scatteringRateField->GetNumArray(direction);
+    NumberArray3D<FPNumber>* sr_direction;
+    if(scatteringRateField->GetElemType() == ElementType::NodeScalar) {
+        sr_direction = &(scatteringRateField->GetNumArray(0));
+    } else {
+        sr_direction = &(scatteringRateField->GetNumArray(direction));
+    }
 
     std::vector<FPNumber> sr_interpolated(numOfParticles);
-    UniformGridInterpolator::InterpolateGridOnPoints(sr_direction, r0, dr, positions, sr_interpolated);
+    UniformGridInterpolator::InterpolateGridOnPoints(*sr_direction, r0, dr, positions, sr_interpolated);
 
     for(std::size_t i = 0; i < numOfParticles; ++i) {
           forces[i][direction] -= momentums[i][direction]*sr_interpolated[i];

@@ -34,15 +34,48 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t)
     const std::vector<FPNumber>& numOfEmittedParticles = particleEmitter->GetEmissionNumber(t);
     const std::vector<std::array<FPNumber, 3>>& emissionPoints = particleEmitter->GetEmissionPoints();
     const std::vector<std::array<FPNumber, 3>>& emissionVelocities = particleEmitter->GetEmissionVelocities();
+    std::vector<std::vector<std::array<FPNumber, 3>>>* emissionSubPoints = particleEmitter->GetEmissionSubPoints();
 
     std::size_t numEmissions = numOfEmittedParticles.size();
     assert(emissionPoints.size() == numEmissions && emissionVelocities.size() == numEmissions);
     std::array<FPNumber, 3> force{0.0, 0.0, 0.0};
 
+    if(chargeParticleEmissionNumberTracker.size() != numEmissions) {
+        chargeParticleEmissionNumberTracker.resize(numEmissions, 0.0);
+    }
+
     for(std::size_t i = 0; i < numEmissions; ++i) {
-        if(numOfEmittedParticles[i] > 1.0) {
-            AddParticle(charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
-            AddParticle(-charge*numOfEmittedParticles[i], mass*numOfEmittedParticles[i], emissionPoints[i], emissionVelocities[i], force);
+        FPNumber numParticle_i = numOfEmittedParticles[i];
+        const std::array<FPNumber, 3>& velocity_i = emissionVelocities[i];
+        if(numParticle_i == 0.0) {
+            chargeParticleEmissionNumberTracker[i] = 0.0;
+        } else {
+            chargeParticleEmissionNumberTracker[i] += numParticle_i;
+            numParticle_i = chargeParticleEmissionNumberTracker[i];
+        }
+
+        if(numParticle_i > 1.0) {
+            if(emissionSubPoints != nullptr && numParticle_i > 2*maxChargedParticleBunchSize) {
+                // bunch particles
+                auto& emissionSubPoints_i = emissionSubPoints->operator[](i);
+                std::size_t numOfSubPts = emissionSubPoints_i.size();
+                std::size_t numOfBunches = numParticle_i / maxChargedParticleBunchSize;
+                if(numOfBunches > numOfSubPts) {
+                    numOfBunches = numOfSubPts;
+                }
+
+                FPNumber bunchSize = numParticle_i / numOfBunches;   // number of particles in each bunch
+                std::size_t subPtsStep = std::floor(numOfSubPts / numOfBunches);
+                assert(subPtsStep >= 1);
+                for(std::size_t j = 0; j < numOfBunches; j += subPtsStep) {
+                    AddParticle(charge*bunchSize, mass*bunchSize, emissionSubPoints_i[j], velocity_i, force);
+                }
+                chargeParticleEmissionNumberTracker[i] = 0.0;
+
+            } else if(numParticle_i > maxChargedParticleBunchSize) {
+                AddParticle(charge*numParticle_i, mass*numParticle_i, emissionPoints[i], velocity_i, force);
+                chargeParticleEmissionNumberTracker[i] = 0.0;
+            }
         }
     }
 }
@@ -127,15 +160,15 @@ void ChargedParticlesTracer::UpdateParticlesCurrents() {
     std::vector<FPNumber>& Jx = currentComponents[0];
     std::vector<FPNumber>& Jy = currentComponents[1];
     std::vector<FPNumber>& Jz = currentComponents[2];
-    FPNumber dA_xy = dr[0]*dr[1];
-    FPNumber dA_yz = dr[1]*dr[2];
-    FPNumber dA_xz = dr[0]*dr[2];
+    //FPNumber dA_xy = dr[0]*dr[1];
+    //FPNumber dA_yz = dr[1]*dr[2];
+    //FPNumber dA_xz = dr[0]*dr[2];
     for(std::size_t i = 0; i < numOfParticles; ++i) {
         const FPNumber& q = charges[i];
         std::array<FPNumber, 3>& v = velocities[i];
-        Jx[i] = q*v[0]/dA_yz;
-        Jy[i] = q*v[1]/dA_xz;
-        Jz[i] = q*v[2]/dA_xy;
+        Jx[i] = q*v[0];// /dA_yz;   warning: these currents should be treated as point currents as opposed to volumetric currents inside FDTD
+        Jy[i] = q*v[1];// /dA_xz;
+        Jz[i] = q*v[2];// /dA_xy;
     }
 
     //std::cout << numOfParticles << " ";

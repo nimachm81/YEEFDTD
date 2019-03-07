@@ -24,6 +24,7 @@ class PhysicalUnits {
         length_SI_to_FD = length_SI / length_FD;
         area_SI_to_FD = length_SI_to_FD * length_SI_to_FD;
         time_SI_to_FD = (length_SI / speedOfLight_SI) / (length_FD / speedOfLight_FD);
+        frequency_SI_to_FD = 1.0 / time_SI_to_FD;
         electricPotential_SI_to_FD = (electronCharge_SI / (vacuumPermittivity_SI * length_SI)) / (electronCharge_FD / (vacuumPermittivity_FD * length_FD));
         electricField_SI_to_FD = (electronCharge_SI / (vacuumPermittivity_SI * length_SI * length_SI)) / (electronCharge_FD / (vacuumPermittivity_FD * length_FD * length_FD));
         electricCurrent_SI_to_FD = (electronCharge_SI / electronCharge_FD) / time_SI_to_FD;
@@ -56,6 +57,14 @@ class PhysicalUnits {
 
     double ConvertSITimeToFDUnits(double t_si) {
         return t_si / time_SI_to_FD;
+    };
+
+    double ConvertFDFrequencyToSIUnits(double f_fd) {
+        return f_fd * frequency_SI_to_FD;
+    };
+
+    double ConvertSIFrequencyToFDUnits(double f_si) {
+        return f_si / frequency_SI_to_FD;
     };
 
     double ConvertFDElectricPotentialToSIUnits(double v_fd) {
@@ -116,9 +125,10 @@ class PhysicalUnits {
 
     // conversion factors
     // _SI_to_FD : SI unit/ FD unit ratio
-    double length_SI_to_FD;
+    double length_SI_to_FD;     // L_SI/L_FD
     double area_SI_to_FD;
     double time_SI_to_FD;
+    double frequency_SI_to_FD;
     double electricPotential_SI_to_FD;
     double electricField_SI_to_FD;
     double electricCurrent_SI_to_FD;

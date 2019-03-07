@@ -187,7 +187,8 @@ void ParamFileTranslator::SetSingleGridParticleEmitters(YeeGrid3D& yee,
                     emitterParams.GetUintProperty("dimensions"),
                     emitterParams.GetRealProperty("maxSurfaceElementSize"),
                     emitterParams.GetStringProperty("eField"),
-                    emitterParams.GetRealProperty("unitLength")
+                    emitterParams.GetRealProperty("unitLength"),
+                    emitterParams.GetUintProperty("numOfSubPoints")
             );
 
         } else {
@@ -211,13 +212,25 @@ void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& y
             if(updaterParams.GetCount("srField") > 0) {
                 scatteringFieldName = updaterParams.GetStringProperty("srField");
             };
+            std::string constrainingGeometry = "";
+            bool keepInsideGeometry = true;
+            if(updaterParams.GetCount("constrainingGeometry") > 0) {
+                constrainingGeometry = updaterParams.GetStringProperty("constrainingGeometry");
+                if(updaterParams.GetCount("keepParticlesInside") > 0) {
+                    if(updaterParams.GetStringProperty("keepParticlesInside") == "no") {
+                        keepInsideGeometry = false;
+                    }
+                }
+            }
             yee.AddChargedParticlesTracer(
                     updaterParams.GetStringProperty("name"),
                     updaterParams.GetStringProperty("eField"),
                     updaterParams.GetStringProperty("bField"),
                     scatteringFieldName,
                     updaterParams.GetStringProperty("particleEmitter"),
-                    updaterParams.GetUintProperty("numberOfReservedParticles")
+                    updaterParams.GetUintProperty("numberOfReservedParticles"),
+                    constrainingGeometry,
+                    keepInsideGeometry
             );
         } else {
             std::cout << "error: updater name not found" << std::endl;
@@ -350,6 +363,28 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetRealProperty("valueInside"),
                     manipulatorParams.GetRealProperty("valueOutside")
                     );
+        } else if(std::get<0>(manipulatorNameAndParams) == "DataTruncationGridArrayManipulator") {
+            bool truncateUp = false;
+            bool truncateDown = false;
+            FPNumber minValue, maxValue;
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            if(manipulatorParams.GetCount("minValue") > 0) {
+                truncateDown = true;
+                minValue = manipulatorParams.GetRealProperty("minValue");
+            }
+            if(manipulatorParams.GetCount("maxValue") > 0) {
+                truncateUp = true;
+                maxValue = manipulatorParams.GetRealProperty("maxValue");
+            }
+            yee.AddDataTruncationGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    minValue,
+                    maxValue,
+                    truncateDown,
+                    truncateUp
+                    );
         } else {
             assert(false);
         }
@@ -362,7 +397,8 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
     auto updateInstructions = singleGridRoot.GetTypeStringAndParameterSubtree("updateInstructions");
     for(auto& updateTypeandParams : updateInstructions) {
         auto& updateType = std::get<0>(updateTypeandParams);
-        if(updateType == "A+=sumbC" || updateType == "A=sumbC" || updateType == "A+=sumbC_shifted") {
+        if(updateType == "A+=sumbC" || updateType == "A=sumbC" || updateType == "A+=sumbC_shifted" ||
+                updateType == "A*=sumbC") {
             ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
 
             auto C_directions_str = updateParams.GetStringArray("C_direction");
@@ -387,7 +423,7 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                         FDInstructionCode::A_plusequal_sum_b_C,
                         updateParamsPtr
                         );
-            }else if(updateType == "A=sumbC") {
+            } else if(updateType == "A=sumbC") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_equal_sum_b_C,
                         updateParamsPtr
@@ -395,6 +431,11 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
             } else if(updateType == "A+=sumbC_shifted") {
                 yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
                         FDInstructionCode::A_plusequal_sum_b_C_shifted,
+                        updateParamsPtr
+                        );
+            } else if(updateType == "A*=sumbC") {
+                yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                        FDInstructionCode::A_multequal_sum_b_C,
                         updateParamsPtr
                         );
             } else {

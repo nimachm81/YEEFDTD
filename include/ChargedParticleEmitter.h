@@ -1,6 +1,8 @@
 #ifndef FDTD_CHARGEDPARTICLEEMITTER_H_
 #define FDTD_CHARGEDPARTICLEEMITTER_H_
 
+#include <memory>
+
 #include "NumberTypes.h"
 #include "YeeGridDataTypes.h"
 #include "PhysicalUnits.hpp"
@@ -18,6 +20,7 @@ class ChargedParticleEmitter : public ParticleEmitter {
     void SetEmissionPoints(std::vector<std::array<FPNumber, 3>>& emissionPts);
     void SetNormalVectors(std::vector<std::array<FPNumber, 3>>& normalVecs);
     void SetSurfaceAreas(std::vector<FPNumber>& areas);
+    void SetEmissionSubPoints(std::shared_ptr<std::vector<std::vector<std::array<FPNumber, 3>>>>& emissionSubPts);
 
     void SetElectricField(YeeGridData3D* eField);
     void SetElectricFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
@@ -33,6 +36,8 @@ class ChargedParticleEmitter : public ParticleEmitter {
     const std::vector<std::array<FPNumber, 3>>& GetEmissionPoints();
     const std::vector<std::array<FPNumber, 3>>& GetEmissionVelocities();
 
+    std::vector<std::vector<std::array<FPNumber, 3>>>* GetEmissionSubPoints();
+
     const std::unordered_map<std::string, FPNumber>& GetParticleParameters();
 
 
@@ -44,6 +49,9 @@ class ChargedParticleEmitter : public ParticleEmitter {
     std::vector<std::array<FPNumber, 3>> normalVectors;       // normal to the surface (assumed normalized)
     std::vector<FPNumber> surfaceAreas;                       // surface area of a patch on the surface of the object
 
+    std::shared_ptr<std::vector<std::vector<std::array<FPNumber, 3>>>> emissionSubPoints;   // if the particle is to be subdevided into
+                                                            // smaller equally spaced particles, these equally spaced points may be used
+
     std::unordered_map<std::string, FPNumber> particleElementaryParameters;   // elementary parameters of each particle
                                                                 // such as unit charge and mass, for example:
                                                                 // {"charge": q, "mass": m}
@@ -52,7 +60,7 @@ class ChargedParticleEmitter : public ParticleEmitter {
     PhysicalUnits unitConverter;      // used to convert between FDTD units and SI units
     FowlerNordheimEmission fnEmitter;       // used to calculate Fowler-Nordheim field emission
     YeeGridData3D* electricField;       // E
-    std::array<std::array<FPNumber, 3>, 3> electricFieldConponentsOrigin;
+    std::array<std::array<FPNumber, 3>, 3> electricFieldComponentsOrigin;
     std::array<FPNumber, 3> gridSpacing;
 
 };

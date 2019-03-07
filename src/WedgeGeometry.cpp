@@ -98,6 +98,62 @@ bool WedgeGeometry::IsPointInsideOrOn(std::array<FPNumber, 3> point) {
     }
 }
 
+void WedgeGeometry::ArePointsInsideOrOn(std::vector<std::array<FPNumber, 3>>& points,
+                                        std::vector<bool>& areInside) {
+    if(areInside.size() < points.size()) {
+        areInside.resize(points.size());
+    }
+
+    FPNumber x_tip = tipPosition[0];
+    FPNumber y_tip = tipPosition[1];
+    FPNumber z_tip = tipPosition[2];
+
+    FPNumber base_halfWidth = wedgeHeight * std::tan(wedgeAngle/2.0);
+    FPNumber tip_to_top = apexRadius * std::cos(wedgeAngle/2.0) / std::tan(wedgeAngle/2.0);
+    FPNumber tip_to_circleCenter = tip_to_top + apexRadius*std::sin(wedgeAngle/2.0);
+
+    FPNumber slope_p = std::tan(M_PI/2.0 + wedgeAngle/2.0);
+    FPNumber slope_m = std::tan(M_PI/2.0 - wedgeAngle/2.0);
+
+    for(std::size_t i = 0; i < points.size(); ++i) {
+        auto& point = points[i];
+        FPNumber x = point[0] - x_tip;
+        FPNumber y = point[1] - y_tip;
+        FPNumber z = point[2] - z_tip;
+
+        if(uniformAxis == 0 && wedgeDirection == 1) {
+            if(y > 0.0 || y < -wedgeHeight) {
+                areInside[i] = false;
+                continue;
+            } else if(y <= -tip_to_top) {
+                if(std::abs(z) > base_halfWidth) {
+                    areInside[i] = false;
+                    continue;
+                } else {
+                    if(y <= z*slope_p && y <= z*slope_m) {
+                        areInside[i] = true;
+                        continue;
+                    } else {
+                        areInside[i] = false;
+                        continue;
+                    }
+                }
+            } else {    // check whether inside cap circle
+                if((y + tip_to_circleCenter)*(y + tip_to_circleCenter) + z*z <= apexRadius*apexRadius) {
+                    areInside[i] = true;
+                    continue;
+                } else {
+                    areInside[i] = false;
+                    continue;
+                }
+            }
+        } else {
+            std::cout << "error: other wedge directions not implemented." << std::endl;
+            assert(false);
+        }
+    }
+}
+
 void WedgeGeometry::AreGridPointsInsideOrOn(const NumberArray3D<FPNumber>& gridArray,
                                             const std::array<FPNumber, 3>& r0,
                                             const std::array<FPNumber, 3>& dr,
@@ -175,7 +231,9 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
                                        FPNumber maxArcLength,
                                        std::vector<std::array<FPNumber, 3>>& centerPoints,
                                        std::vector<std::array<FPNumber, 3>>& normalVecs,
-                                       std::vector<FPNumber>& arcLenghts
+                                       std::vector<FPNumber>& arcLenghts,
+                                       std::vector<std::vector<std::array<FPNumber, 3>>>* arcSubdivisionPoints,
+                                       std::size_t numSubSubdivisionPoints
                                        ) {
 
     const FPNumber sin_t2 = std::sin(wedgeAngle/2.0);
@@ -208,11 +266,21 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
     }
     std::size_t n_base = (std::size_t)(base_length / maxArcLength) + 1;
 
-    std::size_t n_total = 2*n_side + n_cap + n_base;
+    std::size_t n_total = 2*n_side + n_cap;
+    if(n_base > 0 && closeBase) {
+        n_total += n_base;
+    }
 
     centerPoints.resize(n_total);
     normalVecs.resize(n_total);
     arcLenghts.resize(n_total);
+    if(arcSubdivisionPoints != nullptr) {
+        assert(numSubSubdivisionPoints > 0);
+        arcSubdivisionPoints->resize(n_total);
+        for(std::size_t i = 0; i < n_total; ++i){
+            arcSubdivisionPoints->operator[](i).resize(numSubSubdivisionPoints);
+        }
+    }
 
     FPNumber y, z;
     const FPNumber x = x_cut;
@@ -227,6 +295,7 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
         FPNumber theta_0 = wedgeAngle/2.0;
         FPNumber d_theta = (M_PI - wedgeAngle)/n_cap;
         FPNumber theta_i;
+        FPNumber th0_i, th1_i, theta_ij, d_th_ij, y_ij, z_ij;    // subsubdivision variables (each subdevided arc element is subdevided again to numSubSubdivisionPoints
         FPNumber dA = apexRadius*d_theta;   // arc length
 
         for(std::size_t i = 0; i < n_cap; ++i) {
@@ -240,6 +309,20 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
             centerPoints[i + ind_start] = std::array<FPNumber, 3>{x, y, z};
             normalVecs[i + ind_start] = std::array<FPNumber, 3>{vx, vy, vz};
             arcLenghts[i + ind_start] = dA;
+
+            if(arcSubdivisionPoints != nullptr) {
+                auto& arcSubdivisionPoints_i = arcSubdivisionPoints->operator[](i + ind_start);
+
+                th0_i = theta_0 + i*d_theta;
+                d_th_ij = d_theta / numSubSubdivisionPoints;
+
+                for(std::size_t j = 0; j < numSubSubdivisionPoints; ++j) {
+                    theta_ij = th0_i + ((FPNumber)j + 0.5)*d_th_ij;
+                    y_ij = y_circleCenter + apexRadius*std::sin(theta_ij);
+                    z_ij = z_circleCenter + apexRadius*std::cos(theta_ij);
+                    arcSubdivisionPoints_i[j] = std::array<FPNumber, 3>{x, y_ij, z_ij};
+                }
+            }
         }
         ind_start += n_cap;
     }
@@ -262,6 +345,7 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
         FPNumber vz_m = -std::cos(wedgeAngle/2.0);
 
         FPNumber z_p, z_m;
+        FPNumber y_ij, zp_ij, zm_ij;
 
         for(std::size_t i = 0; i < n_side; ++i) {
             y = y0_side + ((FPNumber)i + 0.5)*dy;
@@ -274,6 +358,28 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
             centerPoints[2*i + 1 + ind_start] = std::array<FPNumber, 3>{x, y, z_m};
             normalVecs[2*i + 1 + ind_start] = std::array<FPNumber, 3>{vx, vy, vz_m};
             arcLenghts[2*i + 1 + ind_start] = dA;
+
+            if(arcSubdivisionPoints != nullptr) {
+                auto& arcSubdivisionPoints_2i = arcSubdivisionPoints->operator[](2*i + ind_start);
+                auto& arcSubdivisionPoints_2ip1 = arcSubdivisionPoints->operator[](2*i + 1 + ind_start);
+
+                FPNumber y0_i = y0_side + (FPNumber)i*dy;
+                FPNumber dy_ij = dy / numSubSubdivisionPoints;
+
+                FPNumber z0_p_i = z0_side_p + (FPNumber)i*dz_p;
+                FPNumber z0_m_i = z0_side_m + (FPNumber)i*dz_m;
+                FPNumber dz_p_ij = dz_p / numSubSubdivisionPoints;
+                FPNumber dz_m_ij = dz_m / numSubSubdivisionPoints;
+
+                for(std::size_t j = 0; j < numSubSubdivisionPoints; ++j) {
+                    y_ij = y0_i + ((FPNumber)j + 0.5)*dy_ij;
+                    zp_ij = z0_p_i + ((FPNumber)j + 0.5)*dz_p_ij;
+                    zm_ij = z0_m_i + ((FPNumber)j + 0.5)*dz_m_ij;
+                    arcSubdivisionPoints_2i[j] = std::array<FPNumber, 3>{x, y_ij, zp_ij};
+                    arcSubdivisionPoints_2ip1[j] = std::array<FPNumber, 3>{x, y_ij, zm_ij};
+                }
+            }
+
         }
         ind_start += 2*n_side;
     }
@@ -290,12 +396,25 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
 
         FPNumber dA = dz;
 
+        FPNumber z_ij;
+
         for(std::size_t i = 0; i < n_base; ++i) {
             z = z0_base + ((FPNumber)i + 0.5)*dz;
 
             centerPoints[i + ind_start] = std::array<FPNumber, 3>{x, y, z};
             normalVecs[i + ind_start] = std::array<FPNumber, 3>{vx, vy, vz};
             arcLenghts[i + ind_start] = dA;
+
+            if(arcSubdivisionPoints != nullptr) {
+                auto& arcSubdivisionPoints_i = arcSubdivisionPoints->operator[](i + ind_start);
+
+                FPNumber z0_i = z0_base + (FPNumber)i*dz;
+                FPNumber dz_ij = dz / numSubSubdivisionPoints;
+                for(std::size_t j = 0; j < numSubSubdivisionPoints; ++j) {
+                    z_ij = z0_i + ((FPNumber)j + 0.5)*dz_ij;
+                    arcSubdivisionPoints_i[j] = std::array<FPNumber, 3>{x, y, z_ij};
+                }
+            }
         }
         ind_start += n_base;
     }

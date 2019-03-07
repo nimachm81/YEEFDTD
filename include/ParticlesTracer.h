@@ -10,6 +10,7 @@
 #include "YeeGridDataTypes.h"
 #include "DiscretePointsGAMDataUpdater.h"
 #include "ParticleEmitter.h"
+#include "Geometry.h"
 
 class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     public:
@@ -28,7 +29,10 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     void SetParticleEmitter(ParticleEmitter* emitter);
     void AddParticlesEmittedByTheParticleEmitter(FPNumber t);   // adds the particles emitted at time t to the collection of particles
 
-    void UpdateParticlesPositions(const FPNumber dt);
+    void SetConstrainingGeometry(Geometry* geometry, bool keepInside);
+    void UpdateParticlesConstraintStatus();
+
+    void UpdateParticlesPositions(const FPNumber dt, bool applyConstraints = true);
     void UpdateParticlesMomentumsAndVelocities(const FPNumber dt);
     void UpdateScatteringForce(int direction);
     void UpdateTime(const FPNumber newTime);
@@ -51,6 +55,10 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     std::array<FPNumber, 3> gridSpacing;    // grid spacing for the fields
 
     ParticleEmitter* particleEmitter = nullptr;
+
+    Geometry* constrainingGeometry = nullptr;     // if initalized the particles are constrained inside/outside the gromtry
+    bool keepInsideGeometry = true;     // true: keep particles inside, false: keep paarticles outside
+    std::vector<bool> arePointsInside;     // true: constraint satisfied       false : not satisfied
 };
 
 #endif  // FDTD_PARTICLESTRACER_H_

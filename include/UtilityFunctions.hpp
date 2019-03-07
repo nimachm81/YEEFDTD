@@ -22,7 +22,7 @@ std::string CastComplexToJSONString(FPNumber complxNum) {
 };
 
 template<typename T>
-int WriteParamToFile(std::ofstream& paramFileOut, T& param, std::string paramName) {
+int WriteParamToFile(std::ofstream& paramFileOut, T param, std::string paramName) {
     char dtype;
     if(typeid(T)==typeid(float)) {
         dtype = 'f';

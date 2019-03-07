@@ -17,6 +17,7 @@
 #include "ChargedParticlesTracer.h"
 #include "DiscretePointsGridArrayManipulator.h"
 #include "BivalueGridArrayManipulator.h"
+#include "DataTruncationGridArrayManipulator.h"
 #include "WedgeGeometry.h"
 #include "ChargedParticleEmitter.h"
 #include "ManualChargedParticleEmitter.h"
@@ -316,6 +317,7 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
 void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params) {
     if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
        instructionCode == FDInstructionCode::A_equal_sum_b_C ||
+       instructionCode == FDInstructionCode::A_multequal_sum_b_C ||
        instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
         auto& params_tuple =
             *static_cast<
@@ -374,6 +376,13 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     arrayASlice = b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
                 } else {
                     arrayASlice += b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
+                }
+            } else if(instructionCode == FDInstructionCode::A_multequal_sum_b_C) {
+                if(i == 0 && numRhs == 1) {
+                    arrayASlice *= b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
+                } else {
+                    std::cout << "#### error: not implemented!" << std::endl;
+                    assert(false);
                 }
             }
         }
@@ -515,6 +524,9 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 }
             }
         }
+    } else {
+        std::cout << "#### error: instruction code not implemented!" << std::endl;
+        assert(false);
     }
 }
 
@@ -786,6 +798,35 @@ void YeeGrid3D::AddBivalueGridArrayManipulator(const std::string name,
     gridArrayManipulators[name] = modifier;
 }
 
+void YeeGrid3D::AddDataTruncationGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            FPNumber minValue,
+            FPNumber maxValue,
+            bool truncateMin,
+            bool truncateMax
+            ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<DataTruncationGridArrayManipulator> modifier(new DataTruncationGridArrayManipulator);
+
+    modifier->SetMinValue(minValue);
+    modifier->SetMaxValue(maxValue);
+    modifier->TruncateDown(truncateMin);
+    modifier->TruncateUp(truncateMax);
+
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+
+    // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
 void YeeGrid3D::AddWedgeGeometry(const std::string name,
             const FPNumber wedgeAngle,
             const FPNumber tipRadius,
@@ -837,7 +878,8 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
             int dimensions,
             FPNumber maxElemSize,
             const std::string eFieldName,
-            FPNumber unitLength
+            FPNumber unitLength,
+            std::size_t numOfSubPoints
             ) {
     auto found = particleEmitters.find(name);
     assert(found == particleEmitters.end()); // make sure name does not already exist.
@@ -858,12 +900,27 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
     std::vector<FPNumber> arcLenghts;
 
     if(dimensions == 2) {
-        geometries[geometryName]->SubdevideSurface2D(0.0,     // x_cut
-                                maxElemSize,      // maximum length of each subdevision
-                                centerPoints,     // the point at the middle of each patch
-                                normalVecs,   // normal unit vector pointing outwards
-                                arcLenghts      // patch area
-                                );
+        if(numOfSubPoints >= 1) {
+            std::shared_ptr<std::vector<std::vector<std::array<FPNumber, 3>>>>
+                    subPoints(new std::vector<std::vector<std::array<FPNumber, 3>>>{});
+            auto* subPointsPtr = subPoints.get();
+            geometries[geometryName]->SubdevideSurface2D(0.0,     // x_cut at x = 0.0
+                                    maxElemSize,      // maximum length of each subdevision
+                                    centerPoints,     // the point at the middle of each patch
+                                    normalVecs,   // normal unit vector pointing outwards
+                                    arcLenghts,      // patch area
+                                    subPointsPtr,
+                                    numOfSubPoints
+                                    );
+            emitter->SetEmissionSubPoints(subPoints);
+        } else {
+            geometries[geometryName]->SubdevideSurface2D(0.0,     // x_cut at x = 0.0
+                                    maxElemSize,      // maximum length of each subdevision
+                                    centerPoints,     // the point at the middle of each patch
+                                    normalVecs,   // normal unit vector pointing outwards
+                                    arcLenghts      // patch area
+                                    );
+        }
     } else {
         std::cout << "error: 3D subdivision not implemented" << std::endl;
         assert(false);
@@ -892,7 +949,9 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
             const std::string bFieldName,
             const std::string srFieldName,
             const std::string particleEmitterName,
-            const std::size_t numberOfReservedParticles
+            const std::size_t numberOfReservedParticles,
+            const std::string constrainingGeometryName,
+            bool keepPointsInside
             ) {
     auto found = gamDataUpdaters.find(name);
     assert(found == gamDataUpdaters.end()); // make sure name does not already exist.
@@ -918,7 +977,9 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     assert(foundEmitter != particleEmitters.end());
     updater->SetParticleEmitter(particleEmitters[particleEmitterName].get());
 
-    updater->ReserveMemory(numberOfReservedParticles);
+    if(numberOfReservedParticles > 0) {
+        updater->ReserveMemory(numberOfReservedParticles);
+    }
 
     // set field orgins
     for(int direction = 0; direction < 3; ++direction) {
@@ -931,9 +992,20 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     }
     if(srFieldName != "") {
         for(int direction = 0; direction < 3; ++direction) {
-            std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(srFieldName, direction);
-            updater->SetScatteringRateFieldGridOrigin(direction, arrayR0);
+            if(gridElements[srFieldName]->GetElemType() == ElementType::NodeScalar) {
+                std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(srFieldName, 0);
+                updater->SetScatteringRateFieldGridOrigin(direction, arrayR0);
+            } else {
+                std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(srFieldName, direction);
+                updater->SetScatteringRateFieldGridOrigin(direction, arrayR0);
+            }
         }
+    }
+
+    if(constrainingGeometryName != "") {
+        auto foundGeometry = geometries.find(constrainingGeometryName);
+        assert(foundGeometry != geometries.end());
+        updater->SetConstrainingGeometry(geometries[constrainingGeometryName].get(), keepPointsInside);
     }
 
     // set grid spacing

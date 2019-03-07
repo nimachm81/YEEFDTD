@@ -18,8 +18,17 @@ void ChargedParticleEmitter::SetWorkFunction(FPNumber workFunction) {
     fnEmitter.SetWorkFunction(workFunction);
 }
 
+void ChargedParticleEmitter::SetEmissionSubPoints(std::shared_ptr<std::vector<std::vector<std::array<FPNumber, 3>>>>& emissionSubPts) {
+    emissionSubPoints = emissionSubPts;
+}
+
 void ChargedParticleEmitter::SetEmissionPoints(std::vector<std::array<FPNumber, 3>>& emissionPts) {
     emissionPoints = emissionPts;
+
+    std::size_t numOfPoints = emissionPoints.size();
+    emissionNumbers.resize(numOfPoints, 0.0);
+    emissionVelocities.resize(numOfPoints);
+
 }
 
 void ChargedParticleEmitter::SetNormalVectors(std::vector<std::array<FPNumber, 3>>& normalVecs) {
@@ -35,7 +44,7 @@ void ChargedParticleEmitter::SetElectricField(YeeGridData3D* eField) {
 }
 
 void ChargedParticleEmitter::SetElectricFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin) {
-    electricFieldConponentsOrigin[direction] = origin;
+    electricFieldComponentsOrigin[direction] = origin;
 }
 
 void ChargedParticleEmitter::SetGridSpacing(std::array<FPNumber, 3>& dr) {
@@ -51,7 +60,7 @@ FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eField
     fnEmitter.SetEfield(eFieldNormal_SI);
     FPNumber numOfParticles = fnEmitter.GetNumberOfEmittedElectrons(surfaceArea_SI, timeInterval_SI);
 
-    if(numOfParticles > 1000) {
+    if(numOfParticles > 1 || eFieldNormal_SI > 3.0e8) {
         std::cout << "E_SI: " << eFieldNormal_SI << " , dA_SI: " << surfaceArea_SI << " , dt_SI: " << timeInterval_SI << " , n_e : " <<  numOfParticles << std::endl;
     }
 
@@ -64,13 +73,11 @@ const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber 
     FPNumber dt = t - time;
 
     std::size_t numOfPoints = emissionPoints.size();
-    emissionNumbers.resize(numOfPoints);
-    emissionVelocities.resize(numOfPoints);
 
     std::array<std::vector<FPNumber>, 3> e_interp;
     for(int i = 0; i < 3; ++i) {
         UniformGridInterpolator::InterpolateGridOnPoints(electricField->GetNumArray(i),
-                                                         electricFieldConponentsOrigin[i],
+                                                         electricFieldComponentsOrigin[i],
                                                          gridSpacing,
                                                          emissionPoints,
                                                          e_interp[i]);
@@ -107,6 +114,10 @@ const std::vector<std::array<FPNumber, 3>>& ChargedParticleEmitter::GetEmissionV
 
 const std::unordered_map<std::string, FPNumber>& ChargedParticleEmitter::GetParticleParameters() {
     return particleElementaryParameters;
+}
+
+std::vector<std::vector<std::array<FPNumber, 3>>>* ChargedParticleEmitter::GetEmissionSubPoints() {
+    return emissionSubPoints.get();
 }
 
 

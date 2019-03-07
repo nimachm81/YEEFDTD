@@ -19,6 +19,8 @@ class WedgeGeometry : public Geometry{
     void CloseBase(bool close);
 
     bool IsPointInsideOrOn(std::array<FPNumber, 3> point);
+    void ArePointsInsideOrOn(std::vector<std::array<FPNumber, 3>>& points,
+                             std::vector<bool>& areInside);
     void AreGridPointsInsideOrOn(const NumberArray3D<FPNumber>& gridArray,
                                  const std::array<FPNumber, 3>& r0,
                                  const std::array<FPNumber, 3>& dr,
@@ -29,7 +31,9 @@ class WedgeGeometry : public Geometry{
                             FPNumber maxArcLength,      // maximum length of each section
                             std::vector<std::array<FPNumber, 3>>& centerPoints,     // the point at the middle of each patch
                             std::vector<std::array<FPNumber, 3>>& normalVecs,   // normal unit vector pointing outwards
-                            std::vector<FPNumber>& arcLenghts      // patch area
+                            std::vector<FPNumber>& arcLenghts,      // patch area
+                            std::vector<std::vector<std::array<FPNumber, 3>>>* arcSubdivisionPoints = nullptr,    // if defined, provides
+                            std::size_t numSubSubdivisionPoints = 1
                             );
     private:
     int uniformAxis = 0;    // along this axis there is no varation (0:x, 1:y, 2:z)

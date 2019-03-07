@@ -2,16 +2,17 @@
 
 #include "NumberTypes.h"
 #include "PhysicalUnits.hpp"
+#include "UtilityFunctions.hpp"
 
 void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
-    FPNumber fdtd_unit_length = 100.0e-6;
+    FPNumber fdtd_unit_length = 30.0e-6;
     PhysicalUnits units(fdtd_unit_length);
 
     FPNumber y0 = -1.0;
     FPNumber y1 = 1.0;
-    FPNumber z0 = -1.0;
-    FPNumber z1 = 1.0;
-    FPNumber pml_thickness = 0.5;
+    FPNumber z0 = -0.3;
+    FPNumber z1 = 0.3;
+    FPNumber pml_thickness = 0.3;
     FPNumber pml_r_z0 = z1;
     FPNumber pml_r_z1 = z1 + pml_thickness;
     FPNumber pml_l_z0 = z0 - pml_thickness;
@@ -19,7 +20,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber pml_t_y0 = y1;
     FPNumber pml_t_y1 = y1 + pml_thickness;
 
-    std::size_t numOfSamplesPerUnitLength = 400;
+    std::size_t numOfSamplesPerUnitLength = 600;
 
     std::size_t ny = static_cast<std::size_t>(std::real(y1 - y0) * numOfSamplesPerUnitLength);
     std::size_t nz = static_cast<std::size_t>(std::real(z1 - z0) * numOfSamplesPerUnitLength);
@@ -51,7 +52,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber pml_t_cube_sigh_y0 = pml_t_cube_sige_y0;
     FPNumber pml_t_cube_sigh_y1 = pml_t_cube_sige_y1 + pml_t_dy/2.0;
 
-    FPNumber sig_eh = 8.0;
+    FPNumber sig_eh = 15.0;
     FPNumber pml_r_sig_E = sig_eh;
     FPNumber pml_r_sig_H = sig_eh;
     FPNumber pml_l_sig_E = sig_eh;
@@ -65,40 +66,56 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
 
     const FPNumber eps_r = 1.0;     // only to set jm_amplitude... for eps_r != 1 json file should be updated
 
-    FPNumber eFieldMax_SI = 5.0e7;     // V/m
-    FPNumber eFieldMax_FD = units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
+    FPNumber eFieldMax_SI = 2.0e8;     // V/m
+    FPNumber eFieldMax_FD = units.ConvertSIElectricFieldToFDUnits(eFieldMax_SI);
+    std::cout << "eFieldMax_SI: " << eFieldMax_SI << " ,eFieldMax_FD: " << eFieldMax_FD << std::endl;
 
-    FPNumber z_j = -0.5;
+    FPNumber eField_FD_convertto_SI = units.ConvertFDElectricFieldToSIUnits(1.0);
+
+    FPNumber z_j = 0.9*z0 + 0.1*z1;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
+    FPNumber j_mod_freq = units.ConvertSIFrequencyToFDUnits(3.0e12);
+    FPNumber j_mod_phase = M_PI/2.0;
     FPNumber j_center_y = (y0 + y1)/(FPNumber)2.0;
-    FPNumber j_decay_rate_y = 1.5;
-    FPNumber j_center_t = 1.5;
+    FPNumber j_decay_rate_y = 2.0/(y1 - y0);        //1.5
+    FPNumber j_decay_rate_t = j_mod_freq / 0.5;
+    FPNumber j_center_t = 1.0 / j_mod_freq;
     FPNumber jm_center_t = j_center_t + dt/(FPNumber)2.0*std::sqrt(eps_r);
     FPNumber j_amplitude = -eFieldMax_FD;
     FPNumber jm_amplitude = -j_amplitude*std::sqrt(eps_r);
-    FPNumber j_mod_freq = 1.0;
-    FPNumber j_mod_phase = M_PI/2.0;
+
+    std::cout << "j_mod_freq : " << j_mod_freq << std::endl;
+    std::cout << "j_center_t : " << j_center_t << " , nt_center : " << (j_center_t/dt) << std::endl;
 
 
-    FPNumber wedgeAngle = 4.0/180.0*M_PI;
-    FPNumber wedgeTipRadius = 0.01;
+    FPNumber wedgeAngle = 0.1/180.0*M_PI;
+    FPNumber wedgeTipRadius = units.ConvertSILengthToFDUnits(300.0e-9);
     FPNumber wedgeHeight = 1.0;
     std::array<FPNumber, 3> wedgeTipPosition{0.0, 0.0, 0.0};
     FPNumber wedgeTopHeight = 2.0*wedgeTipRadius;  // only this part of the wedge is discretized for the emitter
 
-    FPNumber maxSurfElemSize = 0.00001;
+    FPNumber maxSurfElemSize = 0.01*wedgeTipRadius;
+    std::cout << "wedgeTipRadius: " << wedgeTipRadius << " , maxSurfElemSize: " << maxSurfElemSize << std::endl;
 
-    FPNumber q = -units.GetElectronChargeInFDUnits();
-    FPNumber m = units.GetElectronMassInFDUnits();
+    FPNumber electronCharge = -units.GetElectronChargeInFDUnits();
+    FPNumber electronMass = units.GetElectronMassInFDUnits();
+    FPNumber holeCharge = -electronCharge;
 
-    std::cout << "q: " << q << " , m: " << m << std::endl;
+    std::cout << "electronCharge: " << electronCharge << " , electronMass: " << electronMass << std::endl;
 
-    FPNumber plasmaFrequency = 100.0;
-    FPNumber gamma = 5.0;   // scattering rate
+    FPNumber plasmaFrequency = units.ConvertSIFrequencyToFDUnits(300.0e12);
+    FPNumber gamma = units.ConvertSIFrequencyToFDUnits(5.0e12);;   // scattering rate
+    std::cout << "plasmaFrequency: " << plasmaFrequency << " , gamma: " << gamma << std::endl;
 
 
-    std::size_t data_save_rate = 50;
-    std::size_t numOfTimeSamples = 4401;
+    FPNumber t_max = units.ConvertSITimeToFDUnits(1.0e-12);
+    FPNumber dt_data_save = units.ConvertSITimeToFDUnits(0.01e-12);
+
+    std::size_t data_save_rate = (std::size_t)(dt_data_save/dt);
+    std::size_t numOfTimeSamples = (std::size_t)(t_max/dt);
+
+    std::cout << "data_save_rate: " << data_save_rate << std::endl;
+    std::cout << "numOfTimeSamples: " << numOfTimeSamples << std::endl;
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_y0_\"", boost::lexical_cast<std::string>(std::real(y0))},
@@ -115,12 +132,20 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
             {"\"_dz_\"", boost::lexical_cast<std::string>(std::real(dz))},
             {"\"_dt_\"", boost::lexical_cast<std::string>(std::real(dt))},
             {"\"_m_dt_\"", boost::lexical_cast<std::string>(std::real(-dt))},
+            {"\"_dt_2_\"", boost::lexical_cast<std::string>(std::real(dt/2.0))},
+            {"\"_m_dt_2_\"", boost::lexical_cast<std::string>(std::real(-dt/2.0))},
             {"\"_dt_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dy))},
             {"\"_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dy))},
+            {"\"_m_dtdz_dy_\"", boost::lexical_cast<std::string>(std::real(-dt*dz/dy))},
+            {"\"_dt_dy_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dy/(dz)))},
+            {"\"_m_dt_dy_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dy/(dz)))},
             {"\"_1_dy_\"", boost::lexical_cast<std::string>(std::real(1.0/dy))},
             {"\"_m_1_dy_\"", boost::lexical_cast<std::string>(std::real(-1.0/dy))},
             {"\"_dt_dz_\"", boost::lexical_cast<std::string>(std::real(dt/dz))},
             {"\"_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-dt/dz))},
+            {"\"_m_dtdy_dz_\"", boost::lexical_cast<std::string>(std::real(-dt*dy/dz))},
+            {"\"_dt_dz_dy_\"", boost::lexical_cast<std::string>(std::real(dt/dz/(dy)))},
+            {"\"_m_dt_dz_dy_\"", boost::lexical_cast<std::string>(std::real(-dt/dz/(dy)))},
             {"\"_1_dz_\"", boost::lexical_cast<std::string>(std::real(1.0/dz))},
             {"\"_m_1_dz_\"", boost::lexical_cast<std::string>(std::real(-1.0/dz))},
             {"\"_gr_z0_\"", boost::lexical_cast<std::string>(std::real(pml_r_z0))},
@@ -171,14 +196,17 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
             {"\"_gt_m_1_dy_\"", boost::lexical_cast<std::string>(std::real(-1.0/pml_t_dy))},
             {"\"_gt_sig_e_\"", boost::lexical_cast<std::string>(std::real(pml_t_sig_E))},
             {"\"_gt_sig_h_\"", boost::lexical_cast<std::string>(std::real(pml_t_sig_H))},
-            {"\"_q_\"", boost::lexical_cast<std::string>(std::real(q))},
-            {"\"_m_\"", boost::lexical_cast<std::string>(std::real(m))},
+            {"\"_echarge_\"", boost::lexical_cast<std::string>(std::real(electronCharge))},
+            {"\"_hcharge_\"", boost::lexical_cast<std::string>(std::real(holeCharge))},
+            {"\"_mass_\"", boost::lexical_cast<std::string>(std::real(electronMass))},
+            {"\"_echarge_mass_\"", boost::lexical_cast<std::string>(std::real(electronCharge/electronMass))},
             {"\"_surf_dl_\"", boost::lexical_cast<std::string>(std::real(maxSurfElemSize))},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
             {"\"_indzJ_m1_\"", boost::lexical_cast<std::string>(indzJ - 1)},
             {"\"_J_center_y_\"", boost::lexical_cast<std::string>(std::real(j_center_y))},
             {"\"_J_decayrate_y_\"", boost::lexical_cast<std::string>(std::real(j_decay_rate_y))},
+            {"\"_J_decayrate_t_\"", boost::lexical_cast<std::string>(std::real(j_decay_rate_t))},
             {"\"_J_center_t_\"", boost::lexical_cast<std::string>(std::real(j_center_t))},
             {"\"_Jm_center_t_\"", boost::lexical_cast<std::string>(std::real(jm_center_t))},
             {"\"_J_amp_\"", boost::lexical_cast<std::string>(std::real(j_amplitude))},
@@ -197,11 +225,28 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
             {"\"_save_rate_\"", boost::lexical_cast<std::string>(data_save_rate)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
-    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_GridCollection.json",
+    std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_scalarPlasma_GridCollection.json";
+    //std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_vectorPlasma_GridCollection.json";
+
+    ParameterExtractor::ReplaceStringsInFile(fileName,
                 "instructions/processed/MaxwellYee2D_Metal_Wedge_electron_emitter_GridCollection_processed.json", str_replacewith);
 
     ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee2D_Metal_Wedge_electron_emitter_GridCollection_processed.json");
     fileTranslator.Translate();
+
+
+    std::string parametersFileName =
+            std::string("data/2D/") + "params" + ".param";
+
+    std::ofstream paramFileOut(parametersFileName.c_str(), std::ios::out | std::ios::binary);
+    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDTimeToSIUnits(dt), "dt");   // 0
+    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dy), "dy");   // 1
+    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dz), "dz");   // 2
+    WriteParamToFile<FPNumber>(paramFileOut, fdtd_unit_length, "fdtd_unit_length");
+    WriteParamToFile<FPNumber>(paramFileOut, eField_FD_convertto_SI, "eField_FD_convertto_SI");
+    WriteParamToFile<FPNumber>(paramFileOut, data_save_rate, "data_save_rate");
+    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDFrequencyToSIUnits(1.0), "frequency_conversion_factor");   // 0
+
 }
 
 

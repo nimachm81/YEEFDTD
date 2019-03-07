@@ -1,5 +1,6 @@
 
 {
+"comment":"equations should be updated so that the moving charge current is treated as a distribution. More specifically in Ez_me_Jz, _m_dt_dy_eps_ should be multiplied by dz.",
 "simulationType":"singleGrid",
 "simulationParameters":{
     "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_nt_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_dt_dy_eps_", "_dt_dz_eps_", "_m_dt_dy_eps_", "_m_dt_dz_eps_", "_q_", "_m_", "_p0_t0_",  "_p0_n_", "_p0_r0_y_", "_p0_r0_z_", "_p0_v0_y_", "_p0_v0_z_"],

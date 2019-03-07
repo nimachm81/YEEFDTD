@@ -21,6 +21,9 @@ enum class FDInstructionCode {
     ,A_equal_sum_b_C    // Sets array A as:     A = Sum{b_n*C_n}
                 // same parameters as A_plusequal_sum_b_C
 
+    ,A_multequal_sum_b_C    // Sets array A as:     A *= Sum{b_n*C_n}
+                // same parameters as A_plusequal_sum_b_C
+
     ,A_plusequal_sum_bB_C    // Update array A as:       A += Sum{b_n*B_n*C_n}
                 // same parameters as in A_plusequal_sum_b_C except B is a grid array with the same shape as A and C
 

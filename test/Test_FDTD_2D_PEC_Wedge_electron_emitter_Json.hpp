@@ -21,7 +21,7 @@ void test_run_fdtd_2d_pec_wedge_electron_emitter_from_json() {
     const FPNumber eps_r = 1.0;     // json file should be updated for eps_r != 1
 
     FPNumber eFieldMax_SI = 3.0e7;     // V/m
-    FPNumber eFieldMax_FD = units.ConvertFDElectricFieldToSIUnits(eFieldMax_SI);
+    FPNumber eFieldMax_FD = units.ConvertSIElectricFieldToFDUnits(eFieldMax_SI);
 
     FPNumber z_j = -1.5;
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));

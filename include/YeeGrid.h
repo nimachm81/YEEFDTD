@@ -166,6 +166,14 @@ class YeeGrid3D {
             FPNumber valueInside,
             FPNumber valueOutside
             );
+    void AddDataTruncationGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            FPNumber minValue,
+            FPNumber maxValue,
+            bool truncateMin,
+            bool truncateMax
+            );
 
     void AddWedgeGeometry(const std::string name,
             const FPNumber wedgeAngle,
@@ -191,7 +199,8 @@ class YeeGrid3D {
             int dimensions,
             FPNumber maxElemSize,
             const std::string eFieldName,
-            FPNumber unitLength
+            FPNumber unitLength,
+            std::size_t numOfSubPoints = 0
             );
 
     void AddChargedParticlesTracer(const std::string name,
@@ -199,7 +208,9 @@ class YeeGrid3D {
             const std::string bFieldName,
             const std::string srFieldName,
             const std::string particleEmitterName,
-            const std::size_t numberOfReservedParticles = 1000
+            const std::size_t numberOfReservedParticles,
+            const std::string constrainingGeometryName,
+            bool keepPointsInside
             );
     void AddDiscretePointsGridArrayManipulator(const std::string name,
             const std::string gridDataName,

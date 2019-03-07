@@ -1,5 +1,5 @@
-#ifndef FDTD_WEDGEGRIDARRAYMANIPULATOR_H_
-#define FDTD_WEDGEGRIDARRAYMANIPULATOR_H_
+#ifndef FDTD_BIVALUEGRIDARRAYMANIPULATOR_H_
+#define FDTD_BIVALUEGRIDARRAYMANIPULATOR_H_
 
 #include <cassert>
 #include <cmath>
@@ -29,4 +29,4 @@ class BivalueGridArrayManipulator : public GridArrayManipulator {
     NumberArray3D<std::int8_t> conditionArray;     // 0: array point inside 1: array point outside
 };
 
-#endif // FDTD_WEDGEGRIDARRAYMANIPULATOR_H_
+#endif // FDTD_BIVALUEGRIDARRAYMANIPULATOR_H_
