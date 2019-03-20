@@ -21,6 +21,11 @@
 #include "WedgeGeometry.h"
 #include "ChargedParticleEmitter.h"
 #include "ManualChargedParticleEmitter.h"
+#include "GaussianPlaneWaveGridArrayManipulator.h"
+#include "RectPlaneWaveGridArrayManipulator.h"
+#include "GaussianPlaneWaveVectorField.h"
+#include "RectPlaneWaveVectorField.h"
+
 
 YeeGrid3D::~YeeGrid3D() {
     CloseGridViewFiles();
@@ -798,6 +803,78 @@ void YeeGrid3D::AddBivalueGridArrayManipulator(const std::string name,
     gridArrayManipulators[name] = modifier;
 }
 
+void YeeGrid3D::AddGaussianPlaneWaveGridArrayManipulator(const std::string name,
+        const std::string gridDataName,
+        int direction,
+        std::array<FPNumber, 3> propagationDirection,
+        FPNumber velocity,
+        FPNumber amplitude,
+        FPNumber t_center,
+        FPNumber t_decay_rate,
+        FPNumber t_modulationFrequecy,
+        FPNumber t_modulatioPhase,
+        FPNumber timeOffsetFraction
+        ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<GaussianPlaneWaveGridArrayManipulator> modifier(new GaussianPlaneWaveGridArrayManipulator);
+    modifier->SetPropagationDirection(propagationDirection);
+    modifier->SetPropagationVelocity(velocity);
+    modifier->SetAmplitude(amplitude);
+    modifier->SetCenterTime(t_center);
+    modifier->SetTimeDecayRate(t_decay_rate);
+    modifier->SetModulationFrequency(t_modulationFrequecy);
+    modifier->SetModulationPhase(t_modulatioPhase);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    modifier->SetTimeOffsetFraction(timeOffsetFraction);
+
+        // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
+void YeeGrid3D::AddRectPlaneWaveGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            FPNumber amplitude,
+            FPNumber t_center,
+            FPNumber t_rect_width,
+            FPNumber t_edge_width,
+            FPNumber t_modulationFrequecy,
+            FPNumber t_modulatioPhase,
+            FPNumber timeOffsetFraction
+            ) {
+    auto found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<RectPlaneWaveGridArrayManipulator> modifier(new RectPlaneWaveGridArrayManipulator);
+    modifier->SetPropagationDirection(propagationDirection);
+    modifier->SetPropagationVelocity(velocity);
+    modifier->SetAmplitude(amplitude);
+    modifier->SetCenterTime(t_center);
+    modifier->SetRectWidth(t_rect_width);
+    modifier->SetRectEdgeWidth(t_edge_width);
+    modifier->SetModulationFrequency(t_modulationFrequecy);
+    modifier->SetModulationPhase(t_modulatioPhase);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    modifier->SetTimeOffsetFraction(timeOffsetFraction);
+
+        // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
 void YeeGrid3D::AddDataTruncationGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
@@ -848,6 +925,60 @@ void YeeGrid3D::AddWedgeGeometry(const std::string name,
     geometries[name] = geometry;
 }
 
+void YeeGrid3D::AddGaussianPlaneWaveVectorField(const std::string name,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            std::array<FPNumber, 3> amplitude,
+            FPNumber t_center,
+            FPNumber t_decayRate,
+            FPNumber t_modulationFrequency,
+            FPNumber t_modulationPhase
+            ) {
+    auto found = vectorFields.find(name);
+    assert(found == vectorFields.end()); // make sure name does not already exist.
+
+    std::shared_ptr<GaussianPlaneWaveVectorField> field(new GaussianPlaneWaveVectorField);
+
+    field->SetPropagationVelocity(velocity);
+    field->SetPropagationDirection(propagationDirection);
+    field->SetAmplitude(amplitude);
+    field->SetCenterTime(t_center);
+    field->SetTimeDecayRate(t_decayRate);
+    field->SetModulationFrequency(t_modulationFrequency);
+    field->SetModulationPhase(t_modulationPhase);
+
+
+    vectorFields[name] = field;
+}
+
+void YeeGrid3D::AddRectPlaneWaveVectorField(const std::string name,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            std::array<FPNumber, 3> amplitude,
+            FPNumber t_center,
+            FPNumber t_rectWidth,
+            FPNumber t_edgeWidth,
+            FPNumber t_modulationFrequency,
+            FPNumber t_modulationPhase
+            ) {
+    auto found = vectorFields.find(name);
+    assert(found == vectorFields.end()); // make sure name does not already exist.
+
+    std::shared_ptr<RectPlaneWaveVectorField> field(new RectPlaneWaveVectorField);
+
+    field->SetPropagationVelocity(velocity);
+    field->SetPropagationDirection(propagationDirection);
+    field->SetAmplitude(amplitude);
+    field->SetCenterTime(t_center);
+    field->SetRectWidth(t_rectWidth);
+    field->SetRectEdgeWidth(t_edgeWidth);
+    field->SetModulationFrequency(t_modulationFrequency);
+    field->SetModulationPhase(t_modulationPhase);
+
+
+    vectorFields[name] = field;
+}
+
 void YeeGrid3D::AddManualChargedParticleEmitter(const std::string name,
         FPNumber particleCharge,
         FPNumber particleMasse,
@@ -878,6 +1009,7 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
             int dimensions,
             FPNumber maxElemSize,
             const std::string eFieldName,
+            const std::string analyticEFieldName,
             FPNumber unitLength,
             std::size_t numOfSubPoints
             ) {
@@ -941,15 +1073,25 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
     }
     emitter->SetGridSpacing(dr);
 
+    if(analyticEFieldName != "") {
+        auto foundAnalEField = vectorFields.find(analyticEFieldName);
+        assert(foundAnalEField != vectorFields.end());
+
+        emitter->SetAnalyticElectricField(vectorFields[analyticEFieldName].get());
+    }
+
     particleEmitters[name] = emitter;
 }
 
 void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
+            const std::string analyticEFieldName,
+            const std::string analyticBFieldName,
             const std::string srFieldName,
             const std::string particleEmitterName,
             const std::size_t numberOfReservedParticles,
+            const std::size_t bunchSize,
             const std::string constrainingGeometryName,
             bool keepPointsInside
             ) {
@@ -966,6 +1108,19 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     assert(foundBField != gridElements.end());
     updater->SetMagneticFieldGrid(gridElements[bFieldName].get());
 
+    if(analyticEFieldName != "") {
+        auto foundAnalEField = vectorFields.find(analyticEFieldName);
+        assert(foundAnalEField != vectorFields.end());
+        updater->SetAnalyticElectricField(vectorFields[analyticEFieldName].get());
+    }
+
+    if(analyticBFieldName != "") {
+        auto foundAnalBField = vectorFields.find(analyticBFieldName);
+        assert(foundAnalBField != vectorFields.end());
+        updater->SetAnalyticMagneticField(vectorFields[analyticBFieldName].get());
+    }
+
+
     if(srFieldName != "") {
         auto foundSRField = gridElements.find(srFieldName);
         assert(foundSRField != gridElements.end());
@@ -979,6 +1134,10 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
 
     if(numberOfReservedParticles > 0) {
         updater->ReserveMemory(numberOfReservedParticles);
+    }
+
+    if(bunchSize > 0 ) {
+        updater->SetMaxChargedPartcileBunchSize(bunchSize);
     }
 
     // set field orgins

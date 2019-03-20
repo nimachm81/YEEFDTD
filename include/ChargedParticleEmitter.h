@@ -8,6 +8,7 @@
 #include "PhysicalUnits.hpp"
 #include "FowlerNordheimEmission.hpp"
 #include "ParticleEmitter.h"
+#include "VectorField.h"
 
 class ChargedParticleEmitter : public ParticleEmitter {
     public:
@@ -25,6 +26,8 @@ class ChargedParticleEmitter : public ParticleEmitter {
     void SetElectricField(YeeGridData3D* eField);
     void SetElectricFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
     void SetGridSpacing(std::array<FPNumber, 3>& dr);
+
+    void SetAnalyticElectricField(VectorField* eField);
 
     FPNumber GetFowlerNordheimEmissionNumber(FPNumber eFieldNormal, // in FDTD units
                                          FPNumber surfaceArea,  // in FDTD units
@@ -59,10 +62,13 @@ class ChargedParticleEmitter : public ParticleEmitter {
     //FPNumber temperature;
     PhysicalUnits unitConverter;      // used to convert between FDTD units and SI units
     FowlerNordheimEmission fnEmitter;       // used to calculate Fowler-Nordheim field emission
-    YeeGridData3D* electricField;       // E
+    YeeGridData3D* electricField = nullptr;       // E
     std::array<std::array<FPNumber, 3>, 3> electricFieldComponentsOrigin;
     std::array<FPNumber, 3> gridSpacing;
 
+    FPNumber fermiVelocity = 0.00003;
+
+    VectorField* analyticElectricField = nullptr;
 };
 
 #endif // FDTD_CHARGEDPARTICLEEMITTER_H_

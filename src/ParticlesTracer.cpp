@@ -85,7 +85,7 @@ void ParticlesTracer::UpdateParticlesPositions(const FPNumber dt, bool applyCons
         r[1] += v[1]*dt;
         r[2] += v[2]*dt;
     }
-    if(applyConstraints) {
+    if(applyConstraints && constrainingGeometry != nullptr) {
         UpdateParticlesConstraintStatus();
         for(std::size_t i = 0; i < positions.size(); ++i) {
             if(arePointsInside[i] != keepInsideGeometry) {

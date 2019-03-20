@@ -51,6 +51,10 @@ void ChargedParticleEmitter::SetGridSpacing(std::array<FPNumber, 3>& dr) {
     gridSpacing = dr;
 }
 
+void ChargedParticleEmitter::SetAnalyticElectricField(VectorField* eField) {
+    analyticElectricField = eField;
+}
+
 FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eFieldNormal, FPNumber surfaceArea,
                                                              FPNumber timeInterval) {
     FPNumber eFieldNormal_SI = unitConverter.ConvertFDElectricFieldToSIUnits(eFieldNormal);
@@ -60,7 +64,7 @@ FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eField
     fnEmitter.SetEfield(eFieldNormal_SI);
     FPNumber numOfParticles = fnEmitter.GetNumberOfEmittedElectrons(surfaceArea_SI, timeInterval_SI);
 
-    if(numOfParticles > 1 || eFieldNormal_SI > 3.0e8) {
+    if(numOfParticles > 100) {
         std::cout << "E_SI: " << eFieldNormal_SI << " , dA_SI: " << surfaceArea_SI << " , dt_SI: " << timeInterval_SI << " , n_e : " <<  numOfParticles << std::endl;
     }
 
@@ -70,6 +74,7 @@ FPNumber ChargedParticleEmitter::GetFowlerNordheimEmissionNumber(FPNumber eField
 
 const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber t) {
     assert(t > time);
+    assert(electricField != nullptr);
     FPNumber dt = t - time;
 
     std::size_t numOfPoints = emissionPoints.size();
@@ -81,6 +86,27 @@ const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber 
                                                          gridSpacing,
                                                          emissionPoints,
                                                          e_interp[i]);
+    }
+
+    if(analyticElectricField != nullptr) {
+        std::vector<std::array<FPNumber, 3>> e_analytic;
+
+        analyticElectricField->GetFieldValuesAtPoints(t, emissionPoints, e_analytic);
+
+        std::vector<FPNumber>& ex_interp = e_interp[0];
+        std::vector<FPNumber>& ey_interp = e_interp[1];
+        std::vector<FPNumber>& ez_interp = e_interp[2];
+        for(std::size_t i = 0; i < numOfPoints; ++i) {
+            std::array<FPNumber, 3>& e_analytic_i = e_analytic[i];
+            ex_interp[i] += e_analytic_i[0];
+            ey_interp[i] += e_analytic_i[1];
+            ez_interp[i] += e_analytic_i[2];
+        }
+    }
+
+    FPNumber particleChargeSign = -1.0;
+    if(particleElementaryParameters["charge"] > 0.0) {
+        particleChargeSign = 1.0;
     }
 
     const std::vector<FPNumber>& ex_interp = e_interp[0];
@@ -98,7 +124,9 @@ const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber 
         }
         //std::cout << "em num:" << emissionNumbers[i] << ", " ;
 
-        emissionVelocities[i] = std::array<FPNumber, 3>{0.0, 0.0, 0.0};
+        emissionVelocities[i] = std::array<FPNumber, 3>{v_norm[0]*fermiVelocity*(-particleChargeSign),
+                                                        v_norm[1]*fermiVelocity*(-particleChargeSign),
+                                                        v_norm[2]*fermiVelocity*(-particleChargeSign)};
      }
 
     return emissionNumbers;

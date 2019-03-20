@@ -35,6 +35,11 @@ class WedgeGeometry : public Geometry{
                             std::vector<std::vector<std::array<FPNumber, 3>>>* arcSubdivisionPoints = nullptr,    // if defined, provides
                             std::size_t numSubSubdivisionPoints = 1
                             );
+    void GetBoundingBox2D(FPNumber x_cut,
+                          std::array<FPNumber, 3>& lowerLeftCorner,
+                          std::array<FPNumber, 3>& upperRightCorner
+                          );
+
     private:
     int uniformAxis = 0;    // along this axis there is no varation (0:x, 1:y, 2:z)
     int wedgeDirection = 1;      // the wedge is pointing along this direction (0:x, 1:y, 2:z)

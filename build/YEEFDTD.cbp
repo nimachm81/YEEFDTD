@@ -8,12 +8,8 @@
 		<Option virtualFolders="CMake Files/;" />
 		<Build>
 			<Target title="all">
-				<Option output="YEEFDTD" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="" />
-				<Option object_output="/home/nima/Documents/GitProjects/YEEFDTD/build/.objs" />
-				<Option type="1" />
+				<Option type="4" />
 				<Option compiler="gcc" />
-				<Option use_console_runner="0" />
 				<MakeCommands>
 					<Build command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 all' />
 					<CompileFile command='/usr/bin/make -f &quot;/home/nima/Documents/GitProjects/YEEFDTD/build/Makefile&quot;  VERBOSE=1 &quot;$file&quot;' />
@@ -109,6 +105,8 @@
 		<Unit filename="../include/FDInstructionFactory.h" />
 		<Unit filename="../include/FowlerNordheimEmission.hpp" />
 		<Unit filename="../include/GaussianGridArrayManipulator.h" />
+		<Unit filename="../include/GaussianPlaneWaveGridArrayManipulator.h" />
+		<Unit filename="../include/GaussianPlaneWaveVectorField.h" />
 		<Unit filename="../include/GaussianSpaceTimeGridArrayManipulator.h" />
 		<Unit filename="../include/Geometry.h" />
 		<Unit filename="../include/GridArrayManipulator.h" />
@@ -129,6 +127,10 @@
 		<Unit filename="../include/PeriodicGridArrayManipulator.h" />
 		<Unit filename="../include/PhysicalConstants.hpp" />
 		<Unit filename="../include/PhysicalUnits.hpp" />
+		<Unit filename="../include/PlaneWaveGridArrayManipulator.h" />
+		<Unit filename="../include/PlaneWaveVectorField.h" />
+		<Unit filename="../include/RectPlaneWaveGridArrayManipulator.h" />
+		<Unit filename="../include/RectPlaneWaveVectorField.h" />
 		<Unit filename="../include/SingleGridParameterExtractor.h" />
 		<Unit filename="../include/SpaceTimeCubeGridArrayManipulator.h" />
 		<Unit filename="../include/SpatialCubeGridArrayManipulator.h" />
@@ -136,6 +138,7 @@
 		<Unit filename="../include/UniformGridInterpolator.hpp" />
 		<Unit filename="../include/UtilityFunctions.hpp" />
 		<Unit filename="../include/Vector.hpp" />
+		<Unit filename="../include/VectorField.h" />
 		<Unit filename="../include/WedgeGeometry.h" />
 		<Unit filename="../include/YeeGrid.h" />
 		<Unit filename="../include/YeeGridCollection.h" />
@@ -161,6 +164,12 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GaussianGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/GaussianPlaneWaveGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/GaussianPlaneWaveVectorField.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/GaussianSpaceTimeGridArrayManipulator.cpp">
@@ -191,6 +200,18 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/PeriodicGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/PlaneWaveGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/PlaneWaveVectorField.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/RectPlaneWaveGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/RectPlaneWaveVectorField.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/SingleGridParameterExtractor.cpp">
@@ -247,6 +268,8 @@
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_MPI_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_GridCollection_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_GridCollection_Json.hpp" />
+		<Unit filename="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_partialGrid_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_MonopoleCharge_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_MovingCharge_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_PBC_SquareLattice_GaussianPlasma_Json.hpp" />

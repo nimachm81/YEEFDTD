@@ -23,6 +23,11 @@ void ChargedParticlesTracer::AddParticle(const FPNumber charge,
     currentComponents[2].push_back(charge*velocity[2]);
 }
 
+void ChargedParticlesTracer::SetMaxChargedPartcileBunchSize(std::size_t bunchSize) {
+    maxChargedParticleBunchSize = bunchSize;
+}
+
+
 void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t) {
     if(particleEmitter == nullptr) {
         return;
@@ -44,6 +49,8 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t)
         chargeParticleEmissionNumberTracker.resize(numEmissions, 0.0);
     }
 
+    std::size_t n_particle_previous = charges.size();
+
     for(std::size_t i = 0; i < numEmissions; ++i) {
         FPNumber numParticle_i = numOfEmittedParticles[i];
         const std::array<FPNumber, 3>& velocity_i = emissionVelocities[i];
@@ -54,8 +61,9 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t)
             numParticle_i = chargeParticleEmissionNumberTracker[i];
         }
 
-        if(numParticle_i > 1.0) {
-            if(emissionSubPoints != nullptr && numParticle_i > 2*maxChargedParticleBunchSize) {
+        if(numParticle_i >= 1.0) {
+            if(emissionSubPoints != nullptr && numParticle_i > 2*maxChargedParticleBunchSize
+                                            && maxChargedParticleBunchSize >= 1) {
                 // bunch particles
                 auto& emissionSubPoints_i = emissionSubPoints->operator[](i);
                 std::size_t numOfSubPts = emissionSubPoints_i.size();
@@ -72,11 +80,15 @@ void ChargedParticlesTracer::AddParticlesEmittedByTheParticleEmitter(FPNumber t)
                 }
                 chargeParticleEmissionNumberTracker[i] = 0.0;
 
-            } else if(numParticle_i > maxChargedParticleBunchSize) {
+            } else if(numParticle_i >= maxChargedParticleBunchSize || maxChargedParticleBunchSize < 1.0) {
                 AddParticle(charge*numParticle_i, mass*numParticle_i, emissionPoints[i], velocity_i, force);
                 chargeParticleEmissionNumberTracker[i] = 0.0;
             }
         }
+    }
+
+    if(charges.size() % 10 == 1 && charges.size() > n_particle_previous) {
+        std::cout << "num of particles : " << charges.size() << " , bunch size: " << maxChargedParticleBunchSize << std::endl;
     }
 }
 
@@ -96,19 +108,35 @@ void ChargedParticlesTracer::SetMagneticFieldGridOrigin(int direction, std::arra
     magneticFieldConponentsOrigin[direction] = origin;
 }
 
+void ChargedParticlesTracer::SetAnalyticElectricField(VectorField* eField) {
+    analyticElectricField = eField;
+}
+
+void ChargedParticlesTracer::SetAnalyticMagneticField(VectorField* bField) {
+    analyticMagneticField = bField;
+}
+
 void ChargedParticlesTracer::UpdateElectricForce(int direction) {
-    if(electricField == nullptr) {
-        return;
-    }
 
     const std::array<FPNumber, 3>& r0 = electricFieldConponentsOrigin[direction];
     const std::array<FPNumber, 3>& dr = gridSpacing;
 
     const std::size_t numOfParticles = charges.size();
-    const NumberArray3D<FPNumber>& e_direction = electricField->GetNumArray(direction);
 
-    std::vector<FPNumber> e_interpolated(numOfParticles);
-    UniformGridInterpolator::InterpolateGridOnPoints(e_direction, r0, dr, positions, e_interpolated);
+    std::vector<FPNumber> e_interpolated(numOfParticles, 0.0);
+    if(electricField != nullptr) {
+        const NumberArray3D<FPNumber>& e_direction = electricField->GetNumArray(direction);
+        UniformGridInterpolator::InterpolateGridOnPoints(e_direction, r0, dr, positions, e_interpolated);
+    }
+    if(analyticElectricField != nullptr) {
+        std::vector<std::array<FPNumber, 3>> e_analytic;
+
+        analyticElectricField->GetFieldValuesAtPoints(time, positions, e_analytic);
+
+        for(std::size_t i = 0; i < numOfParticles; ++i) {
+            e_interpolated[i] += e_analytic[i][direction];
+        }
+    }
 
     for(std::size_t i = 0; i < numOfParticles; ++i) {
           forces[i][direction] += charges[i]*e_interpolated[i];
@@ -117,19 +145,26 @@ void ChargedParticlesTracer::UpdateElectricForce(int direction) {
 
 
 void ChargedParticlesTracer::UpdateMagneticForce(int direction) {
-    if(magneticField == nullptr) {
-        return;
-    }
 
     const std::array<FPNumber, 3>& r0 = magneticFieldConponentsOrigin[direction];
     const std::array<FPNumber, 3>& dr = gridSpacing;
 
     std::size_t numOfParticles = charges.size();
-    const NumberArray3D<FPNumber>& b_direction = magneticField->GetNumArray(direction);
 
-    std::vector<FPNumber> b_interpolated(numOfParticles);
-    UniformGridInterpolator::InterpolateGridOnPoints(b_direction, r0, dr, positions, b_interpolated);
+    std::vector<FPNumber> b_interpolated(numOfParticles, 0.0);
+    if(magneticField != nullptr) {
+        const NumberArray3D<FPNumber>& b_direction = magneticField->GetNumArray(direction);
+        UniformGridInterpolator::InterpolateGridOnPoints(b_direction, r0, dr, positions, b_interpolated);
+    }
+    if(analyticMagneticField != nullptr) {
+        std::vector<std::array<FPNumber, 3>> b_analytic;
 
+        analyticMagneticField->GetFieldValuesAtPoints(time, positions, b_analytic);
+
+        for(std::size_t i = 0; i < numOfParticles; ++i) {
+            b_interpolated[i] += b_analytic[i][direction];
+        }
+    }
 
     for(std::size_t i = 0; i < numOfParticles; ++i) {
         FPNumber bInterp = b_interpolated[i];

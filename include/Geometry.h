@@ -28,6 +28,11 @@ class Geometry {
                             std::size_t numSubSubdivisionPoints = 1     // this many equaly spaced points on each subsection
                             ) = 0;
 
+
+    virtual void GetBoundingBox2D(FPNumber x_cut,
+                                  std::array<FPNumber, 3>& lowerLeftCorner,
+                                  std::array<FPNumber, 3>& upperRightCorner
+                                  ) = 0;
 };
 
 #endif // FDTD_GEOMETRY_H_

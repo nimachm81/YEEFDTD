@@ -3,7 +3,7 @@
 "comment":"equations should be updated so that the moving charge current is treated as a distribution. More specifically in Ez_me_Jz, _m_dt_dy_eps_ should be multiplied by dz.",
 "simulationType":"singleGrid",
 "simulationParameters":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_nt_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_dt_dy_eps_", "_dt_dz_eps_", "_m_dt_dy_eps_", "_m_dt_dz_eps_", "_q_", "_m_", "_p0_t0_",  "_p0_n_", "_p0_r0_y_", "_p0_r0_z_", "_p0_v0_y_", "_p0_v0_z_"],
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_nt_", "_dt_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_dt_dy_eps_", "_dt_dz_eps_", "_m_dt_dy_eps_", "_m_dt_dz_eps_", "_q_", "_m_", "_p0_t0_",  "_p0_n_", "_p0_r0_y_", "_p0_r0_z_", "_p0_v0_y_", "_p0_v0_z_", "_save_rate_", "_Ey_dc_", "_Ez_dc_", "_Bx_dc_"],
     "dimensions":{
         "r0":[0.0, "_y0_", "_z0_"],
         "r1":[1.0, "_y1_", "_z1_"],
@@ -12,6 +12,34 @@
     },
     "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"J", "type":"EdgeE"}],
     "partialGridArrays":[],
+    "analyticVectorFields":[
+        {
+        "type":"GaussianPlaneWaveVectorField",
+        "parameters":{
+            "name":"analyticEField",
+            "propagationDirection":[0.0, 0.0, 1.0],
+            "propagationVelocity":1.0,
+            "amplitude":[0.0, "_Ey_dc_", "_Ez_dc_"],
+            "centerTime":0.0,
+            "decayRate":0.0,
+            "frequency":0.0,
+            "phase":0.0
+            }
+        },
+        {
+        "type":"GaussianPlaneWaveVectorField",
+        "parameters":{
+            "name":"analyticBField",
+            "propagationDirection":[0.0, 0.0, 1.0],
+            "propagationVelocity":1.0,
+            "amplitude":["_Bx_dc_", 0.0, 0.0],
+            "centerTime":0.0,
+            "decayRate":0.0,
+            "frequency":0.0,
+            "phase":0.0
+            }
+        }
+    ],
     "particleEmitters":[
         {
         "type":"ManualChargedParticleEmitter",
@@ -30,7 +58,10 @@
             "name":"movingCharge",
             "eField":"E",
             "bField":"H",
-            "particleEmitter":"manualEmitter"
+            "eFieldAnalytic":"analyticEField",
+            "bFieldAnalytic":"analyticBField",
+            "particleEmitter":"manualEmitter",
+            "numberOfReservedParticles":10
             }
         }
     ],
@@ -149,7 +180,7 @@
             "name":"2D/E-y",
             "array":"E",
             "direction":"y",
-            "saveRate":1
+            "saveRate":"_save_rate_"
             }
         },
         {
@@ -158,7 +189,7 @@
             "name":"2D/E-z",
             "array":"E",
             "direction":"z",
-            "saveRate":1
+            "saveRate":"_save_rate_"
             }
         },
         {
@@ -167,7 +198,7 @@
             "name":"2D/H-x",
             "array":"H",
             "direction":"x",
-            "saveRate":1
+            "saveRate":"_save_rate_"
             }
         },
         {
@@ -176,7 +207,7 @@
             "name":"2D/J-y",
             "array":"J",
             "direction":"y",
-            "saveRate":1
+            "saveRate":"_save_rate_"
             }
         },
         {
@@ -185,7 +216,7 @@
             "name":"2D/J-z",
             "array":"J",
             "direction":"z",
-            "saveRate":1
+            "saveRate":"_save_rate_"
             }
         }
     ]

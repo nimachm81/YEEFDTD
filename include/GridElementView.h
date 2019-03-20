@@ -25,7 +25,7 @@ class GridElementView {
 
     private:
     std::size_t saveOnDiskFrequency = 1;
-    NumberArray3D<FPNumber> numArray;
+    NumberArray3D<FPNumber> numArray;   // it is initialized as a slice
     std::string viewName;
     std::string viewFolder;
     std::string viewFileExtension;

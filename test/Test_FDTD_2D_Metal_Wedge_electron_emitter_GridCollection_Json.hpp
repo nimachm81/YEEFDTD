@@ -20,7 +20,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
     FPNumber pml_t_y0 = y1;
     FPNumber pml_t_y1 = y1 + pml_thickness;
 
-    std::size_t numOfSamplesPerUnitLength = 600;
+    std::size_t numOfSamplesPerUnitLength = 1000;
 
     std::size_t ny = static_cast<std::size_t>(std::real(y1 - y0) * numOfSamplesPerUnitLength);
     std::size_t nz = static_cast<std::size_t>(std::real(z1 - z0) * numOfSamplesPerUnitLength);
@@ -225,8 +225,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
             {"\"_save_rate_\"", boost::lexical_cast<std::string>(data_save_rate)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
-    std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_scalarPlasma_GridCollection.json";
-    //std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_vectorPlasma_GridCollection.json";
+    std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_GridCollection.json";
 
     ParameterExtractor::ReplaceStringsInFile(fileName,
                 "instructions/processed/MaxwellYee2D_Metal_Wedge_electron_emitter_GridCollection_processed.json", str_replacewith);

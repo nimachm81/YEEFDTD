@@ -31,6 +31,7 @@ void ParamFileTranslator::TranslateSingleGrid(boost::property_tree::ptree node) 
     SetSingleGridDimensions(yee, singleGridRoot);
     SetSingleGridGridArrays(yee, singleGridRoot);
     SetSingleGridGeometries(yee, singleGridRoot);
+    SetSingleGridAnalyticVectorFields(yee, singleGridRoot);
     SetSingleGridParticleEmitters(yee, singleGridRoot);
     SetSingleGridGirdArrayManipulatorUpdaters(yee, singleGridRoot);
     SetSingleGridGridArrayManipulators(yee, singleGridRoot);
@@ -69,6 +70,7 @@ void ParamFileTranslator::TranslateGridCollection(boost::property_tree::ptree no
         SetSingleGridDimensions(grid_i, singleGridRoot);
         SetSingleGridGridArrays(grid_i, singleGridRoot);
         SetSingleGridGeometries(grid_i, singleGridRoot);
+        SetSingleGridAnalyticVectorFields(grid_i, singleGridRoot);
         SetSingleGridParticleEmitters(grid_i, singleGridRoot);
         SetSingleGridGirdArrayManipulatorUpdaters(grid_i, singleGridRoot);
         SetSingleGridGridArrayManipulators(grid_i, singleGridRoot);
@@ -142,6 +144,47 @@ void ParamFileTranslator::SetSingleGridGeometries(YeeGrid3D& yee,
     }
 }
 
+void ParamFileTranslator::SetSingleGridAnalyticVectorFields(YeeGrid3D& yee,
+                                                            SingleGridParameterExtractor& singleGridRoot) {
+    if(singleGridRoot.GetCount("analyticVectorFields") <= 0) {
+        return;
+    }
+    auto analyticVectorFields = singleGridRoot.GetTypeStringAndParameterSubtree("analyticVectorFields");
+    for(auto& vecFieldNameAndParams : analyticVectorFields) {
+        if(std::get<0>(vecFieldNameAndParams) == "GaussianPlaneWaveVectorField") {
+            ParameterExtractor vecFieldParams(std::get<1>(vecFieldNameAndParams));
+
+            yee.AddGaussianPlaneWaveVectorField(
+                    vecFieldParams.GetStringProperty("name"),
+                    vecFieldParams.Get3VecRealProperty("propagationDirection"),
+                    vecFieldParams.GetRealProperty("propagationVelocity"),
+                    vecFieldParams.Get3VecRealProperty("amplitude"),
+                    vecFieldParams.GetRealProperty("centerTime"),
+                    vecFieldParams.GetRealProperty("decayRate"),
+                    vecFieldParams.GetRealProperty("frequency"),
+                    vecFieldParams.GetRealProperty("phase")
+                    );
+        } else if(std::get<0>(vecFieldNameAndParams) == "RectPlaneWaveVectorField") {
+            ParameterExtractor vecFieldParams(std::get<1>(vecFieldNameAndParams));
+
+            yee.AddRectPlaneWaveVectorField(
+                    vecFieldParams.GetStringProperty("name"),
+                    vecFieldParams.Get3VecRealProperty("propagationDirection"),
+                    vecFieldParams.GetRealProperty("propagationVelocity"),
+                    vecFieldParams.Get3VecRealProperty("amplitude"),
+                    vecFieldParams.GetRealProperty("centerTime"),
+                    vecFieldParams.GetRealProperty("rectWidth"),
+                    vecFieldParams.GetRealProperty("rectEdgeWidth"),
+                    vecFieldParams.GetRealProperty("frequency"),
+                    vecFieldParams.GetRealProperty("phase")
+                    );
+        }else {
+            std::cout << "error: vector field name not recognized" << std::endl;
+            assert(false);
+        }
+    }
+}
+
 void ParamFileTranslator::SetSingleGridParticleEmitters(YeeGrid3D& yee,
                                                                     SingleGridParameterExtractor& singleGridRoot) {
     if(singleGridRoot.GetCount("particleEmitters") <= 0) {
@@ -179,6 +222,10 @@ void ParamFileTranslator::SetSingleGridParticleEmitters(YeeGrid3D& yee,
         } else if(std::get<0>(emitterNameAndParams) == "ChargedParticleEmitter") {
             ParameterExtractor emitterParams(std::get<1>(emitterNameAndParams));
 
+            std::string analyticEField = "";
+            if(emitterParams.GetCount("eFieldAnalytic") > 0) {
+                analyticEField = emitterParams.GetStringProperty("eFieldAnalytic");
+            }
             yee.AddChargedParticleEmitter(
                     emitterParams.GetStringProperty("name"),
                     emitterParams.GetRealProperty("charge"),
@@ -187,6 +234,7 @@ void ParamFileTranslator::SetSingleGridParticleEmitters(YeeGrid3D& yee,
                     emitterParams.GetUintProperty("dimensions"),
                     emitterParams.GetRealProperty("maxSurfaceElementSize"),
                     emitterParams.GetStringProperty("eField"),
+                    analyticEField,
                     emitterParams.GetRealProperty("unitLength"),
                     emitterParams.GetUintProperty("numOfSubPoints")
             );
@@ -208,10 +256,22 @@ void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& y
     for(auto& updaterNameAndParams : gamUpdaters) {
         if(std::get<0>(updaterNameAndParams) == "ChargedParticlesTracer") {
             ParameterExtractor updaterParams(std::get<1>(updaterNameAndParams));
+
             std::string scatteringFieldName = "";
             if(updaterParams.GetCount("srField") > 0) {
                 scatteringFieldName = updaterParams.GetStringProperty("srField");
             };
+
+            std::string analyticEFieldName = "";
+            if(updaterParams.GetCount("eFieldAnalytic") > 0) {
+                analyticEFieldName = updaterParams.GetStringProperty("eFieldAnalytic");
+            };
+
+            std::string analyticBFieldName = "";
+            if(updaterParams.GetCount("bFieldAnalytic") > 0) {
+                analyticBFieldName = updaterParams.GetStringProperty("bFieldAnalytic");
+            };
+
             std::string constrainingGeometry = "";
             bool keepInsideGeometry = true;
             if(updaterParams.GetCount("constrainingGeometry") > 0) {
@@ -222,13 +282,22 @@ void ParamFileTranslator::SetSingleGridGirdArrayManipulatorUpdaters(YeeGrid3D& y
                     }
                 }
             }
+
+            std::size_t bunchSize = 0;
+            if(updaterParams.GetCount("maxChargedParticleBunchSize") > 0) {
+                bunchSize = updaterParams.GetUintProperty("maxChargedParticleBunchSize");
+            }
+
             yee.AddChargedParticlesTracer(
                     updaterParams.GetStringProperty("name"),
                     updaterParams.GetStringProperty("eField"),
                     updaterParams.GetStringProperty("bField"),
+                    analyticEFieldName,
+                    analyticBFieldName,
                     scatteringFieldName,
                     updaterParams.GetStringProperty("particleEmitter"),
                     updaterParams.GetUintProperty("numberOfReservedParticles"),
+                    bunchSize,
                     constrainingGeometry,
                     keepInsideGeometry
             );
@@ -362,6 +431,37 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetStringProperty("geometry"),
                     manipulatorParams.GetRealProperty("valueInside"),
                     manipulatorParams.GetRealProperty("valueOutside")
+                    );
+        } else if(std::get<0>(manipulatorNameAndParams) == "GaussianPlaneWaveGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddGaussianPlaneWaveGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.Get3VecRealProperty("propagationDirection"),
+                    manipulatorParams.GetRealProperty("propagationVelocity"),
+                    manipulatorParams.GetRealProperty("amplitude"),
+                    manipulatorParams.GetRealProperty("centerTime"),
+                    manipulatorParams.GetRealProperty("decayRate"),
+                    manipulatorParams.GetRealProperty("frequency"),
+                    manipulatorParams.GetRealProperty("phase"),
+                    manipulatorParams.GetRealProperty("timeOffsetFraction")
+                    );
+        }  else if(std::get<0>(manipulatorNameAndParams) == "RectPlaneWaveGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddRectPlaneWaveGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.Get3VecRealProperty("propagationDirection"),
+                    manipulatorParams.GetRealProperty("propagationVelocity"),
+                    manipulatorParams.GetRealProperty("amplitude"),
+                    manipulatorParams.GetRealProperty("centerTime"),
+                    manipulatorParams.GetRealProperty("rectWidth"),
+                    manipulatorParams.GetRealProperty("rectEdgeWidth"),
+                    manipulatorParams.GetRealProperty("frequency"),
+                    manipulatorParams.GetRealProperty("phase"),
+                    manipulatorParams.GetRealProperty("timeOffsetFraction")
                     );
         } else if(std::get<0>(manipulatorNameAndParams) == "DataTruncationGridArrayManipulator") {
             bool truncateUp = false;

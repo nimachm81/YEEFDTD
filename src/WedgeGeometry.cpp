@@ -252,7 +252,7 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
     FPNumber slope_p = std::tan(M_PI/2.0 + wedgeAngle/2.0);
     FPNumber slope_m = std::tan(M_PI/2.0 - wedgeAngle/2.0);
 
-    FPNumber side_length = (wedgeHeight - tip_to_top) / std::cos(wedgeAngle/2.0);     // length of the sides excluding the cap
+    FPNumber side_length = (wedgeHeight - tip_to_top) / cos_t2;     // length of the sides excluding the cap
     FPNumber capArc_length = apexRadius*(M_PI - wedgeAngle);     // size of the cap arc (apex)
     FPNumber base_length = 2*base_halfWidth;
 
@@ -422,3 +422,20 @@ void WedgeGeometry::SubdevideSurface2D(FPNumber x_cut,
 }
 
 
+void WedgeGeometry::GetBoundingBox2D(FPNumber x_cut,
+                                     std::array<FPNumber, 3>& lowerLeftCorner,
+                                     std::array<FPNumber, 3>& upperRightCorner
+                                    ) {
+    FPNumber base_halfWidth = wedgeHeight * std::tan(wedgeAngle/2.0);
+    FPNumber y0 = apexPosition[1] - apexToBaseDistance;
+    FPNumber y1 = apexPosition[1];
+    FPNumber z0 = apexPosition[2] - base_halfWidth;
+    FPNumber z1 = apexPosition[2] + base_halfWidth;
+
+    lowerLeftCorner[0] = x_cut;
+    lowerLeftCorner[1] = y0;
+    lowerLeftCorner[2] = z0;
+    upperRightCorner[0] = x_cut;
+    upperRightCorner[1] = y1;
+    upperRightCorner[2] = z1;
+}

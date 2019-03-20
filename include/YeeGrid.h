@@ -19,6 +19,7 @@
 #include "DiscretePointsGAMDataUpdater.h"
 #include "ParticleEmitter.h"
 #include "Geometry.h"
+#include "VectorField.h"
 
 class YeeGrid3D {
     public:
@@ -166,6 +167,31 @@ class YeeGrid3D {
             FPNumber valueInside,
             FPNumber valueOutside
             );
+    void AddGaussianPlaneWaveGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            FPNumber amplitude,
+            FPNumber t_center,
+            FPNumber t_decay_rate,
+            FPNumber t_modulationFrequecy,
+            FPNumber t_modulatioPhase,
+            FPNumber timeOffsetFraction
+            );
+    void AddRectPlaneWaveGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            FPNumber amplitude,
+            FPNumber t_center,
+            FPNumber t_rect_width,
+            FPNumber t_edge_width,
+            FPNumber t_modulationFrequecy,
+            FPNumber t_modulatioPhase,
+            FPNumber timeOffsetFraction
+            );
     void AddDataTruncationGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
@@ -181,6 +207,27 @@ class YeeGrid3D {
             const FPNumber apexToBaseDistance,
             const std::array<FPNumber, 3> apexPosition,
             const bool closeBase = true
+            );
+
+    void AddGaussianPlaneWaveVectorField(const std::string name,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            std::array<FPNumber, 3> amplitude,
+            FPNumber t_center,
+            FPNumber t_decayRate,
+            FPNumber t_modulationFrequency,
+            FPNumber t_modulationPhase
+            );
+
+    void AddRectPlaneWaveVectorField(const std::string name,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            std::array<FPNumber, 3> amplitude,
+            FPNumber t_center,
+            FPNumber t_rectWidth,
+            FPNumber t_edgeWidth,
+            FPNumber t_modulationFrequency,
+            FPNumber t_modulationPhase
             );
 
     void AddManualChargedParticleEmitter(const std::string name,
@@ -199,6 +246,7 @@ class YeeGrid3D {
             int dimensions,
             FPNumber maxElemSize,
             const std::string eFieldName,
+            const std::string analyticEFieldName,
             FPNumber unitLength,
             std::size_t numOfSubPoints = 0
             );
@@ -206,12 +254,16 @@ class YeeGrid3D {
     void AddChargedParticlesTracer(const std::string name,
             const std::string eFieldName,
             const std::string bFieldName,
+            const std::string analyticEFieldName,
+            const std::string analyticBFieldName,
             const std::string srFieldName,
             const std::string particleEmitterName,
             const std::size_t numberOfReservedParticles,
+            const std::size_t bunchSize,
             const std::string constrainingGeometryName,
             bool keepPointsInside
             );
+
     void AddDiscretePointsGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
@@ -252,6 +304,7 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::shared_ptr<DiscretePointsGAMDataUpdater>> gamDataUpdaters;  // data updaters for (some) grid array manipulators
     std::unordered_map<std::string, std::shared_ptr<Geometry>> geometries;
     std::unordered_map<std::string, std::shared_ptr<ParticleEmitter>> particleEmitters;
+    std::unordered_map<std::string, std::shared_ptr<VectorField>> vectorFields;
 };
 
 
