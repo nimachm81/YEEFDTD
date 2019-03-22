@@ -4,31 +4,33 @@
 "simulationParameters":{
 "grids":{
 "grid-middle":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_m1_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_dt_2_", "_m_dt_", "_m_dt_2_", "_nt_", "_dt_dy_", "_1_dy_", "_m_1_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_echarge_", "_hcharge_", "_mass_", "_surf_dl_", "_fdtd_unit_length_", "_gamma_", "_wp_sq_", "_echarge_mass_", "_m_dt_dy_dz_", "_dt_dy_dz_", "_m_dt_dz_dy_", "_dt_dz_dy_", "_save_rate_", "_m_dtdy_dz_", "_m_dtdz_dy_", "_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_", "_planewave_velocity_", "_Eyinc_amp_", "_Bxinc_amp_", "_gaussianplanewave_decay_rate_", "_planewave_t_center_", "_planewave_freq_", "_planewave_phase_", "_rect_width_", "_rect_edge_width_", "_indy0Wedge_", "_indz0Wedge_", "_indy1Wedge_", "_indy1Wedge_p1_", "_indz1Wedge_", "_indz1Wedge_p1_", "_ny_wedge_", "_ny_wedge_p1_", "_nz_wedge_", "_nz_wedge_p1_", "_metalwedge_angle_", "_metalwedge_tip_radius_", "_metalwedge_height_", "_metalwedge_tip_y_", "_metalwedge_tip_z", "_emitterwedge_angle_", "_emitterwedge_tip_radius_", "_emitterwedge_height_", "_emitterwedge_tip_y_", "_emitterwedge_tip_z", "_bunch_size_"],
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_m1_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_dt_2_", "_m_dt_", "_m_dt_2_", "_nt_", "_dt_dy_", "_1_dy_", "_m_1_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_echarge_", "_hcharge_", "_mass_", "_surf_dl_", "_fdtd_unit_length_", "_gamma_", "_wp_sq_", "_echarge_mass_", "_m_dt_dy_dz_", "_dt_dy_dz_", "_m_dt_dz_dy_", "_dt_dz_dy_", "_save_rate_", "_m_dtdy_dz_", "_m_dtdz_dy_", "_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_", "_planewave_velocity_", "_Eyinc_amp_", "_Bxinc_amp_", "_gaussianplanewave_decay_rate_", "_planewave_t_center_", "_planewave_freq_", "_planewave_phase_", "_rect_width_", "_rect_edge_width_", "_indy0Wedge_", "_indz0Wedge_", "_indy1Wedge_", "_indy1Wedge_p1_", "_indz1Wedge_", "_indz1Wedge_p1_", "_ny_wedge_", "_ny_wedge_p1_", "_nz_wedge_", "_nz_wedge_p1_", "_metalwedge_angle_", "_metalwedge_tip_radius_", "_metalwedge_height_", "_metalwedge_tip_y_", "_metalwedge_tip_z", "_emitterwedge_angle_", "_emitterwedge_tip_radius_", "_emitterwedge_height_", "_emitterwedge_tip_y_", "_emitterwedge_tip_z", "_bunch_size_", "_save_rate_2_", "_save_rate_pml_"],
     "dimensions":{
         "r0":[0.0, "_y0_", "_z0_"],
         "r1":[1.0, "_y1_", "_z1_"],
         "nCells":[1, "_ny_", "_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE", "comment":"scattered field"}, {"name":"H", "type":"EdgeH", "comment":"scattered field"}, 
-                        {"name":"Je", "type":"EdgeE", "comment":"space charge currents"}, 
-                        {"name":"Vey", "type":"NodeScalar", "comment":"space charge velocities"},
-                        {"name":"Vez", "type":"NodeScalar", "comment":"space charge velocities"},
-                        {"name":"Ne", "type":"NodeScalar", "comment":"number of electrons"}
-                        ],
+    "entireGridArrays":[],
     "partialGridArrays":[
-            {"name":"Jh", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"], 
+            {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"scattered field"}, 
+            {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"scattered field"}, 
+            {"name":"Je", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"space charge currents"}, 
+            {"name":"Vey", "type":"NodeScalar", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"space charge velocities"},
+            {"name":"Vez", "type":"NodeScalar", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"space charge velocities"},
+            {"name":"Ne", "type":"NodeScalar", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"number of electrons"},
+            
+            {"name":"Jh", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"], 
                     "comment":"hole charge"},
-            {"name":"J_metal", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]}, 
-            {"name":"Einc", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]}, 
-            {"name":"wp2", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]},
-            {"name":"wp2_0", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]},
-            {"name":"gamma", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]}, 
-            {"name":"rho", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]}, 
-            {"name":"emitterWedgeMask", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]},
-            {"name":"wedgeMask", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]},
-            {"name":"wedgeMaskEYee", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[1, "_ny_wedge_", "_nz_wedge_"]}
+            {"name":"J_metal", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]}, 
+            {"name":"Einc", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]}, 
+            {"name":"wp2", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]},
+            {"name":"wp2_0", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]},
+            {"name":"gamma", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]}, 
+            {"name":"rho", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]}, 
+            {"name":"emitterWedgeMask", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]},
+            {"name":"wedgeMask", "type":"NodeScalar", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]},
+            {"name":"wedgeMaskEYee", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"]}
                         ],
     "geometries":[
         {
@@ -955,7 +957,7 @@
             "name":"2D/H-x",
             "array":"H",
             "direction":"x",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -964,7 +966,7 @@
             "name":"2D/Je-y",
             "array":"Je",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -973,7 +975,7 @@
             "name":"2D/Je-z",
             "array":"Je",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -982,7 +984,7 @@
             "name":"2D/Jh-y",
             "array":"Jh",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -991,7 +993,7 @@
             "name":"2D/Jh-z",
             "array":"Jh",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -1000,7 +1002,7 @@
             "name":"2D/J-metal-y",
             "array":"J_metal",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -1009,7 +1011,7 @@
             "name":"2D/J-metal-z",
             "array":"J_metal",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -1018,7 +1020,7 @@
             "name":"2D/rho",
             "array":"rho",
             "direction":"x",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_2_"
             }
         },
         {
@@ -1076,9 +1078,15 @@
         "nCells":[1, "_ny_", "_gr_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[ ],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gr_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gr_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gr_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gr_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gr_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_ny_", "_gr_nz_"]}    
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -1336,7 +1344,7 @@
            "name":"2D/E-pml-r-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -1345,7 +1353,7 @@
            "name":"2D/E-pml-r-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -1354,7 +1362,7 @@
            "name":"2D/sigE-pml-r-z",
             "array":"sigE",
             "direction":"z",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -1363,7 +1371,7 @@
            "name":"2D/sigH-pml-r-z",
             "array":"sigH",
             "direction":"z",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -1377,9 +1385,15 @@
         "nCells":[1, "_ny_", "_gl_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gl_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gl_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gl_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gl_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_gl_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_ny_", "_gl_nz_"]}    
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -1623,7 +1637,7 @@
            "name":"2D/E-pml-l-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -1632,7 +1646,7 @@
            "name":"2D/E-pml-l-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -1641,7 +1655,7 @@
            "name":"2D/sigE-pml-l-z",
             "array":"sigE",
             "direction":"z",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -1650,7 +1664,7 @@
            "name":"2D/sigH-pml-l-z",
             "array":"sigH",
             "direction":"z",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -1664,9 +1678,15 @@
         "nCells":[1, "_gt_ny_", "_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gt_ny_", "_nz_"]}
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -1926,7 +1946,7 @@
            "name":"2D/E-pml-t-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -1935,7 +1955,7 @@
            "name":"2D/E-pml-t-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -1944,7 +1964,7 @@
            "name":"2D/sigE-pml-t-y",
             "array":"sigE",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -1953,7 +1973,7 @@
            "name":"2D/sigH-pml-t-y",
             "array":"sigH",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -1967,9 +1987,15 @@
         "nCells":[1, "_gb_ny_", "_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gb_ny_", "_nz_"]}
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -2231,7 +2257,7 @@
            "name":"2D/E-pml-b-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -2240,7 +2266,7 @@
            "name":"2D/E-pml-b-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -2249,7 +2275,7 @@
            "name":"2D/sigE-pml-b-y",
             "array":"sigE",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -2258,7 +2284,7 @@
            "name":"2D/sigH-pml-b-y",
             "array":"sigH",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -2272,10 +2298,17 @@
         "nCells":[1, "_gt_ny_", "_gr_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"}, 
-                        {"name":"H", "type":"EdgeH"}, {"name":"B", "type":"EdgeH"}, {"name":"dB", "type":"EdgeH"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]}, 
+                        {"name":"B", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]}, 
+                        {"name":"dB", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gr_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gt_ny_", "_gr_nz_"]}
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -2666,7 +2699,7 @@
            "name":"2D/E-pml-tr-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -2675,7 +2708,7 @@
            "name":"2D/E-pml-tr-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -2684,7 +2717,7 @@
            "name":"2D/sigE-pml-tr-y",
             "array":"sigE",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -2693,7 +2726,7 @@
            "name":"2D/sigH-pml-tr-y",
             "array":"sigH",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -2707,10 +2740,17 @@
         "nCells":[1, "_gt_ny_", "_gl_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"}, 
-                        {"name":"H", "type":"EdgeH"}, {"name":"B", "type":"EdgeH"}, {"name":"dB", "type":"EdgeH"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]}, 
+                        {"name":"B", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]}, 
+                        {"name":"dB", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gt_ny_", "_gl_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gt_ny_", "_gl_nz_"]}
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -3090,7 +3130,7 @@
            "name":"2D/E-pml-tl-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -3099,7 +3139,7 @@
            "name":"2D/E-pml-tl-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -3108,7 +3148,7 @@
            "name":"2D/sigE-pml-tl-y",
             "array":"sigE",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -3117,7 +3157,7 @@
            "name":"2D/sigH-pml-tl-y",
             "array":"sigH",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -3131,10 +3171,17 @@
         "nCells":[1, "_gb_ny_", "_gr_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"}, 
-                        {"name":"H", "type":"EdgeH"}, {"name":"B", "type":"EdgeH"}, {"name":"dB", "type":"EdgeH"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]}, 
+                        {"name":"B", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]}, 
+                        {"name":"dB", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gr_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gb_ny_", "_gr_nz_"]}
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -3513,7 +3560,7 @@
            "name":"2D/E-pml-br-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -3522,7 +3569,7 @@
            "name":"2D/E-pml-br-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -3531,7 +3578,7 @@
            "name":"2D/sigE-pml-br-y",
             "array":"sigE",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -3540,7 +3587,7 @@
            "name":"2D/sigH-pml-br-y",
             "array":"sigH",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         
@@ -3554,10 +3601,17 @@
         "nCells":[1, "_gb_ny_", "_gl_nz_"],
         "dt":"_dt_"
     },
-    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"}, 
-                        {"name":"H", "type":"EdgeH"}, {"name":"B", "type":"EdgeH"}, {"name":"dB", "type":"EdgeH"},
-                        {"name":"sigE", "type":"EdgeE"}, {"name":"sigH", "type":"EdgeH"}],
-    "partialGridArrays":[],
+    "entireGridArrays":[],
+    "partialGridArrays":[
+                        {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]}, 
+                        {"name":"D", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]}, 
+                        {"name":"dD", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]}, 
+                        {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]}, 
+                        {"name":"B", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]}, 
+                        {"name":"dB", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]},
+                        {"name":"sigE", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_gb_ny_", "_gl_nz_"]}, 
+                        {"name":"sigH", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gb_ny_", "_gl_nz_"]}
+                        ],
     "girdArrayManipulators":[
         {
         "type":"SpatialCubeGridArrayManipulator",
@@ -3922,7 +3976,7 @@
            "name":"2D/E-pml-bl-y",
             "array":"E",
             "direction":"y",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -3931,7 +3985,7 @@
            "name":"2D/E-pml-bl-z",
             "array":"E",
             "direction":"z",
-            "saveRate":"_save_rate_"
+            "saveRate":"_save_rate_pml_"
             }
         },
         {
@@ -3940,7 +3994,7 @@
            "name":"2D/sigE-pml-bl-y",
             "array":"sigE",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         },
         {
@@ -3949,7 +4003,7 @@
            "name":"2D/sigH-pml-bl-y",
             "array":"sigH",
             "direction":"y",
-            "saveRate":1000
+            "saveRate":10000
             }
         }
         

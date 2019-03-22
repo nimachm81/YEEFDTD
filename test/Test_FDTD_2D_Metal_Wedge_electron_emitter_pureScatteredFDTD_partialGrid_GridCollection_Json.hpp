@@ -196,6 +196,8 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     std::size_t particle_bunch_size = 1;
 
     std::size_t data_save_rate = (std::size_t)(dt_data_save/dt);
+    std::size_t data_save_rate_2 = data_save_rate;
+    std::size_t data_save_rate_pml = 10000; //data_save_rate;
     std::size_t numOfTimeSamples = (std::size_t)(t_max/dt);
 
     std::cout << "data_save_rate: " << data_save_rate << std::endl;
@@ -341,6 +343,8 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
             {"\"_wp_sq_\"", boost::lexical_cast<std::string>(std::real(plasmaFrequency*plasmaFrequency))},
             {"\"_bunch_size_\"", boost::lexical_cast<std::string>(particle_bunch_size)},
             {"\"_save_rate_\"", boost::lexical_cast<std::string>(data_save_rate)},
+            {"\"_save_rate_2_\"", boost::lexical_cast<std::string>(data_save_rate_2)},
+            {"\"_save_rate_pml_\"", boost::lexical_cast<std::string>(data_save_rate_pml)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
     std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_partialGrid_GridCollection.json";
