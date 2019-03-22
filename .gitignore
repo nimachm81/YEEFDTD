@@ -22,3 +22,6 @@ build/instructions/processed/
 
 # raw data files
 *.data
+
+# binary files
+build/main
