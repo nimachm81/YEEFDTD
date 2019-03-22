@@ -269,7 +269,10 @@ class YeeGrid3D {
             int direction,
             const std::string dataUpdaterName,
             const std::string dataUpdaterDataName,      // name of the array inside the dataUpdater to associate with gridData
-            int dataUpdaterDataDirection                // direction of the array inside dataUpdater
+            int dataUpdaterDataDirection,                // direction of the array inside dataUpdater
+            const std::string dataUpdaterDataType = "scalar",
+            const int sameCellTreatmentType = 0,
+            const int interpolationType = 1
     );
 
     void PrintAllGridData();

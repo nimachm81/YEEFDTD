@@ -15,7 +15,8 @@
 #include "SpaceTimeCubeGridArrayManipulator.h"
 #include "SpherialShellGaussianGridArrayManipulator.h"
 #include "ChargedParticlesTracer.h"
-#include "DiscretePointsGridArrayManipulator.h"
+#include "DiscretePointsScalarGridArrayManipulator.h"
+#include "DiscretePointsVectorGridArrayManipulator.h"
 #include "BivalueGridArrayManipulator.h"
 #include "DataTruncationGridArrayManipulator.h"
 #include "WedgeGeometry.h"
@@ -1179,18 +1180,34 @@ void YeeGrid3D::AddDiscretePointsGridArrayManipulator(const std::string name,
             int direction,
             const std::string dataUpdaterName,
             const std::string dataUpdaterDataName,      // name of the array inside the dataUpdater to associate with gridData
-            int dataUpdaterDataDirection                // direction of the array inside dataUpdater
-    ) {
+            int dataUpdaterDataDirection,                // direction of the array inside dataUpdater
+            const std::string dataUpdaterDataType,
+            const int sameCellTreatmentType,
+            const int interpolationType
+            ) {
     auto found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
-    std::shared_ptr<DiscretePointsGridArrayManipulator> modifier(new DiscretePointsGridArrayManipulator);
+    assert(dataUpdaterDataType == "scalar" || dataUpdaterDataType == "vector");
+
+    std::shared_ptr<DiscretePointsGridArrayManipulator> modifier;
+    if(dataUpdaterDataType == "scalar") {
+        modifier.reset(new DiscretePointsScalarGridArrayManipulator);
+    } else if(dataUpdaterDataType == "vector") {
+        modifier.reset(new DiscretePointsVectorGridArrayManipulator);
+    } else {
+        std::cout << "error: data type should be either scalar or vector" << std::endl;
+        assert(false);
+    }
 
     // attach updater
     modifier->AddDataUpdater(gamDataUpdaters[dataUpdaterName].get(),
                              dataUpdaterDataName,
                              dataUpdaterDataDirection
                              );
+
+    modifier->SetSameCellTreatmentType(sameCellTreatmentType);
+    modifier->SetInterpolationType(interpolationType);
 
     modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
 

@@ -65,7 +65,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     FPNumber pml_b_cube_sigh_y0 = pml_b_cube_sige_y0 + pml_b_dy/2.0;
     FPNumber pml_b_cube_sigh_y1 = pml_b_cube_sige_y1;
 
-    FPNumber sig_eh = 15.0;
+    FPNumber sig_eh = 10.0;
     FPNumber pml_r_sig_E = sig_eh;
     FPNumber pml_r_sig_H = sig_eh;
     FPNumber pml_l_sig_E = sig_eh;

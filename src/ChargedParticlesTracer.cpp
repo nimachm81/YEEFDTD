@@ -214,9 +214,22 @@ void ChargedParticlesTracer::AttachDataToGAMPositions(std::vector<std::array<FPN
     positions = &(this->positions);
 }
 
-void ChargedParticlesTracer::AttachDataToGAMValues(std::vector<FPNumber>*& values, std::string dataName, int direction) {
+void ChargedParticlesTracer::AttachScalarDataToGAMValues(std::vector<FPNumber>*& values, std::string dataName, int direction) {
     if(dataName == "current") {
         values = &currentComponents[direction];
+    } else if(dataName == "charge") {
+        values = &charges;
+    } else {
+        std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
+        assert(false);
+    }
+}
+
+void ChargedParticlesTracer::AttachVectorDataToGAMValues(std::vector<std::array<FPNumber, 3>>*& values, std::string dataName, int direction) {
+    if(dataName == "velocity") {
+        values = &velocities;
+    } else if(dataName == "momentum") {
+        values = &momentums;
     } else {
         std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
         assert(false);

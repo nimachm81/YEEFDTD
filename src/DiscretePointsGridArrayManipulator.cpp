@@ -1,18 +1,18 @@
 
-#include <cstddef>
 
 #include "DiscretePointsGridArrayManipulator.h"
 
 
-void DiscretePointsGridArrayManipulator::AddDataUpdater(DiscretePointsGAMDataUpdater* updater,
-                                                        std::string dataName,
-                                                        int direction
-                                                        ) {
-    dataUpdater = updater;
-    updater->AttachDataToGAMPositions(positions);
-    updater->AttachDataToGAMValues(values, dataName, direction);
+void DiscretePointsGridArrayManipulator::SetInterpolationType(int intpolType) {
+    assert(intpolType >= 0 && intpolType <= 1);
+    interpolationType = intpolType;
 }
 
+
+void DiscretePointsGridArrayManipulator::SetSameCellTreatmentType(int treatmentType) {
+    assert(treatmentType >= 0 && treatmentType <= 1);
+    sameCellTreatmentType = treatmentType;
+}
 
 void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorInstructionCode instruction) {
     dataUpdater->UpdateGAMValues(t);
@@ -20,7 +20,7 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
         gridArray = (FPNumber)0.0;
 
         std::size_t numOfPoints = positions->size();
-        assert(values->size() == numOfPoints);
+        //assert(values->size() == numOfPoints);
 
         if(interpolationType == 0) {
             for(std::size_t i = 0; i < numOfPoints; ++i) {
@@ -49,7 +49,16 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
                     const std::array<std::size_t, 3> indx_sizet{(std::size_t)closestIndx[0],
                                                                 (std::size_t)closestIndx[1],
                                                                 (std::size_t)closestIndx[2]};
-                    gridArray[indx_sizet] += (*values)[i];
+                    if(sameCellTreatmentType == 0) {
+                        gridArray[indx_sizet] += GetDataValueByInddex(i);
+                    } else if(sameCellTreatmentType == 1) {
+                        if(std::abs(GetDataValueByInddex(i)) > std::abs(gridArray[indx_sizet])) {
+                            gridArray[indx_sizet] = GetDataValueByInddex(i);
+                        }
+                    } else {
+                        std::cout << "error: unrecognized sameCellTreatmentType value " << sameCellTreatmentType << std::endl;
+                        assert(false);
+                    }
                 }
             }
         } else if(interpolationType == 1) {
@@ -71,7 +80,7 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
 
                 std::array<std::intmax_t, 3> indx;
                 std::array<FPNumber, 3> vol_ratio;
-                FPNumber value = (*values)[i];
+                FPNumber value = GetDataValueByInddex(i);
 
                 for(int i_x = 0; i_x < 2; ++i_x) {
                     indx[0] = lowerIndx[0] + i_x;
@@ -107,7 +116,18 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
                             const std::array<std::size_t, 3> indx_sizet{(std::size_t)indx[0],
                                                                         (std::size_t)indx[1],
                                                                         (std::size_t)indx[2]};
-                            gridArray[indx_sizet] += value*vol_ratio[0]*vol_ratio[1]*vol_ratio[2];
+                            if(sameCellTreatmentType == 0) {
+                                gridArray[indx_sizet] += value*vol_ratio[0]*vol_ratio[1]*vol_ratio[2];
+                            } else if(sameCellTreatmentType == 1) {
+                                FPNumber val_new = value*vol_ratio[0]*vol_ratio[1]*vol_ratio[2];
+                                if(std::abs(val_new) > std::abs(gridArray[indx_sizet])) {
+                                    gridArray[indx_sizet] = val_new;
+                                }
+                            } else {
+                                std::cout << "error: unrecognized sameCellTreatmentType value " << sameCellTreatmentType
+                                          << std::endl;
+                                assert(false);
+                            }
                         }
                     }
                 }
@@ -123,4 +143,5 @@ void DiscretePointsGridArrayManipulator::UpdateArray(const FPNumber t, GAManipul
 FPNumber DiscretePointsGridArrayManipulator::CalculateTime(const FPNumber dt, const std::size_t timeIndex) {
     return ((FPNumber)timeIndex + timeOffsetFraction) * dt;
 }
+
 

@@ -414,13 +414,33 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
         } else if(std::get<0>(manipulatorNameAndParams) == "DiscretePointsGridArrayManipulator") {
             ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
             ParameterExtractor dataUpdaterParams(manipulatorParams.GetSubTreeRootNode("dataUpdater"));
+
+            std::string updaterDataType = "scalar";
+            if(dataUpdaterParams.GetCount("dataType") > 0) {
+                updaterDataType = dataUpdaterParams.GetStringProperty("dataType");
+                assert(updaterDataType == "scalar" || updaterDataType == "vector");
+            }
+
+            int sameCellTreatmentType = 0;
+            if(dataUpdaterParams.GetCount("sameCellTreatmentType") > 0) {
+                sameCellTreatmentType = dataUpdaterParams.GetUintProperty("sameCellTreatmentType");
+            }
+
+            int interpolationType = 1;
+            if(dataUpdaterParams.GetCount("interpolationType") > 0) {
+                interpolationType = dataUpdaterParams.GetUintProperty("interpolationType");
+            }
+
             yee.AddDiscretePointsGridArrayManipulator(
                     manipulatorParams.GetStringProperty("name"),
                     manipulatorParams.GetStringProperty("array"),
                     stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
                     dataUpdaterParams.GetStringProperty("name"),
                     dataUpdaterParams.GetStringProperty("dataName"),
-                    stringDirectionToIntDirectionMap[dataUpdaterParams.GetStringProperty("direction")]
+                    stringDirectionToIntDirectionMap[dataUpdaterParams.GetStringProperty("direction")],
+                    updaterDataType,
+                    sameCellTreatmentType,
+                    interpolationType
                     );
         } else if(std::get<0>(manipulatorNameAndParams) == "BivalueGridArrayManipulator") {
             ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));

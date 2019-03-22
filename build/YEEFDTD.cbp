@@ -100,6 +100,8 @@
 		<Unit filename="../include/DemotableComplex.hpp" />
 		<Unit filename="../include/DiscretePointsGAMDataUpdater.h" />
 		<Unit filename="../include/DiscretePointsGridArrayManipulator.h" />
+		<Unit filename="../include/DiscretePointsScalarGridArrayManipulator.h" />
+		<Unit filename="../include/DiscretePointsVectorGridArrayManipulator.h" />
 		<Unit filename="../include/ElementType.h" />
 		<Unit filename="../include/FDInstructionCode.h" />
 		<Unit filename="../include/FDInstructionFactory.h" />
@@ -158,6 +160,12 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/DiscretePointsGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/DiscretePointsScalarGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/DiscretePointsVectorGridArrayManipulator.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/FDInstructionFactory.cpp">
