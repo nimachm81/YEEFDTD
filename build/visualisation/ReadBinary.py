@@ -1,6 +1,7 @@
 
 
-__all__ = ["GetArrayInfo", "GetArrays", "ReadParamsFile"]
+__all__ = ["GetArrayInfo", "GetArrays", "ReadParamsFile", "GetDiscreteScalarDataArray", \
+           "GetDiscreteVectorDataArray"]
 
 import struct
 import numpy as np
@@ -76,6 +77,8 @@ def GetArrays(fileName, indStart=0, indEnd=None):
         A = np.zeros((numOfArraysToRead, shape[0], shape[1], shape[2]), dtype=np.complex64)
     elif typeCode==4:
         A = np.zeros((numOfArraysToRead, shape[0], shape[1], shape[2]), dtype=np.complex128)
+    else:
+        assert False
 
     ind_st = 0
     for n in range(numOfArraysToRead):
@@ -156,7 +159,7 @@ def GetDiscreteScalarDataArray(fileName):
     typeSize = struct.unpack("Q", fileContent[ind_st: ind_st + size])[0]
     ind_st += size
     size = 8
-    arraySize = struct.unpack("Q", fileContent[ind_st: ind_st + size])
+    arraySize = struct.unpack("Q", fileContent[ind_st: ind_st + size])[0]
     size_total = preambleSize + arraySize*typeSize
 
     ind = 0;
@@ -165,17 +168,86 @@ def GetDiscreteScalarDataArray(fileName):
     while ind < len(fileContent):
         ind += preambleSize
         size = 8
-        arraySize = struct.unpack("Q", fileContent[ind: ind + size])
+        arraySize = struct.unpack("Q", fileContent[ind: ind + size])[0]
         ind += size
         
         size = arraySize * typeSize
-        array = struct.unpack("Q", fileContent[ind: ind + size])
+        if(typeCode == 1):
+            array = struct.unpack("f"*arraySize, fileContent[ind: ind + size])
+        elif(typeCode == 2):
+            array = struct.unpack("d"*arraySize, fileContent[ind: ind + size])
+        elif(typeCode == 3):
+            array = struct.unpack("f"*2*arraySize, fileContent[ind: ind + size])
+            a_r = [array[2*i] for i in range(len(array)//2) ]
+            a_i = [array[2*i + 1] for i in range(len(array)//2) ]
+            array = np.array(a_r) + 1j*np.array(a_i)
+        elif(typeCode == 4):
+            array = struct.unpack("d"*2*arraySize, fileContent[ind: ind + size])
+            a_r = [array[2*i] for i in range(len(array)//2) ]
+            a_i = [array[2*i + 1] for i in range(len(array)//2) ]
+            array = np.array(a_r) + 1j*np.array(a_i)
+        else:
+            assert False
         
-        arrays.append(np.array(list(array)))
+        ind += size
+        arrays.append(np.array(array))
         
     
     file.close()
 
     return arrays
     
+def GetDiscreteVectorDataArray(fileName):
+    """ Reads a discrete array saved through DiscreteVectorDataView
+    """
+    file = open(fileName, mode='rb')
+    fileContent = file.read()
+   
+    preambleSize = 1*4 + 1*8 + 1*8
+ 
+    ind_st = 0
+    size = 4
+    typeCode = struct.unpack("i", fileContent[ind_st: ind_st + size])[0]
+    ind_st += size    
+    size = 8
+    typeSize = struct.unpack("Q", fileContent[ind_st: ind_st + size])[0]
+    ind_st += size
+    size = 8
+    arraySize = struct.unpack("Q", fileContent[ind_st: ind_st + size])[0]
+    size_total = preambleSize + arraySize*typeSize
+
+    ind = 0;
+    preambleSize = 1*4 + 1*8
+    arrays = []
+    while ind < len(fileContent):
+        ind += preambleSize
+        size = 8
+        arraySize = 3 * struct.unpack("Q", fileContent[ind: ind + size])[0]
+        ind += size
+        
+        size = arraySize * typeSize
+        if(typeCode == 1):
+            array = np.array(struct.unpack("f"*arraySize, fileContent[ind: ind + size]))
+        elif(typeCode == 2):
+            array = np.array(struct.unpack("d"*arraySize, fileContent[ind: ind + size]))
+        elif(typeCode == 3):
+            array = struct.unpack("f"*2*arraySize, fileContent[ind: ind + size])
+            a_r = [array[2*i] for i in range(len(array)//2) ]
+            a_i = [array[2*i + 1] for i in range(len(array)//2) ]
+            array = np.array(a_r) + 1j*np.array(a_i)
+        elif(typeCode == 4):
+            array = struct.unpack("d"*2*arraySize, fileContent[ind: ind + size])
+            a_r = [array[2*i] for i in range(len(array)//2) ]
+            a_i = [array[2*i + 1] for i in range(len(array)//2) ]
+            array = np.array(a_r) + 1j*np.array(a_i)
+        else:
+            assert False
+        
+        ind += size
+        arrays.append(np.array(array.reshape((3, arraySize//3), order='F')))
+        
+    
+    file.close()
+
+    return arrays
     

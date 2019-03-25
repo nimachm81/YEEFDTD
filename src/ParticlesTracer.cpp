@@ -54,7 +54,9 @@ void ParticlesTracer::PointToScalarData(std::vector<FPNumber>*& values, std::str
 }
 
 void ParticlesTracer::PointToVectorData(std::vector<std::array<FPNumber, 3>>*& values, std::string dataName) {
-    if(dataName == "velocity") {
+    if(dataName == "position") {
+        values = &positions;
+    } else if(dataName == "velocity") {
         values = &velocities;
     } else if(dataName == "momentum") {
         values = &momentums;

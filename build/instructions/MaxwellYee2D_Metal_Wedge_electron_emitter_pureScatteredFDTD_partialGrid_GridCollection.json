@@ -1089,6 +1089,16 @@
             "dataName":"velocity",
             "saveRate":"_save_rate_"
             }
+        },
+        {
+        "type":"ChargedParticleDataView",
+        "parameters":{
+            "name":"2D/Re",
+            "updaterName":"chargeEmissionTracer_elec",
+            "dataType":"vector",
+            "dataName":"position",
+            "saveRate":"_save_rate_"
+            }
         }
     ]
 },
