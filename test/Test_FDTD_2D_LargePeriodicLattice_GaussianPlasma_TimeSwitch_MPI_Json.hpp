@@ -36,7 +36,7 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json_paral
                                                       n_wp_2p_thz, n_gamma_thz, n_wp_switch_dt, n_cell_displacement};
     std::size_t mappedParameterIndices[numOfParams];
 
-    int statusFlag = map_processor_to_parameter(processRank, numOfParams,
+    int statusFlag = UtilityFunctions::map_processor_to_parameter(processRank, numOfParams,
                 maxNumOfEachParameter,
                 mappedParameterIndices,
                 processRankOffset

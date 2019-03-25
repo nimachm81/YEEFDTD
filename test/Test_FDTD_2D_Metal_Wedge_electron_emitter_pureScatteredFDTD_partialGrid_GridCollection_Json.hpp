@@ -360,32 +360,32 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
             std::string("data/2D/") + "params" + ".param";
 
     std::ofstream paramFileOut(parametersFileName.c_str(), std::ios::out | std::ios::binary);
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDTimeToSIUnits(dt), "dt_si");   // 0
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dy), "dy_si");   // 1
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dz), "dz_si");   // 2
-    WriteParamToFile<FPNumber>(paramFileOut, y0, "y0");
-    WriteParamToFile<FPNumber>(paramFileOut, y1, "y1");
-    WriteParamToFile<FPNumber>(paramFileOut, z0, "z0");
-    WriteParamToFile<FPNumber>(paramFileOut, z1, "z1");
-    WriteParamToFile<FPNumber>(paramFileOut, dt, "dt");
-    WriteParamToFile<FPNumber>(paramFileOut, dy, "dy");
-    WriteParamToFile<FPNumber>(paramFileOut, dz, "dz");
-    WriteParamToFile<FPNumber>(paramFileOut, fdtd_unit_length, "fdtd_unit_length");
-    WriteParamToFile<FPNumber>(paramFileOut, eField_FD_convertto_SI, "eField_FD_convertto_SI");
-    WriteParamToFile<FPNumber>(paramFileOut, data_save_rate, "data_save_rate");
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDFrequencyToSIUnits(1.0), "frequency_conversion_factor");   // 0
-    WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_y0, "ind_wedge_y0");
-    WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_y1, "ind_wedge_y1");
-    WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_z0, "ind_wedge_z0");
-    WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_z1, "ind_wedge_z1");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_amplitude, "pw_amplitude");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_center_t, "pw_center_t");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_decay_rate_t, "pw_decay_rate_t");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_mod_freq, "pw_mod_freq");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_mod_phase, "pw_mod_phase");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_velocity, "pw_velocity");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_ey_amplitude, "pw_ey_amplitude");
-    WriteParamToFile<FPNumber>(paramFileOut, pw_bx_amplitude, "pw_bx_amplitude");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDTimeToSIUnits(dt), "dt_si");   // 0
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dy), "dy_si");   // 1
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dz), "dz_si");   // 2
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, y0, "y0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, y1, "y1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, z0, "z0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, z1, "z1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, dt, "dt");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, dy, "dy");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, dz, "dz");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, fdtd_unit_length, "fdtd_unit_length");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, eField_FD_convertto_SI, "eField_FD_convertto_SI");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, data_save_rate, "data_save_rate");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDFrequencyToSIUnits(1.0), "frequency_conversion_factor");   // 0
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_y0, "ind_wedge_y0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_y1, "ind_wedge_y1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_z0, "ind_wedge_z0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, ind_wedge_z1, "ind_wedge_z1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_amplitude, "pw_amplitude");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_center_t, "pw_center_t");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_decay_rate_t, "pw_decay_rate_t");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_mod_freq, "pw_mod_freq");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_mod_phase, "pw_mod_phase");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_velocity, "pw_velocity");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_ey_amplitude, "pw_ey_amplitude");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_bx_amplitude, "pw_bx_amplitude");
 
 }
 

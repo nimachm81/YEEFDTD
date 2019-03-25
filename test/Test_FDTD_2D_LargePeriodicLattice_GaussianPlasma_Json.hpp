@@ -42,8 +42,8 @@ void test_run_fdtd_large_periodic_gaussian_plasma_2d_from_json(FPNumber theta_de
     FPNumber wp = (FPNumber)1.0e12*((FPNumber)2.0*(FPNumber)M_PI)/((FPNumber)3.0e8/(pitch*(FPNumber)1.0e-6));
     std::cout << "wp : " << wp << std::endl;
 
-    FPNumber wp2_decayrate_y = FWHMtoDecayRate(FWHM/pitch);
-    FPNumber wp2_decayrate_z = FWHMtoDecayRate(FWHM/pitch);
+    FPNumber wp2_decayrate_y = UtilityFunctions::FWHMtoDecayRate(FWHM/pitch);
+    FPNumber wp2_decayrate_z = UtilityFunctions::FWHMtoDecayRate(FWHM/pitch);
     FPNumber wp2_center_y = 0.0;
     FPNumber wp2_center_z = 0.0;
 

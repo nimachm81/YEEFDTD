@@ -54,8 +54,8 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
                   /((FPNumber)3.0e8/unit_length_si);
     std::cout << "wp : " << wp << std::endl;
 
-    FPNumber wp2_decayrate_y = FWHMtoDecayRate(fwhm_to_pitch*pitch_to_unitlength);
-    FPNumber wp2_decayrate_z = FWHMtoDecayRate(fwhm_to_pitch*pitch_to_unitlength);
+    FPNumber wp2_decayrate_y = UtilityFunctions::FWHMtoDecayRate(fwhm_to_pitch*pitch_to_unitlength);
+    FPNumber wp2_decayrate_z = UtilityFunctions::FWHMtoDecayRate(fwhm_to_pitch*pitch_to_unitlength);
     FPNumber wp2_center_y = 0.0;
     FPNumber wp2_center_z = celldisplacement_to_pitch*pitch_to_unitlength;
 
@@ -236,20 +236,20 @@ void test_run_fdtd_large_periodic_gaussian_plasma_time_switch_2d_from_json(
             file_suffix +
             ".param";
     std::ofstream paramFileOut(parametersFileName.c_str(), std::ios::out | std::ios::binary);
-    WriteParamToFile<FPNumber>(paramFileOut, dt, "dt");   // 0
-    WriteParamToFile<FPNumber>(paramFileOut, dy, "dy");   // 1
-    WriteParamToFile<FPNumber>(paramFileOut, dz, "dz");   // 2
-    WriteParamToFile<FPNumber>(paramFileOut, unit_length_si, "unit_length_si");   // 3
-    WriteParamToFile<FPNumber>(paramFileOut, pitch_to_unitlength, "pitch_to_unitlength");   // 4
-    WriteParamToFile<FPNumber>(paramFileOut, fwhm_to_pitch, "fwhm_to_pitch");   // 5
-    WriteParamToFile<FPNumber>(paramFileOut, wp_2p_thz, "wp_2p_thz");   // 6
-    WriteParamToFile<FPNumber>(paramFileOut, gamma_thz, "gamma_thz");   // 7
-    WriteParamToFile<FPNumber>(paramFileOut, wp_switch_dt, "wp_switch_dt");   // 8
-    WriteParamToFile<std::size_t>(paramFileOut, EorWp_entire_sample_rate, "EorWp_entire_sample_rate");   // 9
-    WriteParamToFile<FPNumber>(paramFileOut, er_z_record, "er_z_record");   // 10
-    WriteParamToFile<FPNumber>(paramFileOut, et_z_record, "et_z_record");   // 11
-    WriteParamToFile<FPNumber>(paramFileOut, theta_deg, "theta_deg");   // 12
-    WriteParamToFile<FPNumber>(paramFileOut, celldisplacement_to_pitch, "celldisplacement_to_pitch");   // 13
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, dt, "dt");   // 0
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, dy, "dy");   // 1
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, dz, "dz");   // 2
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, unit_length_si, "unit_length_si");   // 3
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pitch_to_unitlength, "pitch_to_unitlength");   // 4
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, fwhm_to_pitch, "fwhm_to_pitch");   // 5
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, wp_2p_thz, "wp_2p_thz");   // 6
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gamma_thz, "gamma_thz");   // 7
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, wp_switch_dt, "wp_switch_dt");   // 8
+    UtilityFunctions::WriteParamToFile<std::size_t>(paramFileOut, EorWp_entire_sample_rate, "EorWp_entire_sample_rate");   // 9
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, er_z_record, "er_z_record");   // 10
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, et_z_record, "et_z_record");   // 11
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, theta_deg, "theta_deg");   // 12
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, celldisplacement_to_pitch, "celldisplacement_to_pitch");   // 13
     paramFileOut.close();
 };
 

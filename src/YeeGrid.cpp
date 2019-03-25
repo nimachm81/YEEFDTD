@@ -26,6 +26,9 @@
 #include "RectPlaneWaveGridArrayManipulator.h"
 #include "GaussianPlaneWaveVectorField.h"
 #include "RectPlaneWaveVectorField.h"
+#include "GridElementView.h"
+#include "DiscreteScalarDataView.h"
+#include "DiscreteVectorDataView.h"
 
 
 YeeGrid3D::~YeeGrid3D() {
@@ -150,26 +153,26 @@ const std::array<FPNumber, 3>& YeeGrid3D::GetCornerR1() const {
 
 
 void YeeGrid3D::AddEntireGridElement(const std::string name, ElementType elemType) {
-    auto found = gridElements.find(name);
+    const auto& found = gridElements.find(name);
     assert(found == gridElements.end()); // make sure name does not already exist.
     gridElements[name] = std::make_shared<YeeGridData3D>(elemType, nCells);
 }
 
 void YeeGrid3D::AddPartialGridElement(const std::string name, ElementType elemType
         ,std::array<std::size_t, 3> startCell ,std::array<std::size_t, 3> numCells) {
-    auto found = gridElements.find(name);
+    const auto& found = gridElements.find(name);
     assert(found == gridElements.end()); // make sure name does not already exist.
     gridElements[name] = std::make_shared<YeeGridData3D>(elemType, numCells, startCell);
 }
 
 YeeGridData3D& YeeGrid3D::GetGridElement(const std::string name) {
-    auto found = gridElements.find(name);
+    const auto& found = gridElements.find(name);
     assert(found != gridElements.end()); // make sure name is valid.
     return *gridElements[name];
 }
 
 void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params) {
-    auto found = updateInstructions.find(name);
+    const auto& found = updateInstructions.find(name);
     assert(found == updateInstructions.end()); // make sure name does not already exist.
     updateInstructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, params);
 }
@@ -177,7 +180,7 @@ void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode i
 void YeeGrid3D::SetIterativeSequence(std::vector<std::string> sequence) {
     for(auto instructionName : sequence) {
         // make sure sequence instruction names are valid.
-        auto found = updateInstructions.find(instructionName);
+        const auto& found = updateInstructions.find(instructionName);
         assert(found != updateInstructions.end());
     }
     iterativeSequence = sequence;
@@ -186,19 +189,19 @@ void YeeGrid3D::SetIterativeSequence(std::vector<std::string> sequence) {
 void YeeGrid3D::SetSingleRunSequence(std::vector<std::string> sequence) {
     for(auto instructionName : sequence) {
         // make sure sequence instruction names are valid.
-        auto found = updateInstructions.find(instructionName);
+        const auto& found = updateInstructions.find(instructionName);
         assert(found != updateInstructions.end());
     }
     singleRunSequence = sequence;
 }
 
 void YeeGrid3D::AddInstructionSequence(std::string name, std::vector<std::string> sequence) {
-    auto found = instructionSequences.find(name);
+    const auto& found = instructionSequences.find(name);
     assert(found == instructionSequences.end());  // name is valid (not already taken)
 
     for(auto instructionName : sequence) {
         // make sure sequence instruction names are valid.
-        auto found = updateInstructions.find(instructionName);
+        const auto& found = updateInstructions.find(instructionName);
         if(found == updateInstructions.end()) {
             std::cout << "Instruction not defined: " << instructionName << std::endl;
             assert(false);
@@ -592,7 +595,7 @@ void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name, const st
         int direction, FPNumber amplitude,
         FPNumber t_center, FPNumber t_decay, FPNumber modulationFrequecy,
         FPNumber modulatioPhase, FPNumber timeOffsetFraction) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<GaussianGridArrayManipulator> modifier(new GaussianGridArrayManipulator);
@@ -615,7 +618,7 @@ void YeeGrid3D::AddGaussianGridArrayManipulator(const std::string name,
         FPNumber t_center, FPNumber t_decay, FPNumber modulationFrequecy,
         FPNumber modulatioPhase, FPNumber timeOffsetFraction
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<GaussianGridArrayManipulator> modifier(new GaussianGridArrayManipulator);
@@ -637,7 +640,7 @@ void YeeGrid3D::AddSpatialCubeGridArrayManipulator(const std::string name,
         std::array<FPNumber, 3> edgeThickness,
         FPNumber insideValue, FPNumber outsideValue
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<SpatialCubeGridArrayManipulator> modifier(new SpatialCubeGridArrayManipulator);
@@ -663,7 +666,7 @@ void YeeGrid3D::AddSpaceTimeCubeGridArrayManipulator(const std::string name,
         FPNumber insideValue, FPNumber outsideValue,
         FPNumber timeOffsetFraction
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<SpaceTimeCubeGridArrayManipulator> modifier(new SpaceTimeCubeGridArrayManipulator);
@@ -692,7 +695,7 @@ void YeeGrid3D::AddGaussianSpaceTimeGridArrayManipulator(const std::string name,
         std::array<FPNumber, 4> st_modulatioPhase,
         FPNumber timeOffsetFraction
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<GaussianSaceTimeGridArrayManipulator> modifier(new GaussianSaceTimeGridArrayManipulator);
@@ -722,7 +725,7 @@ void YeeGrid3D::AddPeriodicGaussianGridArrayManipulator(const std::string name,
         std::array<FPNumber, 3> unitCellOrigin,
         std::array<std::array<FPNumber, 3>, 3> primitiveVectors
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<PeriodicGaussianGridArrayManipulator> modifier(new PeriodicGaussianGridArrayManipulator);
@@ -752,7 +755,7 @@ void YeeGrid3D::AddSpherialShellGaussianGridArrayManipulator(const std::string n
         FPNumber r_modulationFrequecy,
         FPNumber r_modulatioPhase
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<SpherialShellGaussianGridArrayManipulator> modifier(new SpherialShellGaussianGridArrayManipulator);
@@ -780,12 +783,12 @@ void YeeGrid3D::AddBivalueGridArrayManipulator(const std::string name,
         FPNumber valueInside,
         FPNumber valueOutside
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<BivalueGridArrayManipulator> modifier(new BivalueGridArrayManipulator);
 
-    auto foundGeometry = geometries.find(geometryName);
+    const auto& foundGeometry = geometries.find(geometryName);
     assert(foundGeometry != geometries.end()); // geometry name exists
 
     modifier->SetGeometry(geometries[geometryName]);
@@ -816,7 +819,7 @@ void YeeGrid3D::AddGaussianPlaneWaveGridArrayManipulator(const std::string name,
         FPNumber t_modulatioPhase,
         FPNumber timeOffsetFraction
         ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<GaussianPlaneWaveGridArrayManipulator> modifier(new GaussianPlaneWaveGridArrayManipulator);
@@ -852,7 +855,7 @@ void YeeGrid3D::AddRectPlaneWaveGridArrayManipulator(const std::string name,
             FPNumber t_modulatioPhase,
             FPNumber timeOffsetFraction
             ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<RectPlaneWaveGridArrayManipulator> modifier(new RectPlaneWaveGridArrayManipulator);
@@ -884,7 +887,7 @@ void YeeGrid3D::AddDataTruncationGridArrayManipulator(const std::string name,
             bool truncateMin,
             bool truncateMax
             ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     std::shared_ptr<DataTruncationGridArrayManipulator> modifier(new DataTruncationGridArrayManipulator);
@@ -912,7 +915,7 @@ void YeeGrid3D::AddWedgeGeometry(const std::string name,
             const std::array<FPNumber, 3> apexPosition,
             const bool closeBase
             ) {
-    auto found = geometries.find(name);
+    const auto& found = geometries.find(name);
     assert(found == geometries.end()); // make sure name does not already exist.
 
     std::shared_ptr<WedgeGeometry> geometry(new WedgeGeometry);
@@ -935,7 +938,7 @@ void YeeGrid3D::AddGaussianPlaneWaveVectorField(const std::string name,
             FPNumber t_modulationFrequency,
             FPNumber t_modulationPhase
             ) {
-    auto found = vectorFields.find(name);
+    const auto& found = vectorFields.find(name);
     assert(found == vectorFields.end()); // make sure name does not already exist.
 
     std::shared_ptr<GaussianPlaneWaveVectorField> field(new GaussianPlaneWaveVectorField);
@@ -962,7 +965,7 @@ void YeeGrid3D::AddRectPlaneWaveVectorField(const std::string name,
             FPNumber t_modulationFrequency,
             FPNumber t_modulationPhase
             ) {
-    auto found = vectorFields.find(name);
+    const auto& found = vectorFields.find(name);
     assert(found == vectorFields.end()); // make sure name does not already exist.
 
     std::shared_ptr<RectPlaneWaveVectorField> field(new RectPlaneWaveVectorField);
@@ -988,7 +991,7 @@ void YeeGrid3D::AddManualChargedParticleEmitter(const std::string name,
         const std::vector<std::array<FPNumber, 3>>& particlesInitialPositions,
         const std::vector<std::array<FPNumber, 3>>& particlesInitialVelocities
         ) {
-    auto found = particleEmitters.find(name);
+    const auto& found = particleEmitters.find(name);
     assert(found == particleEmitters.end()); // make sure name does not already exist.
 
     std::shared_ptr<ManualChargedParticleEmitter> emitter(new ManualChargedParticleEmitter);
@@ -1014,7 +1017,7 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
             FPNumber unitLength,
             std::size_t numOfSubPoints
             ) {
-    auto found = particleEmitters.find(name);
+    const auto& found = particleEmitters.find(name);
     assert(found == particleEmitters.end()); // make sure name does not already exist.
 
     std::shared_ptr<ChargedParticleEmitter> emitter(new ChargedParticleEmitter);
@@ -1025,7 +1028,7 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
     emitter->SetUnitLength(unitLength);
 
     //--- set up geometry surface
-    auto foundGeometry = geometries.find(geometryName);
+    const auto& foundGeometry = geometries.find(geometryName);
     assert(foundGeometry != geometries.end()); // make sure name does not already exist.
 
     std::vector<std::array<FPNumber, 3>> centerPoints;     // the point at the middle of each patch
@@ -1064,7 +1067,7 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
     emitter->SetSurfaceAreas(arcLenghts);
 
     // set up electric field
-    auto foundEField = gridElements.find(eFieldName);
+    const auto& foundEField = gridElements.find(eFieldName);
     assert(foundEField != gridElements.end());
 
     emitter->SetElectricField(gridElements[eFieldName].get());
@@ -1075,7 +1078,7 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
     emitter->SetGridSpacing(dr);
 
     if(analyticEFieldName != "") {
-        auto foundAnalEField = vectorFields.find(analyticEFieldName);
+        const auto& foundAnalEField = vectorFields.find(analyticEFieldName);
         assert(foundAnalEField != vectorFields.end());
 
         emitter->SetAnalyticElectricField(vectorFields[analyticEFieldName].get());
@@ -1096,40 +1099,40 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
             const std::string constrainingGeometryName,
             bool keepPointsInside
             ) {
-    auto found = gamDataUpdaters.find(name);
+    const auto& found = gamDataUpdaters.find(name);
     assert(found == gamDataUpdaters.end()); // make sure name does not already exist.
 
     std::shared_ptr<ChargedParticlesTracer> updater(new ChargedParticlesTracer);
 
-    auto foundEField = gridElements.find(eFieldName);
+    const auto& foundEField = gridElements.find(eFieldName);
     assert(foundEField != gridElements.end());
     updater->SetElectricFieldGrid(gridElements[eFieldName].get());
 
-    auto foundBField = gridElements.find(bFieldName);
+    const auto& foundBField = gridElements.find(bFieldName);
     assert(foundBField != gridElements.end());
     updater->SetMagneticFieldGrid(gridElements[bFieldName].get());
 
     if(analyticEFieldName != "") {
-        auto foundAnalEField = vectorFields.find(analyticEFieldName);
+        const auto& foundAnalEField = vectorFields.find(analyticEFieldName);
         assert(foundAnalEField != vectorFields.end());
         updater->SetAnalyticElectricField(vectorFields[analyticEFieldName].get());
     }
 
     if(analyticBFieldName != "") {
-        auto foundAnalBField = vectorFields.find(analyticBFieldName);
+        const auto& foundAnalBField = vectorFields.find(analyticBFieldName);
         assert(foundAnalBField != vectorFields.end());
         updater->SetAnalyticMagneticField(vectorFields[analyticBFieldName].get());
     }
 
 
     if(srFieldName != "") {
-        auto foundSRField = gridElements.find(srFieldName);
+        const auto& foundSRField = gridElements.find(srFieldName);
         assert(foundSRField != gridElements.end());
         updater->SetScatteringRateFieldGrid(gridElements[srFieldName].get());
     }
 
     // add particles
-    auto foundEmitter = particleEmitters.find(particleEmitterName);
+    const auto& foundEmitter = particleEmitters.find(particleEmitterName);
     assert(foundEmitter != particleEmitters.end());
     updater->SetParticleEmitter(particleEmitters[particleEmitterName].get());
 
@@ -1163,7 +1166,7 @@ void YeeGrid3D::AddChargedParticlesTracer(const std::string name,
     }
 
     if(constrainingGeometryName != "") {
-        auto foundGeometry = geometries.find(constrainingGeometryName);
+        const auto& foundGeometry = geometries.find(constrainingGeometryName);
         assert(foundGeometry != geometries.end());
         updater->SetConstrainingGeometry(geometries[constrainingGeometryName].get(), keepPointsInside);
     }
@@ -1185,7 +1188,7 @@ void YeeGrid3D::AddDiscretePointsGridArrayManipulator(const std::string name,
             const int sameCellTreatmentType,
             const int interpolationType
             ) {
-    auto found = gridArrayManipulators.find(name);
+    const auto& found = gridArrayManipulators.find(name);
     assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
 
     assert(dataUpdaterDataType == "scalar" || dataUpdaterDataType == "vector");
@@ -1262,39 +1265,81 @@ void YeeGrid3D::AddGridElementView(std::string gridElemViewName,   // name of th
             std::string gridElemName , int gridElemComponent,   // name of the gridElement and its x,y,z component
             std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd // slice start and end
             ) {
-    gridElementViews.emplace(gridElemViewName, GridElementView());
-    GridElementView& geView = gridElementViews[gridElemViewName];
-    geView.SetName(gridElemViewName);
-    geView.SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent).GetSlice(indStart, indEnd));
+    const auto& found = dataViews.find(gridElemViewName);
+    assert(found == dataViews.end()); // make sure name does not already exist.
+
+    std::shared_ptr<GridElementView> view(new GridElementView);
+    view->SetName(gridElemViewName);
+    view->SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent).GetSlice(indStart, indEnd));
+
+    dataViews[gridElemViewName] = view;
 }
 
 void YeeGrid3D::AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
             std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component
             ) {
-    gridElementViews.emplace(gridElemViewName, GridElementView());
-    GridElementView& geView = gridElementViews[gridElemViewName];
-    geView.SetName(gridElemViewName);
-    geView.SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent));
+    const auto& found = dataViews.find(gridElemViewName);
+    assert(found == dataViews.end()); // make sure name does not already exist.
+
+    std::shared_ptr<GridElementView> view(new GridElementView);
+    view->SetName(gridElemViewName);
+    view->SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent));
+
+    dataViews[gridElemViewName] = view;
 }
 
-void YeeGrid3D::SetDataStoreRate(std::string gridElemViewName, std::size_t saveEveryNSammples) {
-    gridElementViews[gridElemViewName].SetSaveOnDiskFrequency(saveEveryNSammples);
+void YeeGrid3D::AddChargedParticleDataView(std::string viewName,
+                        std::string particleTracerName,
+                        std::string dataType,
+                        std::string dataName
+                        ) {
+    const auto& found = dataViews.find(viewName);
+    assert(found == dataViews.end()); // make sure name does not already exist.
+
+    if(dataType == "scalar") {
+        std::shared_ptr<DiscreteScalarDataView> view(new DiscreteScalarDataView);
+        view->SetName(viewName);
+
+        std::vector<FPNumber>* scalarData = nullptr;
+        gamDataUpdaters[particleTracerName]->PointToScalarData(scalarData, dataName, 0);
+        assert(scalarData != nullptr);
+        view->SetScalarProperty(scalarData);
+
+        dataViews[viewName] = view;
+    } else if(dataType == "vector") {
+        std::shared_ptr<DiscreteVectorDataView> view(new DiscreteVectorDataView);
+        view->SetName(viewName);
+
+        std::vector<std::array<FPNumber, 3>>* vectorData = nullptr;
+        gamDataUpdaters[particleTracerName]->PointToVectorData(vectorData, dataName);
+        assert(vectorData != nullptr);
+        view->SetVectorProperty(vectorData);
+
+        dataViews[viewName] = view;
+    } else {
+        assert(false);
+    }
+}
+
+
+void YeeGrid3D::SetDataStoreRate(std::string dataViewName, std::size_t saveEveryNSammples) {
+    dataViews[dataViewName]->SetSaveOnDiskFrequency(saveEveryNSammples);
 }
 
 void YeeGrid3D::WriteAllGridElemViewsToFile() {
-    for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
-        it->second.StoreData(timeIndex);
+    for(auto it = dataViews.begin(); it != dataViews.end(); ++it) {
+        it->second->StoreData(timeIndex);
     }
 }
 
 void YeeGrid3D::DeleteOlderViewFiles() {
-    for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
-        it->second.DeleteOlderFiles();
+    for(auto it = dataViews.begin(); it != dataViews.end(); ++it) {
+        it->second->DeleteOlderFiles();
     }
 }
 
 void YeeGrid3D::CloseGridViewFiles() {
-    for(auto it = gridElementViews.begin(); it != gridElementViews.end(); ++it) {
-        it->second.CloseFile();
+    for(auto it = dataViews.begin(); it != dataViews.end(); ++it) {
+        it->second->CloseFile();
     }
 }

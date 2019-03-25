@@ -9,8 +9,8 @@ void DiscretePointsVectorGridArrayManipulator::AddDataUpdater(DiscretePointsGAMD
                                                         int direction
                                                         ) {
     dataUpdater = updater;
-    updater->AttachDataToGAMPositions(positions);
-    updater->AttachVectorDataToGAMValues(values, dataName, direction);
+    updater->PointToDataPositions(positions);
+    updater->PointToVectorData(values, dataName);
 
     assert(direction >= 0 && direction < 3);
     DiscretePointsVectorGridArrayManipulator::direction = direction;

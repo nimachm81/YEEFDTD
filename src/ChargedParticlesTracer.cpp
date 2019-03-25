@@ -210,29 +210,21 @@ void ChargedParticlesTracer::UpdateParticlesCurrents() {
 }
 
 
-void ChargedParticlesTracer::AttachDataToGAMPositions(std::vector<std::array<FPNumber, 3>>*& positions) {
-    positions = &(this->positions);
-}
-
-void ChargedParticlesTracer::AttachScalarDataToGAMValues(std::vector<FPNumber>*& values, std::string dataName, int direction) {
+void ChargedParticlesTracer::PointToScalarData(std::vector<FPNumber>*& values, std::string dataName, int direction) {
     if(dataName == "current") {
         values = &currentComponents[direction];
     } else if(dataName == "charge") {
         values = &charges;
     } else {
-        std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
-        assert(false);
+        ParticlesTracer::PointToScalarData(values, dataName, direction);
     }
 }
 
-void ChargedParticlesTracer::AttachVectorDataToGAMValues(std::vector<std::array<FPNumber, 3>>*& values, std::string dataName, int direction) {
-    if(dataName == "velocity") {
-        values = &velocities;
-    } else if(dataName == "momentum") {
-        values = &momentums;
+void ChargedParticlesTracer::PointToVectorData(std::vector<std::array<FPNumber, 3>>*& values, std::string dataName) {
+    if(false) {
+        // left for future  data arrays
     } else {
-        std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
-        assert(false);
+        ParticlesTracer::PointToVectorData(values, dataName);
     }
 }
 

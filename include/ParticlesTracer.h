@@ -26,6 +26,14 @@ class ParticlesTracer : public DiscretePointsGAMDataUpdater {
     void SetScatteringRateFieldGrid(YeeGridData3D* srField);
     void SetScatteringRateFieldGridOrigin(int direction, std::array<FPNumber, 3>& origin);
 
+    virtual void PointToDataPositions(std::vector<std::array<FPNumber, 3>>*& positions);
+    virtual void PointToScalarData(std::vector<FPNumber>*& values,
+                                   std::string dataName,
+                                   int direction);
+
+    virtual void PointToVectorData(std::vector<std::array<FPNumber, 3>>*& values,
+                                 std::string dataName);
+
     void SetParticleEmitter(ParticleEmitter* emitter);
     void AddParticlesEmittedByTheParticleEmitter(FPNumber t);   // adds the particles emitted at time t to the collection of particles
 

@@ -4,6 +4,7 @@
 #define FDTD_DEMOTABELCOMPLEX_H_
 
 
+
 template<typename T>
 class DemotableComplex : public std::complex<T> {
     public:

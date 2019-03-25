@@ -15,7 +15,7 @@
 #include "FDInstructionCode.h"
 #include "ElementType.h"
 #include "GridArrayManipulator.h"
-#include "GridElementView.h"
+#include "DataView.h"
 #include "DiscretePointsGAMDataUpdater.h"
 #include "ParticleEmitter.h"
 #include "Geometry.h"
@@ -284,6 +284,11 @@ class YeeGrid3D {
     void AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
                             std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component
                             );
+    void AddChargedParticleDataView(std::string viewName,
+                            std::string particleTracerName,
+                            std::string dataType,
+                            std::string dataName
+                            );
 
     void WriteAllGridElemViewsToFile();
     void DeleteOlderViewFiles();
@@ -303,7 +308,7 @@ class YeeGrid3D {
     std::vector<std::string> iterativeSequence;     // sequence in which to apply the field update instructions
     std::vector<std::string> singleRunSequence;     // sequence in which to apply the field update instructions
     std::unordered_map<std::string, std::vector<std::string>> instructionSequences;
-    std::unordered_map<std::string, GridElementView> gridElementViews;  // a slice of gridElements for printing to output
+    std::unordered_map<std::string, std::shared_ptr<DataView>> dataViews;  // a slice of gridElements for printing to output
     std::unordered_map<std::string, std::shared_ptr<DiscretePointsGAMDataUpdater>> gamDataUpdaters;  // data updaters for (some) grid array manipulators
     std::unordered_map<std::string, std::shared_ptr<Geometry>> geometries;
     std::unordered_map<std::string, std::shared_ptr<ParticleEmitter>> particleEmitters;

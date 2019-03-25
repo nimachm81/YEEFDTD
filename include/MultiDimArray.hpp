@@ -17,6 +17,8 @@
 #include "MultiDimArrayFileIO.hpp"
 #include "MultiDimArrayBufferIO.hpp"
 
+#include "UtilityFunctions.hpp"
+
 template <typename T>
 class NumberArray3D {
     private:
@@ -828,16 +830,7 @@ class NumberArray3D {
                               bool writeShape = false,
                               bool writeDataTypeSize = false) {
         assert(arrayData != nullptr);
-        int dataTypeCode = -1;
-        if(typeid(T) == typeid(float)) {
-            dataTypeCode = 1;
-        } else if(typeid(T) == typeid(double)) {
-            dataTypeCode = 2;
-        } else if(typeid(T) == typeid(std::complex<float>)) {
-            dataTypeCode = 3;
-        } else if(typeid(T) == typeid(std::complex<double>)) {
-            dataTypeCode = 4;
-        }
+        int dataTypeCode = UtilityFunctions::GetDatatypeNumericalCode<T>();
 
         return Write3DNumberArrayData(fileOut, shape, indStart, arrayData, dataTypeCode, writeShape, writeDataTypeSize);
     }
@@ -847,16 +840,7 @@ class NumberArray3D {
                               bool writeShape = false,
                               bool writeDataTypeSize = false) {
         assert(arrayData != nullptr);
-        int dataTypeCode = -1;
-        if(typeid(T) == typeid(float)) {
-            dataTypeCode = 1;
-        } else if(typeid(T) == typeid(double)) {
-            dataTypeCode = 2;
-        } else if(typeid(T) == typeid(std::complex<float>)) {
-            dataTypeCode = 3;
-        } else if(typeid(T) == typeid(std::complex<double>)) {
-            dataTypeCode = 4;
-        }
+        int dataTypeCode = UtilityFunctions::GetDatatypeNumericalCode<T>();
 
         return Write3DNumberArrayDataToMemory(buffer, bufferInd,
                     shape, indStart, arrayData, dataTypeCode, writeShape, writeDataTypeSize);

@@ -40,6 +40,30 @@ void ParticlesTracer::SetGridSpacing(std::array<FPNumber, 3>& dr) {
     gridSpacing = dr;
 }
 
+void ParticlesTracer::PointToDataPositions(std::vector<std::array<FPNumber, 3>>*& positions) {
+    positions = &(this->positions);
+}
+
+void ParticlesTracer::PointToScalarData(std::vector<FPNumber>*& values, std::string dataName, int direction) {
+    if(dataName == "mass") {
+        values = &masses;
+    } else {
+        std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
+        assert(false);
+    }
+}
+
+void ParticlesTracer::PointToVectorData(std::vector<std::array<FPNumber, 3>>*& values, std::string dataName) {
+    if(dataName == "velocity") {
+        values = &velocities;
+    } else if(dataName == "momentum") {
+        values = &momentums;
+    } else {
+        std::cout << "error: " << dataName << " is not a valid data name." << std::endl;
+        assert(false);
+    }
+}
+
 void ParticlesTracer::SetParticleEmitter(ParticleEmitter* emitter) {
     particleEmitter = emitter;
 }

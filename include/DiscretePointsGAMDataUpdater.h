@@ -6,15 +6,14 @@ class DiscretePointsGAMDataUpdater {
     public:
     virtual ~DiscretePointsGAMDataUpdater() { };
 
-    virtual void AttachDataToGAMPositions(std::vector<std::array<FPNumber, 3>>*& positions) = 0;
+    virtual void PointToDataPositions(std::vector<std::array<FPNumber, 3>>*& positions) = 0;
 
-    virtual void AttachScalarDataToGAMValues(std::vector<FPNumber>*& values,
-                                             std::string dataName,
-                                             int direction) = 0;
+    virtual void PointToScalarData(std::vector<FPNumber>*& values,
+                                   std::string dataName,
+                                   int direction) = 0;
 
-    virtual void AttachVectorDataToGAMValues(std::vector<std::array<FPNumber, 3>>*& values,
-                                             std::string dataName,
-                                             int direction) = 0;
+    virtual void PointToVectorData(std::vector<std::array<FPNumber, 3>>*& values,
+                                 std::string dataNamen) = 0;
 
     virtual void UpdateGAMValues(const FPNumber t) = 0;
 };

@@ -9,8 +9,8 @@ void DiscretePointsScalarGridArrayManipulator::AddDataUpdater(DiscretePointsGAMD
                                                         int direction
                                                         ) {
     dataUpdater = updater;
-    updater->AttachDataToGAMPositions(positions);
-    updater->AttachScalarDataToGAMValues(values, dataName, direction);
+    updater->PointToDataPositions(positions);
+    updater->PointToScalarData(values, dataName, direction);
 
     assert(direction >= 0 && direction < 3);
 }

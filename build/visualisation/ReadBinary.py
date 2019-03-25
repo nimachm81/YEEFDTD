@@ -7,6 +7,8 @@ import numpy as np
 
     
 def GetArrayInfo(fileName):
+    """ Reads the parameters of an array saved through MultiDimArray
+    """
     file = open(fileName, mode='rb')
     
     preambleSize = 1*4 + 1*8 + 3*8
@@ -37,7 +39,8 @@ def GetArrayInfo(fileName):
     
 
 def GetArrays(fileName, indStart=0, indEnd=None):
-    
+    """ Reads an array saved through MultiDimArray
+    """
     arrayInfo = GetArrayInfo(fileName)
     numOfArrays = arrayInfo["numOfArrays"]
     preambleSize = arrayInfo["preambleSize"]
@@ -99,6 +102,8 @@ def GetArrays(fileName, indStart=0, indEnd=None):
     
     
 def ReadParamsFile(filename_params):
+    """ Reads a parameter file saved using UtilityFunctions::WriteParamToFile
+    """
     paramfile = open(filename_params, mode='rb')
     paramsfileContent = paramfile.read()
     paramfile.close()
@@ -135,3 +140,42 @@ def ReadParamsFile(filename_params):
     return params
 
 
+def GetDiscreteScalarDataArray(fileName):
+    """ Reads a discrete array saved through DiscreteScalarDataView
+    """
+    file = open(fileName, mode='rb')
+    fileContent = file.read()
+   
+    preambleSize = 1*4 + 1*8 + 1*8
+ 
+    ind_st = 0
+    size = 4
+    typeCode = struct.unpack("i", fileContent[ind_st: ind_st + size])[0]
+    ind_st += size    
+    size = 8
+    typeSize = struct.unpack("Q", fileContent[ind_st: ind_st + size])[0]
+    ind_st += size
+    size = 8
+    arraySize = struct.unpack("Q", fileContent[ind_st: ind_st + size])
+    size_total = preambleSize + arraySize*typeSize
+
+    ind = 0;
+    preambleSize = 1*4 + 1*8
+    arrays = []
+    while ind < len(fileContent):
+        ind += preambleSize
+        size = 8
+        arraySize = struct.unpack("Q", fileContent[ind: ind + size])
+        ind += size
+        
+        size = arraySize * typeSize
+        array = struct.unpack("Q", fileContent[ind: ind + size])
+        
+        arrays.append(np.array(list(array)))
+        
+    
+    file.close()
+
+    return arrays
+    
+    

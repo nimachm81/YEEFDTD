@@ -238,13 +238,13 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json() {
             std::string("data/2D/") + "params" + ".param";
 
     std::ofstream paramFileOut(parametersFileName.c_str(), std::ios::out | std::ios::binary);
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDTimeToSIUnits(dt), "dt");   // 0
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dy), "dy");   // 1
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dz), "dz");   // 2
-    WriteParamToFile<FPNumber>(paramFileOut, fdtd_unit_length, "fdtd_unit_length");
-    WriteParamToFile<FPNumber>(paramFileOut, eField_FD_convertto_SI, "eField_FD_convertto_SI");
-    WriteParamToFile<FPNumber>(paramFileOut, data_save_rate, "data_save_rate");
-    WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDFrequencyToSIUnits(1.0), "frequency_conversion_factor");   // 0
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDTimeToSIUnits(dt), "dt");   // 0
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dy), "dy");   // 1
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDLengthToSIUnits(dz), "dz");   // 2
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, fdtd_unit_length, "fdtd_unit_length");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, eField_FD_convertto_SI, "eField_FD_convertto_SI");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, data_save_rate, "data_save_rate");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, (FPNumber)units.ConvertFDFrequencyToSIUnits(1.0), "frequency_conversion_factor");   // 0
 
 }
 

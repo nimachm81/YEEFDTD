@@ -1068,6 +1068,28 @@
             "saveRate":10000
             }
         }
+    ],
+    "discreteDataViews":[
+        {
+        "type":"ChargedParticleDataView",
+        "parameters":{
+            "name":"2D/e",
+            "updaterName":"chargeEmissionTracer_elec",
+            "dataType":"scalar",
+            "dataName":"charge",
+            "saveRate":"_save_rate_"
+            }
+        },
+        {
+        "type":"ChargedParticleDataView",
+        "parameters":{
+            "name":"2D/Ve",
+            "updaterName":"chargeEmissionTracer_elec",
+            "dataType":"vector",
+            "dataName":"velocity",
+            "saveRate":"_save_rate_"
+            }
+        }
     ]
 },
 "grid-pml-right":{

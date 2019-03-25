@@ -97,11 +97,14 @@
 		<Unit filename="../include/ChargedParticleEmitter.h" />
 		<Unit filename="../include/ChargedParticlesTracer.h" />
 		<Unit filename="../include/DataTruncationGridArrayManipulator.h" />
+		<Unit filename="../include/DataView.h" />
 		<Unit filename="../include/DemotableComplex.hpp" />
 		<Unit filename="../include/DiscretePointsGAMDataUpdater.h" />
 		<Unit filename="../include/DiscretePointsGridArrayManipulator.h" />
 		<Unit filename="../include/DiscretePointsScalarGridArrayManipulator.h" />
 		<Unit filename="../include/DiscretePointsVectorGridArrayManipulator.h" />
+		<Unit filename="../include/DiscreteScalarDataView.h" />
+		<Unit filename="../include/DiscreteVectorDataView.h" />
 		<Unit filename="../include/ElementType.h" />
 		<Unit filename="../include/FDInstructionCode.h" />
 		<Unit filename="../include/FDInstructionFactory.h" />
@@ -159,6 +162,9 @@
 		<Unit filename="../src/DataTruncationGridArrayManipulator.cpp">
 			<Option target="main" />
 		</Unit>
+		<Unit filename="../src/DataView.cpp">
+			<Option target="main" />
+		</Unit>
 		<Unit filename="../src/DiscretePointsGridArrayManipulator.cpp">
 			<Option target="main" />
 		</Unit>
@@ -166,6 +172,12 @@
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/DiscretePointsVectorGridArrayManipulator.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/DiscreteScalarDataView.cpp">
+			<Option target="main" />
+		</Unit>
+		<Unit filename="../src/DiscreteVectorDataView.cpp">
 			<Option target="main" />
 		</Unit>
 		<Unit filename="../src/FDInstructionFactory.cpp">

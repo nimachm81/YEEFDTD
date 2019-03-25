@@ -36,11 +36,9 @@ class ChargedParticlesTracer : public ParticlesTracer {
 
     void UpdateParticlesCurrents();  // updates currents using particles velocities
 
-    void AttachDataToGAMPositions(std::vector<std::array<FPNumber, 3>>*& positions);
-    virtual void AttachScalarDataToGAMValues(std::vector<FPNumber>*& values, std::string dataName, int direction);
-    virtual void AttachVectorDataToGAMValues(std::vector<std::array<FPNumber, 3>>*& values,
-                                             std::string dataName,
-                                             int direction);
+    virtual void PointToScalarData(std::vector<FPNumber>*& values, std::string dataName, int direction);
+    virtual void PointToVectorData(std::vector<std::array<FPNumber, 3>>*& values,
+                                             std::string dataName);
     void UpdateGAMValues(const FPNumber t);
 
     private:

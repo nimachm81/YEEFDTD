@@ -714,7 +714,31 @@ void ParamFileTranslator::SetSingleGridGridViews(YeeGrid3D& yee,
             std::size_t saveRate = viewParams.GetUintProperty("saveRate");
             yee.SetDataStoreRate(viewName, saveRate);
         } else {
+            std::cout << "error : viewType not recognized" << std::endl;
             assert(false);
+        }
+    }
+
+    if(singleGridRoot.GetCount("discreteDataViews") > 0) {
+        auto discreteDataViews = singleGridRoot.GetTypeStringAndParameterSubtree("discreteDataViews");
+        for(auto& viewTypeandParams : discreteDataViews) {
+            auto& viewType = std::get<0>(viewTypeandParams);
+            if(viewType == "ChargedParticleDataView") {
+                ParameterExtractor viewParams(std::get<1>(viewTypeandParams));
+
+                std::string viewName = viewParams.GetStringProperty("name");
+                std::string updaterName = viewParams.GetStringProperty("updaterName");
+                std::string dataType = viewParams.GetStringProperty("dataType");
+                std::string dataName = viewParams.GetStringProperty("dataName");
+
+                yee.AddChargedParticleDataView(viewName, updaterName, dataType, dataName);
+
+                std::size_t saveRate = viewParams.GetUintProperty("saveRate");
+                yee.SetDataStoreRate(viewName, saveRate);
+            } else {
+                std::cout << "error : viewType not recognized" << std::endl;
+                assert(false);
+            }
         }
     }
 
