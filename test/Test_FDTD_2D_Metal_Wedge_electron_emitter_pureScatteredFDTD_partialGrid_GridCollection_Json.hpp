@@ -110,7 +110,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
 
     // wedge parameters
     FPNumber emitterWedgeAngle = 1.0/180.0*M_PI;
-    FPNumber emitterWedgeTipRadius = units.ConvertSILengthToFDUnits(300.0e-9);
+    FPNumber emitterWedgeTipRadius = units.ConvertSILengthToFDUnits(200.0e-9);
     std::array<FPNumber, 3> emitterWedgeTipPosition{0.0, -0.0, 0.0};
     FPNumber emitterWedgeHeight = emitterWedgeTipPosition[1] - y0;
     FPNumber emitterWedgeTopHeight = 2.0*emitterWedgeTipRadius;  // only this part of the wedge is discretized for the emitter

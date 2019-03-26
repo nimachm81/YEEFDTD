@@ -16,9 +16,6 @@
             {"name":"E", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"scattered field"}, 
             {"name":"H", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"scattered field"}, 
             {"name":"Je", "type":"EdgeE", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"space charge currents"}, 
-            {"name":"Vey", "type":"NodeScalar", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"space charge velocities"},
-            {"name":"Vez", "type":"NodeScalar", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"space charge velocities"},
-            {"name":"Ne", "type":"NodeScalar", "indStart":[0, 0, 0], "nCells":[0, "_ny_", "_nz_"], "comment":"number of electrons"},
             
             {"name":"Jh", "type":"EdgeE", "indStart":[0, "_indy0Wedge_", "_indz0Wedge_"], "nCells":[0, "_ny_wedge_", "_nz_wedge_"], 
                     "comment":"hole charge"},
@@ -332,36 +329,6 @@
             "array":"Jh",
             "direction":"z",
             "dataUpdater":{"name":"chargeEmissionTracer_hole", "dataName":"current", "direction":"z"}
-            }
-        },
-        {
-        "type":"DiscretePointsGridArrayManipulator",
-        "parameters":{
-            "name":"VeyUpdater",
-            "array":"Vey",
-            "direction":"x",
-            "dataUpdater":{"name":"chargeEmissionTracer_elec", "dataName":"velocity", "dataType":"vector", "direction":"y", 
-                           "sameCellTreatmentType":1, "interpolationType":0}
-            }
-        },
-        {
-        "type":"DiscretePointsGridArrayManipulator",
-        "parameters":{
-            "name":"VezUpdater",
-            "array":"Vez",
-            "direction":"x",
-            "dataUpdater":{"name":"chargeEmissionTracer_elec", "dataName":"velocity", "dataType":"vector", "direction":"z", 
-                           "sameCellTreatmentType":1, "interpolationType":0}
-            }
-        },
-        {
-        "type":"DiscretePointsGridArrayManipulator",
-        "parameters":{
-            "name":"NeUpdater",
-            "array":"Ne",
-            "direction":"x",
-            "dataUpdater":{"name":"chargeEmissionTracer_elec", "dataName":"charge", "dataType":"scalar", "direction":"x", 
-                           "sameCellTreatmentType":0, "interpolationType":0}
             }
         }
     ],
@@ -884,37 +851,13 @@
             "name":"Jz_holes_update",
             "girdArrayManipulator":"JhzUpdater"
             }
-        },
-        {
-        "type":"A=frt",
-        "parameters":{
-            "name":"Vy_spacecharge_update",
-            "girdArrayManipulator":"VeyUpdater"
-            }
-        },
-        {
-        "type":"A=frt",
-        "parameters":{
-            "name":"Vz_spacecharge_update",
-            "girdArrayManipulator":"VezUpdater"
-            }
-        },
-        {
-        "type":"A=frt",
-        "parameters":{
-            "name":"Ne_spacecharge_update",
-            "girdArrayManipulator":"NeUpdater"
-            }
         }
-
     ],
     "updateSequences":[ {"name":"setMetalParams", "sequence":["wedgeMask_update", "gamma_update", "wp2_update", "wp2_e_wp20_p_rho",
                                                               "wedgeMask_yee_y_update", "wedgeMask_yee_z_update", "emitterWedgeMask_update"]},
                         {"name":"update-E", "sequence":["Jy_spacecharge_update", "Jz_spacecharge_update",
                                                         "Jy_holes_update", "Jz_holes_update",
-                                                        
-                                                        "Vy_spacecharge_update", "Vz_spacecharge_update", "Ne_spacecharge_update",
-                                                        
+                                                                                                                
                                                         "Jmetaly_pe_Wp2Escaty", "Jmetalz_pe_Wp2Escatz", "Jmetaly_pe_Wp2Eincy", "Jmetalz_pe_Wp2Eincz",
                                                             "Jmetaly_me_gammaJmetaly", "Jmetalz_me_gammaJmetalz",
                                                         "rho_me_DivJmetaly", "rho_me_DivJmetalz", "rho_me_DivJhy", "rho_me_DivJhz",
@@ -1035,33 +978,6 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"2D/Ve-y",
-            "array":"Vey",
-            "direction":"x",
-            "saveRate":"_save_rate_"
-            }
-        },
-        {
-        "type":"entire",
-        "parameters":{
-            "name":"2D/Ve-z",
-            "array":"Vez",
-            "direction":"x",
-            "saveRate":"_save_rate_"
-            }
-        },
-        {
-        "type":"entire",
-        "parameters":{
-            "name":"2D/Ne",
-            "array":"Ne",
-            "direction":"x",
-            "saveRate":"_save_rate_"
-            }
-        },
-        {
-        "type":"entire",
-        "parameters":{
             "name":"2D/EmitterMask",
             "array":"emitterWedgeMask",
             "direction":"x",
@@ -1095,6 +1011,36 @@
         "parameters":{
             "name":"2D/Re",
             "updaterName":"chargeEmissionTracer_elec",
+            "dataType":"vector",
+            "dataName":"position",
+            "saveRate":"_save_rate_"
+            }
+        },
+        {
+        "type":"ChargedParticleDataView",
+        "parameters":{
+            "name":"2D/h",
+            "updaterName":"chargeEmissionTracer_hole",
+            "dataType":"scalar",
+            "dataName":"charge",
+            "saveRate":"_save_rate_"
+            }
+        },
+        {
+        "type":"ChargedParticleDataView",
+        "parameters":{
+            "name":"2D/Vh",
+            "updaterName":"chargeEmissionTracer_hole",
+            "dataType":"vector",
+            "dataName":"velocity",
+            "saveRate":"_save_rate_"
+            }
+        },
+        {
+        "type":"ChargedParticleDataView",
+        "parameters":{
+            "name":"2D/Rh",
+            "updaterName":"chargeEmissionTracer_hole",
             "dataType":"vector",
             "dataName":"position",
             "saveRate":"_save_rate_"
