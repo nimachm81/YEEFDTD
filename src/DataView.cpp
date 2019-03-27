@@ -108,5 +108,8 @@ void DataView::StoreData(std::size_t iterationIndex) {
 
             WriteDataToFile();
         }
+        if(verbosityLevel >= 1 && std::remainder(iterationIndex, 10*saveOnDiskFrequency) == 0) {
+            std::cout << "Writing data at iterationIndex: " << iterationIndex << std::endl;
+        }
     }
 }

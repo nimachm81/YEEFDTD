@@ -1009,6 +1009,7 @@ void YeeGrid3D::AddManualChargedParticleEmitter(const std::string name,
 void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
             FPNumber particleCharge,
             FPNumber particleMasse,
+            FPNumber metalWorkFunction_eV,
             const std::string geometryName,
             int dimensions,
             FPNumber maxElemSize,
@@ -1024,6 +1025,8 @@ void YeeGrid3D::AddChargedParticleEmitter(const std::string name,
 
     emitter->SetElementaryCharge(particleCharge);
     emitter->SetElementaryMass(particleMasse);
+
+    emitter->SetWorkFunction(metalWorkFunction_eV);
 
     emitter->SetUnitLength(unitLength);
 

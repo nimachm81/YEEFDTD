@@ -81,7 +81,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
 
     const FPNumber eps_r = 1.0;     // only to set jm_amplitude... for eps_r != 1 json file should be updated
 
-    FPNumber eFieldMax_SI = 5.0e7;     // V/m
+    FPNumber eFieldMax_SI = 6.5e8;     // V/m
     FPNumber eFieldMax_FD = units.ConvertSIElectricFieldToFDUnits(eFieldMax_SI);
     std::cout << "eFieldMax_SI: " << eFieldMax_SI << " ,eFieldMax_FD: " << eFieldMax_FD << std::endl;
 
@@ -110,8 +110,9 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
 
     // wedge parameters
     FPNumber emitterWedgeAngle = 1.0/180.0*M_PI;
-    FPNumber emitterWedgeTipRadius = units.ConvertSILengthToFDUnits(300.0e-9);
-    std::array<FPNumber, 3> emitterWedgeTipPosition{0.0, -0.0, 0.0};
+    FPNumber emitterWedgeTipRadius = units.ConvertSILengthToFDUnits(100.0e-9);
+    FPNumber tip_y = 0.7*y0 + 0.3*y1;
+    std::array<FPNumber, 3> emitterWedgeTipPosition{0.0, tip_y, 0.0};
     FPNumber emitterWedgeHeight = emitterWedgeTipPosition[1] - y0;
     FPNumber emitterWedgeTopHeight = 2.0*emitterWedgeTipRadius;  // only this part of the wedge is discretized for the emitter
 
@@ -187,13 +188,14 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
 
     FPNumber plasmaFrequency = units.ConvertSIFrequencyToFDUnits(1000.0e12);
     FPNumber gamma = units.ConvertSIFrequencyToFDUnits(20.0e12);;   // scattering rate
+    FPNumber workFunction_eV = 4.5;
     std::cout << "plasmaFrequency: " << plasmaFrequency << " , gamma: " << gamma << std::endl;
+    std::cout << "work function (eV) : " << workFunction_eV;
 
-
-    FPNumber t_max = units.ConvertSITimeToFDUnits(1.5e-12);
+    FPNumber t_max = units.ConvertSITimeToFDUnits(1.0e-12);
     FPNumber dt_data_save = units.ConvertSITimeToFDUnits(0.01e-12);
 
-    std::size_t particle_bunch_size = 1;
+    std::size_t particle_bunch_size = 10;
 
     std::size_t data_save_rate = (std::size_t)(dt_data_save/dt);
     std::size_t data_save_rate_2 = data_save_rate;
@@ -326,6 +328,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
             {"\"_metalwedge_height_\"", boost::lexical_cast<std::string>(std::real(metalWedgeHeight))},
             {"\"_metalwedge_tip_y_\"", boost::lexical_cast<std::string>(std::real(metalWedgeTipPosition[1]))},
             {"\"_metalwedge_tip_z\"", boost::lexical_cast<std::string>(std::real(metalWedgeTipPosition[2]))},
+            {"\"_work_function_ev_\"", boost::lexical_cast<std::string>(std::real(workFunction_eV))},
             {"\"_indy0Wedge_\"", boost::lexical_cast<std::string>(ind_wedge_y0)},
             {"\"_indy1Wedge_\"", boost::lexical_cast<std::string>(ind_wedge_y1)},
             {"\"_indy1Wedge_p1_\"", boost::lexical_cast<std::string>(ind_wedge_y1 + 1)},
@@ -386,6 +389,8 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_velocity, "pw_velocity");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_ey_amplitude, "pw_ey_amplitude");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_bx_amplitude, "pw_bx_amplitude");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_rect_width, "pw_rect_width");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_rect_edge_width, "pw_rect_edge_width");
 
 }
 

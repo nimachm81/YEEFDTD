@@ -39,6 +39,8 @@ class DataView {
     //std::unique_ptr<char> buffer = nullptr;
     char* buffer = nullptr;
     std::size_t bufferInd = 0;  // points to the next empty index
+
+    int verbosityLevel = 1;
 };
 
 #endif // FDTD_DATAVIEW_H_

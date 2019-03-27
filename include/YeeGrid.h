@@ -242,6 +242,7 @@ class YeeGrid3D {
     void AddChargedParticleEmitter(const std::string name,
             FPNumber particleCharge,
             FPNumber particleMasse,
+            FPNumber metalWorkFunction_eV,
             const std::string geometryName,
             int dimensions,
             FPNumber maxElemSize,

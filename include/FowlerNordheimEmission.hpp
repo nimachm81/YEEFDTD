@@ -10,7 +10,7 @@
 
 class FowlerNordheimEmission {
     public:
-    FowlerNordheimEmission(double eField_v_m = 0.0, double workFunction_eV = 1.0) {
+    FowlerNordheimEmission(double eField_v_m = 0.0, double workFunction_eV = 4.5) {
         eField_voltsPerCentimeter = eField_v_m * 1.0e-2;
         workFunction_electronVolts = workFunction_eV;
 
@@ -68,6 +68,7 @@ class FowlerNordheimEmission {
     double GetEmissionCurrent(bool useInterpolation = true) {
         assert(eField_voltsPerCentimeter >= 0.0);
         double y = fn_c * std::sqrt(eField_voltsPerCentimeter) / workFunction_electronVolts;
+        //std::cout << "workFunction : " << workFunction_electronVolts << std::endl;
         double v_y;
         if(useInterpolation) {
             v_y = InterpolateParameterVy(y);
