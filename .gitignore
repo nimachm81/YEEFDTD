@@ -25,3 +25,7 @@ build/instructions/processed/
 
 # binary files
 build/main
+
+# Codeblocks files
+build/YEEFDTD.cbp
+build/YEEFDTD.layout
