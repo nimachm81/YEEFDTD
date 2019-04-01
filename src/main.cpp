@@ -13,8 +13,6 @@
 #include "Test_FDTD_2D_PEC_Wedge_Json.hpp"
 #include "Test_FDTD_2D_PEC_Wedge_electron_emitter_Json.hpp"
 #include "Test_FDTD_2D_PEC_Wedge_electron_emitter_GridCollection_Json.hpp"
-#include "Test_FDTD_2D_Metal_Wedge_electron_emitter_GridCollection_Json.hpp"
-#include "Test_FDTD_2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_GridCollection_Json.hpp"
 #include "Test_FDTD_2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_partialGrid_GridCollection_Json.hpp"
 #include "Test_Fowler_Nordheim.hpp"
 

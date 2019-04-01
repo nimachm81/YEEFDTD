@@ -66,7 +66,7 @@ class ChargedParticleEmitter : public ParticleEmitter {
     std::array<std::array<FPNumber, 3>, 3> electricFieldComponentsOrigin;
     std::array<FPNumber, 3> gridSpacing;
 
-    FPNumber fermiVelocity = 0.00003;
+    FPNumber initialVelocity = 1.0e-5;
 
     VectorField* analyticElectricField = nullptr;
 };

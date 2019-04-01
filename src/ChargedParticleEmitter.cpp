@@ -124,9 +124,9 @@ const std::vector<FPNumber>& ChargedParticleEmitter::GetEmissionNumber(FPNumber 
         }
         //std::cout << "em num:" << emissionNumbers[i] << ", " ;
 
-        emissionVelocities[i] = std::array<FPNumber, 3>{v_norm[0]*fermiVelocity*(-particleChargeSign),
-                                                        v_norm[1]*fermiVelocity*(-particleChargeSign),
-                                                        v_norm[2]*fermiVelocity*(-particleChargeSign)};
+        emissionVelocities[i] = std::array<FPNumber, 3>{v_norm[0]*initialVelocity*(-particleChargeSign),
+                                                        v_norm[1]*initialVelocity*(-particleChargeSign),
+                                                        v_norm[2]*initialVelocity*(-particleChargeSign)};
      }
 
     return emissionNumbers;

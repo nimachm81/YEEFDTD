@@ -287,8 +287,6 @@
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_TimeSwitch_MPI_Json.hpp" />
-		<Unit filename="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_GridCollection_Json.hpp" />
-		<Unit filename="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_partialGrid_GridCollection_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_MonopoleCharge_Json.hpp" />
 		<Unit filename="../test/Test_FDTD_2D_MovingCharge_Json.hpp" />
