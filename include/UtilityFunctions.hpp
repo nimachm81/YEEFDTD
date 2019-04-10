@@ -76,6 +76,45 @@ class  UtilityFunctions {
         paramFileOut.write((char*)paramNameChars, nameLength*sizeof(char));
     };
 
+    template<typename T>
+    static void Read1DArrayFromFile(std::ifstream& fileIn, std::vector<T>& dataOut) {
+        fileIn.seekg(0, fileIn.end);
+        std::size_t fileSize = fileIn.tellg();
+        assert(fileSize % sizeof(T) == 0);
+
+        std::size_t arraySize = fileSize / sizeof(T);
+        dataOut.resize(arraySize);
+
+        fileIn.seekg(0);
+        fileIn.read((char*)(dataOut.data()), fileSize);
+    };
+
+    template<typename T>
+    static void Read1DArrayFromFile(std::string fileName, std::vector<T>& dataOut) {
+        std::ifstream file;
+        file.open(fileName.c_str(), std::ios::in | std::ios::binary);
+        assert(file.is_open());
+
+        Read1DArrayFromFile(file, dataOut);
+        file.close();
+    }
+
+    template<typename T>
+    static void Write1DArrayToFile(std::ofstream& fileOut, std::vector<T>& dataOut) {
+        std::size_t dataSize = dataOut.size() * sizeof(T);
+        fileOut.write((char*)(dataOut.data()), dataSize);
+    };
+
+    template<typename T>
+    static void Write1DArrayToFile(std::string fileName, std::vector<T>& dataOut) {
+        std::ofstream file;
+        file.open(fileName.c_str(), std::ios::out | std::ios::binary);
+        assert(file.is_open());
+
+        Write1DArrayToFile(file, dataOut);
+        file.close();
+    };
+
     static int map_processor_to_parameter(int processRank, const int numOfParams,
                     std::size_t* maxNumOfEachParameter,
                     std::size_t* mappedParameterIndices,

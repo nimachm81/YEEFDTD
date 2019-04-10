@@ -6,14 +6,13 @@
 
 class GaussianPlaneWaveGridArrayManipulator : public PlaneWaveGridArrayManipulator {
     public:
-    GaussianPlaneWaveGridArrayManipulator();
     virtual ~GaussianPlaneWaveGridArrayManipulator() { };
 
     void SetTimeDecayRate(FPNumber rate);
     void SetModulationFrequency(FPNumber freq);
     void SetModulationPhase(FPNumber phase);
 
-    FPNumber GetNormalizedTemporalWaveform(FPNumber t);
+    virtual FPNumber GetNormalizedTemporalWaveform(FPNumber t);
 
     protected:
     FPNumber t_decayRate = 1.0;

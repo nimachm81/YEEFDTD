@@ -16,7 +16,7 @@ class GridCollectionParameterExtractor : public ParameterExtractor {
     GridCollectionParameterExtractor(const std::string filename);
     GridCollectionParameterExtractor(boost::property_tree::ptree ptree);
 
-    std::vector<std::tuple<std::size_t, std::size_t, std::vector<std::pair<std::string, std::string>>>>
+    std::vector<std::tuple<std::size_t, std::size_t, std::vector<std::pair<std::string, std::string>>, bool>>
     GetRunSequence(const std::string path);
 
 };

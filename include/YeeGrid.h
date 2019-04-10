@@ -86,7 +86,10 @@ class YeeGrid3D {
     void* ConstructParams_A_equal_func_r_t(
                                     std::string gridManipulator_name
                                     ) const;
-
+    void* ConstructParams_timeIndexUpdate(
+                                     std::string operation,
+                                     FPNumber steps
+                                     ) const;
     void* ConstructParams_A_plusequal_sum_b_C_neighbor(
                                     YeeGrid3D* neighborGrid,
                                     std::array<std::size_t, 3> ind_start_A,
@@ -192,6 +195,17 @@ class YeeGrid3D {
             FPNumber t_modulatioPhase,
             FPNumber timeOffsetFraction
             );
+    void AddDataFilePlaneWaveGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            FPNumber amplitude,
+            FPNumber t_center,
+            const std::string timesampleFileName,
+            const std::string fieldsampleFileName,
+            FPNumber timeOffsetFraction
+            );
     void AddDataTruncationGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
@@ -228,6 +242,15 @@ class YeeGrid3D {
             FPNumber t_edgeWidth,
             FPNumber t_modulationFrequency,
             FPNumber t_modulationPhase
+            );
+
+    void AddDataFilePlaneWaveVectorField(const std::string name,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            std::array<FPNumber, 3> amplitude,
+            FPNumber t_center,
+            std::string timesampleFileName,
+            std::string fieldsampleFileName
             );
 
     void AddManualChargedParticleEmitter(const std::string name,

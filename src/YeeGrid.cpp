@@ -24,8 +24,10 @@
 #include "ManualChargedParticleEmitter.h"
 #include "GaussianPlaneWaveGridArrayManipulator.h"
 #include "RectPlaneWaveGridArrayManipulator.h"
+#include "DataFilePlaneWaveGridArrayManipulator.h"
 #include "GaussianPlaneWaveVectorField.h"
 #include "RectPlaneWaveVectorField.h"
+#include "DataFilePlaneWaveVectorField.h"
 #include "GridElementView.h"
 #include "DiscreteScalarDataView.h"
 #include "DiscreteVectorDataView.h"
@@ -97,6 +99,17 @@ YeeGrid3D::~YeeGrid3D() {
                     >*
                 >(params);
             delete params_tuple;
+        } else if(instructionCode == FDInstructionCode::timeIndexUpdate) {
+            auto* params_tuple =
+                static_cast<
+                    std::tuple<
+                        std::string,
+                        FPNumber
+                    >*
+                >(params);
+            delete params_tuple;
+        } else {
+            assert(false);
         }
     }
 }
@@ -115,6 +128,8 @@ void YeeGrid3D::SetNumOfCells(std::array<std::size_t, 3>& nCells) {
         } else {
             assert(r_1[i]==r_0[i]);
             dr[i] = 0.0;
+            std::cout << "Warning: dr["<< i << "] was reset to zero." << std::endl;
+            assert(false);
         }
     }
 }
@@ -289,6 +304,21 @@ void* YeeGrid3D::ConstructParams_A_equal_func_r_t(std::string gridManipulator_na
     return static_cast<void*>(params_tuple);
 }
 
+
+void* YeeGrid3D::ConstructParams_timeIndexUpdate(std::string operation,
+                                                 FPNumber steps) const {
+    auto* params_tuple =
+            new std::tuple<
+                std::string,
+                FPNumber
+            >(
+                operation,    // 0
+                steps
+            );
+    return static_cast<void*>(params_tuple);
+}
+
+
 void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
                                   YeeGrid3D* neighborGrid,
                                   std::array<std::size_t, 3> ind_start_A,
@@ -377,6 +407,8 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 arrayASlice.MakeThisASliceOf(arrayA.GetSlice(ind_start_A_rel, ind_end_A_rel));
             }
 
+            // Warning: if A appears on the right hand side as well it should be the first one and it should not
+            //          appear more than once
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
                     instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
                 arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
@@ -533,6 +565,26 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 }
             }
         }
+    } else if(instructionCode == FDInstructionCode::timeIndexUpdate) {
+        auto& params_tuple =
+            *static_cast<
+                std::tuple<
+                    std::string,
+                    FPNumber
+                >*
+            >(params);
+        std::string operation = std::get<0>(params_tuple);
+        FPNumber steps = std::get<1>(params_tuple);
+
+        if(operation == "+=") {
+            timeIndex += (std::size_t)steps;
+        } else if(operation == "=") {
+            timeIndex = (std::size_t)steps;
+        } else {
+            std::cout << "error: operation undefined!" << std::endl;
+            assert(false);
+        }
+
     } else {
         std::cout << "#### error: instruction code not implemented!" << std::endl;
         assert(false);
@@ -879,6 +931,39 @@ void YeeGrid3D::AddRectPlaneWaveGridArrayManipulator(const std::string name,
     gridArrayManipulators[name] = modifier;
 }
 
+void YeeGrid3D::AddDataFilePlaneWaveGridArrayManipulator(const std::string name,
+            const std::string gridDataName,
+            int direction,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            FPNumber amplitude,
+            FPNumber t_center,
+            const std::string timesampleFileName,
+            const std::string fieldsampleFileName,
+            FPNumber timeOffsetFraction
+            ) {
+    const auto& found = gridArrayManipulators.find(name);
+    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+
+    std::shared_ptr<DataFilePlaneWaveGridArrayManipulator> modifier(new DataFilePlaneWaveGridArrayManipulator);
+    modifier->SetPropagationDirection(propagationDirection);
+    modifier->SetPropagationVelocity(velocity);
+    modifier->SetAmplitude(amplitude);
+    modifier->SetCenterTime(t_center);
+    modifier->SetTimeSamplesFromFile(timesampleFileName);
+    modifier->SetFieldSamplesFromFile(fieldsampleFileName);
+    modifier->SetGridArrayTo(gridElements[gridDataName]->GetNumArray(direction));
+    modifier->SetTimeOffsetFraction(timeOffsetFraction);
+
+        // find the coordinates of the first element of the array
+    std::array<FPNumber, 3> arrayR0 = GetCoordinatesOfFirstElementOfGridDataArray(gridDataName, direction);
+
+    modifier->SetCornerCoordinate(arrayR0);
+    modifier->SetGridSpacing(dr);
+
+    gridArrayManipulators[name] = modifier;
+}
+
 void YeeGrid3D::AddDataTruncationGridArrayManipulator(const std::string name,
             const std::string gridDataName,
             int direction,
@@ -982,6 +1067,30 @@ void YeeGrid3D::AddRectPlaneWaveVectorField(const std::string name,
 
     vectorFields[name] = field;
 }
+
+void YeeGrid3D::AddDataFilePlaneWaveVectorField(const std::string name,
+            std::array<FPNumber, 3> propagationDirection,
+            FPNumber velocity,
+            std::array<FPNumber, 3> amplitude,
+            FPNumber t_center,
+            std::string timesampleFileName,
+            std::string fieldsampleFileName
+            ) {
+    const auto& found = vectorFields.find(name);
+    assert(found == vectorFields.end()); // make sure name does not already exist.
+
+    std::shared_ptr<DataFilePlaneWaveVectorField> field(new DataFilePlaneWaveVectorField);
+
+    field->SetPropagationVelocity(velocity);
+    field->SetPropagationDirection(propagationDirection);
+    field->SetAmplitude(amplitude);
+    field->SetCenterTime(t_center);
+    field->SetTimeSamplesFromFile(timesampleFileName);
+    field->SetFieldSamplesFromFile(fieldsampleFileName);
+
+    vectorFields[name] = field;
+}
+
 
 void YeeGrid3D::AddManualChargedParticleEmitter(const std::string name,
         FPNumber particleCharge,

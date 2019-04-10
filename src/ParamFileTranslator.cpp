@@ -178,7 +178,19 @@ void ParamFileTranslator::SetSingleGridAnalyticVectorFields(YeeGrid3D& yee,
                     vecFieldParams.GetRealProperty("frequency"),
                     vecFieldParams.GetRealProperty("phase")
                     );
-        }else {
+        } else if(std::get<0>(vecFieldNameAndParams) == "DataFilePlaneWaveVectorField") {
+            ParameterExtractor vecFieldParams(std::get<1>(vecFieldNameAndParams));
+
+            yee.AddDataFilePlaneWaveVectorField(
+                    vecFieldParams.GetStringProperty("name"),
+                    vecFieldParams.Get3VecRealProperty("propagationDirection"),
+                    vecFieldParams.GetRealProperty("propagationVelocity"),
+                    vecFieldParams.Get3VecRealProperty("amplitude"),
+                    vecFieldParams.GetRealProperty("centerTime"),
+                    vecFieldParams.GetStringProperty("timeSampleFileName"),
+                    vecFieldParams.GetStringProperty("fieldSampleFileName")
+                    );
+        } else {
             std::cout << "error: vector field name not recognized" << std::endl;
             assert(false);
         }
@@ -484,6 +496,20 @@ void ParamFileTranslator::SetSingleGridGridArrayManipulators(YeeGrid3D& yee,
                     manipulatorParams.GetRealProperty("phase"),
                     manipulatorParams.GetRealProperty("timeOffsetFraction")
                     );
+        }  else if(std::get<0>(manipulatorNameAndParams) == "DataFilePlaneWaveGridArrayManipulator") {
+            ParameterExtractor manipulatorParams(std::get<1>(manipulatorNameAndParams));
+            yee.AddDataFilePlaneWaveGridArrayManipulator(
+                    manipulatorParams.GetStringProperty("name"),
+                    manipulatorParams.GetStringProperty("array"),
+                    stringDirectionToIntDirectionMap[manipulatorParams.GetStringProperty("direction")],
+                    manipulatorParams.Get3VecRealProperty("propagationDirection"),
+                    manipulatorParams.GetRealProperty("propagationVelocity"),
+                    manipulatorParams.GetRealProperty("amplitude"),
+                    manipulatorParams.GetRealProperty("centerTime"),
+                    manipulatorParams.GetStringProperty("timeSampleFileName"),
+                    manipulatorParams.GetStringProperty("fieldSampleFileName"),
+                    manipulatorParams.GetRealProperty("timeOffsetFraction")
+                    );
         } else if(std::get<0>(manipulatorNameAndParams) == "DataTruncationGridArrayManipulator") {
             bool truncateUp = false;
             bool truncateDown = false;
@@ -666,6 +692,18 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
             } else {
                 assert(false);
             }
+        } else if(updateType == "timeIndexUpdate") {
+            ParameterExtractor updateParams(std::get<1>(updateTypeandParams));
+
+            void* updateParamsPtr = yee.ConstructParams_timeIndexUpdate(
+                    updateParams.GetStringProperty("operation"),
+                    updateParams.GetRealProperty("steps")
+                    );
+
+            yee.AddUpdateInstruction(updateParams.GetStringProperty("name"),
+                    FDInstructionCode::timeIndexUpdate,
+                    updateParamsPtr
+                    );
         } else {
             std::cout << "Unknown update instruction: " << updateType << std::endl;
             assert(false);
@@ -768,6 +806,7 @@ void ParamFileTranslator::SetAndRunGridCollectionRunSequencs(YeeGridCollection& 
         std::size_t indStart = std::get<0>(it);
         std::size_t indEnd = std::get<1>(it);
         auto& name_sequence_vec = std::get<2>(it);
+        bool updateTimeManually = std::get<3>(it);
 
         std::cout << "Running sequence: " << std::endl;
         std::cout << indStart << " " << indEnd << std::endl;
@@ -783,7 +822,7 @@ void ParamFileTranslator::SetAndRunGridCollectionRunSequencs(YeeGridCollection& 
             index_sequence_vec.emplace_back(gridsInds[gridName], sequenceName);
         }
 
-        gridCollection.RunInstructionsPeriodically(indStart, indEnd, index_sequence_vec);
+        gridCollection.RunInstructionsPeriodically(indStart, indEnd, index_sequence_vec, !updateTimeManually);
     }
 }
 

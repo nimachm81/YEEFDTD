@@ -1,7 +1,7 @@
 
 
 __all__ = ["GetArrayInfo", "GetArrays", "ReadParamsFile", "GetDiscreteScalarDataArray", \
-           "GetDiscreteVectorDataArray"]
+           "GetDiscreteVectorDataArray", "Read1DArray"]
 
 import struct
 import numpy as np
@@ -250,4 +250,28 @@ def GetDiscreteVectorDataArray(fileName):
     file.close()
 
     return arrays
+    
+
+def Read1DArray(filename, format="d"):
+    ## f: float     d: double
+    assert format in ["f", "d"]
+    file = open(filename, mode='rb')
+    fileContent = file.read()
+    
+    file.seek(0,2)
+    fileSize = file.tell()
+    
+    dataSize = 4
+    if format=="d":
+        dataSize = 8
+    
+    n = int(fileSize / dataSize)
+    
+    arr = np.array(struct.unpack(format*n, fileContent))
+        
+    file.close()
+    return arr
+    
+    
+    
     

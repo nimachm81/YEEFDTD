@@ -1,11 +1,31 @@
 
 
-
+#include <typeinfo>
 
 #include "NumberTypes.h"
 #include "PhysicalUnits.hpp"
 #include "UtilityFunctions.hpp"
 #include "WedgeGeometry.h"
+
+void ConvertSITimeSamplesTOFDTDTimeSamples(std::string filename_in,
+                                           std::string filename_out,
+                                           FPNumber fdtd_unit_length) {
+    std::vector<FPNumber> timeSamples;
+    UtilityFunctions::Read1DArrayFromFile(filename_in, timeSamples);
+
+    PhysicalUnits units(fdtd_unit_length);
+    FPNumber conversionFactor = units.ConvertSITimeToFDUnits(1.0);
+
+    std::vector<FPNumber> timeSamples_FDTD;
+    timeSamples_FDTD.resize(timeSamples.size());
+
+    for(std::size_t i = 0; i < timeSamples.size(); ++i) {
+        timeSamples_FDTD[i] = timeSamples[i] * conversionFactor;
+        std::cout << "t_si: " << timeSamples[i] << " , t: " << timeSamples_FDTD[i] << std::endl;
+    }
+
+    UtilityFunctions::Write1DArrayToFile(filename_out, timeSamples_FDTD);
+}
 
 void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid_gridCollection_from_json() {
     FPNumber fdtd_unit_length = 10.0e-6;
@@ -81,7 +101,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
 
     const FPNumber eps_r = 1.0;     // only to set jm_amplitude... for eps_r != 1 json file should be updated
 
-    FPNumber eFieldMax_SI = 2.2*6.5e8;     // V/m
+    FPNumber eFieldMax_SI = 6.5e8;     // V/m
     FPNumber eFieldMax_FD = units.ConvertSIElectricFieldToFDUnits(eFieldMax_SI);
     std::cout << "eFieldMax_SI: " << eFieldMax_SI << " ,eFieldMax_FD: " << eFieldMax_FD << std::endl;
 
@@ -100,7 +120,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     FPNumber pw_rect_width = 1.0 / pw_mod_freq;     // for rect plane wave
     FPNumber pw_rect_edge_width = 0.1 * pw_rect_width;  // for rect plane wave
 
-    FPNumber pw_amplitude = eFieldMax_FD;
+    FPNumber pw_amplitude = -eFieldMax_FD;
     FPNumber pw_ey_amplitude = +pw_amplitude;
     FPNumber pw_bx_amplitude = -pw_amplitude;
 
@@ -108,17 +128,69 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     std::cout << "pw_center_t : " << pw_center_t << " , nt_center : " << (pw_center_t/dt) << std::endl;
 
 
-    bool pw_isGaussianNotRect = true;      // true: Gaussian     false: rect
-    std::string pw_gasussianUpdaterName = "\"EyincUpdater\"";
-    std::string pw_rectUpdaterName = "\"#EyincUpdater\"";
-    if(!pw_isGaussianNotRect) {
-        pw_gasussianUpdaterName = "\"#EyincUpdater\"";
-        pw_rectUpdaterName = "\"EyincUpdater\"";
+    int pw_type = 2;      // 0: Gaussian     1: rect     2: datafile
+
+    if(pw_type == 2) {
+        pw_center_t = units.ConvertSITimeToFDUnits(-1.0e-12);
     }
+
+
+    std::string pw_gasussianUpdaterName = "\"EyincUpdater\"";
+    std::string pw_gasussianEAnalyticName = "\"analyticEField\"";
+    std::string pw_gasussianBAnalyticName = "\"analyticBField\"";
+    std::string pw_rectUpdaterName = "\"EyincUpdater\"";
+    std::string pw_rectEAnalyticName = "\"analyticEField\"";
+    std::string pw_rectBAnalyticName = "\"analyticBField\"";
+    std::string pw_datafileUpdaterName = "\"EyincUpdater\"";
+    std::string pw_datafileEAnalyticName = "\"analyticEField\"";
+    std::string pw_datafileBAnalyticName = "\"analyticBField\"";
+    if(pw_type == 0) {
+        pw_rectUpdaterName.insert(1, "#");
+        pw_rectEAnalyticName.insert(1, "#");
+        pw_rectBAnalyticName.insert(1, "#");
+        pw_datafileUpdaterName.insert(1, "##");
+        pw_datafileEAnalyticName.insert(1, "##");
+        pw_datafileBAnalyticName.insert(1, "##");
+    } else if(pw_type == 1) {
+        pw_gasussianUpdaterName.insert(1, "#");
+        pw_gasussianEAnalyticName.insert(1, "#");
+        pw_gasussianBAnalyticName.insert(1, "#");
+        pw_datafileUpdaterName.insert(1, "##");
+        pw_datafileEAnalyticName.insert(1, "##");
+        pw_datafileBAnalyticName.insert(1, "##");
+    } else if(pw_type == 2) {
+        pw_gasussianUpdaterName.insert(1, "#");
+        pw_gasussianEAnalyticName.insert(1, "#");
+        pw_gasussianBAnalyticName.insert(1, "#");
+        pw_rectUpdaterName.insert(1, "##");
+        pw_rectEAnalyticName.insert(1, "##");
+        pw_rectBAnalyticName.insert(1, "##");
+    } else {
+        assert(false);
+    }
+
+
+    // warning: time data should be in FDTD units, field data can be normalized
+    std::string pw_timesamples_si_file = "data/2D/time_samples";
+    std::string pw_timesamples_file = "data/2D/time_samples_fdtd";
+    std::string pw_fieldsamples_file = "data/2D/field_samples";
+    if(typeid(FPNumber) == typeid(float)) {
+        pw_timesamples_si_file += ".f";
+        pw_timesamples_file += ".f";
+        pw_fieldsamples_file += ".f";
+    } else if(typeid(FPNumber) == typeid(double)) {
+        pw_timesamples_si_file += ".d";
+        pw_timesamples_file += ".d";
+        pw_fieldsamples_file += ".d";
+    }
+
+    ConvertSITimeSamplesTOFDTDTimeSamples(pw_timesamples_si_file, pw_timesamples_file, fdtd_unit_length);
+    pw_timesamples_file = std::string("\"") + pw_timesamples_file + "\"";
+    pw_fieldsamples_file = std::string("\"") + pw_fieldsamples_file + "\"";
 
     // wedge parameters
     FPNumber emitterWedgeAngle = 1.0/180.0*M_PI;
-    FPNumber emitterWedgeTipRadius = units.ConvertSILengthToFDUnits(300.0e-9);
+    FPNumber emitterWedgeTipRadius = units.ConvertSILengthToFDUnits(200.0e-9);
     FPNumber tip_y = 0.7*y0 + 0.3*y1;
     std::array<FPNumber, 3> emitterWedgeTipPosition{0.0, tip_y, 0.0};
     FPNumber emitterWedgeHeight = emitterWedgeTipPosition[1] - y0;
@@ -200,7 +272,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     std::cout << "plasmaFrequency: " << plasmaFrequency << " , gamma: " << gamma << std::endl;
     std::cout << "work function (eV) : " << workFunction_eV;
 
-    FPNumber t_max = units.ConvertSITimeToFDUnits(1.0e-12);
+    FPNumber t_max = units.ConvertSITimeToFDUnits(3.0e-12);
     FPNumber dt_data_save = units.ConvertSITimeToFDUnits(0.01e-12);
 
     std::size_t particle_bunch_size = 1;
@@ -358,7 +430,16 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
             {"\"_save_rate_pml_\"", boost::lexical_cast<std::string>(data_save_rate_pml)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)},
             {"\"_GaussianEyincUpdater_\"", pw_gasussianUpdaterName},
-            {"\"_RectEyincUpdater_\"", pw_rectUpdaterName}
+            {"\"_GaussianEAnalyticName_\"", pw_gasussianEAnalyticName},
+            {"\"_GaussianBAnalyticName_\"", pw_gasussianBAnalyticName},
+            {"\"_RectEyincUpdater_\"", pw_rectUpdaterName},
+            {"\"_RectEAnalyticName_\"", pw_rectEAnalyticName},
+            {"\"_RectBAnalyticName_\"", pw_rectBAnalyticName},
+            {"\"_DataFileEyincUpdater_\"", pw_datafileUpdaterName},
+            {"\"_DataFileEAnalyticName_\"", pw_datafileEAnalyticName},
+            {"\"_DataFileBAnalyticName_\"", pw_datafileBAnalyticName},
+            {"\"_datafile_timesampleName_\"", pw_timesamples_file},
+            {"\"_datafile_fieldsampleName_\"", pw_fieldsamples_file}
             };
     std::string fileName = "instructions/MaxwellYee2D_Metal_Wedge_electron_emitter_pureScatteredFDTD_GridCollection.json";
 
@@ -401,7 +482,7 @@ void test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_bx_amplitude, "pw_bx_amplitude");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_rect_width, "pw_rect_width");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_rect_edge_width, "pw_rect_edge_width");
-    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_isGaussianNotRect, "pw_isGaussianNotRect");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, pw_type, "pw_type");
 
 }
 

@@ -1,5 +1,6 @@
 
 
+#include "Test_FDTD_1D_nonuniform_Collection.hpp"
 #include "Test_FDTD_1D_Unidirectional_Source_Json.hpp"
 #include "Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_Json.hpp"
 #include "Test_FDTD_2D_LargePeriodicLattice_GaussianPlasma_MPI_Json.hpp"
@@ -36,9 +37,11 @@ int main(int argc, char** argv) {
     //test_run_fdtd_2d_pec_wedge_electron_emitter_gridCollection_from_json();
     //test_run_fdtd_2d_metal_wedge_electron_emitter_gridCollection_from_json();
     //test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_gridCollection_from_json();
-    test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid_gridCollection_from_json();
+    //test_run_fdtd_2d_metal_wedge_electron_emitter_pureScatteredFDTD_partialGrid_gridCollection_from_json();
 
     //test_Fowler_Nordheim();
+
+    test_run_fdtd_1d_nonuniform_collection_from_json();
 
 }
 

@@ -1,10 +1,6 @@
 
 #include "GaussianPlaneWaveGridArrayManipulator.h"
 
-GaussianPlaneWaveGridArrayManipulator::GaussianPlaneWaveGridArrayManipulator() :
-        PlaneWaveGridArrayManipulator() {
-
-}
 
 void GaussianPlaneWaveGridArrayManipulator::SetTimeDecayRate(FPNumber rate) {
     t_decayRate = rate;

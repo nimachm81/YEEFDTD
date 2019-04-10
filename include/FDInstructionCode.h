@@ -56,6 +56,9 @@ enum class FDInstructionCode {
     ,A_plusequal_sum_b_C_shifted // same as A_plusequal_sum_b_C except if origins of A and C are not the same, A will
                 // be shifted by originC - originA
 
+
+    ,timeIndexUpdate    // to update the time index
+
 };
 
 

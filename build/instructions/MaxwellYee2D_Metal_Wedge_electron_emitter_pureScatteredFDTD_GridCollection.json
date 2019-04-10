@@ -4,7 +4,7 @@
 "simulationParameters":{
 "grids":{
 "grid-middle":{
-    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_m1_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_dt_2_", "_m_dt_", "_m_dt_2_", "_nt_", "_dt_dy_", "_1_dy_", "_m_1_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_echarge_", "_hcharge_", "_mass_", "_surf_dl_", "_fdtd_unit_length_", "_gamma_", "_wp_sq_", "_echarge_mass_", "_m_dt_dy_dz_", "_dt_dy_dz_", "_m_dt_dz_dy_", "_dt_dz_dy_", "_save_rate_", "_m_dtdy_dz_", "_m_dtdz_dy_", "_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_", "_planewave_velocity_", "_Eyinc_amp_", "_Bxinc_amp_", "_gaussianplanewave_decay_rate_", "_planewave_t_center_", "_planewave_freq_", "_planewave_phase_", "_rect_width_", "_rect_edge_width_", "_indy0Wedge_", "_indz0Wedge_", "_indy1Wedge_", "_indy1Wedge_p1_", "_indz1Wedge_", "_indz1Wedge_p1_", "_ny_wedge_", "_ny_wedge_p1_", "_nz_wedge_", "_nz_wedge_p1_", "_metalwedge_angle_", "_metalwedge_tip_radius_", "_metalwedge_height_", "_metalwedge_tip_y_", "_metalwedge_tip_z", "_emitterwedge_angle_", "_emitterwedge_tip_radius_", "_emitterwedge_height_", "_emitterwedge_tip_y_", "_emitterwedge_tip_z", "_bunch_size_", "_save_rate_2_", "_save_rate_pml_", "_work_function_ev_", "_GaussianEyincUpdater_", "_RectEyincUpdater_"],
+    "variables":["_y0_", "_y1_", "_z0_", "_z1_", "_ny_", "_ny_p1_", "_ny_m1_", "_nz_", "_nz_m1_", "_nz_p1_", "_dy_", "_dz_", "_dt_", "_dt_2_", "_m_dt_", "_m_dt_2_", "_nt_", "_dt_dy_", "_1_dy_", "_m_1_dy_", "_dt_dz_", "_m_dt_dy_", "_m_dt_dz_", "_echarge_", "_hcharge_", "_mass_", "_surf_dl_", "_fdtd_unit_length_", "_gamma_", "_wp_sq_", "_echarge_mass_", "_m_dt_dy_dz_", "_dt_dy_dz_", "_m_dt_dz_dy_", "_dt_dz_dy_", "_save_rate_", "_m_dtdy_dz_", "_m_dtdz_dy_", "_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_", "_planewave_velocity_", "_Eyinc_amp_", "_Bxinc_amp_", "_gaussianplanewave_decay_rate_", "_planewave_t_center_", "_planewave_freq_", "_planewave_phase_", "_rect_width_", "_rect_edge_width_", "_indy0Wedge_", "_indz0Wedge_", "_indy1Wedge_", "_indy1Wedge_p1_", "_indz1Wedge_", "_indz1Wedge_p1_", "_ny_wedge_", "_ny_wedge_p1_", "_nz_wedge_", "_nz_wedge_p1_", "_metalwedge_angle_", "_metalwedge_tip_radius_", "_metalwedge_height_", "_metalwedge_tip_y_", "_metalwedge_tip_z", "_emitterwedge_angle_", "_emitterwedge_tip_radius_", "_emitterwedge_height_", "_emitterwedge_tip_y_", "_emitterwedge_tip_z", "_bunch_size_", "_save_rate_2_", "_save_rate_pml_", "_work_function_ev_", "_GaussianEyincUpdater_", "_RectEyincUpdater_", "_DataFileEyincUpdater_", "_GaussianEAnalyticName_", "_GaussianBAnalyticName_", "_RectEAnalyticName_", "_RectBAnalyticName_", "_DataFileEAnalyticName_", "_DataFileBAnalyticName_", "_datafile_timesampleName_", "_datafile_fieldsampleName_"],
     "dimensions":{
         "r0":[0.0, "_y0_", "_z0_"],
         "r1":[1.0, "_y1_", "_z1_"],
@@ -66,7 +66,7 @@
         {
         "type":"GaussianPlaneWaveVectorField",
         "parameters":{
-            "name":"#analyticEField",
+            "name":"_GaussianEAnalyticName_",
             "propagationDirection":[0.0, 0.0, 1.0],
             "propagationVelocity":1.0,
             "amplitude":[0.0, "_Eyinc_amp_", 0.0],
@@ -79,7 +79,7 @@
         {
         "type":"GaussianPlaneWaveVectorField",
         "parameters":{
-            "name":"#analyticBField",
+            "name":"_GaussianBAnalyticName_",
             "propagationDirection":[0.0, 0.0, 1.0],
             "propagationVelocity":1.0,
             "amplitude":["_Bxinc_amp_", 0.0, 0.0],
@@ -92,7 +92,7 @@
         {
         "type":"RectPlaneWaveVectorField",
         "parameters":{
-            "name":"analyticEField",
+            "name":"_RectEAnalyticName_",
             "propagationDirection":[0.0, 0.0, 1.0],
             "propagationVelocity":1.0,
             "amplitude":[0.0, "_Eyinc_amp_", 0.0],
@@ -106,7 +106,7 @@
         {
         "type":"RectPlaneWaveVectorField",
         "parameters":{
-            "name":"analyticBField",
+            "name":"_RectBAnalyticName_",
             "propagationDirection":[0.0, 0.0, 1.0],
             "propagationVelocity":1.0,
             "amplitude":["_Bxinc_amp_", 0.0, 0.0],
@@ -115,6 +115,30 @@
             "rectEdgeWidth":"_rect_edge_width_",
             "frequency":"_planewave_freq_",
             "phase":"_planewave_phase_"
+            }
+        },
+        {
+        "type":"DataFilePlaneWaveVectorField",
+        "parameters":{
+            "name":"_DataFileEAnalyticName_",
+            "propagationDirection":[0.0, 0.0, 1.0],
+            "propagationVelocity":1.0,
+            "amplitude":[0.0, "_Eyinc_amp_", 0.0],
+            "centerTime":"_planewave_t_center_",
+            "timeSampleFileName":"_datafile_timesampleName_",
+            "fieldSampleFileName":"_datafile_fieldsampleName_"
+            }
+        },
+        {
+        "type":"DataFilePlaneWaveVectorField",
+        "parameters":{
+            "name":"_DataFileBAnalyticName_",
+            "propagationDirection":[0.0, 0.0, 1.0],
+            "propagationVelocity":1.0,
+            "amplitude":["_Bxinc_amp_", 0.0, 0.0],
+            "centerTime":"_planewave_t_center_",
+            "timeSampleFileName":"_datafile_timesampleName_",
+            "fieldSampleFileName":"_datafile_fieldsampleName_"
             }
         }
     ],
@@ -219,6 +243,21 @@
             "rectEdgeWidth":"_rect_edge_width_",
             "frequency":"_planewave_freq_",
             "phase":"_planewave_phase_",
+            "timeOffsetFraction":0.0
+            }
+        },
+        {
+        "type":"DataFilePlaneWaveGridArrayManipulator",
+        "parameters":{
+            "name":"_DataFileEyincUpdater_",
+            "array":"Einc",
+            "direction":"y",
+            "propagationDirection":["_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_"],
+            "propagationVelocity":"_planewave_velocity_",
+            "amplitude":"_Eyinc_amp_",
+            "centerTime":"_planewave_t_center_",
+            "timeSampleFileName":"_datafile_timesampleName_",
+            "fieldSampleFileName":"_datafile_fieldsampleName_",
             "timeOffsetFraction":0.0
             }
         },
