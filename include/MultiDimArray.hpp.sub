@@ -160,12 +160,19 @@ class NumberArray3D {
     }
 
     //------------------------------ Operators ---------------------------------------
-\begin(substitution){
-\subfrom(##1##)
-\subto((=), (+=), (-=), (*=), (/=))
-}
+\begin{substitution}
+\begin{from}
+    \begin{list}SUB1\end{list}
+\end{from}
+\begin{to}
+    \begin{list}=\end{list}
+    \begin{list}+=\end{list}
+    \begin{list}-=\end{list}
+    \begin{list}*=\end{list}
+    \begin{list}/=\end{list}
+\end{to}
 
-    NumberArray3D& operator##1##(const NumberArray3D& rhs) {
+    NumberArray3D& operatorSUB1(const NumberArray3D& rhs) {
         assert( rhs.GetShape() == shape );
         std::size_t n0 = shape[0];
         std::size_t n1 = shape[1];
@@ -192,7 +199,7 @@ class NumberArray3D {
             for(std::size_t i0 = 0; i0 < n0; ++i0) {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] ##1##
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] SUB1
                                 rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
                     }
                 }
@@ -201,7 +208,7 @@ class NumberArray3D {
             for(std::size_t i0 = 0; i0 < n0; ++i0) {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] ##1##
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] SUB1
                                 rhs_arrayData[rhs_ind0 + i0*rhs_s0][rhs_ind1 + i1*rhs_s1][rhs_ind2 + i2*rhs_s2];
                     }
                 }
@@ -210,7 +217,7 @@ class NumberArray3D {
         return *this;
     }
 
-    NumberArray3D& operator##1##(const T rhs) {
+    NumberArray3D& operatorSUB1(const T rhs) {
         std::size_t n0 = shape[0];
         std::size_t n1 = shape[1];
         std::size_t n2 = shape[2];
@@ -225,7 +232,7 @@ class NumberArray3D {
             for(std::size_t i0 = 0; i0 < n0; ++i0) {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] ##1## rhs;
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] SUB1 rhs;
                     }
                 }
             }
@@ -233,7 +240,7 @@ class NumberArray3D {
             for(std::size_t i0 = 0; i0 < n0; ++i0) {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] ##1## rhs;
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] SUB1 rhs;
                     }
                 }
             }
@@ -241,15 +248,20 @@ class NumberArray3D {
         return *this;
     }
 
-\end(substitution)
+\end{substitution}
 
+\begin{substitution}
+\begin{from}
+    \begin{list}SUB1\end{list}
+\end{from}
+\begin{to}
+    \begin{list}+\end{list}
+    \begin{list}-\end{list}
+    \begin{list}*\end{list}
+    \begin{list}/\end{list}
+\end{to}
 
-\begin(substitution){
-\subfrom(##1##)
-\subto((+), (-), (*), (/))
-}
-
-    friend NumberArray3D operator##1##(const NumberArray3D& numArrA, const NumberArray3D& numArrB) {
+    friend NumberArray3D operatorSUB1(const NumberArray3D& numArrA, const NumberArray3D& numArrB) {
         const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
         T*** a_arrayData = numArrA.GetArrayData();
         const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
@@ -289,7 +301,7 @@ class NumberArray3D {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
                         c_arrayData[i0][i1][i2] =
-                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] ##1##
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] SUB1
                                 b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
                     }
                 }
@@ -299,7 +311,7 @@ class NumberArray3D {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
                         c_arrayData[i0][i1][i2] =
-                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] ##1##
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] SUB1
                                 b_arrayData[b_ind0 + i0*b_s0][b_ind1 + i1*b_s1][b_ind2 + i2*b_s2];
                     }
                 }
@@ -308,7 +320,7 @@ class NumberArray3D {
         return numArrC;     // TODO: define move constructors
     }
 
-    friend NumberArray3D operator##1##(const NumberArray3D& numArrA, const T numB) {
+    friend NumberArray3D operatorSUB1(const NumberArray3D& numArrA, const T numB) {
         const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
         T*** a_arrayData = numArrA.GetArrayData();
         const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
@@ -334,7 +346,7 @@ class NumberArray3D {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
                         c_arrayData[i0][i1][i2] =
-                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] ##1## numB;
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] SUB1 numB;
                     }
                 }
             }
@@ -343,7 +355,7 @@ class NumberArray3D {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
                         c_arrayData[i0][i1][i2] =
-                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] ##1## numB;
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] SUB1 numB;
                     }
                 }
             }
@@ -351,7 +363,7 @@ class NumberArray3D {
         return numArrC;     // TODO: define move constructors
     }
 
-    friend NumberArray3D operator##1##(const T numB, const NumberArray3D& numArrA) {
+    friend NumberArray3D operatorSUB1(const T numB, const NumberArray3D& numArrA) {
         const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
         T*** a_arrayData = numArrA.GetArrayData();
         const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
@@ -377,7 +389,7 @@ class NumberArray3D {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
                         c_arrayData[i0][i1][i2] =
-                                numB ##1## a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                                numB SUB1 a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
                     }
                 }
             }
@@ -386,7 +398,7 @@ class NumberArray3D {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
                         c_arrayData[i0][i1][i2] =
-                                numB ##1## a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2];
+                                numB SUB1 a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2];
                     }
                 }
             }
@@ -394,7 +406,7 @@ class NumberArray3D {
         return numArrC;     // TODO: define move constructors
     }
 
-\end(substitution)
+\end{substitution}
 
 
     T& operator[](const std::array<std::size_t, 3> indx) {
@@ -439,11 +451,18 @@ class NumberArray3D {
 
     //------------------------- special functions -----------------------------------
 
-\begin(substitution){
-\subfrom(##1##, ##2##)
-\subto((exp,std::exp), (cos,std::cos), (sin,std::sin))
-}
-    static NumberArray3D ##1##(const NumberArray3D& numArrA) {
+
+\begin{substitution}
+\begin{from}
+    \begin{list}SUB1 SUB2\end{list}
+\end{from}
+\begin{to}
+    \begin{list}exp std::exp\end{list}
+    \begin{list}cos std::cos\end{list} 
+    \begin{list}sin std::sin\end{list}
+\end{to}
+
+    static NumberArray3D SUB1(const NumberArray3D& numArrA) {
         const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
         T*** a_arrayData = numArrA.GetArrayData();
         const std::array<std::size_t, 3>& a_indStart = numArrA.GetIndStart();
@@ -467,7 +486,7 @@ class NumberArray3D {
             for(std::size_t i0 = 0; i0 < n0; ++i0) {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        c_arrayData[i0][i1][i2] = ##2##(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
+                        c_arrayData[i0][i1][i2] = SUB2(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
                     }
                 }
             }
@@ -475,7 +494,7 @@ class NumberArray3D {
             for(std::size_t i0 = 0; i0 < n0; ++i0) {
                 for(std::size_t i1 = 0; i1 < n1; ++i1) {
                     for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        c_arrayData[i0][i1][i2] = ##2##(a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2]);
+                        c_arrayData[i0][i1][i2] = SUB2(a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2]);
                     }
                 }
             }
@@ -483,7 +502,7 @@ class NumberArray3D {
         return numArrC;
     }
 
-\end(substitution)
+\end{substitution}
 
     //---------------------   meshgrid
 
