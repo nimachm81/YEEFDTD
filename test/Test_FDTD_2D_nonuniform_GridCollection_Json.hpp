@@ -1,13 +1,13 @@
 
 
 
-void test_run_fdtd_2d_from_json() {
+void test_run_fdtd_2d_nonuniform_GridCollection_from_json() {
     FPNumber y0 = -5.0;
     FPNumber y1 = 5.0;
     FPNumber z0 = -5.0;
     FPNumber z1 = 5.0;
     std::size_t ny = 200;
-    std::size_t nz = 250;
+    std::size_t nz = 200;
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
     FPNumber dz = (z1 - z0)/(FPNumber)(nz);
     FPNumber stabilityFactor = 0.99;
@@ -43,11 +43,12 @@ void test_run_fdtd_2d_from_json() {
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
             {"\"_nt_\"", boost::lexical_cast<std::string>(numOfTimeSamples)}
             };
-    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D.json",
-                "instructions/processed/MaxwellYee2D_processed.json", str_replacewith);
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee2D_nonuniform_GridCollection.json",
+                "instructions/processed/MaxwellYee2D_nonuniform_GridCollection_processed.json", str_replacewith);
 
-    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee2D_processed.json");
+    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee2D_nonuniform_GridCollection_processed.json");
     fileTranslator.Translate();
 }
+
 
 

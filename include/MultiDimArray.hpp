@@ -24,19 +24,23 @@ class NumberArray3D {
     private:
     std::array<std::size_t, 3> indStart;
     std::array<std::size_t, 3> shape;
+    std::array<std::size_t, 3> stride;
     T*** arrayData = nullptr;
     bool isSlice = true;
+    bool isSingleStride = false;
 
     public:
-    NumberArray3D() : isSlice(false), shape{0, 0, 0}, indStart{0, 0, 0} {}
-    NumberArray3D(std::array<std::size_t, 3> shape, T initValue) : isSlice(false), shape(shape), indStart{0, 0, 0} {
+    NumberArray3D() : isSlice(false), shape{0, 0, 0}, indStart{0, 0, 0}, stride{1, 1, 1}, isSingleStride(true) {}
+    NumberArray3D(std::array<std::size_t, 3> shape, T initValue) : isSlice(false), shape(shape),
+                                                                   indStart{0, 0, 0}, stride{1, 1, 1},
+                                                                   isSingleStride(true) {
         arrayData = Create3DNumberArray(shape, initValue);
     }
 
     // The copy constructor shares the Array pointer with the array being copied. To create a fresh copy use
     // the explicite copy methods.
     NumberArray3D(const NumberArray3D& numArray) : isSlice(true), shape(numArray.GetShape()),
-            indStart(numArray.GetIndStart()) {
+            indStart(numArray.GetIndStart()), stride(numArray.GetStride()), isSingleStride(numArray.IsSingleStride()) {
         arrayData = numArray.GetArrayData();
         //std::cout << "inside the copy constructor" << std::endl;
     }
@@ -44,24 +48,33 @@ class NumberArray3D {
     NumberArray3D(const NumberArray3D&& numArray) :
             isSlice(numArray.IsSlice()),
             shape(std::move(numArray.GetShape())),
-            indStart(std::move(numArray.GetIndStart())) {
-        //std::cout << "inside the move constructor" << std::endl;
+            indStart(std::move(numArray.GetIndStart())),
+            stride(std::move(numArray.GetStride())),
+            isSingleStride(numArray.IsSingleStride()) {
+        // Warning: array data not set ?
+        std::cout << "inside NumberArray3D's move constructor. arrayData status ??" << std::endl;
         //arrayData = std::move(numArray.GetArrayData());
     }
 
-    NumberArray3D(T*** arraySlice, std::array<std::size_t, 3> shape, std::array<std::size_t, 3> indStart) :
-            shape(shape), indStart(indStart), isSlice(true) {
-        arrayData = arraySlice;
+    NumberArray3D(T*** arrayDataOfAnother3DArray, std::array<std::size_t, 3> shape, std::array<std::size_t, 3> indStart,
+                  std::array<std::size_t, 3> stride = {1, 1, 1}) :
+            shape(shape), indStart(indStart), isSlice(true), stride(stride) {
+        arrayData = arrayDataOfAnother3DArray;
+        if(stride[0] == 1 && stride[1] == 1 && stride[2] == 1) {
+            isSingleStride = true;
+        } else {
+            isSingleStride = false;
+        }
     }
 
     ~NumberArray3D() {
         if(!isSlice) {
             // when indStart is different than {0, 0, 0} the shape of the underlying allocated array should be
             // adjusted:
-            std::array<std::size_t, 3> shapeOfArrayData{shape[0] + indStart[0],
-                                                        shape[1] + indStart[1],
-                                                        shape[2] + indStart[2] };
-            Delete3DNumberArray(arrayData, shapeOfArrayData);
+            std::array<std::size_t, 3> actualShapeOfArrayData{shape[0]*stride[0] + indStart[0],
+                                                              shape[1]*stride[1] + indStart[1],
+                                                              shape[2]*stride[2] + indStart[2] };
+            Delete3DNumberArray(arrayData, actualShapeOfArrayData);
         }
     }
 
@@ -70,7 +83,9 @@ class NumberArray3D {
         this->isSlice = false;
         this->shape = shape;
         this->indStart = std::array<std::size_t, 3>{0, 0, 0};
+        this->stride = std::array<std::size_t, 3>{1, 1, 1};
         this->arrayData = Create3DNumberArray(shape, initValue);
+        this->isSingleStride = true;
     }
 
     T*** GetArrayData() const {
@@ -93,22 +108,41 @@ class NumberArray3D {
         return shape;
     }
 
+    std::array<std::size_t, 3>& GetStride() {
+        return stride;
+    }
+
+    const std::array<std::size_t, 3>& GetStride() const {
+        return stride;
+    }
 
     bool IsSlice() const {
         return isSlice;
     }
 
-    NumberArray3D GetSlice(std::array<std::size_t, 3> indStart_slice, std::array<std::size_t, 3> indEnd_slice) {
+    bool IsSingleStride() const {
+        return isSingleStride;
+    }
+
+    NumberArray3D GetSlice(std::array<std::size_t, 3> indStart_slice, std::array<std::size_t, 3> indEnd_slice,
+                           std::array<std::size_t, 3> stride_slice = {1, 1, 1}) {
+        // The slice array includes indStart_slice but it does not include indEnd_slice
         assert(indEnd_slice[0] <= shape[0] && indEnd_slice[1] <= shape[1] && indEnd_slice[2] <= shape[2]);
         std::array<std::size_t, 3> shape_slice;
         for(std::size_t i = 0; i < 3; ++i) {
-            shape_slice[i] = indEnd_slice[i] - indStart_slice[i];
+            assert(stride_slice[i] > 0);
+            shape_slice[i] = (indEnd_slice[i] - indStart_slice[i]) / stride_slice[i];
+            assert(shape_slice[i] > 0);
         }
         // indStart_slice_total: with respect to the origin of the allocated array
-        std::array<std::size_t, 3> indStart_slice_total{indStart_slice[0] + indStart[0],
-                                                        indStart_slice[1] + indStart[1],
-                                                        indStart_slice[2] + indStart[2]};
-        return NumberArray3D(arrayData, shape_slice, indStart_slice_total);
+        std::array<std::size_t, 3> indStart_slice_total{indStart_slice[0]*stride[0] + indStart[0],
+                                                        indStart_slice[1]*stride[1] + indStart[1],
+                                                        indStart_slice[2]*stride[2] + indStart[2]};
+        std::array<std::size_t, 3> stride_slice_total{stride[0]*stride_slice[0],
+                                                      stride[1]*stride_slice[1],
+                                                      stride[2]*stride_slice[2]};
+
+        return NumberArray3D(arrayData, shape_slice, indStart_slice_total, stride_slice_total);
     }
 
     NumberArray3D& MakeThisASliceOf(const NumberArray3D& rhs) {
@@ -117,6 +151,8 @@ class NumberArray3D {
             isSlice = true;
             shape = rhs.GetShape();
             indStart = rhs.GetIndStart();
+            stride = rhs.GetStride();
+            isSingleStride = rhs.IsSingleStride();
 
             arrayData = rhs.GetArrayData();
         }
@@ -135,18 +171,37 @@ class NumberArray3D {
             std::size_t ind0 = indStart[0];
             std::size_t ind1 = indStart[1];
             std::size_t ind2 = indStart[2];
+            std::size_t s0 = stride[0];
+            std::size_t s1 = stride[1];
+            std::size_t s2 = stride[2];
 
             T*** rhs_arrayData = rhs.GetArrayData();
             const std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
             std::size_t rhs_ind0 = rhs_indStart[0];
             std::size_t rhs_ind1 = rhs_indStart[1];
             std::size_t rhs_ind2 = rhs_indStart[2];
+            const std::array<std::size_t, 3>& rhs_stride = rhs.GetStride();
+            std::size_t rhs_s0 = rhs_stride[0];
+            std::size_t rhs_s1 = rhs_stride[1];
+            std::size_t rhs_s2 = rhs_stride[2];
 
-            for(std::size_t i0 = 0; i0 < n0; ++i0) {
-                for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] =
-                                rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+            bool isUnitStride = IsSingleStride() && rhs.IsSingleStride();
+            if(isUnitStride) {
+                for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                    for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                        for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                            arrayData[ind0 + i0][ind1 + i1][ind2 + i2] =
+                                    rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+                        }
+                    }
+                }
+            } else {
+                for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                    for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                        for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                            arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] =
+                                    rhs_arrayData[rhs_ind0 + i0*rhs_s0][rhs_ind1 + i1*rhs_s1][rhs_ind2 + i2*rhs_s2];
+                        }
                     }
                 }
             }
@@ -162,11 +217,24 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = num;
+        if(isSingleStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = num;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] = num;
+                    }
                 }
             }
         }
@@ -193,15 +261,39 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
+        const std::array<std::size_t, 3>& b_stride = numArrB.GetStride();
+        std::size_t b_s0 = b_stride[0];
+        std::size_t b_s1 = b_stride[1];
+        std::size_t b_s2 = b_stride[2];
+
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] +
-                            b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride() && numArrB.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] +
+                                b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] +
+                                b_arrayData[b_ind0 + i0*b_s0][b_ind1 + i1*b_s1][b_ind2 + i2*b_s2];
+                    }
                 }
             }
         }
@@ -220,14 +312,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] + numB;
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] + numB;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] + numB;
+                    }
                 }
             }
         }
@@ -246,14 +355,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            numB + a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB + a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB + a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2];
+                    }
                 }
             }
         }
@@ -280,15 +406,38 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
+        const std::array<std::size_t, 3>& b_stride = numArrB.GetStride();
+        std::size_t b_s0 = b_stride[0];
+        std::size_t b_s1 = b_stride[1];
+        std::size_t b_s2 = b_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] -
-                            b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride() && numArrB.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] -
+                                b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] -
+                                b_arrayData[b_ind0 + i0*b_s0][b_ind1 + i1*b_s1][b_ind2 + i2*b_s2];
+                    }
                 }
             }
         }
@@ -307,14 +456,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] - numB;
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] - numB;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] - numB;
+                    }
                 }
             }
         }
@@ -333,14 +499,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            numB - a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB - a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB - a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2];
+                    }
                 }
             }
         }
@@ -355,18 +538,37 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
         T*** rhs_arrayData = rhs.GetArrayData();
         const std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
         std::size_t rhs_ind0 = rhs_indStart[0];
         std::size_t rhs_ind1 = rhs_indStart[1];
         std::size_t rhs_ind2 = rhs_indStart[2];
+        const std::array<std::size_t, 3>& rhs_stride = rhs.GetStride();
+        std::size_t rhs_s0 = rhs_stride[0];
+        std::size_t rhs_s1 = rhs_stride[1];
+        std::size_t rhs_s2 = rhs_stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] +=
-                            rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+        bool isUnitStride = IsSingleStride() && rhs.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] +=
+                                rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] +=
+                                rhs_arrayData[rhs_ind0 + i0*rhs_s0][rhs_ind1 + i1*rhs_s1][rhs_ind2 + i2*rhs_s2];
+                    }
                 }
             }
         }
@@ -380,11 +582,24 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] += rhs;
+        if(isSingleStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] += rhs;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] += rhs;
+                    }
                 }
             }
         }
@@ -411,15 +626,38 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
+        const std::array<std::size_t, 3>& b_stride = numArrB.GetStride();
+        std::size_t b_s0 = b_stride[0];
+        std::size_t b_s1 = b_stride[1];
+        std::size_t b_s2 = b_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] *
-                            b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride() && numArrB.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] *
+                                b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] *
+                                b_arrayData[b_ind0 + i0*b_s0][b_ind1 + i1*b_s1][b_ind2 + i2*b_s2];
+                    }
                 }
             }
         }
@@ -438,14 +676,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] * numB;
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] * numB;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] * numB;
+                    }
                 }
             }
         }
@@ -464,14 +719,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            numB * a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB * a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB * a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2];
+                    }
                 }
             }
         }
@@ -486,18 +758,37 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
         T*** rhs_arrayData = rhs.GetArrayData();
         const std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
         std::size_t rhs_ind0 = rhs_indStart[0];
         std::size_t rhs_ind1 = rhs_indStart[1];
         std::size_t rhs_ind2 = rhs_indStart[2];
+        const std::array<std::size_t, 3>& rhs_stride = rhs.GetStride();
+        std::size_t rhs_s0 = rhs_stride[0];
+        std::size_t rhs_s1 = rhs_stride[1];
+        std::size_t rhs_s2 = rhs_stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] *=
-                            rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+        bool isUnitStride = IsSingleStride() && rhs.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] *=
+                                rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] *=
+                                rhs_arrayData[rhs_ind0 + i0*rhs_s0][rhs_ind1 + i1*rhs_s1][rhs_ind2 + i2*rhs_s2];
+                    }
                 }
             }
         }
@@ -511,11 +802,24 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] *= rhs;
+        if(isSingleStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] *= rhs;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] *= rhs;
+                    }
                 }
             }
         }
@@ -545,12 +849,35 @@ class NumberArray3D {
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] /
-                            b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
+        const std::array<std::size_t, 3>& b_stride = numArrB.GetStride();
+        std::size_t b_s0 = b_stride[0];
+        std::size_t b_s1 = b_stride[1];
+        std::size_t b_s2 = b_stride[2];
+
+        bool isUnitStride = numArrA.IsSingleStride() && numArrB.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] /
+                                b_arrayData[b_ind0 + i0][b_ind1 + i1][b_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] /
+                                b_arrayData[b_ind0 + i0*b_s0][b_ind1 + i1*b_s1][b_ind2 + i2*b_s2];
+                    }
                 }
             }
         }
@@ -569,14 +896,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] / numB;
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2] / numB;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2] / numB;
+                    }
                 }
             }
         }
@@ -595,14 +939,31 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] =
-                            numB / a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+        bool isUnitStride = numArrA.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB / a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] =
+                                numB / a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2];
+                    }
                 }
             }
         }
@@ -617,18 +978,37 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
         T*** rhs_arrayData = rhs.GetArrayData();
         const std::array<std::size_t, 3>& rhs_indStart = rhs.GetIndStart();
         std::size_t rhs_ind0 = rhs_indStart[0];
         std::size_t rhs_ind1 = rhs_indStart[1];
         std::size_t rhs_ind2 = rhs_indStart[2];
+        const std::array<std::size_t, 3>& rhs_stride = rhs.GetStride();
+        std::size_t rhs_s0 = rhs_stride[0];
+        std::size_t rhs_s1 = rhs_stride[1];
+        std::size_t rhs_s2 = rhs_stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] /=
-                            rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+        bool isUnitStride = IsSingleStride() && rhs.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] /=
+                                rhs_arrayData[rhs_ind0 + i0][rhs_ind1 + i1][rhs_ind2 + i2];
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] /=
+                                rhs_arrayData[rhs_ind0 + i0*rhs_s0][rhs_ind1 + i1*rhs_s1][rhs_ind2 + i2*rhs_s2];
+                    }
                 }
             }
         }
@@ -642,11 +1022,24 @@ class NumberArray3D {
         std::size_t ind0 = indStart[0];
         std::size_t ind1 = indStart[1];
         std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] /= rhs;
+        if(isSingleStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0][ind1 + i1][ind2 + i2] /= rhs;
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData[ind0 + i0*s0][ind1 + i1*s1][ind2 + i2*s2] /= rhs;
+                    }
                 }
             }
         }
@@ -654,11 +1047,23 @@ class NumberArray3D {
     }
 
     T& operator[](const std::array<std::size_t, 3> indx) {
-        return arrayData[indStart[0] + indx[0]][indStart[1] + indx[1]][indStart[2] + indx[2]];
+        if(isSingleStride) {
+            return arrayData[indStart[0] + indx[0]][indStart[1] + indx[1]][indStart[2] + indx[2]];
+        } else{
+            return arrayData[indStart[0] + indx[0]*stride[0]]
+                            [indStart[1] + indx[1]*stride[1]]
+                            [indStart[2] + indx[2]*stride[2]];
+        }
     }
 
     const T& operator[](const std::array<std::size_t, 3> indx) const {
-        return arrayData[indStart[0] + indx[0]][indStart[1] + indx[1]][indStart[2] + indx[2]];
+        if(isSingleStride) {
+            return arrayData[indStart[0] + indx[0]][indStart[1] + indx[1]][indStart[2] + indx[2]];
+        } else{
+            return arrayData[indStart[0] + indx[0]*stride[0]]
+                            [indStart[1] + indx[1]*stride[1]]
+                            [indStart[2] + indx[2]*stride[2]];
+        }
     }
 
     //------------------------- in-place math functions ----------------------------------
@@ -681,7 +1086,7 @@ class NumberArray3D {
 //        return *this;
 //    }
 
-    //------------------------- mathematical functions -----------------------------------
+    //------------------------- special functions -----------------------------------
 
     static NumberArray3D exp(const NumberArray3D& numArrA) {
         const std::array<std::size_t, 3>& a_shape = numArrA.GetShape();
@@ -695,13 +1100,28 @@ class NumberArray3D {
         std::size_t n1 = a_shape[1];
         std::size_t n2 = a_shape[2];
 
+        const std::array<std::size_t, 3>& a_stride = numArrA.GetStride();
+        std::size_t a_s0 = a_stride[0];
+        std::size_t a_s1 = a_stride[1];
+        std::size_t a_s2 = a_stride[2];
+
         NumberArray3D numArrC(a_shape, 0);  // TODO: use an uninitialized array
         T*** c_arrayData = numArrC.GetArrayData();
 
-        for(std::size_t i0 = 0; i0 < n0; ++i0) {
-            for(std::size_t i1 = 0; i1 < n1; ++i1) {
-                for(std::size_t i2 = 0; i2 < n2; ++i2) {
-                    c_arrayData[i0][i1][i2] = std::exp(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
+        if(numArrA.IsSingleStride()) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] = std::exp(a_arrayData[a_ind0 + i0][a_ind1 + i1][a_ind2 + i2]);
+                    }
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        c_arrayData[i0][i1][i2] = std::exp(a_arrayData[a_ind0 + i0*a_s0][a_ind1 + i1*a_s1][a_ind2 + i2*a_s2]);
+                    }
                 }
             }
         }

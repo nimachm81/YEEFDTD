@@ -98,7 +98,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"E-x",
+            "name":"2D/E-x",
             "array":"E",
             "direction":"x",
             "saveRate":1
@@ -107,7 +107,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"H-y",
+            "name":"2D/H-y",
             "array":"H",
             "direction":"y",
             "saveRate":1
@@ -116,7 +116,7 @@
         {
         "type":"entire",
         "parameters":{
-            "name":"J-x",
+            "name":"2D/J-x",
             "array":"J",
             "direction":"x",
             "saveRate":1
