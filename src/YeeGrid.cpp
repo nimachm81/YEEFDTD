@@ -51,7 +51,9 @@ YeeGrid3D::~YeeGrid3D() {
                         std::vector<FPNumber>,    // 3
                         std::vector<std::string>,   // 4
                         std::vector<int>,           // 5
-                        std::vector<std::array<std::size_t, 3>>     // 6
+                        std::vector<std::array<std::size_t, 3>>,     // 6
+                        std::array<std::size_t, 3>,
+                        std::vector<std::array<std::size_t, 3>>
                     >*
                 >(params);
             delete params_tuple;
@@ -60,16 +62,19 @@ YeeGrid3D::~YeeGrid3D() {
             auto* params_tuple =
                 static_cast<
                     std::tuple<
-                    std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
-                    std::string,    // 1
-                    int,    // 2
-                    std::vector<FPNumber>,    // 3
-                    std::vector<std::string>,   // 4
-                    std::vector<int>,           // 5
-                    std::vector<std::array<std::size_t, 3>>,    // 6
-                    std::vector<std::string>,   // 7
-                    std::vector<int>,           // 8
-                    std::vector<std::array<std::size_t, 3>>     // 9
+                        std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
+                        std::string,    // 1
+                        int,    // 2
+                        std::vector<FPNumber>,    // 3
+                        std::vector<std::string>,   // 4
+                        std::vector<int>,           // 5
+                        std::vector<std::array<std::size_t, 3>>,    // 6
+                        std::vector<std::string>,   // 7
+                        std::vector<int>,           // 8
+                        std::vector<std::array<std::size_t, 3>>,     // 9
+                        std::array<std::size_t, 3>,
+                        std::vector<std::array<std::size_t, 3>>,
+                        std::vector<std::array<std::size_t, 3>>
                     >*
                 >(params);
             delete params_tuple;
@@ -95,7 +100,9 @@ YeeGrid3D::~YeeGrid3D() {
                         std::vector<FPNumber>,    // 4
                         std::vector<std::string>,   // 5
                         std::vector<int>,           // 6
-                        std::vector<std::array<std::size_t, 3>>     // 7
+                        std::vector<std::array<std::size_t, 3>>,     // 7
+                        std::array<std::size_t, 3>,
+                        std::vector<std::array<std::size_t, 3>>
                     >*
                 >(params);
             delete params_tuple;
@@ -233,8 +240,15 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
                                   std::vector<FPNumber> bValues,
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
-                                  std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                  std::vector<std::array<std::size_t, 3>> arrayC_indsStart,
+                                  std::array<std::size_t, 3> arrayA_stride,
+                                  std::vector<std::array<std::size_t, 3>> arrayC_stride
                                   ) const {
+    if(arrayC_stride.size() == 0) {
+        for(std::size_t i = 0; i < arrayC_indsStart.size(); ++i) {
+            arrayC_stride.push_back(std::array<std::size_t, 3>{1, 1, 1});
+        }
+    }
     auto* params_tuple =
         new std::tuple<
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
@@ -243,7 +257,9 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
             std::vector<FPNumber>,    // 3
             std::vector<std::string>,   // 4
             std::vector<int>,           // 5
-            std::vector<std::array<std::size_t, 3>>     // 6
+            std::vector<std::array<std::size_t, 3>>,     // 6
+            std::array<std::size_t, 3>,
+            std::vector<std::array<std::size_t, 3>>     // 8
         >(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>(ind_start_A, ind_end_A),  // 0
             arrayA_name,        // 1
@@ -251,7 +267,9 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(
             bValues,            // 3
             arrayC_names,       // 4
             arrayC_components,  // 5
-            arrayC_indsStart    // 6
+            arrayC_indsStart,   // 6
+            arrayA_stride,
+            arrayC_stride       // 8
         );
      return static_cast<void*>(params_tuple);
 }
@@ -267,8 +285,21 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_bB_C(
                                   std::vector<std::array<std::size_t, 3>> arrayB_indsStart,
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
-                                  std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                  std::vector<std::array<std::size_t, 3>> arrayC_indsStart,
+                                  std::array<std::size_t, 3> arrayA_stride,
+                                  std::vector<std::array<std::size_t, 3>> arrayB_stride,
+                                  std::vector<std::array<std::size_t, 3>> arrayC_stride
                                   ) const {
+    if(arrayB_stride.size() == 0) {
+        for(std::size_t i = 0; i < arrayB_indsStart.size(); ++i) {
+            arrayB_stride.push_back(std::array<std::size_t, 3>{1, 1, 1});
+        }
+    }
+    if(arrayC_stride.size() == 0) {
+        for(std::size_t i = 0; i < arrayC_indsStart.size(); ++i) {
+            arrayC_stride.push_back(std::array<std::size_t, 3>{1, 1, 1});
+        }
+    }
     auto* params_tuple =
         new std::tuple<
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>,   // 0
@@ -280,7 +311,10 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_bB_C(
             std::vector<std::array<std::size_t, 3>>,    // 6
             std::vector<std::string>,   // 7
             std::vector<int>,           // 8
-            std::vector<std::array<std::size_t, 3>>     // 9
+            std::vector<std::array<std::size_t, 3>>,     // 9
+            std::array<std::size_t, 3>,
+            std::vector<std::array<std::size_t, 3>>,     // 11
+            std::vector<std::array<std::size_t, 3>>     // 12
         >(
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>(ind_start_A, ind_end_A),  // 0
             arrayA_name,        // 1
@@ -291,7 +325,10 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_bB_C(
             arrayB_indsStart,   // 6
             arrayC_names,       // 7
             arrayC_components,  // 8
-            arrayC_indsStart    // 9
+            arrayC_indsStart,    // 9
+            arrayA_stride,
+            arrayB_stride,       // 11
+            arrayC_stride       // 12
         );
      return static_cast<void*>(params_tuple);
 }
@@ -328,8 +365,15 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
                                   std::vector<FPNumber> bValues,
                                   std::vector<std::string> arrayC_names,
                                   std::vector<int> arrayC_components,
-                                  std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                  std::vector<std::array<std::size_t, 3>> arrayC_indsStart,
+                                  std::array<std::size_t, 3> arrayA_stride,
+                                  std::vector<std::array<std::size_t, 3>> arrayC_stride
                                   ) const {
+    if(arrayC_stride.size() == 0) {
+        for(std::size_t i = 0; i < arrayC_indsStart.size(); ++i) {
+            arrayC_stride.push_back(std::array<std::size_t, 3>{1, 1, 1});
+        }
+    }
     auto* params_tuple =
         new std::tuple<
             YeeGrid3D*,             // 0
@@ -339,7 +383,9 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
             std::vector<FPNumber>,    // 4
             std::vector<std::string>,   // 5
             std::vector<int>,           // 6
-            std::vector<std::array<std::size_t, 3>>     // 7
+            std::vector<std::array<std::size_t, 3>>,     // 7
+            std::array<std::size_t, 3>,
+            std::vector<std::array<std::size_t, 3>>     // 9
         >(
             neighborGrid,       // 0
             std::pair<std::array<std::size_t, 3>, std::array<std::size_t, 3>>(ind_start_A, ind_end_A),  // 1
@@ -348,7 +394,9 @@ void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C_neighbor(
             bValues,            // 4
             arrayC_names,       // 5
             arrayC_components,  // 6
-            arrayC_indsStart    // 7
+            arrayC_indsStart,    // 7
+            arrayA_stride,
+            arrayC_stride       // 9
         );
      return static_cast<void*>(params_tuple);
 }
@@ -367,7 +415,9 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     std::vector<FPNumber>,    // 3
                     std::vector<std::string>,   // 4
                     std::vector<int>,           // 5
-                    std::vector<std::array<std::size_t, 3>>     // 6
+                    std::vector<std::array<std::size_t, 3>>,     // 6
+                    std::array<std::size_t, 3>,
+                    std::vector<std::array<std::size_t, 3>>     // 8
                 >*
             >(params);
         std::array<std::size_t, 3>& ind_start_A = std::get<0>(params_tuple).first;
@@ -378,24 +428,29 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::vector<std::string>& arrayC_names = std::get<4>(params_tuple);
         std::vector<int>& arrayC_components = std::get<5>(params_tuple);
         std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<6>(params_tuple);
+        std::array<std::size_t, 3>& arrayA_stride = std::get<7>(params_tuple);
+        std::vector<std::array<std::size_t, 3>>& arrayC_stride = std::get<8>(params_tuple);
 
         std::size_t numRhs = bValue.size();
         assert(arrayC_names.size() == numRhs &&
                arrayC_components.size() == numRhs && arrayC_indsStart.size() == numRhs);
 
         NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A, arrayA_stride);
+        auto A_shape = arrayASlice.GetShape();
 
         for(std::size_t i = 0; i < numRhs; ++i) {
             FPNumber b = bValue[i];
             NumberArray3D<FPNumber>& arrayC = (*(gridElements[arrayC_names[i]])).GetNumArray(arrayC_components[i]);
             std::array<std::size_t, 3>& ind_start_C = arrayC_indsStart[i];
-            std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + ind_end_A[0] - ind_start_A[0],
-                                                 ind_start_C[1] + ind_end_A[1] - ind_start_A[1],
-                                                 ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
+            std::array<std::size_t, 3>& arrayC_i_stride = arrayC_stride[i];
+            std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + (A_shape[0] - 1)*arrayC_i_stride[0] + 1,
+                                                 ind_start_C[1] + (A_shape[1] - 1)*arrayC_i_stride[1] + 1,
+                                                 ind_start_C[2] + (A_shape[2] - 1)*arrayC_i_stride[2] + 1
+                                                 };
+            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C, arrayC_i_stride);
 
-            if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
+            if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {     // moving arrays
                 std::array<std::size_t, 3>& indOriginA = (*(gridElements[arrayA_name])).GetIndexOfOrigin();
                 std::array<std::size_t, 3>& indOriginC = (*(gridElements[arrayC_names[i]])).GetIndexOfOrigin();
                 std::array<std::size_t, 3> ind_start_A_rel{ind_start_A[0] + indOriginC[0] - indOriginA[0],
@@ -404,7 +459,7 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 std::array<std::size_t, 3> ind_end_A_rel{ind_end_A[0] + indOriginC[0] - indOriginA[0],
                                                          ind_end_A[1] + indOriginC[1] - indOriginA[1],
                                                          ind_end_A[2] + indOriginC[2] - indOriginA[2]};
-                arrayASlice.MakeThisASliceOf(arrayA.GetSlice(ind_start_A_rel, ind_end_A_rel));
+                arrayASlice.MakeThisASliceOf(arrayA.GetSlice(ind_start_A_rel, ind_end_A_rel, arrayA_stride));
             }
 
             // Warning: if A appears on the right hand side as well it should be the first one and it should not
@@ -441,7 +496,10 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     std::vector<std::array<std::size_t, 3>>,    // 6
                     std::vector<std::string>,   // 7
                     std::vector<int>,           // 8
-                    std::vector<std::array<std::size_t, 3>>     // 9
+                    std::vector<std::array<std::size_t, 3>>,     // 9
+                    std::array<std::size_t, 3>,
+                    std::vector<std::array<std::size_t, 3>>,     // 11
+                    std::vector<std::array<std::size_t, 3>>      // 12
                 >*
             >(params);
         std::array<std::size_t, 3>& ind_start_A = std::get<0>(params_tuple).first;
@@ -455,6 +513,9 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::vector<std::string>& arrayC_names = std::get<7>(params_tuple);
         std::vector<int>& arrayC_components = std::get<8>(params_tuple);
         std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<9>(params_tuple);
+        std::array<std::size_t, 3>& arrayA_stride = std::get<10>(params_tuple);
+        std::vector<std::array<std::size_t, 3>>& arrayB_stride = std::get<11>(params_tuple);
+        std::vector<std::array<std::size_t, 3>>& arrayC_stride = std::get<12>(params_tuple);
 
         std::size_t numRhs = bValues.size();
         assert(arrayB_names.size() == numRhs && arrayC_names.size() == numRhs &&
@@ -462,23 +523,28 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                arrayB_components.size() == numRhs && arrayB_indsStart.size() == numRhs);
 
         NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A, arrayA_stride);
+        auto A_shape = arrayASlice.GetShape();
 
         for(std::size_t i = 0; i < numRhs; ++i) {
             FPNumber b = bValues[i];
             NumberArray3D<FPNumber>& arrayB = (*(gridElements[arrayB_names[i]])).GetNumArray(arrayB_components[i]);
             std::array<std::size_t, 3>& ind_start_B = arrayB_indsStart[i];
-            std::array<std::size_t, 3> ind_end_B{ind_start_B[0] + ind_end_A[0] - ind_start_A[0],
-                                                 ind_start_B[1] + ind_end_A[1] - ind_start_A[1],
-                                                 ind_start_B[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<FPNumber> arrayBSlice = arrayB.GetSlice(ind_start_B, ind_end_B);
+            std::array<std::size_t, 3>& arrayB_i_stride = arrayB_stride[i];
+            std::array<std::size_t, 3> ind_end_B{ind_start_B[0] + (A_shape[0] - 1)*arrayB_i_stride[0] + 1,
+                                                 ind_start_B[1] + (A_shape[1] - 1)*arrayB_i_stride[1] + 1,
+                                                 ind_start_B[2] + (A_shape[2] - 1)*arrayB_i_stride[2] + 1
+                                                 };
+            NumberArray3D<FPNumber> arrayBSlice = arrayB.GetSlice(ind_start_B, ind_end_B, arrayB_i_stride);
 
             NumberArray3D<FPNumber>& arrayC = (*(gridElements[arrayC_names[i]])).GetNumArray(arrayC_components[i]);
             std::array<std::size_t, 3>& ind_start_C = arrayC_indsStart[i];
-            std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + ind_end_A[0] - ind_start_A[0],
-                                                 ind_start_C[1] + ind_end_A[1] - ind_start_A[1],
-                                                 ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
+            std::array<std::size_t, 3>& arrayC_i_stride = arrayC_stride[i];
+            std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + (A_shape[0] - 1)*arrayC_i_stride[0] + 1,
+                                                 ind_start_C[1] + (A_shape[1] - 1)*arrayC_i_stride[1] + 1,
+                                                 ind_start_C[2] + (A_shape[2] - 1)*arrayC_i_stride[2] + 1
+                                                 };
+            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C, arrayC_i_stride);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C) {
                 arrayASlice += b*arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
@@ -525,7 +591,9 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     std::vector<FPNumber>,    // 4
                     std::vector<std::string>,   // 5
                     std::vector<int>,           // 6
-                    std::vector<std::array<std::size_t, 3>>     // 7
+                    std::vector<std::array<std::size_t, 3>> ,    // 7
+                    std::array<std::size_t, 3>,
+                    std::vector<std::array<std::size_t, 3>>     // 9
                 >*
             >(params);
         YeeGrid3D* neighborGrid = std::get<0>(params_tuple);
@@ -537,23 +605,28 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::vector<std::string>& arrayC_names = std::get<5>(params_tuple);
         std::vector<int>& arrayC_components = std::get<6>(params_tuple);
         std::vector<std::array<std::size_t, 3>>& arrayC_indsStart = std::get<7>(params_tuple);
+        std::array<std::size_t, 3>& arrayA_stride = std::get<8>(params_tuple);
+        std::vector<std::array<std::size_t, 3>>& arrayC_stride = std::get<9>(params_tuple);
 
         std::size_t numRhs = bValue.size();
         assert(arrayC_names.size() == numRhs &&
                arrayC_components.size() == numRhs && arrayC_indsStart.size() == numRhs);
 
         NumberArray3D<FPNumber>& arrayA = (*(gridElements[arrayA_name])).GetNumArray(arrayA_component);
-        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A);
+        NumberArray3D<FPNumber> arrayASlice = arrayA.GetSlice(ind_start_A, ind_end_A, arrayA_stride);
+        auto A_shape = arrayASlice.GetShape();
 
         for(std::size_t i = 0; i < numRhs; ++i) {
             FPNumber b = bValue[i];
             NumberArray3D<FPNumber>& arrayC =
                     neighborGrid->GetGridElement(arrayC_names[i]).GetNumArray(arrayC_components[i]);
             std::array<std::size_t, 3>& ind_start_C = arrayC_indsStart[i];
-            std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + ind_end_A[0] - ind_start_A[0],
-                                                 ind_start_C[1] + ind_end_A[1] - ind_start_A[1],
-                                                 ind_start_C[2] + ind_end_A[2] - ind_start_A[2]};
-            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C);
+            std::array<std::size_t, 3>& arrayC_i_stride = arrayC_stride[i];
+            std::array<std::size_t, 3> ind_end_C{ind_start_C[0] + (A_shape[0] - 1)*arrayC_i_stride[0] + 1,
+                                                 ind_start_C[1] + (A_shape[1] - 1)*arrayC_i_stride[1] + 1,
+                                                 ind_start_C[2] + (A_shape[2] - 1)*arrayC_i_stride[2] + 1
+                                                 };
+            NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C, arrayC_i_stride);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor) {
                 arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs

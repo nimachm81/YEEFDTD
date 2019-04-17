@@ -68,7 +68,9 @@ class YeeGrid3D {
                                     std::vector<FPNumber> bValues,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
-                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart,
+                                    std::array<std::size_t, 3> arrayA_stride = {1, 1, 1},
+                                    std::vector<std::array<std::size_t, 3>> arrayC_stride = {}
                                     ) const;
     void* ConstructParams_A_plusequal_sum_bB_C(
                                     std::array<std::size_t, 3> ind_start_A,
@@ -81,7 +83,10 @@ class YeeGrid3D {
                                     std::vector<std::array<std::size_t, 3>> arrayB_indsStart,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
-                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart,
+                                    std::array<std::size_t, 3> arrayA_stride = {1, 1, 1},
+                                    std::vector<std::array<std::size_t, 3>> arrayB_stride = {},
+                                    std::vector<std::array<std::size_t, 3>> arrayC_stride = {}
                                     ) const;
     void* ConstructParams_A_equal_func_r_t(
                                     std::string gridManipulator_name
@@ -99,7 +104,9 @@ class YeeGrid3D {
                                     std::vector<FPNumber> bValues,
                                     std::vector<std::string> arrayC_names,
                                     std::vector<int> arrayC_components,
-                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart
+                                    std::vector<std::array<std::size_t, 3>> arrayC_indsStart,
+                                    std::array<std::size_t, 3> arrayA_stride = {1, 1, 1},
+                                    std::vector<std::array<std::size_t, 3>> arrayC_stride = {}
                                     ) const;
 
     std::array<FPNumber, 3> GetCoordinatesOfFirstElementOfGridDataArray(const std::string& gridDataName, int direction);

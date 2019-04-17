@@ -131,7 +131,7 @@ class NumberArray3D {
         std::array<std::size_t, 3> shape_slice;
         for(std::size_t i = 0; i < 3; ++i) {
             assert(stride_slice[i] > 0);
-            shape_slice[i] = (indEnd_slice[i] - indStart_slice[i]) / stride_slice[i];
+            shape_slice[i] = (indEnd_slice[i] - 1 - indStart_slice[i]) / stride_slice[i] + 1;
             assert(shape_slice[i] > 0);
         }
         // indStart_slice_total: with respect to the origin of the allocated array
@@ -160,6 +160,7 @@ class NumberArray3D {
     }
 
     //------------------------------ Operators ---------------------------------------
+    //-------------------------- automatic substitution (start) ----------------------
 \begin{substitution}
 \begin{from}
     \begin{list}SUB1\end{list}
@@ -247,7 +248,6 @@ class NumberArray3D {
         }
         return *this;
     }
-
 \end{substitution}
 
 \begin{substitution}
@@ -405,8 +405,8 @@ class NumberArray3D {
         }
         return numArrC;     // TODO: define move constructors
     }
-
 \end{substitution}
+    //-------------------------- automatic substitution (end) ----------------------
 
 
     T& operator[](const std::array<std::size_t, 3> indx) {
@@ -450,15 +450,14 @@ class NumberArray3D {
 //    }
 
     //------------------------- special functions -----------------------------------
-
-
+    //-------------------------- automatic substitution (start) ----------------------
 \begin{substitution}
 \begin{from}
     \begin{list}SUB1 SUB2\end{list}
 \end{from}
 \begin{to}
     \begin{list}exp std::exp\end{list}
-    \begin{list}cos std::cos\end{list} 
+    \begin{list}cos std::cos\end{list}
     \begin{list}sin std::sin\end{list}
 \end{to}
 
@@ -501,8 +500,8 @@ class NumberArray3D {
         }
         return numArrC;
     }
-
 \end{substitution}
+    //-------------------------- automatic substitution (end) ----------------------
 
     //---------------------   meshgrid
 

@@ -554,6 +554,16 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 C_directions.emplace_back(stringDirectionToIntDirectionMap[direction]);
             }
 
+            std::array<std::size_t, 3> A_stride = {1, 1, 1};
+            if(updateParams.GetCount("A_stride") > 0) {
+                A_stride = updateParams.Get3VecUintProperty("A_stride");
+            }
+
+            std::vector<std::array<std::size_t, 3>> C_stride = {};
+            if(updateParams.GetCount("C_stride") > 0) {
+                C_stride = updateParams.Get3VecUintArray("C_stride");
+            }
+
             void* updateParamsPtr = yee.ConstructParams_A_plusequal_sum_b_C(
                 updateParams.Get3VecUintProperty("A_indStart"),  // indStart
                 updateParams.Get3VecUintProperty("A_indEnd"), // indEnd
@@ -562,7 +572,9 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 updateParams.GetRealArray("b"),     // b values
                 updateParams.GetStringArray("C"),   // C names
                 C_directions,
-                updateParams.Get3VecUintArray("C_indStart")
+                updateParams.Get3VecUintArray("C_indStart"),
+                A_stride,
+                C_stride
                 );
 
             if(updateType == "A+=sumbC") {
@@ -598,6 +610,16 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 C_directions.emplace_back(stringDirectionToIntDirectionMap[direction]);
             }
 
+            std::array<std::size_t, 3> A_stride = {1, 1, 1};
+            if(updateParams.GetCount("A_stride") > 0) {
+                A_stride = updateParams.Get3VecUintProperty("A_stride");
+            }
+
+            std::vector<std::array<std::size_t, 3>> C_stride = {};
+            if(updateParams.GetCount("C_stride") > 0) {
+                C_stride = updateParams.Get3VecUintArray("C_stride");
+            }
+
             void* updateParamsPtr = yee.ConstructParams_A_plusequal_sum_b_C_neighbor(
                 gridsMap[updateParams.GetStringProperty("neighborGrid")],
                 updateParams.Get3VecUintProperty("A_indStart"),  // indStart
@@ -607,7 +629,9 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 updateParams.GetRealArray("b"),     // b values
                 updateParams.GetStringArray("C"),   // C names
                 C_directions,
-                updateParams.Get3VecUintArray("C_indStart")
+                updateParams.Get3VecUintArray("C_indStart"),
+                A_stride,
+                C_stride
                 );
 
             if(updateType == "A+=sumbC::NB") {
@@ -639,6 +663,21 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 C_directions.emplace_back(stringDirectionToIntDirectionMap[direction]);
             }
 
+            std::array<std::size_t, 3> A_stride = {1, 1, 1};
+            if(updateParams.GetCount("A_stride") > 0) {
+                A_stride = updateParams.Get3VecUintProperty("A_stride");
+            }
+
+            std::vector<std::array<std::size_t, 3>> B_stride = {};
+            if(updateParams.GetCount("B_stride") > 0) {
+                B_stride = updateParams.Get3VecUintArray("B_stride");
+            }
+
+            std::vector<std::array<std::size_t, 3>> C_stride = {};
+            if(updateParams.GetCount("C_stride") > 0) {
+                C_stride = updateParams.Get3VecUintArray("C_stride");
+            }
+
             void* updateParamsPtr = yee.ConstructParams_A_plusequal_sum_bB_C(
                 updateParams.Get3VecUintProperty("A_indStart"),  // indStart
                 updateParams.Get3VecUintProperty("A_indEnd"), // indEnd
@@ -650,7 +689,10 @@ void ParamFileTranslator::SetSingleGridUpddateInstructions(YeeGrid3D& yee,
                 updateParams.Get3VecUintArray("B_indStart"),
                 updateParams.GetStringArray("C"),   // C names
                 C_directions,
-                updateParams.Get3VecUintArray("C_indStart")
+                updateParams.Get3VecUintArray("C_indStart"),
+                A_stride,
+                B_stride,
+                C_stride
                 );
 
             if(updateType == "A+=sumbBC") {
