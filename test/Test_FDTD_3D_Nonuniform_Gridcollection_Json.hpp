@@ -14,7 +14,7 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     FPNumber dx = (x1 - x0)/(FPNumber)(nx);
     FPNumber dy = (y1 - y0)/(FPNumber)(ny);
     FPNumber dz = (z1 - z0)/(FPNumber)(nz);
-    FPNumber stabilityFactor = 0.45;
+    FPNumber stabilityFactor = 0.99;
     FPNumber dt = (FPNumber)1.0/std::sqrt((FPNumber)1.0/(dx*dx) + (FPNumber)1.0/(dy*dy) + (FPNumber)1.0/(dz*dz))*stabilityFactor;
 
     FPNumber x_j = (x0 + x1)/(FPNumber)2.0;
@@ -26,7 +26,6 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     if(indxJ % 2 == 1) {
         indxJ += 1;
     }
-    std::size_t numOfTimeSamples = 200;
 
     FPNumber gr_x0 = 0;
     FPNumber gr_x1 = 2.0;
@@ -47,6 +46,20 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     std::size_t gr_save_rate = 1;
     std::size_t save_rate = 2*gr_save_rate;
 
+    std::size_t numOfTimeSamples = 150;
+    int interpolationOrder = 1;
+    std::size_t nt_ip0, nt_ip1;
+    if(interpolationOrder == 0) {
+        nt_ip0 = numOfTimeSamples;
+        nt_ip1 = 0;
+    } else if(interpolationOrder == 1) {
+        nt_ip1 = numOfTimeSamples;
+        nt_ip0 = 0;
+    } else {
+        assert(false);
+    }
+
+
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_x0_\"", boost::lexical_cast<std::string>(std::real(x0))},
             {"\"_x1_\"", boost::lexical_cast<std::string>(std::real(x1))},
@@ -59,8 +72,10 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_nz_\"", boost::lexical_cast<std::string>(nz)},
             {"\"_nx_p1_\"", boost::lexical_cast<std::string>(nx + 1)},
             {"\"_nx_m1_\"", boost::lexical_cast<std::string>(nx - 1)},
+            {"\"_nx_m2_\"", boost::lexical_cast<std::string>(nx - 2)},
             {"\"_ny_p1_\"", boost::lexical_cast<std::string>(ny + 1)},
             {"\"_ny_m1_\"", boost::lexical_cast<std::string>(ny - 1)},
+            {"\"_ny_m2_\"", boost::lexical_cast<std::string>(ny - 2)},
             {"\"_nz_p1_\"", boost::lexical_cast<std::string>(nz + 1)},
             {"\"_nz_m1_\"", boost::lexical_cast<std::string>(nz - 1)},
             {"\"_nz_m2_\"", boost::lexical_cast<std::string>(nz - 2)},
@@ -96,6 +111,9 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gr_nx_p1_\"", boost::lexical_cast<std::string>(gr_nx + 1)},
             {"\"_gr_ny_p1_\"", boost::lexical_cast<std::string>(gr_ny + 1)},
             {"\"_gr_nz_p1_\"", boost::lexical_cast<std::string>(gr_nz + 1)},
+            {"\"_gr_nx_m1_\"", boost::lexical_cast<std::string>(gr_nx - 1)},
+            {"\"_gr_ny_m1_\"", boost::lexical_cast<std::string>(gr_ny - 1)},
+            {"\"_gr_nz_m1_\"", boost::lexical_cast<std::string>(gr_nz - 1)},
             {"\"_gr_dx_\"", boost::lexical_cast<std::string>(std::real(gr_dx))},
             {"\"_gr_dy_\"", boost::lexical_cast<std::string>(std::real(gr_dy))},
             {"\"_gr_dz_\"", boost::lexical_cast<std::string>(std::real(gr_dz))},
@@ -112,7 +130,8 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gr_m_dt_dy_2_\"", boost::lexical_cast<std::string>(std::real(-gr_dt/gr_dy/2.0))},
             {"\"_gr_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(gr_dt/gr_dz/2.0))},
             {"\"_gr_m_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(-gr_dt/gr_dz/2.0))},
-            {"\"_nt_coarse_\"", boost::lexical_cast<std::string>(numOfTimeSamples)},
+            {"\"_nt_coarse_IP0_\"", boost::lexical_cast<std::string>(nt_ip0)},
+            {"\"_nt_coarse_IP1_\"", boost::lexical_cast<std::string>(nt_ip1)},
             {"\"_indxSave_\"", boost::lexical_cast<std::string>(indxJ)},
             {"\"_indxSave_p1_\"", boost::lexical_cast<std::string>(indxJ + 1)},
             {"\"_gr_indxSave_\"", boost::lexical_cast<std::string>(gr_indxSave)},
