@@ -199,7 +199,7 @@ void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode i
     updateInstructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, params);
 }
 
-void YeeGrid3D::SetIterativeSequence(std::vector<std::string> sequence) {
+void YeeGrid3D::SetIterativeSequence(std::vector<std::string>& sequence) {
     for(auto instructionName : sequence) {
         // make sure sequence instruction names are valid.
         const auto& found = updateInstructions.find(instructionName);
@@ -208,7 +208,7 @@ void YeeGrid3D::SetIterativeSequence(std::vector<std::string> sequence) {
     iterativeSequence = sequence;
 }
 
-void YeeGrid3D::SetSingleRunSequence(std::vector<std::string> sequence) {
+void YeeGrid3D::SetSingleRunSequence(std::vector<std::string>& sequence) {
     for(auto instructionName : sequence) {
         // make sure sequence instruction names are valid.
         const auto& found = updateInstructions.find(instructionName);
@@ -217,19 +217,25 @@ void YeeGrid3D::SetSingleRunSequence(std::vector<std::string> sequence) {
     singleRunSequence = sequence;
 }
 
-void YeeGrid3D::AddInstructionSequence(std::string name, std::vector<std::string> sequence) {
+void YeeGrid3D::AddInstructionSequence(std::string name, std::vector<std::string>& sequence) {
     const auto& found = instructionSequences.find(name);
     assert(found == instructionSequences.end());  // name is valid (not already taken)
 
+    std::vector<std::string> filteredSequence; // ignores instruction names starting with #
     for(auto instructionName : sequence) {
-        // make sure sequence instruction names are valid.
-        const auto& found = updateInstructions.find(instructionName);
-        if(found == updateInstructions.end()) {
-            std::cout << "Instruction not defined: " << instructionName << std::endl;
-            assert(false);
+        if(instructionName.compare(0, 1, "#") != 0) {
+            // make sure sequence instruction names are valid.
+            const auto& found = updateInstructions.find(instructionName);
+            if(found == updateInstructions.end()) {
+                std::cout << "Instruction not defined: " << instructionName << std::endl;
+                assert(false);
+            }
+            filteredSequence.push_back(instructionName);
+        } else {
+            std::cout << instructionName << " was ignored!" << std::endl;
         }
     }
-    instructionSequences[name] = sequence;
+    instructionSequences[name] = filteredSequence;
 }
 
 void* YeeGrid3D::ConstructParams_A_plusequal_sum_b_C(

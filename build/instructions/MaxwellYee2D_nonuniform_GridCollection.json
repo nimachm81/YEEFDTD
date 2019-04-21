@@ -323,15 +323,6 @@
             "direction":"x",
             "saveRate":"_gr_save_rate_"
             }
-        },
-        {
-        "type":"entire",
-        "parameters":{
-            "name":"2D/Hl-y",
-            "array":"Hl",
-            "direction":"y",
-            "saveRate":"_gr_save_rate_"
-            }
         }
     ]
 }

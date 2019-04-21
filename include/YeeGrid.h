@@ -50,9 +50,9 @@ class YeeGrid3D {
     YeeGridData3D& GetGridElement(const std::string name);
 
     void AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params);
-    void SetIterativeSequence(std::vector<std::string> sequence);
-    void SetSingleRunSequence(std::vector<std::string> sequence);
-    void AddInstructionSequence(std::string name, std::vector<std::string> sequence);
+    void SetIterativeSequence(std::vector<std::string>& sequence);
+    void SetSingleRunSequence(std::vector<std::string>& sequence);
+    void AddInstructionSequence(std::string name, std::vector<std::string>& sequence);
     void ApplyUpdateInstruction(FDInstructionCode instructionCode, void* params);
     void ApplyIterativeInstructions(std::size_t numIterations);
     void ApplyIterativeInstructionsOnce();

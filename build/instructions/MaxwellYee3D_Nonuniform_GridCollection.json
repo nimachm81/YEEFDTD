@@ -1,0 +1,623 @@
+
+{
+"simulationType":"gridCollection",
+"variables":"_nt_coarse_",
+"simulationParameters":{
+"grids":{
+"grid_m":{
+    "variables":["_x0_", "_x1_", "_y0_", "_y1_", "_z0_", "_z1_", "_nx_", "_nx_p1_", "_ny_", "_ny_p1_", "_nz_", "_nz_p1_", "_dx_", "_dy_", "_dz_", "_dt_", "_x_j_", "_y_j_", "_z_j_", "_indxJ_", "_indyJ_", "_indzJ_", "_indxJ_p1_", "_indyJ_p1_", "_indzJ_p1_", "_dt_dx_", "_dt_dy_", "_dt_dz_", "_m_dt_dx_", "_m_dt_dy_", "_m_dt_dz_", "_m_dt_dxdydz_", "_mod_phase_", "_nx_m1_", "_ny_m1_", "_nz_m1_", "_nz_m2_", "_indxSave_", "_indxSave_p1_", "_save_rate_"],
+    "dimensions":{
+        "r0":["_x0_", "_y0_", "_z0_"],
+        "r1":["_x1_", "_y1_", "_z1_"],
+        "nCells":["_nx_", "_ny_", "_nz_"],
+        "dt":"_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":["_indxJ_", "_indyJ_", "_indzJ_"], "nCells":[1, 0, 0]}],
+    "girdArrayManipulators":[
+        {
+        "type":"GaussianGridArrayManipulator",
+        "parameters":{
+            "name":"Jupdater",
+            "array":"J",
+            "direction":"x",
+            "amplitude":1.0,
+            "t_center":1.0,
+            "t_decay":0.2,
+            "modulationFrequency":1.0,
+            "modulationPhase":"_mod_phase_",
+            "timeOffsetFraction":0.5
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 1],
+            "A_indEnd":["_nx_", "_ny_", "_nz_"],
+            "b":["_dt_dz_", "_m_dt_dz_", "_m_dt_dy_", "_dt_dy_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 1], [0, 0, 1], [0, 1, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z1_e_E_p_curl_H_outside",
+            "A":"E",
+            "neighborGrid":"grid_r",
+            "A_direction":"x",
+            "A_indStart":[0, 2, "_nz_"],
+            "A_indEnd":["_nx_m1_", "_ny_m1_", "_nz_p1_"],
+            "b":[1.0, "_gr_dt_dz_2_", "_gr_m_dt_dz_2_", "_gr_m_dt_dy_2_", "_gr_dt_dy_2_"],
+            "C":["E", "Hl", "H", "H", "H"],
+            "C_direction":["x", "y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 0], [0, 1, 0], [0, 0, 0], [0, 1, 0]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_2_1_z1_e_Ex_2_0",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[1, 2, "_nz_"],
+            "A_indEnd":["_nx_", "_ny_m1_", "_nz_p1_"],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 2, "_nz_"]],
+            "A_stride":[2, 2, 1],
+            "C_stride":[[2, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z1_e_Ex_2_avg",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, "_nz_"],
+            "A_indEnd":["_nx_", "_ny_", "_nz_p1_"],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, "_nz_"], [0, 2, "_nz_"]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z1_e_Ex_r",
+            "A":"E",
+            "neighborGrid":"grid_r",
+            "A_direction":"x",
+            "A_indStart":[0, 2, "_nz_"],
+            "A_indEnd":["_nx_m1_", "_ny_m1_", "_nz_p1_"],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 1, 0]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 1],
+            "A_indEnd":["_nx_", "_ny_", "_nz_"],
+            "b":["_m_dt_dz_", "_dt_dz_", "_dt_dx_", "_m_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 1], [0, 0, 1], [1, 0, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z1_e_E_p_curl_H_outside",
+            "A":"E",
+            "neighborGrid":"grid_r",
+            "A_direction":"y",
+            "A_indStart":[2, 0, "_nz_"],
+            "A_indEnd":["_nx_m1_", "_ny_m1_", "_nz_p1_"],
+            "b":[1.0, "_gr_m_dt_dz_2_", "_gr_dt_dz_2_", "_gr_dt_dx_2_", "_gr_m_dt_dx_2_"],
+            "C":["E", "Hl", "H", "H", "H"],
+            "C_direction":["y", "x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 0], [1, 0, 0], [0, 0, 0], [1, 0, 0]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_2_1_z1_e_Ey_2_0",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[2, 1, "_nz_"],
+            "A_indEnd":["_nx_m1_", "_ny_", "_nz_p1_"],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[2, 0, "_nz_"]],
+            "A_stride":[2, 2, 1],
+            "C_stride":[[2, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z1_e_Ey_2_avg",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, "_nz_"],
+            "A_indEnd":["_nx_", "_ny_", "_nz_p1_"],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, "_nz_"], [2, 0, "_nz_"]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z1_e_Ey_r",
+            "A":"E",
+            "neighborGrid":"grid_r",
+            "A_direction":"y",
+            "A_indStart":[2, 0, "_nz_"],
+            "A_indEnd":["_nx_m1_", "_ny_m1_", "_nz_p1_"],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[1, 0, 0]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_pe_curl_H",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[1, 1, 0],
+            "A_indEnd":["_nx_", "_ny_", "_nz_"],
+            "b":["_dt_dy_", "_m_dt_dy_", "_m_dt_dx_", "_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[1, 0, 0], [1, 1, 0], [0, 1, 0], [1, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hy_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_nx_", "_ny_p1_", "_nz_"],
+            "b":["_dt_dz_", "_m_dt_dz_", "_m_dt_dx_", "_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hz_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_nx_", "_ny_", "_nz_p1_"],
+            "b":["_m_dt_dy_", "_dt_dy_", "_dt_dx_", "_m_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_nx_p1_", "_ny_", "_nz_"],
+            "b":["_dt_dy_", "_m_dt_dy_", "_m_dt_dz_", "_dt_dz_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_me_J",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":["_indxJ_", "_indyJ_", "_indzJ_"],
+            "A_indEnd":["_indxJ_p1_", "_indyJ_p1_", "_indzJ_p1_"],
+            "b":["_m_dt_dxdydz_"],
+            "C":["J"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"J_update",
+            "girdArrayManipulator":"Jupdater"
+            }
+        },
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindSingleUpdate",
+            "operation":"+=",
+            "steps": 1
+            }
+        },
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindReset",
+            "operation":"=",
+            "steps": 0
+            }
+        }        
+    ],
+    "updateSequences":[{"name":"update_JH", "sequence":["J_update", "Hx_pe_m_curl_E", "Hy_pe_m_curl_E", "Hz_pe_m_curl_E"]},
+                       {"name":"update_E", "sequence":["E_me_J","Ex_pe_curl_H", "Ey_pe_curl_H", "Ez_pe_curl_H"]},
+                       {"name":"update_E_edge_dt", "sequence":["Ex_2_0_z1_e_E_p_curl_H_outside", "Ex_2_1_z1_e_Ex_2_0", "Ex_1_z1_e_Ex_2_avg",
+                                                               "Ey_2_0_z1_e_E_p_curl_H_outside", "Ey_2_1_z1_e_Ey_2_0", "Ey_1_z1_e_Ey_2_avg"
+                                                              ]},                       
+                       {"name":"update_E_edge_2dt", "sequence":["Ex_2_0_z1_e_Ex_r", "Ex_2_1_z1_e_Ex_2_0", "Ex_1_z1_e_Ex_2_avg",
+                                                                "Ey_2_0_z1_e_Ey_r", "Ey_2_1_z1_e_Ey_2_0", "Ey_1_z1_e_Ey_2_avg"
+                                                               ]},
+                       {"name":"update_time", "sequence":["tindSingleUpdate"]},
+                       {"name":"reset_time", "sequence":["tindReset"]}                                                                             
+                       ],
+    "gridViews":[
+        {
+        "type":"partial",
+        "parameters":{
+            "name":"3D/E-x",
+            "array":"E",
+            "direction":"x",
+            "indStart":["_indxSave_", 0, 0],
+            "indEnd":["_indxSave_p1_", "_ny_p1_", "_nz_p1_"],
+            "saveRate":"_save_rate_"
+            }
+        },
+        {
+        "type":"partial",
+        "parameters":{
+            "name":"3D/E-x-z1",
+            "array":"E",
+            "direction":"x",
+            "indStart":[0, 0, "_nz_"],
+            "indEnd":["_nx_", "_ny_p1_", "_nz_p1_"],
+            "saveRate":"_save_rate_"
+            }
+        },
+        {
+        "type":"partial",
+        "parameters":{
+            "name":"3D/H-y-z1",
+            "array":"H",
+            "direction":"y",
+            "indStart":[0, 0, "_nz_m1_"],
+            "indEnd":["_nx_", "_ny_p1_", "_nz_"],
+            "saveRate":"_save_rate_"
+            }
+        }
+    ]
+},
+"grid_r":{
+    "variables":["_gr_x0_", "_gr_x1_", "_gr_y0_", "_gr_y1_", "_gr_z0_", "_gr_z1_", "_gr_nx_", "_gr_nx_p1_", "_gr_ny_", "_gr_ny_p1_", "_gr_nz_", "_gr_nz_p1_", "_gr_dx_", "_gr_dy_", "_gr_dz_", "_gr_dt_", "_gr_dt_dx_", "_gr_dt_dy_", "_gr_dt_dz_", "_gr_m_dt_dx_", "_gr_m_dt_dy_", "_gr_m_dt_dz_", "_gr_dt_dz_2_", "_gr_m_dt_dz_2_", "_gr_m_dt_dy_2_", "_gr_dt_dy_2_", "_gr_m_dt_dx_2_", "_gr_dt_dx_2_", "_gr_indxSave_", "_gr_indxSave_p1_", "_gr_ny_p1_", "_gr_nz_p1_", "_gr_save_rate_"],
+    "dimensions":{
+        "r0":["_gr_x0_", "_gr_y0_", "_gr_z0_"],
+        "r1":["_gr_x1_", "_gr_y1_", "_gr_z1_"],
+        "nCells":["_gr_nx_", "_gr_ny_", "_gr_nz_"],
+        "dt":"_gr_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"Hl", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":["_gr_nx_", "_gr_ny_", 1]}],
+    "girdArrayManipulators":[],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 1],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", "_gr_nz_"],
+            "b":["_gr_dt_dz_", "_gr_m_dt_dz_", "_gr_m_dt_dy_", "_gr_dt_dy_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 1], [0, 0, 1], [0, 1, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_z0_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", 1],
+            "b":["_gr_dt_dz_", "_gr_m_dt_dz_", "_gr_m_dt_dy_", "_gr_dt_dy_"],
+            "C":["Hl", "H", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 0], [0, 0, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_z0_pe_curl_H_dt2",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", 1],
+            "b":["_gr_dt_dz_2_", "_gr_m_dt_dz_2_", "_gr_m_dt_dy_2_", "_gr_dt_dy_2_"],
+            "C":["Hl", "H", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 0], [0, 0, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 1],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", "_gr_nz_"],
+            "b":["_gr_m_dt_dz_", "_gr_dt_dz_", "_gr_dt_dx_", "_gr_m_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 1], [0, 0, 1], [1, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_z0_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", 1],
+            "b":["_gr_m_dt_dz_", "_gr_dt_dz_", "_gr_dt_dx_", "_gr_m_dt_dx_"],
+            "C":["Hl", "H", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 0], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_z0_pe_curl_H_dt2",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", 1],
+            "b":["_gr_m_dt_dz_2_", "_gr_dt_dz_2_", "_gr_dt_dx_2_", "_gr_m_dt_dx_2_"],
+            "C":["Hl", "H", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 0], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_pe_curl_H",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[1, 1, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", "_gr_nz_"],
+            "b":["_gr_dt_dy_", "_gr_m_dt_dy_", "_gr_m_dt_dx_", "_gr_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[1, 0, 0], [1, 1, 0], [0, 1, 0], [1, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hy_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_p1_", "_gr_nz_"],
+            "b":["_gr_dt_dz_", "_gr_m_dt_dz_", "_gr_m_dt_dx_", "_gr_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hly_pe_m_curl_E_inside",
+            "A":"Hl",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_p1_", 1],
+            "b":["_gr_m_dt_dz_"],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hly_pe_m_curl_E_outside",
+            "neighborGrid":"grid_m",
+            "A":"Hl",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_p1_", 1],
+            "b":["_gr_dt_dz_2_", "_gr_dt_dz_2_", "_gr_m_dt_dx_2_", "_gr_m_dt_dx_2_", "_gr_dt_dx_2_", "_gr_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z", "z", "z"],
+            "C_indStart":[[0, 0, "_nz_m2_"], [1, 0, "_nz_m2_"], [0, 0, "_nz_m1_"], [0, 0, "_nz_m2_"], [2, 0, "_nz_m1_"], [2, 0, "_nz_m2_"]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hz_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_", "_gr_ny_", "_gr_nz_p1_"],
+            "b":["_gr_m_dt_dy_", "_gr_dt_dy_", "_gr_dt_dx_", "_gr_m_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_p1_", "_gr_ny_", "_gr_nz_"],
+            "b":["_gr_dt_dy_", "_gr_m_dt_dy_", "_gr_m_dt_dz_", "_gr_dt_dz_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hlx_pe_m_curl_E_inside",
+            "A":"Hl",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_p1_", "_gr_ny_", 1],
+            "b":["_gr_dt_dz_"],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hlx_pe_m_curl_E_outside",
+            "neighborGrid":"grid_m",
+            "A":"Hl",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gr_nx_p1_", "_gr_ny_", 1],
+            "b":["_gr_dt_dy_2_", "_gr_dt_dy_2_", "_gr_m_dt_dy_2_", "_gr_m_dt_dy_2_", "_gr_m_dt_dz_2_", "_gr_m_dt_dz_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["z", "z", "z", "z", "y", "y"],
+            "C_indStart":[[0, 0, "_nz_m1_"], [0, 0, "_nz_m2_"], [0, 2, "_nz_m1_"], [0, 2, "_nz_m2_"], [0, 0, "_nz_m2_"], [0, 1, "_nz_m2_"]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindSingleUpdate",
+            "operation":"+=",
+            "steps": 1
+            }
+        },
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindReset",
+            "operation":"=",
+            "steps": 0
+            }
+        }        
+    ],
+    "updateSequences":[{"name":"update_H", "sequence":["Hx_pe_m_curl_E", "Hy_pe_m_curl_E", "Hz_pe_m_curl_E", 
+                                                       "#Hlx_pe_m_curl_E_inside", "Hlx_pe_m_curl_E_outside",
+                                                       "#Hly_pe_m_curl_E_inside", "Hly_pe_m_curl_E_outside"
+                                                       ]},
+                       {"name":"update_E", "sequence":["Ex_pe_curl_H", "Ex_z0_pe_curl_H", 
+                                                       "Ey_pe_curl_H", "Ey_z0_pe_curl_H",
+                                                       "Ez_pe_curl_H"]},
+                       {"name":"update_time", "sequence":["tindSingleUpdate"]},
+                       {"name":"reset_time", "sequence":["tindReset"]}                                                                             
+                      ],
+    "gridViews":[
+        {
+        "type":"partial",
+        "parameters":{
+            "name":"3D/E-x-r",
+            "array":"E",
+            "direction":"x",
+            "indStart":["_gr_indxSave_", 0, 0],
+            "indEnd":["_gr_indxSave_p1_", "_gr_ny_p1_", "_gr_nz_p1_"],
+            "saveRate":"_gr_save_rate_"
+            }
+        },
+        {
+        "type":"partial",
+        "parameters":{
+            "name":"3D/E-x-r-z0",
+            "array":"E",
+            "direction":"x",
+            "indStart":[0, 0, 0],
+            "indEnd":["_gr_nx_", "_gr_ny_p1_", 1],
+            "saveRate":"_gr_save_rate_"
+            }
+        },
+        {
+        "type":"entire",
+        "parameters":{
+            "name":"3D/Hl-y",
+            "array":"Hl",
+            "direction":"y",
+            "saveRate":"_gr_save_rate_"
+            }
+        }
+    ]
+}
+},
+    "runSequence":[{"timeIndStart":0, "timeIndEnd":1, "sequence":[["grid_m", "reset_time"], 
+                                                                  ["grid_r", "reset_time"]],
+                                  "manualTimeUpdate":"yes"},   
+              {"timeIndStart":0, "timeIndEnd":"_nt_coarse_", "sequence":[
+                                                    ["grid_m", "update_JH"], ["grid_r", "update_H"], 
+                                                    ["grid_m", "update_E"], ["grid_m", "update_E_edge_dt"], 
+                                                    ["grid_m", "update_time"],
+                                                    ["grid_r", "update_E"], 
+                                                    ["grid_r", "update_time"],
+                                                    ["grid_m", "update_JH"],
+                                                    ["grid_m", "update_E"], ["grid_m", "update_E_edge_2dt"],
+                                                    ["grid_m", "update_time"]    
+                                                ],
+                                  "manualTimeUpdate":"yes"}
+             ]
+}
+}
+
+
