@@ -41,9 +41,26 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     FPNumber gr_dz = (gr_z1 - gr_z0)/(FPNumber)(gr_nz);
     FPNumber gr_dt = 2.0*dt;
 
+    FPNumber gl_x0 = 0;
+    FPNumber gl_x1 = 2.0;
+    FPNumber gl_y0 = 0;
+    FPNumber gl_y1 = 2.0;
+    FPNumber gl_z0 = z0 - 2.0;
+    FPNumber gl_z1 = z0;
+    std::size_t gl_nx = 50;
+    std::size_t gl_ny = 50;
+    std::size_t gl_nz = 50;
+    FPNumber gl_dx = (gl_x1 - gl_x0)/(FPNumber)(gl_nx);
+    FPNumber gl_dy = (gl_y1 - gl_y0)/(FPNumber)(gl_ny);
+    FPNumber gl_dz = (gl_z1 - gl_z0)/(FPNumber)(gl_nz);
+    FPNumber gl_dt = 2.0*dt;
+
+
     std::size_t gr_indxSave = indxJ / 2;
+    std::size_t gl_indxSave = gr_indxSave;
 
     std::size_t gr_save_rate = 1;
+    std::size_t gl_save_rate = gr_save_rate;
     std::size_t save_rate = 2*gr_save_rate;
 
     std::size_t numOfTimeSamples = 150;
@@ -99,6 +116,9 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
+            {"\"_indxSave_\"", boost::lexical_cast<std::string>(indxJ)},
+            {"\"_indxSave_p1_\"", boost::lexical_cast<std::string>(indxJ + 1)},
+            {"\"_save_rate_\"", boost::lexical_cast<std::string>(save_rate)},
             {"\"_gr_x0_\"", boost::lexical_cast<std::string>(std::real(gr_x0))},
             {"\"_gr_x1_\"", boost::lexical_cast<std::string>(std::real(gr_x1))},
             {"\"_gr_y0_\"", boost::lexical_cast<std::string>(std::real(gr_y0))},
@@ -130,14 +150,45 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gr_m_dt_dy_2_\"", boost::lexical_cast<std::string>(std::real(-gr_dt/gr_dy/2.0))},
             {"\"_gr_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(gr_dt/gr_dz/2.0))},
             {"\"_gr_m_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(-gr_dt/gr_dz/2.0))},
-            {"\"_nt_coarse_IP0_\"", boost::lexical_cast<std::string>(nt_ip0)},
-            {"\"_nt_coarse_IP1_\"", boost::lexical_cast<std::string>(nt_ip1)},
-            {"\"_indxSave_\"", boost::lexical_cast<std::string>(indxJ)},
-            {"\"_indxSave_p1_\"", boost::lexical_cast<std::string>(indxJ + 1)},
             {"\"_gr_indxSave_\"", boost::lexical_cast<std::string>(gr_indxSave)},
             {"\"_gr_indxSave_p1_\"", boost::lexical_cast<std::string>(gr_indxSave + 1)},
-            {"\"_save_rate_\"", boost::lexical_cast<std::string>(save_rate)},
             {"\"_gr_save_rate_\"", boost::lexical_cast<std::string>(gr_save_rate)},
+            {"\"_gl_x0_\"", boost::lexical_cast<std::string>(std::real(gl_x0))},
+            {"\"_gl_x1_\"", boost::lexical_cast<std::string>(std::real(gl_x1))},
+            {"\"_gl_y0_\"", boost::lexical_cast<std::string>(std::real(gl_y0))},
+            {"\"_gl_y1_\"", boost::lexical_cast<std::string>(std::real(gl_y1))},
+            {"\"_gl_z0_\"", boost::lexical_cast<std::string>(std::real(gl_z0))},
+            {"\"_gl_z1_\"", boost::lexical_cast<std::string>(std::real(gl_z1))},
+            {"\"_gl_nx_\"", boost::lexical_cast<std::string>(gl_nx)},
+            {"\"_gl_ny_\"", boost::lexical_cast<std::string>(gl_ny)},
+            {"\"_gl_nz_\"", boost::lexical_cast<std::string>(gl_nz)},
+            {"\"_gl_nx_p1_\"", boost::lexical_cast<std::string>(gl_nx + 1)},
+            {"\"_gl_ny_p1_\"", boost::lexical_cast<std::string>(gl_ny + 1)},
+            {"\"_gl_nz_p1_\"", boost::lexical_cast<std::string>(gl_nz + 1)},
+            {"\"_gl_nx_m1_\"", boost::lexical_cast<std::string>(gl_nx - 1)},
+            {"\"_gl_ny_m1_\"", boost::lexical_cast<std::string>(gl_ny - 1)},
+            {"\"_gl_nz_m1_\"", boost::lexical_cast<std::string>(gl_nz - 1)},
+            {"\"_gl_dx_\"", boost::lexical_cast<std::string>(std::real(gl_dx))},
+            {"\"_gl_dy_\"", boost::lexical_cast<std::string>(std::real(gl_dy))},
+            {"\"_gl_dz_\"", boost::lexical_cast<std::string>(std::real(gl_dz))},
+            {"\"_gl_dt_\"", boost::lexical_cast<std::string>(std::real(gl_dt))},
+            {"\"_gl_dt_dx_\"", boost::lexical_cast<std::string>(std::real(gl_dt/gl_dx))},
+            {"\"_gl_m_dt_dx_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dx))},
+            {"\"_gl_dt_dy_\"", boost::lexical_cast<std::string>(std::real(gl_dt/gl_dy))},
+            {"\"_gl_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dy))},
+            {"\"_gl_dt_dz_\"", boost::lexical_cast<std::string>(std::real(gl_dt/gl_dz))},
+            {"\"_gl_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dz))},
+            {"\"_gl_dt_dx_2_\"", boost::lexical_cast<std::string>(std::real(gl_dt/gl_dx/2.0))},
+            {"\"_gl_m_dt_dx_2_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dx/2.0))},
+            {"\"_gl_dt_dy_2_\"", boost::lexical_cast<std::string>(std::real(gl_dt/gl_dy/2.0))},
+            {"\"_gl_m_dt_dy_2_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dy/2.0))},
+            {"\"_gl_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(gl_dt/gl_dz/2.0))},
+            {"\"_gl_m_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dz/2.0))},
+            {"\"_gl_indxSave_\"", boost::lexical_cast<std::string>(gl_indxSave)},
+            {"\"_gl_indxSave_p1_\"", boost::lexical_cast<std::string>(gl_indxSave + 1)},
+            {"\"_gl_save_rate_\"", boost::lexical_cast<std::string>(gl_save_rate)},
+            {"\"_nt_coarse_IP0_\"", boost::lexical_cast<std::string>(nt_ip0)},
+            {"\"_nt_coarse_IP1_\"", boost::lexical_cast<std::string>(nt_ip1)},
             {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D_Nonuniform_GridCollection.json",
@@ -162,6 +213,12 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gr_y1, "gr_y1");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gr_z0, "gr_z0");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gr_z1, "gr_z1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gl_x0, "gl_x0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gl_x1, "gl_x1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gl_y0, "gl_y0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gl_y1, "gl_y1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gl_z0, "gl_z0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gl_z1, "gl_z1");
 
 }
 
