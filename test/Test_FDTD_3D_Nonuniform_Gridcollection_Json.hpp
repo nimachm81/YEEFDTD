@@ -78,13 +78,29 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     FPNumber gu_dz = (gu_z1 - gu_z0)/(FPNumber)(gu_nz);
     FPNumber gu_dt = 2.0*dt;
 
+    FPNumber gd_x0 = box_in_r0[0];
+    FPNumber gd_x1 = box_in_r1[0];
+    FPNumber gd_y0 = box_out_r0[1];
+    FPNumber gd_y1 = box_in_r0[1];
+    FPNumber gd_z0 = box_out_r0[2];
+    FPNumber gd_z1 = box_out_r1[2];
+    std::size_t gd_nx = n_xyz_in/2;
+    std::size_t gd_ny = n_xyz_in/2;
+    std::size_t gd_nz = n_xyz_in/2*3;
+    FPNumber gd_dx = (gd_x1 - gd_x0)/(FPNumber)(gd_nx);
+    FPNumber gd_dy = (gd_y1 - gd_y0)/(FPNumber)(gd_ny);
+    FPNumber gd_dz = (gd_z1 - gd_z0)/(FPNumber)(gd_nz);
+    FPNumber gd_dt = 2.0*dt;
+
     std::size_t gr_indxSave = indxJ / 2;
     std::size_t gl_indxSave = gr_indxSave;
     std::size_t gu_indxSave = gr_indxSave;
+    std::size_t gd_indxSave = gr_indxSave;
 
     std::size_t gr_save_rate = 1;
     std::size_t gl_save_rate = gr_save_rate;
     std::size_t gu_save_rate = gr_save_rate;
+    std::size_t gd_save_rate = gr_save_rate;
     std::size_t save_rate = 2*gr_save_rate;
 
     std::size_t numOfTimeSamples = 150;
@@ -247,6 +263,40 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gu_indxSave_\"", boost::lexical_cast<std::string>(gu_indxSave)},
             {"\"_gu_indxSave_p1_\"", boost::lexical_cast<std::string>(gu_indxSave + 1)},
             {"\"_gu_save_rate_\"", boost::lexical_cast<std::string>(gu_save_rate)},
+            {"\"_gd_x0_\"", boost::lexical_cast<std::string>(std::real(gd_x0))},
+            {"\"_gd_x1_\"", boost::lexical_cast<std::string>(std::real(gd_x1))},
+            {"\"_gd_y0_\"", boost::lexical_cast<std::string>(std::real(gd_y0))},
+            {"\"_gd_y1_\"", boost::lexical_cast<std::string>(std::real(gd_y1))},
+            {"\"_gd_z0_\"", boost::lexical_cast<std::string>(std::real(gd_z0))},
+            {"\"_gd_z1_\"", boost::lexical_cast<std::string>(std::real(gd_z1))},
+            {"\"_gd_nx_\"", boost::lexical_cast<std::string>(gd_nx)},
+            {"\"_gd_ny_\"", boost::lexical_cast<std::string>(gd_ny)},
+            {"\"_gd_nz_\"", boost::lexical_cast<std::string>(gd_nz)},
+            {"\"_gd_nx_p1_\"", boost::lexical_cast<std::string>(gd_nx + 1)},
+            {"\"_gd_ny_p1_\"", boost::lexical_cast<std::string>(gd_ny + 1)},
+            {"\"_gd_nz_p1_\"", boost::lexical_cast<std::string>(gd_nz + 1)},
+            {"\"_gd_nx_m1_\"", boost::lexical_cast<std::string>(gd_nx - 1)},
+            {"\"_gd_ny_m1_\"", boost::lexical_cast<std::string>(gd_ny - 1)},
+            {"\"_gd_nz_m1_\"", boost::lexical_cast<std::string>(gd_nz - 1)},
+            {"\"_gd_dx_\"", boost::lexical_cast<std::string>(std::real(gd_dx))},
+            {"\"_gd_dy_\"", boost::lexical_cast<std::string>(std::real(gd_dy))},
+            {"\"_gd_dz_\"", boost::lexical_cast<std::string>(std::real(gd_dz))},
+            {"\"_gd_dt_\"", boost::lexical_cast<std::string>(std::real(gd_dt))},
+            {"\"_gd_dt_dx_\"", boost::lexical_cast<std::string>(std::real(gd_dt/gd_dx))},
+            {"\"_gd_m_dt_dx_\"", boost::lexical_cast<std::string>(std::real(-gd_dt/gd_dx))},
+            {"\"_gd_dt_dy_\"", boost::lexical_cast<std::string>(std::real(gd_dt/gd_dy))},
+            {"\"_gd_m_dt_dy_\"", boost::lexical_cast<std::string>(std::real(-gd_dt/gd_dy))},
+            {"\"_gd_dt_dz_\"", boost::lexical_cast<std::string>(std::real(gd_dt/gd_dz))},
+            {"\"_gd_m_dt_dz_\"", boost::lexical_cast<std::string>(std::real(-gd_dt/gd_dz))},
+            {"\"_gd_dt_dx_2_\"", boost::lexical_cast<std::string>(std::real(gd_dt/gd_dx/2.0))},
+            {"\"_gd_m_dt_dx_2_\"", boost::lexical_cast<std::string>(std::real(-gd_dt/gd_dx/2.0))},
+            {"\"_gd_dt_dy_2_\"", boost::lexical_cast<std::string>(std::real(gd_dt/gd_dy/2.0))},
+            {"\"_gd_m_dt_dy_2_\"", boost::lexical_cast<std::string>(std::real(-gd_dt/gd_dy/2.0))},
+            {"\"_gd_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(gd_dt/gd_dz/2.0))},
+            {"\"_gd_m_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(-gd_dt/gd_dz/2.0))},
+            {"\"_gd_indxSave_\"", boost::lexical_cast<std::string>(gd_indxSave)},
+            {"\"_gd_indxSave_p1_\"", boost::lexical_cast<std::string>(gd_indxSave + 1)},
+            {"\"_gd_save_rate_\"", boost::lexical_cast<std::string>(gd_save_rate)},
             {"\"_nt_coarse_IP0_\"", boost::lexical_cast<std::string>(nt_ip0)},
             {"\"_nt_coarse_IP1_\"", boost::lexical_cast<std::string>(nt_ip1)},
             {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)}
@@ -285,6 +335,12 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gu_y1, "gu_y1");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gu_z0, "gu_z0");
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gu_z1, "gu_z1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gd_x0, "gd_x0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gd_x1, "gd_x1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gd_y0, "gd_y0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gd_y1, "gd_y1");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gd_z0, "gd_z0");
+    UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gd_z1, "gd_z1");
 
 }
 
