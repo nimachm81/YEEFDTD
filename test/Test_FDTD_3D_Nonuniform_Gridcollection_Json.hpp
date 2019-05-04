@@ -3,11 +3,11 @@
 
 void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
 
-    std::array<FPNumber, 3> box_in_r0 = {-1.0, -1.0, -1.0};
-    std::array<FPNumber, 3> box_in_r1 = {+1.0, +1.0, +1.0};
+    std::array<FPNumber, 3> box_in_r0 = {-0.5, -0.5, -0.5};
+    std::array<FPNumber, 3> box_in_r1 = {+0.5, +0.5, +0.5};
 
-    std::array<FPNumber, 3> box_out_r0 = {-3.0, -3.0, -3.0};
-    std::array<FPNumber, 3> box_out_r1 = {+3.0, +3.0, +3.0};
+    std::array<FPNumber, 3> box_out_r0 = {-1.5, -1.5, -1.5};
+    std::array<FPNumber, 3> box_out_r1 = {+1.5, +1.5, +1.5};
 
     std::size_t n_xyz_in = 100;
 
@@ -34,6 +34,9 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
     if(indxJ % 2 == 1) {
         indxJ += 1;
+    }
+    if(indyJ % 2 == 1) {
+        indyJ += 1;
     }
 
     FPNumber gr_x0 = box_in_r0[0];
@@ -120,11 +123,18 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     FPNumber gb_dz = (gb_z1 - gb_z0)/(FPNumber)(gb_nz);
     FPNumber gb_dt = 2.0*dt;
 
-    std::size_t gr_indxSave = indxJ / 2;
+    FPNumber x_save = 0.0;
+    std::size_t gm_indxSave = std::round((x_save - x0) / dx);
+    std::size_t gr_indxSave = std::round((x_save - gr_x0) / gr_dx);
     std::size_t gl_indxSave = gr_indxSave;
     std::size_t gu_indxSave = gr_indxSave;
     std::size_t gd_indxSave = gr_indxSave;
-    std::size_t gf_indySave = gf_ny / 2;
+
+    FPNumber y_save = 0.0;
+    std::size_t gm_indySave = std::round((y_save - y0) / dy);
+    std::size_t gr_indySave = std::round((y_save - gr_y0) / gr_dy);
+    std::size_t gl_indySave = gr_indySave;
+    std::size_t gf_indySave = std::round((y_save - gf_y0) / gf_dy);
     std::size_t gb_indySave = gf_indySave;
 
     std::size_t gr_save_rate = 1;
@@ -135,7 +145,7 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     std::size_t gb_save_rate = gr_save_rate;
     std::size_t save_rate = 2*gr_save_rate;
 
-    std::size_t numOfTimeSamples = 150;
+    std::size_t numOfTimeSamples = 200;
     int interpolationOrder = 1;
     std::size_t nt_ip0, nt_ip1;
     if(interpolationOrder == 0) {
@@ -147,6 +157,8 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     } else {
         assert(false);
     }
+
+    std::string j_polarization = "\"x\"";
 
 
     std::unordered_map<std::string, std::string> str_replacewith{
@@ -188,8 +200,10 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_indyJ_p1_\"", boost::lexical_cast<std::string>(indyJ + 1)},
             {"\"_indzJ_\"", boost::lexical_cast<std::string>(indzJ)},
             {"\"_indzJ_p1_\"", boost::lexical_cast<std::string>(indzJ + 1)},
-            {"\"_indxSave_\"", boost::lexical_cast<std::string>(indxJ)},
-            {"\"_indxSave_p1_\"", boost::lexical_cast<std::string>(indxJ + 1)},
+            {"\"_indxSave_\"", boost::lexical_cast<std::string>(gm_indxSave)},
+            {"\"_indxSave_p1_\"", boost::lexical_cast<std::string>(gm_indxSave + 1)},
+            {"\"_indySave_\"", boost::lexical_cast<std::string>(gm_indySave)},
+            {"\"_indySave_p1_\"", boost::lexical_cast<std::string>(gm_indySave + 1)},
             {"\"_save_rate_\"", boost::lexical_cast<std::string>(save_rate)},
             {"\"_gr_x0_\"", boost::lexical_cast<std::string>(std::real(gr_x0))},
             {"\"_gr_x1_\"", boost::lexical_cast<std::string>(std::real(gr_x1))},
@@ -224,6 +238,8 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gr_m_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(-gr_dt/gr_dz/2.0))},
             {"\"_gr_indxSave_\"", boost::lexical_cast<std::string>(gr_indxSave)},
             {"\"_gr_indxSave_p1_\"", boost::lexical_cast<std::string>(gr_indxSave + 1)},
+            {"\"_gr_indySave_\"", boost::lexical_cast<std::string>(gr_indySave)},
+            {"\"_gr_indySave_p1_\"", boost::lexical_cast<std::string>(gr_indySave + 1)},
             {"\"_gr_save_rate_\"", boost::lexical_cast<std::string>(gr_save_rate)},
             {"\"_gl_x0_\"", boost::lexical_cast<std::string>(std::real(gl_x0))},
             {"\"_gl_x1_\"", boost::lexical_cast<std::string>(std::real(gl_x1))},
@@ -260,6 +276,8 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gl_m_dt_dz_2_\"", boost::lexical_cast<std::string>(std::real(-gl_dt/gl_dz/2.0))},
             {"\"_gl_indxSave_\"", boost::lexical_cast<std::string>(gl_indxSave)},
             {"\"_gl_indxSave_p1_\"", boost::lexical_cast<std::string>(gl_indxSave + 1)},
+            {"\"_gl_indySave_\"", boost::lexical_cast<std::string>(gl_indySave)},
+            {"\"_gl_indySave_p1_\"", boost::lexical_cast<std::string>(gl_indySave + 1)},
             {"\"_gl_save_rate_\"", boost::lexical_cast<std::string>(gl_save_rate)},
             {"\"_gu_x0_\"", boost::lexical_cast<std::string>(std::real(gu_x0))},
             {"\"_gu_x1_\"", boost::lexical_cast<std::string>(std::real(gu_x1))},
@@ -401,7 +419,8 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_gb_save_rate_\"", boost::lexical_cast<std::string>(gb_save_rate)},
             {"\"_nt_coarse_IP0_\"", boost::lexical_cast<std::string>(nt_ip0)},
             {"\"_nt_coarse_IP1_\"", boost::lexical_cast<std::string>(nt_ip1)},
-            {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)}
+            {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)},
+            {"\"_j_polarization_\"", j_polarization}
             };
     ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D_Nonuniform_GridCollection.json",
                 "instructions/processed/MaxwellYee3D_Nonuniform_GridCollection_processed.json", str_replacewith);
