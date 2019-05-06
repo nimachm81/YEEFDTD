@@ -18,6 +18,7 @@
 #include "Test_Fowler_Nordheim.hpp"
 #include "Test_FDTD_2D_nonuniform_GridCollection_Json.hpp"
 #include "Test_FDTD_3D_Nonuniform_Gridcollection_Json.hpp"
+#include "Test_FDTD_3D_Nonuniform_Gridcollection_layer2_Json.hpp"
 
 int main(int argc, char** argv) {
     //test_run_fdtd_2d_TM_from_json();
@@ -46,7 +47,8 @@ int main(int argc, char** argv) {
     //test_run_fdtd_1d_nonuniform_collection_from_json();
     //test_run_fdtd_2d_nonuniform_GridCollection_from_json();
 
-    test_run_fdtd_3d_nonuniform_gridcollection_from_json();
+    //test_run_fdtd_3d_nonuniform_gridcollection_from_json();
+    test_run_fdtd_3d_nonuniform_gridcollection_layer2_from_json();
 }
 
 

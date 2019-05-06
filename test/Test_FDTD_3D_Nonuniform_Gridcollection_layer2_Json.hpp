@@ -1,7 +1,7 @@
 
 
 
-void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
+void test_run_fdtd_3d_nonuniform_gridcollection_layer2_from_json() {
 
     std::array<FPNumber, 3> box_in_r0 = {-0.5, -0.5, -0.5};
     std::array<FPNumber, 3> box_in_r1 = {+0.5, +0.5, +0.5};
@@ -415,10 +415,10 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)},
             {"\"_j_polarization_\"", j_polarization}
             };
-    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D_Nonuniform_layer1.json",
-                "instructions/processed/MaxwellYee3D_Nonuniform_layer1_processed.json", str_replacewith);
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D_Nonuniform_layer2.json",
+                "instructions/processed/MaxwellYee3D_Nonuniform_layer2_processed.json", str_replacewith);
 
-    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee3D_Nonuniform_layer1_processed.json");
+    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee3D_Nonuniform_layer2_processed.json");
     fileTranslator.Translate();
 
    std::string parametersFileName =
@@ -469,6 +469,4 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     UtilityFunctions::WriteParamToFile<FPNumber>(paramFileOut, gb_z1, "gb_z1");
 
 }
-
-
 
