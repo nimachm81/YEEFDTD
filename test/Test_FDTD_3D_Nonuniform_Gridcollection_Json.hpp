@@ -32,12 +32,6 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     std::size_t indxJ = std::round(std::real((x_j - x0)/dx));
     std::size_t indyJ = std::round(std::real((y_j - y0)/dy));
     std::size_t indzJ = std::round(std::real((z_j - z0)/dz));
-    if(indxJ % 2 == 1) {
-        indxJ += 1;
-    }
-    if(indyJ % 2 == 1) {
-        indyJ += 1;
-    }
 
     FPNumber gr_x0 = box_in_r0[0];
     FPNumber gr_x1 = box_in_r1[0];
@@ -123,9 +117,11 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     FPNumber gb_dz = (gb_z1 - gb_z0)/(FPNumber)(gb_nz);
     FPNumber gb_dt = 2.0*dt;
 
+    std::string j_polarization = "\"x\"";
+
     FPNumber x_save = 0.0;
-    std::size_t gm_indxSave = std::round((x_save - x0) / dx);
-    std::size_t gr_indxSave = std::round((x_save - gr_x0) / gr_dx);
+    std::size_t gm_indxSave = std::round((x_save - x0 - dx/2) / dx);
+    std::size_t gr_indxSave = std::round((x_save - gr_x0 - gd_dx/2) / gr_dx);
     std::size_t gl_indxSave = gr_indxSave;
     std::size_t gu_indxSave = gr_indxSave;
     std::size_t gd_indxSave = gr_indxSave;
@@ -157,9 +153,6 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
     } else {
         assert(false);
     }
-
-    std::string j_polarization = "\"x\"";
-
 
     std::unordered_map<std::string, std::string> str_replacewith{
             {"\"_x0_\"", boost::lexical_cast<std::string>(std::real(x0))},
@@ -422,10 +415,10 @@ void test_run_fdtd_3d_nonuniform_gridcollection_from_json() {
             {"\"_mod_phase_\"", boost::lexical_cast<std::string>(M_PI/2.0)},
             {"\"_j_polarization_\"", j_polarization}
             };
-    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D_Nonuniform_GridCollection.json",
-                "instructions/processed/MaxwellYee3D_Nonuniform_GridCollection_processed.json", str_replacewith);
+    ParameterExtractor::ReplaceStringsInFile("instructions/MaxwellYee3D_Nonuniform_layer1.json",
+                "instructions/processed/MaxwellYee3D_Nonuniform_layer1_processed.json", str_replacewith);
 
-    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee3D_Nonuniform_GridCollection_processed.json");
+    ParamFileTranslator fileTranslator("instructions/processed/MaxwellYee3D_Nonuniform_layer1_processed.json");
     fileTranslator.Translate();
 
    std::string parametersFileName =
