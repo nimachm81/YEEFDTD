@@ -216,91 +216,6 @@
             }
         },
         {
-        "type":"A=sumbC",
-        "parameters":{
-            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
-            "A":"E",
-            "A_direction":"x",
-            "A_indStart":[0, 1, 0],
-            "A_indEnd":["_nx_", "_ny_", 1],
-            "b":[0.5, 0.5],
-            "C":["E", "E"],
-            "C_direction":["x", "x"],
-            "C_indStart":[[0, 0, 0], [0, 2, 0]],
-            "A_stride":[1, 2, 1],
-            "C_stride":[[1, 2, 1], [1, 2, 1]],
-            "comment":"first order interpolation"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ex_2_0_z0_e_Ex_l_IP1",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"x",
-            "A_indStart":[2, 2, 0],
-            "A_indEnd":["_nx_m1_", "_ny_m1_", 1],
-            "b":[0.25, 0.75],
-            "C":["E", "E"],
-            "C_direction":["x", "x"],
-            "C_indStart":[[0, 1, "_gl_nz_"], [1, 1, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"first order interpolation"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ex_2_0_z0x0_e_Ex_l_IP0",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"x",
-            "A_indStart":[0, 2, 0],
-            "A_indEnd":[1, "_ny_m1_", 1],
-            "b":[1.0],
-            "C":["E"],
-            "C_direction":["x"],
-            "C_indStart":[[0, 1, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"zeroth order interpolation of the very first element on x0"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ex_2_1_z0_e_Ex_l_IP1",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"x",
-            "A_indStart":[1, 2, 0],
-            "A_indEnd":["_nx_m2_", "_ny_m1_", 1],
-            "b":[0.75, 0.25],
-            "C":["E", "E"],
-            "C_direction":["x", "x"],
-            "C_indStart":[[0, 1, "_gl_nz_"], [1, 1, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"first order interpolation"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ex_2_1_z0x1_e_Ex_l_IP0",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"x",
-            "A_indStart":["_nx_m1_", 2, 0],
-            "A_indEnd":["_nx_", "_ny_m1_", 1],
-            "b":[1.0],
-            "C":["E"],
-            "C_direction":["x"],
-            "C_indStart":[["_gl_nx_m1_", 1, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"zeroth order interpolation of the last element at x1"
-            }
-        },
-        {
         "type":"A+=sumbC",
         "parameters":{
             "name":"Ey_pe_curl_H",
@@ -511,6 +426,169 @@
         },
         
         {
+        "comment":"------------------------------------ connecting grid_l ---------------------------------------",
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"x",
+            "A_indStart":[2, 2, 0],
+            "A_indEnd":["_nx_m1_", "_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 1, "_gl_nz_"], [1, 1, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0x0_e_Ex_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"x",
+            "A_indStart":[0, 2, 0],
+            "A_indEnd":[1, "_ny_m1_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 1, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"x",
+            "A_indStart":[1, 2, 0],
+            "A_indEnd":["_nx_m2_", "_ny_m1_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 1, "_gl_nz_"], [1, 1, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0x1_e_Ex_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"x",
+            "A_indStart":["_nx_m1_", 2, 0],
+            "A_indEnd":["_nx_", "_ny_m1_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[["_gl_nx_m1_", 1, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_nx_", "_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 2, 0]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"y",
+            "A_indStart":[2, 2, 0],
+            "A_indEnd":["_nx_m1_", "_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[1, 0, "_gl_nz_"], [1, 1, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0y0_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"y",
+            "A_indStart":[2, 0, 0],
+            "A_indEnd":["_nx_m1_", 1, 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[1, 0, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"y",
+            "A_indStart":[2, 1, 0],
+            "A_indEnd":["_nx_m1_", "_ny_m2_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[1, 0, "_gl_nz_"], [1, 1, "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0y1_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_l",
+            "A_direction":"y",
+            "A_indStart":[2, "_ny_m1_", 0],
+            "A_indEnd":["_nx_m1_", "_ny_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[1, "_gl_ny_m1_", "_gl_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_nx_", "_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [2, 0, 0]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            },
+        "comment":"------------------------------------------ end -------------------------------------------------"
+        },
+
+        {
         "type":"A=sumbC::NB",
         "parameters":{
             "name":"Ey_2_0_x1_e_Ey_f_IP1",
@@ -576,90 +654,6 @@
             "C_indStart":[["_gb_nx_", "_gd_ny_", "_gl_nz_"], ["_gb_nx_", "_gd_ny_p1_", "_gl_nz_"]],
             "A_stride":[1, 2, 2],
             "comment":"first order interpolation"
-            }
-        },
-        {
-        "type":"A=sumbC",
-        "parameters":{
-            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
-            "A":"E",
-            "A_direction":"y",
-            "A_indStart":[1, 0, 0],
-            "A_indEnd":["_nx_", "_ny_", 1],
-            "b":[0.5, 0.5],
-            "C":["E", "E"],
-            "C_direction":["y", "y"],
-            "C_indStart":[[0, 0, 0], [2, 0, 0]],
-            "A_stride":[2, 1, 1],
-            "C_stride":[[2, 1, 1], [2, 1, 1]]
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ey_2_0_z0_e_Ey_l_IP1",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"y",
-            "A_indStart":[2, 2, 0],
-            "A_indEnd":["_nx_m1_", "_ny_m1_", 1],
-            "b":[0.25, 0.75],
-            "C":["E", "E"],
-            "C_direction":["y", "y"],
-            "C_indStart":[[1, 0, "_gl_nz_"], [1, 1, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"first order interpolation"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ey_2_0_z0y0_e_Ey_l_IP0",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"y",
-            "A_indStart":[2, 0, 0],
-            "A_indEnd":["_nx_m1_", 1, 1],
-            "b":[1.0],
-            "C":["E"],
-            "C_direction":["y"],
-            "C_indStart":[[1, 0, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"zeroth order interpolation of the first element at y0"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ey_2_1_z0_e_Ey_l_IP1",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"y",
-            "A_indStart":[2, 1, 0],
-            "A_indEnd":["_nx_m1_", "_ny_m2_", 1],
-            "b":[0.75, 0.25],
-            "C":["E", "E"],
-            "C_direction":["y", "y"],
-            "C_indStart":[[1, 0, "_gl_nz_"], [1, 1, "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"first order interpolation"
-            }
-        },
-        {
-        "type":"A=sumbC::NB",
-        "parameters":{
-            "name":"Ey_2_1_z0y1_e_Ey_l_IP0",
-            "A":"E",
-            "neighborGrid":"grid_l",
-            "A_direction":"y",
-            "A_indStart":[2, "_ny_m1_", 0],
-            "A_indEnd":["_nx_m1_", "_ny_", 1],
-            "b":[1.0],
-            "C":["E"],
-            "C_direction":["y"],
-            "C_indStart":[[1, "_gr_ny_m1_", "_gl_nz_"]],
-            "A_stride":[2, 2, 1],
-            "comment":"zeroth order interpolation of the last element at y1"
             }
         },
         {
@@ -1898,6 +1892,107 @@
             "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
             }
         },
+
+        {
+        "comment":"------------------------------------ connecting grid_ll ---------------------------------------",
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gl_nx_m1_", "_gl_ny_p1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_m1_", "_gd_ny2_", "_gll_nz_"], ["_gb_nx2_", "_gd_ny2_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gl_nx_", "_gl_ny_p1_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_", "_gd_ny2_", "_gll_nz_"], ["_gb_nx2_p1_", "_gd_ny2_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gl_nx_", "_gl_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 2, 0]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gl_nx_p1_", "_gl_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_", "_gd_ny2_m1_", "_gll_nz_"], ["_gb_nx2_", "_gd_ny2_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gl_nx_p1_", "_gl_ny_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_", "_gd_ny2_", "_gll_nz_"], ["_gb_nx2_", "_gd_ny2_p1_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gl_nx_", "_gl_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [2, 0, 0]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            },
+        "comment":"------------------------------------------ end -------------------------------------------------"
+        },
+
+
         {
         "type":"timeIndexUpdate",
         "parameters":{
@@ -1930,6 +2025,14 @@
                                                              ]},                      
                        {"name":"update_E_edge_dt2", "sequence":["Ex_z1_pe_curl_H_dt2", "Ey_z1_pe_curl_H_dt2"]},
                        {"name":"interpolate_E_edge_outer_IP1", "sequence":[
+                                                                      "Ex_2_0_z0_e_Ex_l_IP1", 
+                                                                      "Ex_2_1_z0_e_Ex_l_IP1",
+                                                                      "Ex_1_z0_e_Ex_2_avg_IP1",
+                                                                      
+                                                                      "Ey_2_0_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_1_z0_e_Ey_l_IP1",
+                                                                      "Ey_1_z0_e_Ey_2_avg_IP1"
+                       
                                                                       ]},
                        {"name":"update_time", "sequence":["tindSingleUpdate"]},
                        {"name":"reset_time", "sequence":["tindReset"]}                                                                             
@@ -2428,6 +2531,121 @@
         },
         
         {
+        "comment":"------------------------------------ connecting grid_ll ---------------------------------------",
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gu_nx_m1_", "_gu_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_m1_", "_gd_ny2_p_gr_ny2_", "_gll_nz_"], ["_gb_nx2_", "_gd_ny2_p_gr_ny2_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gu_nx_", "_gu_ny_m1_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_", "_gd_ny2_p_gr_ny2_", "_gll_nz_"], ["_gb_nx2_p1_", "_gd_ny2_p_gr_ny2_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gu_nx_", "_gu_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 2, 0]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gu_nx_p1_", "_gu_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_", "_gd_ny2_p_gr_ny2_m1_", "_gll_nz_"], ["_gb_nx2_", "_gd_ny2_p_gr_ny2_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gu_nx_p1_", "_gu_ny_m2_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_", "_gd_ny2_p_gr_ny2_", "_gll_nz_"], ["_gb_nx2_", "_gd_ny2_p_gr_ny2_p1_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0y1_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, "_gu_ny_m1_", 0],
+            "A_indEnd":["_gu_nx_p1_", "_gu_ny_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_gb_nx2_", "_gll_ny_m1_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gu_nx_", "_gu_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [2, 0, 0]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            },
+        "comment":"------------------------------------------ end -------------------------------------------------"
+        },
+
+        {
         "type":"timeIndexUpdate",
         "parameters":{
             "name":"tindSingleUpdate",
@@ -2458,14 +2676,24 @@
                        {"name":"set_E_Edge_out", "sequence":["Ey_x1_e_Ey_out", "Ez_x1_e_Ez_out",
                                                              "Ey_x0_e_Ey_out", "Ez_x0_e_Ez_out"
                                                              ]},                      
-                       {"name":"interpolate_E_edge_outer_IP1", "sequence":["Ex_2_0_z1_e_Ex_r_IP1", 
+                       {"name":"interpolate_E_edge_outer_IP1", "sequence":[
+                                                                      "Ex_2_0_z1_e_Ex_r_IP1", 
                                                                       "Ex_2_1_z1_e_Ex_r_IP1",
                                                                       "Ex_1_z1_e_Ex_2_avg_IP1",
                                                                       
                                                                       "Ey_2_0_z1_e_Ey_r_IP1",
                                                                       "Ey_2_1_z1_e_Ey_r_IP1",
                                                                       "Ey_2_1_z1y1_e_Ey_r_IP0",
-                                                                      "Ey_1_z1_e_Ey_2_avg_IP1"
+                                                                      "Ey_1_z1_e_Ey_2_avg_IP1",
+
+                                                                      "Ex_2_0_z0_e_Ex_l_IP1", 
+                                                                      "Ex_2_1_z0_e_Ex_l_IP1",
+                                                                      "Ex_1_z0_e_Ex_2_avg_IP1",
+                                                                      
+                                                                      "Ey_2_0_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_1_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_1_z0y1_e_Ey_l_IP0",
+                                                                      "Ey_1_z0_e_Ey_2_avg_IP1"
                                                                       ]},
                        {"name":"update_E_edge_dt2", "sequence":["Ex_y0_pe_curl_H_dt2", "Ez_y0_pe_curl_H_dt2"]},
                        {"name":"update_time", "sequence":["tindSingleUpdate"]},
@@ -2961,6 +3189,121 @@
             },
         "comment":"------------------------------------------ end -----------------------------------------------"
         },
+
+        {
+        "comment":"------------------------------------- connecting grid_ll ---------------------------------------", 
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gd_nx_m1_", "_gd_ny_p1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_m1_", 0, "_gll_nz_"], ["_gb_nx2_", 0, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gd_nx_", "_gd_ny_p1_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_", 0, "_gll_nz_"], ["_gb_nx2_p1_", 0, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gd_nx_", "_gd_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 2, 0]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 2, 0],
+            "A_indEnd":["_gd_nx_p1_", "_gd_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_", 0, "_gll_nz_"], ["_gb_nx2_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0y0_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gd_nx_p1_", 1, 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_gb_nx2_", 0, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gd_nx_p1_", "_gd_ny_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_", 0, "_gll_nz_"], ["_gb_nx2_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gd_nx_", "_gd_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [2, 0, 0]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            },
+        "comment":"------------------------------------------ end -----------------------------------------------"
+        },
         
         {
         "type":"timeIndexUpdate",
@@ -2994,14 +3337,24 @@
                                                              "Ey_x0_e_Ey_out", "Ez_x0_e_Ez_out"
                                                              ]},                      
                        {"name":"update_E_edge_dt2", "sequence":["Ex_y1_pe_curl_H_dt2", "Ez_y1_pe_curl_H_dt2"]},
-                       {"name":"interpolate_E_edge_outer_IP1", "sequence":["Ex_2_0_z1_e_Ex_r_IP1", 
+                       {"name":"interpolate_E_edge_outer_IP1", "sequence":[
+                                                                      "Ex_2_0_z1_e_Ex_r_IP1", 
                                                                       "Ex_2_1_z1_e_Ex_r_IP1",
                                                                       "Ex_1_z1_e_Ex_2_avg_IP1",
                                                                       
                                                                       "Ey_2_0_z1_e_Ey_r_IP1",
                                                                       "Ey_2_0_z1y0_e_Ey_r_IP0",
                                                                       "Ey_2_1_z1_e_Ey_r_IP1",
-                                                                      "Ey_1_z1_e_Ey_2_avg_IP1"
+                                                                      "Ey_1_z1_e_Ey_2_avg_IP1",
+
+                                                                      "Ex_2_0_z0_e_Ex_l_IP1", 
+                                                                      "Ex_2_1_z0_e_Ex_l_IP1",
+                                                                      "Ex_1_z0_e_Ex_2_avg_IP1",
+                                                                      
+                                                                      "Ey_2_0_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_0_z0y0_e_Ey_l_IP0",
+                                                                      "Ey_2_1_z0_e_Ey_l_IP1",
+                                                                      "Ey_1_z0_e_Ey_2_avg_IP1"
                                                                       ]},
                        {"name":"update_time", "sequence":["tindSingleUpdate"]},
                        {"name":"reset_time", "sequence":["tindReset"]}                                                                             
@@ -3529,6 +3882,153 @@
             },
         "comment":"------------------------------------------ end -----------------------------------------------"
         },
+
+        {
+        "comment":"------------------------------------ connecting grid_ll ----------------------------------------",
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[0, 2, 0],
+            "A_indEnd":["_gf_nx_m1_", "_gf_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_p_gr_nx2_m1_", 1, "_gll_nz_"], ["_gb_nx2_p_gr_nx2_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[1, 2, 0],
+            "A_indEnd":["_gf_nx_m2_", "_gf_ny_m1_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[["_gb_nx2_p_gr_nx2_", 1, "_gll_nz_"], ["_gb_nx2_p_gr_nx2_p1_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0x1_e_Ex_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":["_gf_nx_m1_", 2, 0],
+            "A_indEnd":["_gf_nx_", "_gf_ny_m1_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[["_grr_nx_m1_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gf_nx_", "_gf_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 2, 0]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 2, 0],
+            "A_indEnd":["_gf_nx_m1_", "_gf_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, "_gll_nz_"], ["_gb_nx2_p_gr_nx2_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0y0_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gf_nx_m1_", 1, 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gf_nx_m1_", "_gf_ny_m2_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, "_gll_nz_"], ["_gb_nx2_p_gr_nx2_", 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0y1_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[0, "_gf_ny_m1_", 0],
+            "A_indEnd":["_gf_nx_m1_", "_gf_ny_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_gb_nx2_p_gr_nx2_", "_gll_ny_m1_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gf_nx_", "_gf_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [2, 0, 0]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            },
+        "comment":"------------------------------------------ end -----------------------------------------------"
+        },
         
         
         {
@@ -3562,7 +4062,8 @@
                                                               "Ey_pe_curl_H", 
                                                               "Ez_pe_curl_H"]},
                        {"name":"update_E_edge_dt2", "sequence":["Ey_x0_pe_curl_H_dt2", "Ez_x0_pe_curl_H_dt2"]},
-                       {"name":"interpolate_E_edge_outer_IP1", "sequence":["Ex_2_0_z1_e_Ex_r_IP1", 
+                       {"name":"interpolate_E_edge_outer_IP1", "sequence":[
+                                                                      "Ex_2_0_z1_e_Ex_r_IP1", 
                                                                       "Ex_2_1_z1_e_Ex_r_IP1",
                                                                       "Ex_2_1_z1x1_e_Ex_r_IP0", 
                                                                       "Ex_1_z1_e_Ex_2_avg_IP1",
@@ -3571,7 +4072,18 @@
                                                                       "Ey_2_0_z1y0_e_Ey_r_IP0",
                                                                       "Ey_2_1_z1_e_Ey_r_IP1",
                                                                       "Ey_2_1_z1y1_e_Ey_r_IP0",
-                                                                      "Ey_1_z1_e_Ey_2_avg_IP1"
+                                                                      "Ey_1_z1_e_Ey_2_avg_IP1",
+
+                                                                      "Ex_2_0_z0_e_Ex_l_IP1", 
+                                                                      "Ex_2_1_z0_e_Ex_l_IP1",
+                                                                      "Ex_2_1_z0x1_e_Ex_l_IP0", 
+                                                                      "Ex_1_z0_e_Ex_2_avg_IP1",
+                                                                      
+                                                                      "Ey_2_0_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_0_z0y0_e_Ey_l_IP0",
+                                                                      "Ey_2_1_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_1_z0y1_e_Ey_l_IP0",
+                                                                      "Ey_1_z0_e_Ey_2_avg_IP1"
                                                                       ]},
                        {"name":"update_time", "sequence":["tindSingleUpdate"]},
                        {"name":"reset_time", "sequence":["tindReset"]}                                                                             
@@ -4088,6 +4600,153 @@
             },
         "comment":"------------------------------------------ end -----------------------------------------------"
         },
+
+        {
+        "comment":"---------------------------------------- connecting grid_ll --------------------------------------",
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[2, 2, 0],
+            "A_indEnd":["_gb_nx_m1_", "_gb_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 1, "_gll_nz_"], [1, 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_0_z0x0_e_Ex_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[0, 2, 0],
+            "A_indEnd":[1, "_gb_ny_m1_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_2_1_z0_e_Ex_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"x",
+            "A_indStart":[1, 2, 0],
+            "A_indEnd":["_gb_nx_", "_gb_ny_m1_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 1, "_gll_nz_"], [1, 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ex_1_z0_e_Ex_2_avg_IP1",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":["_gb_nx_", "_gb_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[0, 0, 0], [0, 2, 0]],
+            "A_stride":[1, 2, 1],
+            "C_stride":[[1, 2, 1], [1, 2, 1]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[2, 2, 0],
+            "A_indEnd":["_gb_nx_p1_", "_gb_ny_m1_", 1],
+            "b":[0.25, 0.75],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[1, 0, "_gll_nz_"], [1, 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_0_z0y0_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[2, 0, 0],
+            "A_indEnd":["_gb_nx_p1_", 1, 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[1, 0, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0_e_Ey_l_IP1",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[2, 1, 0],
+            "A_indEnd":["_gb_nx_p1_", "_gb_ny_m2_", 1],
+            "b":[0.75, 0.25],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[1, 0, "_gll_nz_"], [1, 1, "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_2_1_z0y1_e_Ey_l_IP0",
+            "A":"E",
+            "neighborGrid":"grid_ll",
+            "A_direction":"y",
+            "A_indStart":[2, "_gb_ny_m1_", 0],
+            "A_indEnd":["_gb_nx_p1_", "_gb_ny_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[1, "_grr_ny_m1_", "_gll_nz_"]],
+            "A_stride":[2, 2, 1]
+            }
+        },
+        {
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"Ey_1_z0_e_Ey_2_avg_IP1",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_gb_nx_", "_gb_ny_", 1],
+            "b":[0.5, 0.5],
+            "C":["E", "E"],
+            "C_direction":["y", "y"],
+            "C_indStart":[[0, 0, 0], [2, 0, 0]],
+            "A_stride":[2, 1, 1],
+            "C_stride":[[2, 1, 1], [2, 1, 1]]
+            },
+        "comment":"------------------------------------------ end -----------------------------------------------"
+        },
         
         
         {
@@ -4121,7 +4780,8 @@
                                                               "Ey_pe_curl_H", 
                                                               "Ez_pe_curl_H"]},
                        {"name":"update_E_edge_dt2", "sequence":["Ey_x1_pe_curl_H_dt2", "Ez_x1_pe_curl_H_dt2"]},
-                       {"name":"interpolate_E_edge_outer_IP1", "sequence":["Ex_2_0_z1_e_Ex_r_IP1", 
+                       {"name":"interpolate_E_edge_outer_IP1", "sequence":[
+                                                                      "Ex_2_0_z1_e_Ex_r_IP1", 
                                                                       "Ex_2_0_z1x0_e_Ex_r_IP0", 
                                                                       "Ex_2_1_z1_e_Ex_r_IP1",
                                                                       "Ex_1_z1_e_Ex_2_avg_IP1",
@@ -4130,7 +4790,18 @@
                                                                       "Ey_2_0_z1y0_e_Ey_r_IP0",
                                                                       "Ey_2_1_z1_e_Ey_r_IP1",
                                                                       "Ey_2_1_z1y1_e_Ey_r_IP0",
-                                                                      "Ey_1_z1_e_Ey_2_avg_IP1"
+                                                                      "Ey_1_z1_e_Ey_2_avg_IP1",
+
+                                                                      "Ex_2_0_z0_e_Ex_l_IP1", 
+                                                                      "Ex_2_0_z0x0_e_Ex_l_IP0", 
+                                                                      "Ex_2_1_z0_e_Ex_l_IP1",
+                                                                      "Ex_1_z0_e_Ex_2_avg_IP1",
+                                                                      
+                                                                      "Ey_2_0_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_0_z0y0_e_Ey_l_IP0",
+                                                                      "Ey_2_1_z0_e_Ey_l_IP1",
+                                                                      "Ey_2_1_z0y1_e_Ey_l_IP0",
+                                                                      "Ey_1_z0_e_Ey_2_avg_IP1"
                                                                       ]},
                        {"name":"update_time", "sequence":["tindSingleUpdate"]},
                        {"name":"reset_time", "sequence":["tindReset"]}                                                                             
@@ -4968,16 +5639,80 @@
         {
         "type":"A+=sumbC::NB",
         "parameters":{
-            "name":"Hry_pe_m_curl_E_outside",
-            "neighborGrid":"grid_m",
+            "name":"Hry_pe_m_curl_E_outside_gb",
+            "neighborGrid":"grid_b",
             "A":"Hr",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gb_nx2_", "_gll_ny_p1_", 1],
+            "b":["_gll_m_dt_dz_2_", "_gll_m_dt_dz_2_", "_gll_m_dt_dx_2_", "_gll_m_dt_dx_2_", "_gll_dt_dx_2_", "_gll_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z", "z", "z"],
+            "C_indStart":[[0, 0, 2], [1, 0, 2], [0, 0, 0], [0, 0, 1], [2, 0, 0], [2, 0, 1]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hry_pe_m_curl_E_outside_gf",
+            "neighborGrid":"grid_f",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx2_p_gr_nx2_", 0, 0],
             "A_indEnd":["_gll_nx_", "_gll_ny_p1_", 1],
             "b":["_gll_m_dt_dz_2_", "_gll_m_dt_dz_2_", "_gll_m_dt_dx_2_", "_gll_m_dt_dx_2_", "_gll_dt_dx_2_", "_gll_dt_dx_2_"],
             "C":["E", "E", "E", "E", "E", "E"],
             "C_direction":["x", "x", "z", "z", "z", "z"],
             "C_indStart":[[0, 0, 2], [1, 0, 2], [0, 0, 0], [0, 0, 1], [2, 0, 0], [2, 0, 1]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hry_pe_m_curl_E_outside_gd",
+            "neighborGrid":"grid_d",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx2_", 0, 0],
+            "A_indEnd":["_gb_nx2_p_gr_nx2_", "_gd_ny2_", 1],
+            "b":["_gll_m_dt_dz_2_", "_gll_m_dt_dz_2_", "_gll_m_dt_dx_2_", "_gll_m_dt_dx_2_", "_gll_dt_dx_2_", "_gll_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z", "z", "z"],
+            "C_indStart":[[0, 0, 2], [1, 0, 2], [0, 0, 0], [0, 0, 1], [2, 0, 0], [2, 0, 1]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hry_pe_m_curl_E_outside_gl",
+            "neighborGrid":"grid_l",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx2_", "_gd_ny2_", 0],
+            "A_indEnd":["_gb_nx2_p_gr_nx2_", "_gd_ny2_p_gr_ny2_p1_", 1],
+            "b":["_gll_m_dt_dz_2_", "_gll_m_dt_dz_2_", "_gll_m_dt_dx_2_", "_gll_m_dt_dx_2_", "_gll_dt_dx_2_", "_gll_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z", "z", "z"],
+            "C_indStart":[[0, 0, 2], [1, 0, 2], [0, 0, 0], [0, 0, 1], [2, 0, 0], [2, 0, 1]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hry_pe_m_curl_E_outside_gu",
+            "neighborGrid":"grid_u",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx2_", "_gd_ny2_p_gr_ny2_p1_", 0],
+            "A_indEnd":["_gb_nx2_p_gr_nx2_", "_gll_ny_p1_", 1],
+            "b":["_gll_m_dt_dz_2_", "_gll_m_dt_dz_2_", "_gll_m_dt_dx_2_", "_gll_m_dt_dx_2_", "_gll_dt_dx_2_", "_gll_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z", "z", "z"],
+            "C_indStart":[[0, 2, 2], [1, 2, 2], [0, 2, 0], [0, 2, 1], [2, 2, 0], [2, 2, 1]],
             "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
             }
         },
@@ -5026,12 +5761,76 @@
         {
         "type":"A+=sumbC::NB",
         "parameters":{
-            "name":"Hrx_pe_m_curl_E_outside",
-            "neighborGrid":"grid_m",
+            "name":"Hrx_pe_m_curl_E_outside_gb",
+            "neighborGrid":"grid_b",
             "A":"Hr",
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gb_nx2_", "_gll_ny_", 1],
+            "b":["_gll_dt_dy_2_", "_gll_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_dt_dz_2_", "_gll_dt_dz_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["z", "z", "z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 2, 0], [0, 2, 1], [0, 0, 2], [0, 1, 2]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_pe_m_curl_E_outside_gf",
+            "neighborGrid":"grid_f",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx2_p_gr_nx2_", 0, 0],
             "A_indEnd":["_gll_nx_p1_", "_gll_ny_", 1],
+            "b":["_gll_dt_dy_2_", "_gll_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_dt_dz_2_", "_gll_dt_dz_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["z", "z", "z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 2, 0], [0, 2, 1], [0, 0, 2], [0, 1, 2]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_pe_m_curl_E_outside_gd",
+            "neighborGrid":"grid_d",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx2_", 0, 0],
+            "A_indEnd":["_gb_nx2_p_gr_nx2_", "_gd_ny2_", 1],
+            "b":["_gll_dt_dy_2_", "_gll_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_dt_dz_2_", "_gll_dt_dz_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["z", "z", "z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 2, 0], [0, 2, 1], [0, 0, 2], [0, 1, 2]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_pe_m_curl_E_outside_gl",
+            "neighborGrid":"grid_l",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx2_", "_gd_ny2_", 0],
+            "A_indEnd":["_gb_nx2_p_gr_nx2_", "_gd_ny2_p_gr_ny2_", 1],
+            "b":["_gll_dt_dy_2_", "_gll_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_dt_dz_2_", "_gll_dt_dz_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["z", "z", "z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 2, 0], [0, 2, 1], [0, 0, 2], [0, 1, 2]],
+            "C_stride":[[2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1], [2, 2, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_pe_m_curl_E_outside_gu",
+            "neighborGrid":"grid_u",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx2_", "_gd_ny2_p_gr_ny2_", 0],
+            "A_indEnd":["_gb_nx2_p_gr_nx2_", "_gll_ny_", 1],
             "b":["_gll_dt_dy_2_", "_gll_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_m_dt_dy_2_", "_gll_dt_dz_2_", "_gll_dt_dz_2_"],
             "C":["E", "E", "E", "E", "E", "E"],
             "C_direction":["z", "z", "z", "z", "y", "y"],
@@ -5058,16 +5857,19 @@
     ],
     "updateSequences":[{"name":"update_H", "sequence":["Hx_pe_m_curl_E", "Hy_pe_m_curl_E", "Hz_pe_m_curl_E"
                                                        ]},
-                       {"name":"update_H_out", "sequence":["Hrx_pe_m_curl_E_inside", "Hrx_pe_m_curl_E_outside",
-                                                        "Hry_pe_m_curl_E_inside", "Hry_pe_m_curl_E_outside"
+                       {"name":"update_H_out", "sequence":["Hrx_pe_m_curl_E_inside", 
+                                                              "Hrx_pe_m_curl_E_outside_gb", "Hrx_pe_m_curl_E_outside_gf",
+                                                              "Hrx_pe_m_curl_E_outside_gd", "Hrx_pe_m_curl_E_outside_gu",
+                                                              "Hrx_pe_m_curl_E_outside_gl",
+                                                        "Hry_pe_m_curl_E_inside", 
+                                                              "Hry_pe_m_curl_E_outside_gb", "Hry_pe_m_curl_E_outside_gf",
+                                                              "Hry_pe_m_curl_E_outside_gd", "Hry_pe_m_curl_E_outside_gu",
+                                                              "Hry_pe_m_curl_E_outside_gl"
                                                        ]},
                        {"name":"update_E_inside", "sequence":["Ex_pe_curl_H",  
                                                               "Ey_pe_curl_H", 
-                                                               "Ez_pe_curl_H"]},
-                       {"name":"set_E_Edge_out", "sequence":["Ex_y1_e_Ex_out", "Ez_y1_e_Ez_out",
-                                                             "Ex_y0_e_Ex_out", "Ez_y0_e_Ez_out",
-                                                             "Ey_x1_e_Ey_out", "Ez_x1_e_Ez_out",
-                                                             "Ey_x0_e_Ey_out", "Ez_x0_e_Ez_out"
+                                                              "Ez_pe_curl_H"]},
+                       {"name":"set_E_Edge_out", "sequence":[
                                                              ]},                      
                        {"name":"update_E_edge_dt2", "sequence":["Ex_z1_pe_curl_H_dt2", "Ey_z1_pe_curl_H_dt2"]},
                        {"name":"interpolate_E_edge_outer_IP1", "sequence":[
@@ -5101,7 +5903,7 @@
         {
         "type":"partial",
         "parameters":{
-            "name":"3D/E-x-l-z1",
+            "name":"3D/E-x-ll-z1",
             "array":"E",
             "direction":"x",
             "indStart":[0, 0, 0],
@@ -5128,15 +5930,20 @@
                                                                   ["grid_d", "reset_time"],
                                                                   ["grid_f", "reset_time"],
                                                                   ["grid_b", "reset_time"],
-                                                                  ["grid_rr", "reset_time"]
+                                                                  ["grid_rr", "reset_time"],
+                                                                  ["grid_ll", "reset_time"]
                                                                  ],
                                   "manualTimeUpdate":"yes"},   
               {"timeIndStart":0, "timeIndEnd":"_nt_coarse_IP1_", "sequence":[
 
                         ["grid_rr", "update_H"], 
+                        ["grid_ll", "update_H"], 
                         ["grid_rr", "update_H_out"], 
+                        ["grid_ll", "update_H_out"], 
                         ["grid_rr", "update_E_edge_dt2"],
+                        ["grid_ll", "update_E_edge_dt2"],
                         ["grid_rr", "set_E_Edge_out"],
+                        ["grid_ll", "set_E_Edge_out"],
 
                             ["grid_r", "update_H"], 
                             ["grid_l", "update_H"], 
@@ -5199,8 +6006,11 @@
                                 ["grid_m", "update_time"],
                         
                         ["grid_rr", "update_E_inside"], ["grid_rr", "update_E_edge_dt2"],
+                        ["grid_ll", "update_E_inside"], ["grid_ll", "update_E_edge_dt2"],
                         ["grid_rr", "set_E_Edge_out"],
+                        ["grid_ll", "set_E_Edge_out"],
                         ["grid_rr", "update_time"],
+                        ["grid_ll", "update_time"],
                                                     
                             ["grid_r", "update_H"], 
                             ["grid_l", "update_H"], 
