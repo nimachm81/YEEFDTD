@@ -1,0 +1,389 @@
+{
+"grid_f":{
+    "dimensions":{
+        "r0":["_gf_x0_", "_gf_y0_", "_gf_z0_"],
+        "r1":["_gf_x1_", "_gf_y1_", "_gf_z1_"],
+        "nCells":["_gf_nx_", "_gf_ny_", "_gf_nz_"],
+        "dt":"_gf_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"H", "type":"EdgeH"}],
+    "partialGridArrays":[{"name":"Hb", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":[1, "_gf_ny_", "_gf_nz_"]}],
+    "girdArrayManipulators":[],
+    "updateInstructions":[
+    
+        {
+        "comment":"------------------------------------ E += curl H ----------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 1],
+            "A_indEnd":["_gf_nx_", "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_dt_dz_", "_gf_m_dt_dz_", "_gf_m_dt_dy_", "_gf_dt_dy_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 1], [0, 0, 1], [0, 1, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 1],
+            "A_indEnd":["_gf_nx_", "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_m_dt_dz_", "_gf_dt_dz_", "_gf_dt_dx_", "_gf_m_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 1], [0, 0, 1], [1, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_pe_curl_H",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[1, 1, 0],
+            "A_indEnd":["_gf_nx_", "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_dt_dy_", "_gf_m_dt_dy_", "_gf_m_dt_dx_", "_gf_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[1, 0, 0], [1, 1, 0], [0, 1, 0], [1, 1, 0]]
+            },
+        "comment":"---------------------------------------- end -------------------------------------------"
+        },
+        
+        
+        {
+        "comment":"----------------------------------- E += curl H (at x0)-------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_x0_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 1],
+            "A_indEnd":[1, "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_m_dt_dz_", "_gf_dt_dz_", "_gf_dt_dx_", "_gf_m_dt_dx_"],
+            "C":["H", "H", "Hb", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 1], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_x0_pe_curl_H_dt2",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 1],
+            "A_indEnd":[1, "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_m_dt_dz_2_", "_gf_dt_dz_2_", "_gf_dt_dx_2_", "_gf_m_dt_dx_2_"],
+            "C":["H", "H", "Hb", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 1], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_x0_pe_curl_H",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":[1, "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_dt_dy_", "_gf_m_dt_dy_", "_gf_m_dt_dx_", "_gf_dt_dx_"],
+            "C":["H", "H", "Hb", "H"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 1, 0], [0, 1, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_x0_pe_curl_H_dt2",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[0, 1, 0],
+            "A_indEnd":[1, "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_dt_dy_2_", "_gf_m_dt_dy_2_", "_gf_m_dt_dx_2_", "_gf_dt_dx_2_"],
+            "C":["H", "H", "Hb", "H"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 1, 0], [0, 1, 0]]
+            },
+        "comment":"---------------------------------------- end -------------------------------------------"
+        },
+        
+        {
+        "comment":"------------------------------------ H -= curl E ----------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gf_nx_p1_", "_gf_ny_", "_gf_nz_"],
+            "b":["_gf_dt_dy_", "_gf_m_dt_dy_", "_gf_m_dt_dz_", "_gf_dt_dz_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hy_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gf_nx_", "_gf_ny_p1_", "_gf_nz_"],
+            "b":["_gf_dt_dz_", "_gf_m_dt_dz_", "_gf_m_dt_dx_", "_gf_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hz_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gf_nx_", "_gf_ny_", "_gf_nz_p1_"],
+            "b":["_gf_m_dt_dy_", "_gf_dt_dy_", "_gf_dt_dx_", "_gf_m_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [1, 0, 0]]
+            },
+        "comment":"---------------------------------------- end -------------------------------------------"
+        },
+        
+        {
+        "comment":"------------------------------------ H_b -= curl E ----------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hby_pe_m_curl_E_inside",
+            "A":"Hb",
+            "A_direction":"y",
+            "A_indStart":[0, "_gd_ny_p1_", "_gl_nz_"],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gl_nz_p_nz2_"],
+            "b":["_gf_dt_dx_"],
+            "C":["E"],
+            "C_direction":["z"],
+            "C_indStart":[[0, "_gd_ny_p1_", "_gl_nz_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hby_pe_m_curl_E_outside_gm",
+            "neighborGrid":"grid_m",
+            "A":"Hb",
+            "A_direction":"y",
+            "A_indStart":[0, "_gd_ny_p1_", "_gl_nz_"],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gl_nz_p_nz2_"],
+            "b":["_gf_dt_dz_2_", "_gf_dt_dz_2_", "_gf_m_dt_dz_2_", "_gf_m_dt_dz_2_", "_gf_m_dt_dx_2_", "_gf_m_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "x", "x", "z", "z"],
+            "C_indStart":[["_nx_m1_", 2, 0], ["_nx_m2_", 2, 0], ["_nx_m1_", 2, 2], ["_nx_m2_", 2, 2], ["_nx_m2_", 2, 0], ["_nx_m2_", 2, 1]],
+            "C_stride":[[1, 2, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hby_e_Hy_outside_gl",
+            "neighborGrid":"grid_l",
+            "A":"Hb",
+            "A_direction":"y",
+            "A_indStart":[0, "_gd_ny_p1_", 0],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gl_nz_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[["_gl_nx_m1_", 1, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hby_e_Hy_outside_gr",
+            "neighborGrid":"grid_r",
+            "A":"Hb",
+            "A_direction":"y",
+            "A_indStart":[0, "_gd_ny_p1_", "_gl_nz_p_nz2_"],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gf_nz_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[["_gr_nx_m1_", 1, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hby_e_Hy_outside_gu",
+            "neighborGrid":"grid_u",
+            "A":"Hb",
+            "A_direction":"y",
+            "A_indStart":[0, "_gd_ny_p_ny2_", 0],
+            "A_indEnd":[1, "_gf_ny_p1_", "_gf_nz_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[["_gu_nx_m1_", 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hby_e_Hy_outside_gd",
+            "neighborGrid":"grid_d",
+            "A":"Hb",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, "_gd_ny_p1_", "_gf_nz_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[["_gd_nx_m1_", 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hbz_pe_m_curl_E_inside",
+            "A":"Hb",
+            "A_direction":"z",
+            "A_indStart":[0, "_gd_ny_", "_gl_nz_p1_"],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gl_nz_p_nz2_"],
+            "b":["_gf_m_dt_dx_"],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[0, "_gd_ny_", "_gl_nz_p1_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC::NB",
+        "parameters":{
+            "name":"Hbz_pe_m_curl_E_outside_gm",
+            "A":"Hb",
+            "neighborGrid":"grid_m",
+            "A_direction":"z",
+            "A_indStart":[0, "_gd_ny_", "_gl_nz_p1_"],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gl_nz_p_nz2_"],
+            "b":["_gf_m_dt_dy_2_", "_gf_m_dt_dy_2_", "_gf_dt_dy_2_", "_gf_dt_dy_2_", "_gf_dt_dx_2_", "_gf_dt_dx_2_"],
+            "C":["E", "E", "E", "E", "E", "E"],
+            "C_direction":["x", "x", "x", "x", "y", "y"],
+            "C_indStart":[["_nx_m1_", 0, 2], ["_nx_m2_", 0, 2], ["_nx_m1_", 2, 2], ["_nx_m2_", 2, 2], ["_nx_m2_", 0, 2], ["_nx_m2_", 1, 2]],
+            "C_stride":[[1, 2, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2], [1, 2, 2]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hbz_e_Hz_outside_gl",
+            "neighborGrid":"grid_l",
+            "A":"Hb",
+            "A_direction":"z",
+            "A_indStart":[0, "_gd_ny_", 0],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gl_nz_p1_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["z"],
+            "C_indStart":[["_gl_nx_m1_", 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hbz_e_Hz_outside_gr",
+            "neighborGrid":"grid_r",
+            "A":"Hb",
+            "A_direction":"z",
+            "A_indStart":[0, "_gd_ny_", "_gl_nz_p_nz2_"],
+            "A_indEnd":[1, "_gd_ny_p_ny2_", "_gf_nz_p1_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["z"],
+            "C_indStart":[["_gr_nx_m1_", 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hbz_e_Hz_outside_gu",
+            "neighborGrid":"grid_u",
+            "A":"Hb",
+            "A_direction":"z",
+            "A_indStart":[0, "_gd_ny_p_ny2_", 0],
+            "A_indEnd":[1, "_gf_ny_", "_gf_nz_p1_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["z"],
+            "C_indStart":[["_gu_nx_m1_", 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hbz_e_Hz_outside_gd",
+            "neighborGrid":"grid_d",
+            "A":"Hb",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, "_gd_ny_", "_gf_nz_p1_"],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["z"],
+            "C_indStart":[["_gd_nx_m1_", 0, 0]]
+            },
+        "comment":"------------------------------------------ end ---------------------------------------------"
+        },
+        
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindSingleUpdate",
+            "operation":"+=",
+            "steps": 1
+            }
+        },
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindReset",
+            "operation":"=",
+            "steps": 0
+            }
+        }        
+    ],
+    "updateSequences":[{"name":"update_H", "sequence":["Hx_pe_m_curl_E", "Hy_pe_m_curl_E", "Hz_pe_m_curl_E" 
+                                                      ]},
+                       {"name":"update_H_out", "sequence":[ 
+                                                       "Hby_pe_m_curl_E_inside", "Hby_pe_m_curl_E_outside_gm",
+                                                           "Hby_e_Hy_outside_gl", "Hby_e_Hy_outside_gr",
+                                                           "Hby_e_Hy_outside_gu", "Hby_e_Hy_outside_gd",
+                                                       "Hbz_pe_m_curl_E_inside", "Hbz_pe_m_curl_E_outside_gm",
+                                                           "Hbz_e_Hz_outside_gl", "Hbz_e_Hz_outside_gr",
+                                                           "Hbz_e_Hz_outside_gu", "Hbz_e_Hz_outside_gd"
+                                                       ]},
+                       {"name":"update_E_inside", "sequence":["Ex_pe_curl_H",  
+                                                              "Ey_pe_curl_H", 
+                                                              "Ez_pe_curl_H"]},
+                       {"name":"set_E_Edge_out", "sequence":[
+                                                             ]},                      
+                       {"name":"update_E_edge_dt2", "sequence":["Ey_x0_pe_curl_H_dt2", "Ez_x0_pe_curl_H_dt2"]},
+                       {"name":"interpolate_E_edge_IP1_02", "sequence":[
+                                                                      ]},
+                       {"name":"interpolate_E_edge_IP1_1", "sequence":[
+                                                                      ]},
+                       {"name":"update_time", "sequence":["tindSingleUpdate"]},
+                       {"name":"reset_time", "sequence":["tindReset"]}                                                                             
+                      ],
+    "gridViews":[]
+}
+}

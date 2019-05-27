@@ -1,0 +1,44 @@
+{
+    "updateInstructions":
+    [
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_x0_e_Ey_out",
+            "neighborGrid":"grid_b",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, "_gd_ny_", "_gd_nz_p1_"],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_gb_nx_", 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ez_x0_e_Ez_out",
+            "neighborGrid":"grid_b",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, "_gd_ny_p1_", "_gd_nz_"],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["z"],
+            "C_indStart":[["_gb_nx_", 0, 0]]
+            }
+        }
+    ],
+    "updateSequences":
+    [
+        {"name":"set_E_Edge_out", 
+        "sequence":[
+            "Ey_x0_e_Ey_out", 
+            "Ez_x0_e_Ez_out"
+        ]
+        }
+    ]
+}

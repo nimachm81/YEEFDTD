@@ -1,0 +1,19 @@
+
+{
+"simulationType":"gridCollection",
+"simulationParameters":{
+"grids":{
+},
+"runSequence":[{"timeIndStart":0, "timeIndEnd":1, "sequence":[
+                                                             ],
+                      "manualTimeUpdate":"yes"
+                      },   
+               {"timeIndStart":0, "timeIndEnd":"_nt_coarse_", "sequence":[
+                                                                ],
+                      "manualTimeUpdate":"yes"
+                      }
+              ]
+}
+}
+
+

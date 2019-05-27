@@ -708,10 +708,10 @@ void YeeGrid3D::ApplyInstructions(std::string name, std::size_t timeIndStart, st
 }
 
 void YeeGrid3D::ApplyInstructionsOnce(std::string name) {
+    //std::cout << name << std::endl;
+
     auto found = instructionSequences.find(name);
     assert(found != instructionSequences.end());  // name is valid
-
-    //std::cout << name << std::endl;
 
     std::vector<std::string>& sequence = instructionSequences[name];
     for(std::string& updateName : sequence) {

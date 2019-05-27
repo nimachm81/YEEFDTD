@@ -1,0 +1,46 @@
+{
+    "partialGridArrays":[{"name":"J", "type":"EdgeE", "indStart":["_indxJ_", "_indyJ_", "_indzJ_"], "nCells":[1, 1, 1]}],
+    "girdArrayManipulators":[
+        {
+        "type":"GaussianGridArrayManipulator",
+        "parameters":{
+            "name":"Jupdater",
+            "array":"J",
+            "direction":"_j_polarization_",
+            "amplitude":"_j_amplitude_",
+            "t_center":"_j_t_center_",
+            "t_decay":"_j_t_decay_",
+            "modulationFrequency":"_j_mod_freq_",
+            "modulationPhase":"_j_mod_phase_",
+            "timeOffsetFraction":"_j_time_offset_frac_"
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"E_me_J",
+            "A":"E",
+            "A_direction":"_j_polarization_",
+            "A_indStart":["_indxJ_", "_indyJ_", "_indzJ_"],
+            "A_indEnd":["_indxJ_p1_", "_indyJ_p1_", "_indzJ_p1_"],
+            "b":["_m_dt_dA_"],
+            "C":["J"],
+            "C_direction":["_j_polarization_"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"J_update",
+            "girdArrayManipulator":"Jupdater"
+            }
+        }    
+    ],
+    "updateSequences":[{"name":"update_H", "sequence":["J_update"]},
+                       {"name":"update_E_inside", "sequence":["E_me_J"]}
+                       ]
+
+}
