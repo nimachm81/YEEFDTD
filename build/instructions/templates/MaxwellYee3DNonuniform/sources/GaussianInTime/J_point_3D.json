@@ -25,7 +25,7 @@
             "A_direction":"_j_polarization_",
             "A_indStart":["_indxJ_", "_indyJ_", "_indzJ_"],
             "A_indEnd":["_indxJ_p1_", "_indyJ_p1_", "_indzJ_p1_"],
-            "b":["_m_dt_dA_"],
+            "b":["_m_dt_dV_"],
             "C":["J"],
             "C_direction":["_j_polarization_"],
             "C_indStart":[[0, 0, 0]]
