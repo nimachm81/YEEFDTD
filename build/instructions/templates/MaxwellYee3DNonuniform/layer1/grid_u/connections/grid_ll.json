@@ -118,6 +118,38 @@
             }
         ],
         "left_up":[
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_1_z0y1_e_Ey_l_IP1",
+                "A":"E",
+                "neighborGrid":"grid_ll",
+                "A_direction":"y",
+                "A_indStart":[0, "_gu_ny_m1_", 0],
+                "A_indEnd":["_gu_nx_p1_", "_gu_ny_", 1],
+                "b":[0.75],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_", "_gll_ny_m1_", "_gll_nz_"]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A+=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_1_z0y1_pe_Ey_u_IP1",
+                "A":"E",
+                "neighborGrid":"grid_uu",
+                "A_direction":"y",
+                "A_indStart":[0, "_gu_ny_m1_", 0],
+                "A_indEnd":["_gu_nx_p1_", "_gu_ny_", 1],
+                "b":[0.25],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_", 0, "_gll_nz_"]],
+                "A_stride":[2, 2, 1]
+                }
+            }
         ]
     },
     "updateSequences":
@@ -134,6 +166,8 @@
                 "Ey_2_1_z0y1_e_Ey_l_IP0"
             ],
             "left_up":[
+                "Ey_2_1_z0y1_e_Ey_l_IP1",
+                "Ey_2_1_z0y1_pe_Ey_u_IP1"
             ]
         }},
         {"name":"interpolate_E_edge_IP1_1", 

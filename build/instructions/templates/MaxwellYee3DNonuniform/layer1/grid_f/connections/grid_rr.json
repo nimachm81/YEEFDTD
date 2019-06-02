@@ -9,12 +9,12 @@
                 "A":"E",
                 "neighborGrid":"grid_rr",
                 "A_direction":"x",
-                "A_indStart":[0, 2, "_gf_nz_"],
-                "A_indEnd":["_gf_nx_m1_", "_gf_ny_m1_", "_gf_nz_p1_"],
+                "A_indStart":[0, 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_m1_", "_gf_ny_p1_", "_gf_nz_p1_"],
                 "b":[0.25, 0.75],
                 "C":["E", "E"],
                 "C_direction":["x", "x"],
-                "C_indStart":[["_gb_nx2_p_gr_nx2_m1_", 1, 0], ["_gb_nx2_p_gr_nx2_", 1, 0]],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_m1_", 0, 0], ["_gb_nx2_p_gr_nx2_", 0, 0]],
                 "A_stride":[2, 2, 1]
                 }
             },
@@ -25,12 +25,12 @@
                 "A":"E",
                 "neighborGrid":"grid_rr",
                 "A_direction":"x",
-                "A_indStart":[1, 2, "_gf_nz_"],
-                "A_indEnd":["_gf_nx_m2_", "_gf_ny_m1_", "_gf_nz_p1_"],
+                "A_indStart":[1, 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_m2_", "_gf_ny_p1_", "_gf_nz_p1_"],
                 "b":[0.75, 0.25],
                 "C":["E", "E"],
                 "C_direction":["x", "x"],
-                "C_indStart":[["_gb_nx2_p_gr_nx2_", 1, 0], ["_gb_nx2_p_gr_nx2_p1_", 1, 0]],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, 0], ["_gb_nx2_p_gr_nx2_p1_", 0, 0]],
                 "A_stride":[2, 2, 1]
                 }
             },
@@ -58,7 +58,7 @@
                 "neighborGrid":"grid_rr",
                 "A_direction":"y",
                 "A_indStart":[0, 2, "_gf_nz_"],
-                "A_indEnd":["_gf_nx_m1_", "_gf_ny_m1_", "_gf_nz_p1_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_m1_", "_gf_nz_p1_"],
                 "b":[0.25, 0.75],
                 "C":["E", "E"],
                 "C_direction":["y", "y"],
@@ -74,7 +74,7 @@
                 "neighborGrid":"grid_rr",
                 "A_direction":"y",
                 "A_indStart":[0, 1, "_gf_nz_"],
-                "A_indEnd":["_gf_nx_m1_", "_gf_ny_m2_", "_gf_nz_p1_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_m2_", "_gf_nz_p1_"],
                 "b":[0.75, 0.25],
                 "C":["E", "E"],
                 "C_direction":["y", "y"],
@@ -107,12 +107,12 @@
                 "A":"E",
                 "neighborGrid":"grid_rr",
                 "A_direction":"x",
-                "A_indStart":["_gf_nx_m1_", 2, "_gf_nz_"],
-                "A_indEnd":["_gf_nx_", "_gf_ny_m1_", "_gf_nz_p1_"],
+                "A_indStart":["_gf_nx_m1_", 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_", "_gf_ny_p1_", "_gf_nz_p1_"],
                 "b":[1.0],
                 "C":["E"],
                 "C_direction":["x"],
-                "C_indStart":[["_grr_nx_m1_", 1, 0]],
+                "C_indStart":[["_grr_nx_m1_", 0, 0]],
                 "A_stride":[2, 2, 1]
                 }
             },
@@ -124,7 +124,7 @@
                 "neighborGrid":"grid_rr",
                 "A_direction":"y",
                 "A_indStart":[0, 0, "_gf_nz_"],
-                "A_indEnd":["_gf_nx_m1_", 1, "_gf_nz_p1_"],
+                "A_indEnd":["_gf_nx_p1_", 1, "_gf_nz_p1_"],
                 "b":[1.0],
                 "C":["E"],
                 "C_direction":["y"],
@@ -140,7 +140,7 @@
                 "neighborGrid":"grid_rr",
                 "A_direction":"y",
                 "A_indStart":[0, "_gf_ny_m1_", "_gf_nz_"],
-                "A_indEnd":["_gf_nx_m1_", "_gf_ny_", "_gf_nz_p1_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_", "_gf_nz_p1_"],
                 "b":[1.0],
                 "C":["E"],
                 "C_direction":["y"],
@@ -150,8 +150,184 @@
             }
         ],
         "right_up_down":[
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ex_2_1_z1x1_e_Ex_r_IP0",
+                "A":"E",
+                "neighborGrid":"grid_rr",
+                "A_direction":"x",
+                "A_indStart":["_gf_nx_m1_", 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_", "_gf_ny_p1_", "_gf_nz_p1_"],
+                "b":[1.0],
+                "C":["E"],
+                "C_direction":["x"],
+                "C_indStart":[["_grr_nx_m1_", 0, 0]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_0_z1y0_e_Ey_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_rr",
+                "A_direction":"y",
+                "A_indStart":[0, 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", 1, "_gf_nz_p1_"],
+                "b":[0.75],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, 0]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A+=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_0_z1y0_pe_Ey_d_IP1",
+                "A":"E",
+                "neighborGrid":"grid_dd",
+                "A_direction":"y",
+                "A_indStart":[0, 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", 1, "_gf_nz_p1_"],
+                "b":[0.25],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", "_gdd_ny_m1_", "_gll_nz_p_gf_nz2_"]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_1_z1y1_e_Ey_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_rr",
+                "A_direction":"y",
+                "A_indStart":[0, "_gf_ny_m1_", "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_", "_gf_nz_p1_"],
+                "b":[0.75],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", "_grr_ny_m1_", 0]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A+=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_1_z1y1_pe_Ey_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_uu",
+                "A_direction":"y",
+                "A_indStart":[0, "_gf_ny_m1_", "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_", "_gf_nz_p1_"],
+                "b":[0.25],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, "_gll_nz_p_gf_nz2_"]],
+                "A_stride":[2, 2, 1]
+                }
+            }
         ],
         "right_up_down_front":[
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ex_2_1_z1x1_e_Ex_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_rr",
+                "A_direction":"x",
+                "A_indStart":["_gf_nx_m1_", 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_", "_gf_ny_p1_", "_gf_nz_p1_"],
+                "b":[0.75],
+                "C":["E"],
+                "C_direction":["x"],
+                "C_indStart":[["_grr_nx_m1_", 0, 0]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A+=sumbC::NB",
+            "parameters":{
+                "name":"Ex_2_1_z1x1_pe_Ex_f_IP1",
+                "A":"E",
+                "neighborGrid":"grid_ff",
+                "A_direction":"x",
+                "A_indStart":["_gf_nx_m1_", 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_", "_gf_ny_p1_", "_gf_nz_p1_"],
+                "b":[0.25],
+                "C":["E"],
+                "C_direction":["x"],
+                "C_indStart":[[0, "_gdd_ny_", "_gll_nz_p_gf_nz2_"]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_0_z1y0_e_Ey_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_rr",
+                "A_direction":"y",
+                "A_indStart":[0, 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", 1, "_gf_nz_p1_"],
+                "b":[0.75],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, 0]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A+=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_0_z1y0_pe_Ey_d_IP1",
+                "A":"E",
+                "neighborGrid":"grid_dd",
+                "A_direction":"y",
+                "A_indStart":[0, 0, "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", 1, "_gf_nz_p1_"],
+                "b":[0.25],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", "_gdd_ny_m1_", "_gll_nz_p_gf_nz2_"]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_1_z1y1_e_Ey_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_rr",
+                "A_direction":"y",
+                "A_indStart":[0, "_gf_ny_m1_", "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_", "_gf_nz_p1_"],
+                "b":[0.75],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", "_grr_ny_m1_", 0]],
+                "A_stride":[2, 2, 1]
+                }
+            },
+            {
+            "type":"A+=sumbC::NB",
+            "parameters":{
+                "name":"Ey_2_1_z1y1_pe_Ey_r_IP1",
+                "A":"E",
+                "neighborGrid":"grid_uu",
+                "A_direction":"y",
+                "A_indStart":[0, "_gf_ny_m1_", "_gf_nz_"],
+                "A_indEnd":["_gf_nx_p1_", "_gf_ny_", "_gf_nz_p1_"],
+                "b":[0.25],
+                "C":["E"],
+                "C_direction":["y"],
+                "C_indStart":[["_gb_nx2_p_gr_nx2_", 0, "_gll_nz_p_gf_nz2_"]],
+                "A_stride":[2, 2, 1]
+                }
+            }
         ]   
     },
     "updateSequences":
@@ -170,8 +346,19 @@
                 "Ey_2_1_z1y1_e_Ey_r_IP0"
             ],
             "right_up_down":[
+                "Ex_2_1_z1x1_e_Ex_r_IP0",
+                "Ey_2_0_z1y0_e_Ey_r_IP1",
+                "Ey_2_0_z1y0_pe_Ey_d_IP1",
+                "Ey_2_1_z1y1_e_Ey_r_IP1",
+                "Ey_2_1_z1y1_pe_Ey_r_IP1"
             ],
             "right_up_down_front":[
+                "Ex_2_1_z1x1_e_Ex_r_IP1",
+                "Ex_2_1_z1x1_pe_Ex_f_IP1",
+                "Ey_2_0_z1y0_e_Ey_r_IP1",
+                "Ey_2_0_z1y0_pe_Ey_d_IP1",
+                "Ey_2_1_z1y1_e_Ey_r_IP1",
+                "Ey_2_1_z1y1_pe_Ey_r_IP1"
             ]   
         }
         },

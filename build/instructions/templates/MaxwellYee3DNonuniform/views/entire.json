@@ -1,0 +1,14 @@
+{
+"gridViews":[
+    {
+    "type":"entire",
+    "parameters":{
+        "name":"_file_name_",
+        "array":"_array_",
+        "direction":"_direction_",
+        "saveRate":"_save_rate_"
+        }
+    }
+]
+}
+

@@ -163,7 +163,26 @@ class GridBlock:
                     viewData = json.loads(file_content)
                     
                     grid["gridViews"].extend(viewData["gridViews"])
+
+            elif viewParams["type"] == "entire":
+                json_file = open('views/entire.json')
+                file_content = json_file.read()
+                json_file.close()
             
+                saveRate = viewParams['saveRate']
+                arrayName = viewParams['arrayName']
+                fileName = viewParams['fileName']
+                direction = viewParams["direction"]     ## "x", "y", "z"
+            
+                replaceDic = {'"_save_rate_"': str(saveRate),
+                              '"_array_"': '"' + arrayName + '"', 
+                              '"_direction_"': '"' + direction + '"', 
+                              '"_file_name_"': '"' + fileName + '"'
+                              }
+                file_content = MultiWordReplace(file_content, replaceDic)
+                viewData = json.loads(file_content)
+                
+                grid["gridViews"].extend(viewData["gridViews"])
         
     def SetupGrid(self):
         ##---------------------------------------------- grid_m ------------------------------------------------
@@ -515,6 +534,7 @@ class GridBlock:
                         if updateSequence["name"] == seqName:
                             updateSequence["sequence"].extend(gb_updateSequence["sequence"])
 
+            ##---- grid_m
             return grids
 
         ##---------------------------------------------- grid_r ------------------------------------------------
@@ -697,7 +717,7 @@ class GridBlock:
                             if updateSequence["name"] == seqName:
                                 updateSequence["sequence"].extend(grr_updateSequence["sequence"])
 
-                ##---- return grid
+                ##---- grid_r
                 return grids
 
             ##---------------------------------------------- grid_rr ------------------------------------------------
@@ -758,6 +778,129 @@ class GridBlock:
                 self.SetupViews(grid_rr)
                     
                 connections = self.connections
+
+                #------------------- uu ------------------
+                #-----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer2/grid_rr/connections/grid_uu.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    guuBlock = connections["u"]
+                    gll_nz = self.nz
+                    gf_nz = connections['lf'].nz
+                    guu_replaceDic = {
+                        '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                        '"grid_uu"': '"' + guuBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, guu_replaceDic)
+                    grid_uu_conn = json.loads(file_content)
+                    
+                    grid_rr["updateInstructions"].extend(grid_uu_conn["updateInstructions"])
+                    
+                    for guu_updateSequence in grid_uu_conn["updateSequences"]:
+                        seqName = guu_updateSequence["name"]
+                        for updateSequence in grid_rr["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(guu_updateSequence["sequence"])
+
+                #------------------- dd ------------------
+                #-----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer2/grid_rr/connections/grid_dd.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    gddBlock = connections["d"]
+                    gdd_ny = gddBlock.ny
+                    gll_nz = self.nz
+                    gf_nz = connections['lf'].nz
+                    gdd_replaceDic = {
+                        '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                        '"_gdd_ny_"': str(gdd_ny),
+                        '"grid_dd"': '"' + gddBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, gdd_replaceDic)
+                    grid_dd_conn = json.loads(file_content)
+                    
+                    grid_rr["updateInstructions"].extend(grid_dd_conn["updateInstructions"])
+                    
+                    for gdd_updateSequence in grid_dd_conn["updateSequences"]:
+                        seqName = gdd_updateSequence["name"]
+                        for updateSequence in grid_rr["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gdd_updateSequence["sequence"])
+
+
+                #------------------- ff ------------------
+                #-----------------------------------------
+                if "f" in connections:
+                    json_file = open('layer1/grid_r/connections/grid_f.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _nz = connections['lf'].nz
+                    _gr_nx, _gr_ny, _gr_nz = self.nx, self.ny, self.nz
+                    _gl_nz = self.nz
+                    _gd_ny = connections["d"].ny
+                    gff_replaceDic = {
+                        '"_gr_nx_"': str(_gr_nx),
+                        '"_gr_nx_p1_"': str(_gr_nx + 1),
+                        '"_gr_ny_"': str(_gr_ny),
+                        '"_gr_ny_p1_"': str(_gr_ny + 1),
+                        '"_gr_nz_"': str(_gr_nz),
+                        '"_gd_ny_"': str(_gd_ny),
+                        '"_gl_nz_p_nz2_"': str(_gl_nz + int(_nz/2)),
+                        '"grid_f"': '"' + connections["f"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gff_replaceDic)
+                    grid_ff_conn = json.loads(file_content)
+                    
+                    grid_rr["updateInstructions"].extend(grid_ff_conn["updateInstructions"])
+                    
+                    for gff_updateSequence in grid_ff_conn["updateSequences"]:
+                        seqName = gff_updateSequence["name"]
+                        for updateSequence in grid_rr["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gff_updateSequence["sequence"])
+
+
+                #------------------- bb ------------------
+                #-----------------------------------------
+                if "b" in connections:
+                    json_file = open('layer1/grid_r/connections/grid_b.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gr_ny, _gr_nz = self.ny, self.nz
+                    _gb_nx = connections["b"].nx
+                    _gl_nz = self.nz
+                    _gd_ny = connections["d"].ny
+                    _nz = connections["lb"].nz
+                    gbb_replaceDic = {
+                        '"_gr_ny_"': str(_gr_ny), '"_gr_ny_p1_"': str(_gr_ny + 1),
+                        '"_gr_nz_"': str(_gr_nz),
+                        '"_gd_ny_"': str(_gd_ny),
+                        '"_gb_nx_"': str(_gb_nx),
+                        '"_gl_nz_p_nz2_"': str(_gl_nz + int(_nz/2)),
+                        '"grid_b"': '"' + connections["b"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gbb_replaceDic)
+                    grid_bb_conn = json.loads(file_content)
+                    
+                    grid_rr["updateInstructions"].extend(grid_bb_conn["updateInstructions"])
+                    
+                    for gbb_updateSequence in grid_bb_conn["updateSequences"]:
+                        seqName = gbb_updateSequence["name"]
+                        for updateSequence in grid_rr["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gbb_updateSequence["sequence"])
 
                 ##---- grid_rr
                 return grids
@@ -906,7 +1049,7 @@ class GridBlock:
                                 updateSequence["sequence"].extend(gb_updateSequence["sequence"])
 
                 #------------------- ll ------------------
-                #----------------------------------------
+                #-----------------------------------------
                 if "l" in connections:
                     json_file = open('layer1/grid_l/connections/grid_ll.json')
                     file_content = json_file.read()
@@ -993,6 +1136,114 @@ class GridBlock:
                 self.SetupViews(grid_ll)
 
                 connections = self.connections
+
+                #------------------- uu ------------------
+                #-----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer2/grid_ll/connections/grid_uu.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    guuBlock = connections["u"]
+                    guu_replaceDic = {
+                        '"grid_uu"': '"' + guuBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, guu_replaceDic)
+                    grid_uu_conn = json.loads(file_content)
+                    
+                    grid_ll["updateInstructions"].extend(grid_uu_conn["updateInstructions"])
+                    
+                    for guu_updateSequence in grid_uu_conn["updateSequences"]:
+                        seqName = guu_updateSequence["name"]
+                        for updateSequence in grid_ll["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(guu_updateSequence["sequence"])
+
+                #------------------- dd ------------------
+                #-----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer2/grid_ll/connections/grid_dd.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    gddBlock = connections["d"]
+                    gdd_ny = gddBlock.ny
+                    gdd_replaceDic = {
+                        '"_gdd_ny_"': str(gdd_ny),
+                        '"grid_dd"': '"' + gddBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, gdd_replaceDic)
+                    grid_dd_conn = json.loads(file_content)
+                    
+                    grid_ll["updateInstructions"].extend(grid_dd_conn["updateInstructions"])
+                    
+                    for gdd_updateSequence in grid_dd_conn["updateSequences"]:
+                        seqName = gdd_updateSequence["name"]
+                        for updateSequence in grid_ll["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gdd_updateSequence["sequence"])
+
+
+                #------------------- ff ------------------
+                #-----------------------------------------
+                if "f" in connections:
+                    json_file = open('layer1/grid_l/connections/grid_f.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gl_nx, _gl_ny, _gl_nz = self.nx, self.ny, self.nz
+                    _gd_ny = connections["d"].ny
+                    gff_replaceDic = {
+                        '"_gl_nx_"': str(_gl_nx), '"_gl_nx_p1_"': str(_gl_nx + 1),
+                        '"_gl_ny_"': str(_gl_ny), '"_gl_ny_p1_"': str(_gl_ny + 1),
+                        '"_gl_nz_"': str(_gl_nz), '"_gl_nz_p1_"': str(_gl_nz + 1),
+                        '"_gd_ny_"': str(_gd_ny),
+                        '"grid_f"': '"' + connections["f"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gff_replaceDic)
+                    grid_ff_conn = json.loads(file_content)
+                    
+                    grid_ll["updateInstructions"].extend(grid_ff_conn["updateInstructions"])
+                    
+                    for gff_updateSequence in grid_ff_conn["updateSequences"]:
+                        seqName = gff_updateSequence["name"]
+                        for updateSequence in grid_ll["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gff_updateSequence["sequence"])
+
+                #------------------- bb ------------------
+                #-----------------------------------------
+                if "b" in connections:
+                    json_file = open('layer1/grid_l/connections/grid_b.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gl_nx, _gl_ny, _gl_nz = self.nx, self.ny, self.nz
+                    _gb_nx = connections["b"].nx
+                    _gd_ny = connections["d"].ny
+                    gbb_replaceDic = {
+                        '"_gl_ny_"': str(_gl_ny), '"_gl_ny_p1_"': str(_gl_ny + 1),
+                        '"_gl_nz_"': str(_gl_nz), '"_gl_nz_p1_"': str(_gl_nz + 1),
+                        '"_gd_ny_"': str(_gd_ny),
+                        '"_gb_nx_"': str(_gb_nx),
+                        '"grid_b"': '"' + connections["b"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gbb_replaceDic)
+                    grid_bb_conn = json.loads(file_content)
+                    
+                    grid_ll["updateInstructions"].extend(grid_bb_conn["updateInstructions"])
+                    
+                    for gbb_updateSequence in grid_bb_conn["updateSequences"]:
+                        seqName = gbb_updateSequence["name"]
+                        for updateSequence in grid_ll["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gbb_updateSequence["sequence"])
 
                 ##--- grid_ll --
                 return grids
@@ -1102,7 +1353,7 @@ class GridBlock:
                                 updateSequence["sequence"].extend(gb_updateSequence["sequence"])
 
                 #------------------- rr ------------------
-                #----------------------------------------
+                #-----------------------------------------
                 if "r" in connections:
                     json_file = open('layer1/grid_u/connections/grid_rr.json')
                     file_content = json_file.read()
@@ -1126,6 +1377,16 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, grr_replaceDic)
                     grid_rr_conn = json.loads(file_content)
+
+                    if 'u' in connections:
+                        gll_nz = connections['l'].nz
+                        gf_nz = connections['f'].nz
+                        g_ud_replaceDic = {
+                            '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                            '"grid_uu"': '"' + connections['u'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_rr_conn = json.loads(file_content)
                     
                     grid_u["updateInstructions"].extend(grid_rr_conn["updateInstructions"]["general"])
                     if "u" not in connections:
@@ -1145,7 +1406,7 @@ class GridBlock:
                                     updateSequence["sequence"].extend(grr_updateSequence["sequence"]["right_up"])                                
 
                 #------------------- ll ------------------
-                #----------------------------------------
+                #-----------------------------------------
                 if "l" in connections:
                     json_file = open('layer1/grid_u/connections/grid_ll.json')
                     file_content = json_file.read()
@@ -1170,6 +1431,13 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, gll_replaceDic)
                     grid_ll_conn = json.loads(file_content)
+
+                    if 'u' in connections:
+                        g_ud_replaceDic = {
+                            '"grid_uu"': '"' + connections['u'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_ll_conn = json.loads(file_content)
                     
                     grid_u["updateInstructions"].extend(grid_ll_conn["updateInstructions"]["general"])
                     if "u" not in connections:
@@ -1187,7 +1455,160 @@ class GridBlock:
                                 else:
                                     updateSequence["sequence"].extend(gll_updateSequence["sequence"]["left_up"])                                
                 
-                ##------         
+                #------------------- uu ------------------
+                #----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer1/grid_u/connections/grid_uu.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    guuBlock = connections["u"]
+                    gll_nz = connections['l'].nz
+                    gb_nx = connections['b'].nx
+                    guu_replaceDic = {
+                        '"_gu_nx_m1_"': str(gu_nx - 1),
+                        '"_gll_nz_"': str(gll_nz), '"_gll_nz_m1_"': str(gll_nz - 1), '"_gll_nz_p1_"': str(gll_nz + 1), 
+                        '"_gb_nx2_"': str(int(gb_nx/2)), '"_gb_nx2_m1_"': str(int(gb_nx/2) - 1), '"_gb_nx2_p1_"': str(int(gb_nx/2) + 1), 
+                        '"grid_uu"': '"' + guuBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, guu_replaceDic)
+                    grid_uu_conn = json.loads(file_content)
+
+                    grid_u["updateInstructions"].extend(grid_uu_conn["updateInstructions"])
+                    
+                    for guu_updateSequence in grid_uu_conn["updateSequences"]:
+                        seqName = guu_updateSequence["name"]
+                        for updateSequence in grid_u["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(guu_updateSequence["sequence"])
+
+                ##------ grid_u        
+                return grids
+
+            ##---------------------------------------------- grid_uu ------------------------------------------------
+            ##-------------------------------------------------------------------------------------------------------
+            elif self.blockLevel >= 2:
+                json_file = open('layer2/grid_uu/grid_uu.json')
+                file_content = json_file.read()
+                json_file.close()
+                
+                guu_nx, guu_ny, guu_nz = self.nx, self.ny, self.nz
+                guu_r0, guu_r1 = self.r0, self.r1
+                guu_dt, guu_dx, guu_dy, guu_dz = self.dt, self.dx, self.dy, self.dz 
+                assert "dc" in self.connections
+                assert "dl" in self.connections
+                assert "dr" in self.connections
+                assert "df" in self.connections
+                assert "db" in self.connections
+                assert self.connections["dc"].blockLevel == self.blockLevel - 1
+                assert self.connections["df"].blockLevel == self.blockLevel - 1
+                assert self.connections["db"].blockLevel == self.blockLevel - 1
+                assert self.connections["dl"].blockLevel == self.blockLevel
+                assert self.connections["dr"].blockLevel == self.blockLevel
+        
+                gll_ny, gll_nz = self.connections["dl"].ny, self.connections["dl"].nz
+                grr_ny = self.connections["dr"].ny
+                gf_ny, gf_nz = self.connections["df"].ny, self.connections["df"].nz 
+                gb_nx, gb_ny = self.connections["db"].nx, self.connections["db"].ny
+                gu_nx, gu_ny = self.connections["dc"].nx, self.connections["dc"].ny
+                replaceDic = {'"_guu_nx_"': str(guu_nx), '"_guu_ny_"': str(guu_ny), '"_guu_nz_"': str(guu_nz),
+                    '"_guu_nx_p1_"': str(guu_nx + 1), '"_guu_ny_p1_"': str(guu_ny + 1), '"_guu_nz_p1_"': str(guu_nz + 1),
+                    '"_guu_nz_m1_"': str(guu_nz - 1),
+                    '"_guu_x0_"': str(guu_r0[0]), '"_guu_y0_"': str(guu_r0[1]), '"_guu_z0_"': str(guu_r0[2]),
+                    '"_guu_x1_"': str(guu_r1[0]), '"_guu_y1_"': str(guu_r1[1]), '"_guu_z1_"': str(guu_r1[2]),
+                    '"_guu_dt_dx_"': str(guu_dt/guu_dx), '"_guu_dt_dy_"': str(guu_dt/guu_dy), '"_guu_dt_dz_"': str(guu_dt/guu_dz),
+                    '"_guu_m_dt_dx_"': str(-guu_dt/guu_dx), '"_guu_m_dt_dy_"': str(-guu_dt/guu_dy), '"_guu_m_dt_dz_"': str(-guu_dt/guu_dz),
+                    '"_guu_dt_dx_2_"': str(guu_dt/guu_dx/2.0), '"_guu_dt_dy_2_"': str(guu_dt/guu_dy/2.0), '"_guu_dt_dz_2_"': str(guu_dt/guu_dz/2.0),
+                    '"_guu_m_dt_dx_2_"': str(-guu_dt/guu_dx/2.0), '"_guu_m_dt_dy_2_"': str(-guu_dt/guu_dy/2.0), 
+                    '"_guu_m_dt_dz_2_"': str(-guu_dt/guu_dz/2.0),
+                    '"_guu_dt_"': str(guu_dt),
+                    '"_gll_nz_"': str(gll_nz), '"_gll_nz_p1_"': str(gll_nz + 1),
+                    '"_gll_ny_m1_"': str(gll_ny - 1),
+                    '"_grr_ny_m1_"': str(grr_ny - 1),
+                    '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                    '"_gb_nx2_"': str(int(gb_nx/2)),
+                    '"_gb_ny_m1_"': str(gb_ny - 1), '"_gb_ny_m2_"': str(gb_ny - 2),
+                    '"_gb_nx2_p_gu_nx2_"': str(int(gb_nx/2) + int(gu_nx/2)),
+                    '"_gu_ny_m1_"': str(gu_ny - 1), '"_gu_ny_m2_"': str(gu_ny - 2),
+                    '"_gf_ny_m1_"': str(gf_ny - 1), '"_gf_ny_m2_"': str(gf_ny - 2),
+                    '"grid_uu"': '"' + self.name + '"',
+                    '"grid_u"':  '"' + self.connections["dc"].name + '"',
+                    '"grid_rr"': '"' + self.connections["dr"].name + '"',
+                    '"grid_ll"': '"' + self.connections["dl"].name + '"',
+                    '"grid_f"':  '"' + self.connections["df"].name + '"',
+                    '"grid_b"':  '"' + self.connections["db"].name + '"'
+                    }
+                file_content = MultiWordReplace(file_content, replaceDic)
+                grids = json.loads(file_content)
+                grid_uu = grids[self.name]
+                
+                self.SetupSources(grid_uu)
+                self.SetupViews(grid_uu)
+                
+                connections = self.connections
+
+                #------------------- ff ------------------
+                #-----------------------------------------
+                if "f" in connections:
+                    json_file = open('layer1/grid_u/connections/grid_f.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gu_nx, _gu_ny, _gu_nz = self.nx, self.ny, self.nz
+                    _gd_ny = self.ny
+                    _ny = connections["df"].ny      ## f: to take the entire lower level middle cube's ny
+                    gff_replaceDic = {
+                        '"_gu_nx_"': str(_gu_nx), '"_gu_nx_p1_"': str(_gu_nx + 1), 
+                        '"_gu_ny_"': str(_gu_ny), '"_gu_ny_p1_"': str(_gu_ny + 1), 
+                        '"_gu_nz_"': str(_gu_nz), '"_gu_nz_p1_"': str(_gu_nz + 1), 
+                        '"_gd_ny_p_ny2_"': str(_gd_ny + int(_ny/2)),
+                        '"grid_f"': '"' + connections["f"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gff_replaceDic)
+                    grid_ff_conn = json.loads(file_content)
+                    
+                    grid_uu["updateInstructions"].extend(grid_ff_conn["updateInstructions"])
+                    
+                    for gff_updateSequence in grid_ff_conn["updateSequences"]:
+                        seqName = gff_updateSequence["name"]
+                        for updateSequence in grid_uu["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gff_updateSequence["sequence"])
+
+                #------------------- bb ------------------
+                #-----------------------------------------
+                if "b" in connections:
+                    json_file = open('layer1/grid_u/connections/grid_b.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gu_nx, _gu_ny, _gu_nz = self.nx, self.ny, self.nz
+                    _gb_nx = connections["b"].nx
+                    _gd_ny = self.ny
+                    _ny = connections["df"].ny      ## f: to take the entire lower level middle cube's ny
+                    gbb_replaceDic = {
+                        '"_gu_ny_"': str(_gu_ny), '"_gu_ny_p1_"': str(_gu_ny + 1), 
+                        '"_gu_nz_"': str(_gu_nz), '"_gu_nz_p1_"': str(_gu_nz + 1), 
+                        '"_gb_nx_"': str(_gb_nx),
+                        '"_gd_ny_p_ny2_"': str(_gd_ny + int(_ny/2)),
+                        '"grid_b"': '"' + connections["b"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gbb_replaceDic)
+                    grid_bb_conn = json.loads(file_content)
+                    
+                    grid_uu["updateInstructions"].extend(grid_bb_conn["updateInstructions"])
+                    
+                    for gbb_updateSequence in grid_bb_conn["updateSequences"]:
+                        seqName = gbb_updateSequence["name"]
+                        for updateSequence in grid_uu["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gbb_updateSequence["sequence"])
+
+                ##------ grid_uu        
                 return grids
         
         ##---------------------------------------------- grid_d ------------------------------------------------
@@ -1305,6 +1726,18 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, grr_replaceDic)
                     grid_rr_conn = json.loads(file_content)
                     
+                    if 'd' in connections:
+                        gdd_ny = connections['d'].ny
+                        gll_nz = connections['l'].nz
+                        gf_nz = connections['f'].nz
+                        g_ud_replaceDic = {
+                            '"_gdd_ny_m1_"': str(gdd_ny - 1),
+                            '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                            '"grid_dd"': '"' + connections['d'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_rr_conn = json.loads(file_content)
+
                     grid_d["updateInstructions"].extend(grid_rr_conn["updateInstructions"]["general"])
                     if "d" not in connections:
                         grid_d["updateInstructions"].extend(grid_rr_conn["updateInstructions"]["right_only"])
@@ -1343,6 +1776,15 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, gll_replaceDic)
                     grid_ll_conn = json.loads(file_content)
+
+                    if 'd' in connections:
+                        gdd_ny = connections['d'].ny
+                        g_ud_replaceDic = {
+                            '"_gdd_ny_m1_"': str(gdd_ny - 1),
+                            '"grid_dd"': '"' + connections['d'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_ll_conn = json.loads(file_content)
                     
                     grid_d["updateInstructions"].extend(grid_ll_conn["updateInstructions"]["general"])
                     if "d" not in connections:
@@ -1360,13 +1802,156 @@ class GridBlock:
                                 else:
                                     updateSequence["sequence"].extend(gll_updateSequence["sequence"]["left_down"])                                
                 
-                ##------         
+                #------------------- dd ------------------
+                #-----------------------------------------
+                if "d" in connections:
+                    json_file = open('layer1/grid_d/connections/grid_dd.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    gddBlock = connections["d"]
+                    gdd_ny = gddBlock.ny
+                    gll_nz = connections['l'].nz
+                    gb_nx =  connections['b'].nx
+                    gdd_replaceDic = {
+                        '"_gd_nx_m1_"': str(gd_nx - 1),
+                        '"_gll_nz_"': str(gll_nz), '"_gll_nz_m1_"': str(gll_nz - 1), '"_gll_nz_p1_"': str(gll_nz + 1),
+                        '"_gb_nx2_"': str(int(gb_nx/2)), '"_gb_nx2_p1_"': str(int(gb_nx/2) + 1), '"_gb_nx2_m1_"': str(int(gb_nx/2) - 1),
+                        '"_gdd_ny_"': str(gdd_ny),
+                        '"grid_dd"': '"' + gddBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, gdd_replaceDic)
+                    grid_dd_conn = json.loads(file_content)
+                                        
+                    grid_d["updateInstructions"].extend(grid_dd_conn["updateInstructions"])
+                    
+                    for gdd_updateSequence in grid_dd_conn["updateSequences"]:
+                        seqName = gdd_updateSequence["name"]
+                        for updateSequence in grid_d["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gdd_updateSequence["sequence"])
+
+                ##------ grid_d
+                return grids
+
+            ##---------------------------------------------- grid_dd ------------------------------------------------
+            ##-------------------------------------------------------------------------------------------------------
+            if self.blockLevel >= 2:
+                json_file = open('layer2/grid_dd/grid_dd.json')
+                file_content = json_file.read()
+                json_file.close()
+                
+                gdd_nx, gdd_ny, gdd_nz = self.nx, self.ny, self.nz
+                gdd_r0, gdd_r1 = self.r0, self.r1
+                gdd_dt, gdd_dx, gdd_dy, gdd_dz = self.dt, self.dx, self.dy, self.dz 
+                assert "uc" in self.connections
+                assert "ul" in self.connections
+                assert "ur" in self.connections
+                assert "uf" in self.connections
+                assert "ub" in self.connections
+                assert self.connections["uc"].blockLevel == self.blockLevel - 1
+                assert self.connections["uf"].blockLevel == self.blockLevel - 1
+                assert self.connections["ub"].blockLevel == self.blockLevel - 1
+                assert self.connections["ul"].blockLevel == self.blockLevel
+                assert self.connections["ur"].blockLevel == self.blockLevel
+                
+                gll_nz = self.connections['ul'].nz
+                gf_nz =  self.connections['uf'].nz
+                gb_nx =  self.connections['ub'].nx
+                gd_nx =  self.connections['uc'].nx
+                replaceDic = {'"_gdd_nx_"': str(gdd_nx), '"_gdd_ny_"': str(gdd_ny), '"_gdd_nz_"': str(gdd_nz),
+                    '"_gdd_nx_p1_"': str(gdd_nx + 1), '"_gdd_ny_p1_"': str(gdd_ny + 1), '"_gdd_nz_p1_"': str(gdd_nz + 1),
+                    '"_gdd_ny_m1_"': str(gdd_ny - 1), '"_gdd_nz_m1_"': str(gdd_nz - 1),
+                    '"_gdd_x0_"': str(gdd_r0[0]), '"_gdd_y0_"': str(gdd_r0[1]), '"_gdd_z0_"': str(gdd_r0[2]),
+                    '"_gdd_x1_"': str(gdd_r1[0]), '"_gdd_y1_"': str(gdd_r1[1]), '"_gdd_z1_"': str(gdd_r1[2]),
+                    '"_gdd_dt_dx_"': str(gdd_dt/gdd_dx), '"_gdd_dt_dy_"': str(gdd_dt/gdd_dy), '"_gdd_dt_dz_"': str(gdd_dt/gdd_dz),
+                    '"_gdd_m_dt_dx_"': str(-gdd_dt/gdd_dx), '"_gdd_m_dt_dy_"': str(-gdd_dt/gdd_dy), '"_gdd_m_dt_dz_"': str(-gdd_dt/gdd_dz),
+                    '"_gdd_dt_dx_2_"': str(gdd_dt/gdd_dx/2.0), '"_gdd_dt_dy_2_"': str(gdd_dt/gdd_dy/2.0), '"_gdd_dt_dz_2_"': str(gdd_dt/gdd_dz/2.0),
+                    '"_gdd_m_dt_dx_2_"': str(-gdd_dt/gdd_dx/2.0), '"_gdd_m_dt_dy_2_"': str(-gdd_dt/gdd_dy/2.0), 
+                    '"_gdd_m_dt_dz_2_"': str(-gdd_dt/gdd_dz/2.0),
+                    '"_gdd_dt_"': str(gdd_dt),
+                    '"_gll_nz_"': str(gll_nz), '"_gll_nz_p1_"': str(gll_nz + 1),
+                    '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                    '"_gb_nx2_"': str(int(gb_nx/2)),
+                    '"_gb_nx2_p_gd_nx2_"': str(int(gb_nx/2) + int(gd_nx/2)),
+                    '"grid_dd"': '"' + self.name + '"',
+                    '"grid_d"':  '"' + self.connections["uc"].name + '"',
+                    '"grid_rr"': '"' + self.connections["ur"].name + '"',
+                    '"grid_ll"': '"' + self.connections["ul"].name + '"',
+                    '"grid_f"':  '"' + self.connections["uf"].name + '"',
+                    '"grid_b"':  '"' + self.connections["ub"].name + '"'
+                    }
+                file_content = MultiWordReplace(file_content, replaceDic)
+                grids = json.loads(file_content)
+                grid_dd = grids[self.name]
+                
+                self.SetupSources(grid_dd)
+                self.SetupViews(grid_dd)
+
+                connections = self.connections
+
+                #------------------- ff ------------------
+                #----------------------------------------
+                if "f" in connections:
+                    json_file = open('layer1/grid_d/connections/grid_f.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gd_nx, _gd_ny, _gd_nz = self.nx, self.ny, self.nz
+                    gff_replaceDic = {
+                        '"_gd_nx_"': str(_gd_nx), '"_gd_nx_p1_"': str(_gd_nx + 1),
+                        '"_gd_ny_"': str(_gd_ny), '"_gd_ny_p1_"': str(_gd_ny + 1),
+                        '"_gd_nz_"': str(_gd_nz), '"_gd_nz_p1_"': str(_gd_nz + 1),
+                        '"grid_f"': '"' + connections["f"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gff_replaceDic)
+                    grid_ff_conn = json.loads(file_content)
+                    
+                    grid_dd["updateInstructions"].extend(grid_ff_conn["updateInstructions"])
+                    
+                    for gff_updateSequence in grid_ff_conn["updateSequences"]:
+                        seqName = gff_updateSequence["name"]
+                        for updateSequence in grid_dd["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gff_updateSequence["sequence"])
+
+                #------------------- bb ------------------
+                #----------------------------------------
+                if "b" in connections:
+                    json_file = open('layer1/grid_d/connections/grid_b.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    _gd_nx, _gd_ny, _gd_nz = self.nx, self.ny, self.nz
+                    _gb_nx = connections["b"].nx
+                    gbb_replaceDic = {
+                        '"_gd_ny_"': str(_gd_ny), '"_gd_ny_p1_"': str(_gd_ny + 1),
+                        '"_gd_nz_"': str(_gd_nz), '"_gd_nz_p1_"': str(_gd_nz + 1),
+                        '"_gb_nx_"': str(_gb_nx),
+                        '"grid_b"': '"' + connections["b"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gbb_replaceDic)
+                    grid_bb_conn = json.loads(file_content)
+                    
+                    grid_dd["updateInstructions"].extend(grid_bb_conn["updateInstructions"])
+                    
+                    for gbb_updateSequence in grid_bb_conn["updateSequences"]:
+                        seqName = gbb_updateSequence["name"]
+                        for updateSequence in grid_dd["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gbb_updateSequence["sequence"])
+
+                ##------ grid_dd
                 return grids
         
         ##---------------------------------------------- grid_f ------------------------------------------------
         ##------------------------------------------------------------------------------------------------------
         elif self.blockPosition == "f":
-            if self.blockLevel == 1:
+            if self.blockLevel >= 1:
                 json_file = open('layer1/grid_f/grid_f.json')
                 file_content = json_file.read()
                 json_file.close()
@@ -1450,6 +2035,27 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, grr_replaceDic)
                     grid_rr_conn = json.loads(file_content)
+
+                    if 'u' in connections or 'd' in connections:
+                        gdd_ny = connections['d'].ny
+                        gll_nz = connections['l'].nz
+                        gf_nz = self.nz
+                        g_ud_replaceDic = {
+                            '"_gdd_ny_m1_"': str(gdd_ny - 1),
+                            '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                            '"grid_uu"': '"' + connections['u'].name + '"',
+                            '"grid_dd"': '"' + connections['d'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_rr_conn = json.loads(file_content)
+                    if 'f' in connections:
+                        gdd_ny = connections['d'].ny
+                        g_ff_replaceDic = {
+                            '"_gdd_ny_"': str(gdd_ny), 
+                            '"grid_ff"': '"' + connections['f'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ff_replaceDic)
+                        grid_rr_conn = json.loads(file_content)
                     
                     grid_f["updateInstructions"].extend(grid_rr_conn["updateInstructions"]["general"])
                     if "u" not in connections and "d" not in connections:
@@ -1497,6 +2103,26 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, gll_replaceDic)
                     grid_ll_conn = json.loads(file_content)
+
+                    if 'u' in connections or 'd' in connections:
+                        gdd_ny = connections['d'].ny
+                        gf_nx = self.nx
+                        g_ud_replaceDic = {
+                            '"_gf_nx_m1_"': str(gf_nx - 1),
+                            '"_gdd_ny_m1_"': str(gdd_ny - 1),
+                            '"grid_uu"': '"' + connections['u'].name + '"',
+                            '"grid_dd"': '"' + connections['d'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_ll_conn = json.loads(file_content)
+                    if 'f' in connections:
+                        gdd_ny = connections['d'].ny
+                        g_ff_replaceDic = {
+                            '"_gdd_ny_"': str(gdd_ny), 
+                            '"grid_ff"': '"' + connections['f'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ff_replaceDic)
+                        grid_ll_conn = json.loads(file_content)
                     
                     grid_f["updateInstructions"].extend(grid_ll_conn["updateInstructions"]["general"])
                     if "u" not in connections and "d" not in connections:
@@ -1518,13 +2144,153 @@ class GridBlock:
                                 else:
                                     updateSequence["sequence"].extend(gll_updateSequence["sequence"]["left_up_down_front"])
                 
-                ##----
+                #------------------- uu ------------------
+                #----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer1/grid_f/connections/grid_uu.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    guuBlock = connections["u"]
+                    guu_nx = guuBlock.nx
+                    gll_nz = connections["l"].nz
+                    gb_nx = self.nx
+                    gr_nx = connections['br'].nx
+                    gf_nx = self.nx
+                    guu_replaceDic = {
+                        '"_gf_nx_m1_"': str(gf_nx - 1), '"_gf_nx_m2_"': str(gf_nx - 2),
+                        '"_gll_nz_"': str(gll_nz), '"_gll_nz_m1_"': str(gll_nz - 1), '"_gll_nz_p1_"': str(gll_nz + 1), 
+                        '"_guu_nx_m1_"': str(guu_nx - 1), 
+                        '"_gb_nx2_p_gr_nx2_"': str(int(gb_nx/2) + int(gr_nx/2)), 
+                        '"_gb_nx2_p_gr_nx2_m1_"': str(int(gb_nx/2) + int(gr_nx/2) - 1), 
+                        '"_gb_nx2_p_gr_nx2_p1_"': str(int(gb_nx/2) + int(gr_nx/2) + 1), 
+                        '"grid_uu"': '"' + guuBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, guu_replaceDic)
+                    grid_uu_conn = json.loads(file_content)
+                    
+                    if 'f' in connections:
+                        gdd_ny = connections['d'].ny
+                        gf_ny = self.ny
+                        g_ff_replaceDic = {
+                            '"_gdd_ny_p_gf_ny2_"': str(gdd_ny + int(gf_ny/2)),
+                            '"grid_ff"': '"' + connections['f'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ff_replaceDic)
+                        grid_uu_conn = json.loads(file_content)
+                    
+                    grid_f["updateInstructions"].extend(grid_uu_conn["updateInstructions"]["general"])
+                    if "f" not in connections:
+                        grid_f["updateInstructions"].extend(grid_uu_conn["updateInstructions"]["up_only"])
+                    else:
+                        grid_f["updateInstructions"].extend(grid_uu_conn["updateInstructions"]["up_front"])
+                    
+                    for guu_updateSequence in grid_uu_conn["updateSequences"]:
+                        seqName = guu_updateSequence["name"]
+                        for updateSequence in grid_f["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(guu_updateSequence["sequence"]["general"])
+                                if "f" not in connections:
+                                    updateSequence["sequence"].extend(guu_updateSequence["sequence"]["up_only"])
+                                else:
+                                    updateSequence["sequence"].extend(guu_updateSequence["sequence"]["up_front"])
+
+                #------------------- dd ------------------
+                #----------------------------------------
+                if "d" in connections:
+                    json_file = open('layer1/grid_f/connections/grid_dd.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    gddBlock = connections["d"]
+                    gdd_nx, gdd_ny = gddBlock.nx, gddBlock.ny
+                    gll_nz = connections["l"].nz
+                    gb_nx = self.nx
+                    gr_nx = connections['br'].nx
+                    gf_nx = self.nx
+                    gdd_replaceDic = {
+                        '"_gf_nx_m1_"': str(gf_nx - 1), '"_gf_nx_m2_"': str(gf_nx - 2),
+                        '"_gll_nz_"': str(gll_nz), '"_gll_nz_m1_"': str(gll_nz - 1), '"_gll_nz_p1_"': str(gll_nz + 1), 
+                        '"_gdd_ny_"': str(gdd_ny), 
+                        '"_gdd_nx_m1_"': str(gdd_nx - 1), 
+                        '"_gb_nx2_p_gr_nx2_"': str(int(gb_nx/2) + int(gr_nx/2)), 
+                        '"_gb_nx2_p_gr_nx2_m1_"': str(int(gb_nx/2) + int(gr_nx/2) - 1), 
+                        '"_gb_nx2_p_gr_nx2_p1_"': str(int(gb_nx/2) + int(gr_nx/2) + 1), 
+                        '"grid_dd"': '"' + gddBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, gdd_replaceDic)
+                    grid_dd_conn = json.loads(file_content)
+
+                    if 'f' in connections:
+                        g_ff_replaceDic = {
+                            '"grid_ff"': '"' + connections['f'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ff_replaceDic)
+                        grid_dd_conn = json.loads(file_content)
+                    
+                    grid_f["updateInstructions"].extend(grid_dd_conn["updateInstructions"]["general"])
+                    if "f" not in connections:
+                        grid_f["updateInstructions"].extend(grid_dd_conn["updateInstructions"]["down_only"])
+                    else:
+                        grid_f["updateInstructions"].extend(grid_dd_conn["updateInstructions"]["down_front"])
+                    
+                    for gdd_updateSequence in grid_dd_conn["updateSequences"]:
+                        seqName = gdd_updateSequence["name"]
+                        for updateSequence in grid_f["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gdd_updateSequence["sequence"]["general"])
+                                if "f" not in connections:
+                                    updateSequence["sequence"].extend(gdd_updateSequence["sequence"]["down_only"])
+                                else:
+                                    updateSequence["sequence"].extend(gdd_updateSequence["sequence"]["down_front"])
+
+
+                #------------------- ff ------------------
+                #-----------------------------------------
+                if "f" in connections:
+                    json_file = open('layer0/grid_m/connections/grid_f.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    ## comment: grid_m's nx and grid_f's nx are not the same, but nx = gf_nx does the job when it is 
+                    ## supposed to select the last elements of grid_f along x
+                    _nx, _ny, _nz = self.nx, self.ny, self.nz
+                    _gd_ny = connections["d"].ny
+                    _gl_nz = connections["l"].nz
+                    gff_replaceDic = {
+                        '"_nx_"': str(_nx), '"_nx_p1_"': str(_nx + 1),  
+                        '"_ny_"': str(_ny), '"_ny_p1_"': str(_ny + 1),  
+                        '"_nz_"': str(_nz), '"_nz_p1_"': str(_nz + 1),  
+                        '"_nx_m1_"': str(_nx - 1), '"_nx_m2_"': str(_nx - 2),
+                        '"_ny_m1_"': str(_ny - 1),
+                        '"_nz_m1_"': str(_nz - 1), '"_nz_m2_"': str(_nz - 2), 
+                        '"_gl_nz_"': str(_gl_nz), '"_gl_nz_m1_"': str(_gl_nz - 1), '"_gl_nz_p1_"': str(_gl_nz + 1), 
+                        '"_gd_ny_"': str(_gd_ny), '"_gd_ny_p1_"': str(_gd_ny + 1), '"_gd_ny_m1_"': str(_gd_ny - 1),
+                        '"grid_f"': '"' + connections["f"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gff_replaceDic)
+                    grid_ff_conn = json.loads(file_content)
+                    
+                    grid_f["updateInstructions"].extend(grid_ff_conn["updateInstructions"])                
+                                                
+                    for gff_updateSequence in grid_ff_conn["updateSequences"]:
+                        seqName = gff_updateSequence["name"]
+                        for updateSequence in grid_f["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gff_updateSequence["sequence"])
+
+                ##---- grid_f
                 return grids
 
         ##---------------------------------------------- grid_b ------------------------------------------------
         ##------------------------------------------------------------------------------------------------------
         elif self.blockPosition == "b":
-            if self.blockLevel == 1:
+            if self.blockLevel >= 1:
                 json_file = open('layer1/grid_b/grid_b.json')
                 file_content = json_file.read()
                 json_file.close()
@@ -1576,7 +2342,7 @@ class GridBlock:
                 connections = self.connections
 
                 #------------------- rr ------------------
-                #----------------------------------------
+                #-----------------------------------------
                 if "r" in connections:
                     json_file = open('layer1/grid_b/connections/grid_rr.json')
                     file_content = json_file.read()
@@ -1593,6 +2359,29 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, grr_replaceDic)
                     grid_rr_conn = json.loads(file_content)
+                    
+                    if 'u' in connections or 'd' in connections:
+                        gdd_ny = connections['d'].ny
+                        gll_nz = connections['l'].nz
+                        gf_nz = self.nz
+                        g_ud_replaceDic = {
+                            '"_gdd_ny_m1_"': str(gdd_ny - 1),
+                            '"_gll_nz_p_gf_nz2_"': str(gll_nz + int(gf_nz/2)),
+                            '"grid_uu"': '"' + connections['u'].name + '"',
+                            '"grid_dd"': '"' + connections['d'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_rr_conn = json.loads(file_content)
+                    if 'b' in connections:
+                        gbb_nx = connections['b'].nx
+                        gdd_ny = connections['d'].ny
+                        g_bb_replaceDic = {
+                            '"_gbb_nx_m1_"': str(gbb_nx - 1),
+                            '"_gdd_ny_"': str(gdd_ny),
+                            '"grid_bb"': '"' + connections['b'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_bb_replaceDic)
+                        grid_rr_conn = json.loads(file_content)
                     
                     grid_b["updateInstructions"].extend(grid_rr_conn["updateInstructions"]["general"])
                     if "u" not in connections and "d" not in connections:
@@ -1634,6 +2423,26 @@ class GridBlock:
                     file_content = MultiWordReplace(file_content, replaceDic)
                     file_content = MultiWordReplace(file_content, gll_replaceDic)
                     grid_ll_conn = json.loads(file_content)
+
+                    if 'u' in connections or 'd' in connections:
+                        gdd_ny = connections['d'].ny
+                        g_ud_replaceDic = {
+                            '"_gdd_ny_m1_"': str(gdd_ny - 1),
+                            '"grid_uu"': '"' + connections['u'].name + '"',
+                            '"grid_dd"': '"' + connections['d'].name + '"',
+                        }
+                        file_content = MultiWordReplace(file_content, g_ud_replaceDic)
+                        grid_ll_conn = json.loads(file_content)
+                    if 'b' in connections:
+                        gbb_nx = connections['b'].nx
+                        gdd_ny = connections['d'].ny
+                        g_bb_replaceDic = {
+                            '"_gbb_nx_m1_"': str(gbb_nx - 1), 
+                            '"_gdd_ny_"': str(gdd_ny),
+                            '"grid_bb"': '"' + connections['b'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_bb_replaceDic)
+                        grid_ll_conn = json.loads(file_content)
                     
                     grid_b["updateInstructions"].extend(grid_ll_conn["updateInstructions"]["general"])
                     if "u" not in connections and "d" not in connections:
@@ -1654,8 +2463,138 @@ class GridBlock:
                                     updateSequence["sequence"].extend(gll_updateSequence["sequence"]["left_up_down"])
                                 else:
                                     updateSequence["sequence"].extend(gll_updateSequence["sequence"]["left_up_down_back"])
-                
-                ##----
+
+                #------------------- uu ------------------
+                #-----------------------------------------
+                if "u" in connections:
+                    json_file = open('layer1/grid_b/connections/grid_uu.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    guuBlock = connections["u"]
+                    gll_nz = connections['l'].nz
+                    guu_replaceDic = {
+                        '"_gll_nz_"': str(gll_nz), '"_gll_nz_m1_"': str(gll_nz - 1), '"_gll_nz_p1_"': str(gll_nz + 1), 
+                        '"grid_uu"': '"' + guuBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, guu_replaceDic)
+                    grid_uu_conn = json.loads(file_content)
+                    
+                    if 'b' in connections:
+                        gbb_nx = connections['b'].nx
+                        gdd_ny = connections['d'].ny
+                        gf_ny = self.ny
+                        g_bb_replaceDic = {
+                            '"_gbb_nx_m1_"': str(gbb_nx - 1), 
+                            '"_gdd_ny_p_gf_ny2_"': str(gdd_ny + int(gf_ny/2)),
+                            '"grid_bb"': '"' + connections['b'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_bb_replaceDic)
+                        grid_uu_conn = json.loads(file_content)
+                    
+                    
+                    grid_b["updateInstructions"].extend(grid_uu_conn["updateInstructions"]["general"])
+                    if "b" not in connections:
+                        grid_b["updateInstructions"].extend(grid_uu_conn["updateInstructions"]["up_only"])
+                    else:
+                        grid_b["updateInstructions"].extend(grid_uu_conn["updateInstructions"]["up_back"])
+                    
+                    
+                    for guu_updateSequence in grid_uu_conn["updateSequences"]:
+                        seqName = guu_updateSequence["name"]
+                        for updateSequence in grid_b["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(guu_updateSequence["sequence"]["general"])
+                                if "b" not in connections:
+                                    updateSequence["sequence"].extend(guu_updateSequence["sequence"]["up_only"])
+                                else:
+                                    updateSequence["sequence"].extend(guu_updateSequence["sequence"]["up_back"])
+
+                #------------------- dd ------------------
+                #-----------------------------------------
+                if "d" in connections:
+                    json_file = open('layer1/grid_b/connections/grid_dd.json')
+                    file_content = json_file.read()
+                    json_file.close()
+                    
+                    gddBlock = connections["d"]
+                    gdd_ny = gddBlock.ny
+                    gll_nz = connections['l'].nz
+                    gdd_replaceDic = {
+                        '"_gll_nz_"': str(gll_nz), '"_gll_nz_m1_"': str(gll_nz - 1), '"_gll_nz_p1_"': str(gll_nz + 1), 
+                        '"_gdd_ny_"': str(gdd_ny),
+                        '"grid_dd"': '"' + gddBlock.name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, replaceDic)
+                    file_content = MultiWordReplace(file_content, gdd_replaceDic)
+                    grid_dd_conn = json.loads(file_content)
+                    
+                    if 'b' in connections:
+                        gbb_nx = connections['b'].nx
+                        g_bb_replaceDic = {
+                            '"_gbb_nx_m1_"': str(gbb_nx - 1), 
+                            '"grid_bb"': '"' + connections['b'].name + '"'
+                        }
+                        file_content = MultiWordReplace(file_content, g_bb_replaceDic)
+                        grid_dd_conn = json.loads(file_content)
+                    
+                    
+                    grid_b["updateInstructions"].extend(grid_dd_conn["updateInstructions"]["general"])
+                    if "b" not in connections:
+                        grid_b["updateInstructions"].extend(grid_dd_conn["updateInstructions"]["down_only"])
+                    else:
+                        grid_b["updateInstructions"].extend(grid_dd_conn["updateInstructions"]["down_back"])
+                    
+                    for gdd_updateSequence in grid_dd_conn["updateSequences"]:
+                        seqName = gdd_updateSequence["name"]
+                        for updateSequence in grid_b["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gdd_updateSequence["sequence"]["general"])
+                                if "b" not in connections:
+                                    updateSequence["sequence"].extend(gdd_updateSequence["sequence"]["down_only"])
+                                else:
+                                    updateSequence["sequence"].extend(gdd_updateSequence["sequence"]["down_back"])
+
+
+                #------------------- bb ------------------
+                #-----------------------------------------
+                if "b" in connections:
+                    json_file = open('layer0/grid_m/connections/grid_b.json')
+                    file_content = json_file.read()
+                    json_file.close()
+
+                    ## comment: grid_m's nx and grid_b's nx are not the same
+                    _ny, _nz = self.ny, self.nz                    
+                    _gb_nx = connections["b"].nx
+                    _gd_ny = connections["d"].ny
+                    _gl_nz = connections["l"].nz
+                    gbb_replaceDic = {
+                        '"_ny_"': str(_ny), '"_ny_p1_"': str(_ny + 1),  
+                        '"_nz_"': str(_nz), '"_nz_p1_"': str(_nz + 1),  
+                        '"_ny_m1_"': str(_ny - 1),
+                        '"_nz_m1_"': str(_nz - 1), '"_nz_m2_"': str(_nz - 2), 
+                        '"_gl_nz_"': str(_gl_nz), '"_gl_nz_m1_"': str(_gl_nz - 1), '"_gl_nz_p1_"': str(_gl_nz + 1), 
+                        '"_gd_ny_"': str(_gd_ny), '"_gd_ny_p1_"': str(_gd_ny + 1), '"_gd_ny_m1_"': str(_gd_ny - 1),
+                        '"_gb_nx_"': str(_gb_nx),
+                        '"grid_b"': '"' + connections["b"].name + '"'
+                        }
+                    
+                    file_content = MultiWordReplace(file_content, gbb_replaceDic)
+                    grid_bb_conn = json.loads(file_content)
+
+                    grid_b["updateInstructions"].extend(grid_bb_conn["updateInstructions"])                
+                                                
+                    for gbb_updateSequence in grid_bb_conn["updateSequences"]:
+                        seqName = gbb_updateSequence["name"]
+                        for updateSequence in grid_b["updateSequences"]:
+                            if updateSequence["name"] == seqName:
+                                updateSequence["sequence"].extend(gbb_updateSequence["sequence"])
+
+
+                ##---- grid_b
                 return grids
 
         
