@@ -439,3 +439,21 @@ void WedgeGeometry::GetBoundingBox2D(FPNumber x_cut,
     upperRightCorner[1] = y1;
     upperRightCorner[2] = z1;
 }
+
+void WedgeGeometry::SubdevideSurface(
+        FPNumber maxElementSurfaceArea,      // with maximum length maxArcLength
+        std::vector<std::array<FPNumber, 3>>& centerPoints,     // output: the point at the middle of each patch
+        std::vector<std::array<FPNumber, 3>>& normalVecs,   // output: normal unit vector pointing outwards
+        std::vector<FPNumber>& elementSurfaceAreas,      // output: patch area
+        std::vector<std::vector<std::array<FPNumber, 3>>>* surfaceSubdivisionPoints,    // if defined, provides
+        std::size_t numSubSubdivisionPoints     // this many equaly spaced points on each subsection
+        ) {
+    assert(false);
+}
+
+void WedgeGeometry::GetBoundingBox(
+        std::array<FPNumber, 3>& lowerLeftCorner,
+        std::array<FPNumber, 3>& upperRightCorner
+        ) {
+    assert(false);
+}

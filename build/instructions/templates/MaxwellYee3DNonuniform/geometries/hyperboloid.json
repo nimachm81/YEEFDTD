@@ -1,0 +1,15 @@
+{
+"geometries":[
+        {
+        "type":"hyperboloid",
+        "parameters":{
+            "name":"_name_",
+            "coneAngle":"_coneAngle_",
+            "tipRadius":"_tipRadius_",
+            "height":"_height_",
+            "apexPosition":["_apex_x_", "_apex_y_", "_apex_z_"]
+            }
+        }
+    ]
+}
+

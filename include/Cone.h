@@ -1,5 +1,6 @@
-#ifndef FDTD_WEDGEGEOMETRY_H_
-#define FDTD_WEDGEGEOMETRY_H_
+
+#ifndef FDTD_CONE_H_
+#define FDTD_CONE_H_
 
 #include <vector>
 #include <array>
@@ -8,11 +9,11 @@
 #include "NumberTypes.h"
 #include "Geometry.h"
 
-class WedgeGeometry : public Geometry {
+class Cone : public Geometry {
     public:
-    virtual ~WedgeGeometry() { };
-    void SetWedgeAngle(const FPNumber angle);
-    void SetWedgeAngleInDegrees(const FPNumber angle_degree);
+    virtual ~Cone() { };
+    void SetConeAngle(const FPNumber angle);
+    void SetConeAngleInDegrees(const FPNumber angle_degree);
     void SetTipRadius(const FPNumber radius);
     void SetApexToBaseDistance(const FPNumber apexToBaseDistance);
     void SetApexPosition(const std::array<FPNumber, 3> pos);
@@ -56,16 +57,14 @@ class WedgeGeometry : public Geometry {
 
 
     private:
-    int uniformAxis = 0;    // along this axis there is no varation (0:x, 1:y, 2:z)
-    int wedgeDirection = 1;      // the wedge is pointing along this direction (0:x, 1:y, 2:z)
-    FPNumber wedgeAngle = M_PI/4.0;         // wedge angle in radians (full angle)
+    FPNumber coneAngle = M_PI/4.0;         // wedge angle in radians (full angle)
     FPNumber apexRadius = 0.0;   // for tipRadius > 0 the tip is rounded
-    std::array<FPNumber, 3> tipPosition;    // position of the unrounded tip
+    std::array<FPNumber, 3> tipPosition;    // position of the unrounded sharp tip
     std::array<FPNumber, 3> apexPosition;    // position of the rounded tip (apex)
     FPNumber apexToBaseDistance = 1.0;
-    FPNumber wedgeHeight = 1.0;         // distance from unrounded tip to base of the wedge
+    FPNumber sharpConeHeight = 1.0;         // distance from unrounded tip to base of the cone
     bool closeBase = true;
 
 };
 
-#endif // FDTD_WEDGEGEOMETRY_H_
+#endif // FDTD_CONE_H_

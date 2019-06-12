@@ -230,6 +230,21 @@ class YeeGrid3D {
             const bool closeBase = true
             );
 
+    void AddConeGeometry(const std::string name,
+            const FPNumber coneAngle,
+            const FPNumber tipRadius,
+            const FPNumber apexToBaseDistance,
+            const std::array<FPNumber, 3> apexPosition,
+            const bool closeBase = true
+            );
+
+    void AddHyperboloidGeometry(const std::string name,
+            const FPNumber coneAngle,
+            const FPNumber tipRadius,
+            const FPNumber height,
+            const std::array<FPNumber, 3> apexPosition
+            );
+
     void AddGaussianPlaneWaveVectorField(const std::string name,
             std::array<FPNumber, 3> propagationDirection,
             FPNumber velocity,

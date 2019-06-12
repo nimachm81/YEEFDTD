@@ -1,0 +1,191 @@
+
+{
+    "partialGridArrays":[
+            {"name":"pecMask", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
+        ],
+
+    "girdArrayManipulators":[
+        {
+        "type":"BivalueGridArrayManipulator",
+        "parameters":{
+            "name":"pecMask_x_Updater",
+            "array":"pecMask",
+            "direction":"x",
+            "geometry":"_geometry_name_",
+            "valueInside":1.0,
+            "valueOutside":0.0
+            }
+        },
+        {
+        "type":"BivalueGridArrayManipulator",
+        "parameters":{
+            "name":"pecMask_y_Updater",
+            "array":"pecMask",
+            "direction":"y",
+            "geometry":"_geometry_name_",
+            "valueInside":1.0,
+            "valueOutside":0.0
+            }
+        },
+        {
+        "type":"BivalueGridArrayManipulator",
+        "parameters":{
+            "name":"pecMask_z_Updater",
+            "array":"pecMask",
+            "direction":"z",
+            "geometry":"_geometry_name_",
+            "valueInside":1.0,
+            "valueOutside":0.0
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Ex_me_pecMaskxEx",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_", "_indy1_p1_", "_indz1_p1_"],
+            "b":[-1.0],
+            "B":["pecMask"],
+            "B_direction":["x"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[["_indx0_", "_indy0_", "_indz0_"]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Ey_me_pecMaskyEy",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_p1_", "_indy1_", "_indz1_p1_"],
+            "b":[-1.0],
+            "B":["pecMask"],
+            "B_direction":["y"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_indx0_", "_indy0_", "_indz0_"]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Ez_me_pecMaskzEz",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_p1_", "_indy1_p1_", "_indz1_"],
+            "b":[-1.0],
+            "B":["pecMask"],
+            "B_direction":["z"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["E"],
+            "C_direction":["z"],
+            "C_indStart":[["_indx0_", "_indy0_", "_indz0_"]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Ex_me_pecMaskxEincx",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_", "_indy1_p1_", "_indz1_p1_"],
+            "b":[-1.0],
+            "B":["pecMask"],
+            "B_direction":["x"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["Einc"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Ey_me_pecMaskyEincy",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_p1_", "_indy1_", "_indz1_p1_"],
+            "b":[-1.0],
+            "B":["pecMask"],
+            "B_direction":["y"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["Einc"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Ez_me_pecMaskzEincz",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_p1_", "_indy1_p1_", "_indz1_"],
+            "b":[-1.0],
+            "B":["pecMask"],
+            "B_direction":["z"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["Einc"],
+            "C_direction":["z"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"pecMask_x_update",
+            "girdArrayManipulator":"pecMask_x_Updater"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"pecMask_y_update",
+            "girdArrayManipulator":"pecMask_y_Updater"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"pecMask_z_update",
+            "girdArrayManipulator":"pecMask_z_Updater"
+            }
+        }
+    ],
+    "updateSequences":[ 
+        {
+            "name":"reset_time", 
+            "sequence":[
+                "pecMask_x_update",
+                "pecMask_y_update",
+                "pecMask_z_update"                
+            ]
+        },
+        {
+            "name":"update_E_inside", 
+            "sequence":[
+                "Ex_me_pecMaskxEx",
+                "Ey_me_pecMaskyEy",
+                "Ez_me_pecMaskzEz",
+                "Ex_me_pecMaskxEincx",
+                "Ey_me_pecMaskyEincy",
+                "Ez_me_pecMaskzEincz"
+            ]
+        }
+    ]
+
+}
+
+

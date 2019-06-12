@@ -137,6 +137,31 @@ void ParamFileTranslator::SetSingleGridGeometries(YeeGrid3D& yee,
                     geometryParams.Get3VecRealProperty("apexPosition"),
                     closeBase
                     );
+        } else if(std::get<0>(geometryNameAndParams) == "hyperboloid") {
+            ParameterExtractor geometryParams(std::get<1>(geometryNameAndParams));
+            yee.AddHyperboloidGeometry(
+                    geometryParams.GetStringProperty("name"),
+                    geometryParams.GetRealProperty("coneAngle"),
+                    geometryParams.GetRealProperty("tipRadius"),
+                    geometryParams.GetRealProperty("height"),
+                    geometryParams.Get3VecRealProperty("apexPosition")
+                    );
+        } else if(std::get<0>(geometryNameAndParams) == "cone") {
+            ParameterExtractor geometryParams(std::get<1>(geometryNameAndParams));
+            bool closeBase = true;
+            if(geometryParams.GetCount("closeBase") > 0) {
+                if(geometryParams.GetStringProperty("closeBase") == "no") {
+                    closeBase = false;
+                }
+            }
+            yee.AddConeGeometry(
+                    geometryParams.GetStringProperty("name"),
+                    geometryParams.GetRealProperty("coneAngle"),
+                    geometryParams.GetRealProperty("tipRadius"),
+                    geometryParams.GetRealProperty("height"),
+                    geometryParams.Get3VecRealProperty("apexPosition"),
+                    closeBase
+                    );
         } else {
             std::cout << "error: geometry name not recognized" << std::endl;
             assert(false);

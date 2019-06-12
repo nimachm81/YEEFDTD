@@ -33,6 +33,21 @@ class Geometry {
                                   std::array<FPNumber, 3>& lowerLeftCorner,
                                   std::array<FPNumber, 3>& upperRightCorner
                                   ) = 0;
+
+    virtual void SubdevideSurface(
+                            FPNumber maxElementSurfaceArea,      // with maximum length maxArcLength
+                            std::vector<std::array<FPNumber, 3>>& centerPoints,     // output: the point at the middle of each patch
+                            std::vector<std::array<FPNumber, 3>>& normalVecs,   // output: normal unit vector pointing outwards
+                            std::vector<FPNumber>& elementSurfaceAreas,      // output: patch area
+                            std::vector<std::vector<std::array<FPNumber, 3>>>* surfaceSubdivisionPoints = nullptr,    // if defined, provides
+                            std::size_t numSubSubdivisionPoints = 1     // this many equaly spaced points on each subsection
+                            ) = 0;
+
+    virtual void GetBoundingBox(
+                            std::array<FPNumber, 3>& lowerLeftCorner,
+                            std::array<FPNumber, 3>& upperRightCorner
+                            ) = 0;
+
 };
 
 #endif // FDTD_GEOMETRY_H_

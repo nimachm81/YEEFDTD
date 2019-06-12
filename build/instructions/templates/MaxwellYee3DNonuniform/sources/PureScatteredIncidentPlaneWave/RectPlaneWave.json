@@ -1,0 +1,42 @@
+{
+    "partialGridArrays":[
+        {"name":"Einc", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
+    ],
+    "girdArrayManipulators":[
+        {
+        "type":"RectPlaneWaveGridArrayManipulator",
+        "parameters":{
+            "name":"EyincUpdater",
+            "array":"Einc",
+            "direction":"_polarization_",
+            "propagationDirection":["_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_"],
+            "propagationVelocity":"_planewave_velocity_",
+            "amplitude":"_Einc_amp_",
+            "centerTime":"_planewave_t_center_",
+            "rectWidth":"_rect_width_",
+            "rectEdgeWidth":"_rect_edge_width_",
+            "frequency":"_planewave_freq_",
+            "phase":"_planewave_phase_",
+            "timeOffsetFraction":0.0
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"update_Ey_inc",
+            "girdArrayManipulator":"EyincUpdater"
+            }
+        }
+    ],
+    "updateSequences":[ 
+        {
+            "name":"update_E_inside", 
+            "sequence": [
+                "update_Ey_inc"
+            ]
+        }
+    ]
+}
+

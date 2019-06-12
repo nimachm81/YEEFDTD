@@ -20,6 +20,8 @@
 #include "BivalueGridArrayManipulator.h"
 #include "DataTruncationGridArrayManipulator.h"
 #include "WedgeGeometry.h"
+#include "Cone.h"
+#include "Hyperboloid.h"
 #include "ChargedParticleEmitter.h"
 #include "ManualChargedParticleEmitter.h"
 #include "GaussianPlaneWaveGridArrayManipulator.h"
@@ -1092,6 +1094,47 @@ void YeeGrid3D::AddWedgeGeometry(const std::string name,
 
     geometries[name] = geometry;
 }
+
+void YeeGrid3D::AddConeGeometry(const std::string name,
+            const FPNumber coneAngle,
+            const FPNumber tipRadius,
+            const FPNumber apexToBaseDistance,
+            const std::array<FPNumber, 3> apexPosition,
+            const bool closeBase
+            ) {
+    const auto& found = geometries.find(name);
+    assert(found == geometries.end()); // make sure name does not already exist.
+
+    std::shared_ptr<Cone> geometry(new Cone);
+
+    geometry->SetConeAngle(coneAngle);
+    geometry->SetTipRadius(tipRadius);
+    geometry->SetApexToBaseDistance(apexToBaseDistance);
+    geometry->SetApexPosition(apexPosition);
+    geometry->CloseBase(closeBase);
+
+    geometries[name] = geometry;
+}
+
+void YeeGrid3D::AddHyperboloidGeometry(const std::string name,
+        const FPNumber coneAngle,
+        const FPNumber tipRadius,
+        const FPNumber height,
+        const std::array<FPNumber, 3> apexPosition
+        ) {
+    const auto& found = geometries.find(name);
+    assert(found == geometries.end()); // make sure name does not already exist.
+
+    std::shared_ptr<Hyperboloid> geometry(new Hyperboloid);
+
+    geometry->SetConeAngle(coneAngle);
+    geometry->SetApexRadius(tipRadius);
+    geometry->SetHeight(height);
+    geometry->SetApexPosition(apexPosition);
+
+    geometries[name] = geometry;
+}
+
 
 void YeeGrid3D::AddGaussianPlaneWaveVectorField(const std::string name,
             std::array<FPNumber, 3> propagationDirection,
