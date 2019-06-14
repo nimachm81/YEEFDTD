@@ -1,0 +1,465 @@
+{
+"pml_l":{
+    "dimensions":{
+        "r0":["_pmll_x0_", "_pmll_y0_", "_pmll_z0_"],
+        "r1":["_pmll_x1_", "_pmll_y1_", "_pmll_z1_"],
+        "nCells":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_"],
+        "dt":"_pmll_dt_"
+    },
+    "entireGridArrays":[{"name":"E", "type":"EdgeE"}, {"name":"D", "type":"EdgeE"}, {"name":"dD", "type":"EdgeE"},
+                        {"name":"H", "type":"EdgeH"}, {"name":"B", "type":"EdgeH"}, {"name":"dB", "type":"EdgeH"}
+                        ],
+    "partialGridArrays":[{"name":"Hr", "type":"EdgeH", "indStart":[0, 0, 0], "nCells":["_pmll_nx_", "_pmll_ny_", 1]}],
+    "girdArrayManipulators":[
+    ],
+    "updateInstructions":[
+    
+        {
+        "comment":"------------------------------------ dD_z = curl H -----------------------------------------",
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"dDz_e_curl_H",
+            "A":"dD",
+            "A_direction":"z",
+            "A_indStart":[1, 1, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_dt_dy_", "_pmll_m_dt_dy_", "_pmll_m_dt_dx_", "_pmll_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[1, 0, 0], [1, 1, 0], [0, 1, 0], [1, 1, 0]]
+            }
+        },
+        {
+        "comment":"------------------------------------ E_(yx) += curl H ----------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 1],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_m_dt_dz_", "_pmll_dt_dz_", "_pmll_dt_dx_", "_pmll_m_dt_dx_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, 0], [1, 0, 1], [0, 0, 1], [1, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 1],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_dt_dz_", "_pmll_m_dt_dz_", "_pmll_m_dt_dy_", "_pmll_dt_dy_"],
+            "C":["H", "H", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, 0], [0, 1, 1], [0, 0, 1], [0, 1, 1]]
+            },
+        "comment":"---------------------------------------- end -------------------------------------------"
+        },
+        
+        {
+        "comment":"----------------------------------- E += curl H (at z1)-------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_z1_pe_curl_H",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, "_pmll_nz_"],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_m_dt_dz_", "_pmll_dt_dz_", "_pmll_dt_dx_", "_pmll_m_dt_dx_"],
+            "C":["H", "Hr", "H", "H"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[1, 0, "_pmll_nz_m1_"], [1, 0, 0], [0, 0, "_pmll_nz_"], [1, 0, "_pmll_nz_"]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_z1_pe_curl_H",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, "_pmll_nz_"],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_dt_dz_", "_pmll_m_dt_dz_", "_pmll_m_dt_dy_", "_pmll_dt_dy_"],
+            "C":["H", "Hr", "H", "H"],
+            "C_direction":["y", "y", "z", "z"],
+            "C_indStart":[[0, 1, "_pmll_nz_m1_"], [0, 1, 0], [0, 0, "_pmll_nz_"], [0, 1, "_pmll_nz_"]]
+            },
+        "comment":"------------------------------------------------------------------------------------------"
+        },
+
+        {
+        "comment":"---------------------------------- D_z += dDz --------------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Dz_pe_dDz",
+            "A":"D",
+            "A_direction":"z",
+            "A_indStart":[1, 1, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_dt_"],
+            "C":["dD"],
+            "C_direction":["z"],
+            "C_indStart":[[1, 1, 0]]
+            },
+        "comment":"-------------------------------------------------------------------------------------------"
+        },
+
+        {
+        "comment":"---------------------------------- E_z += dDz + sigEz Dz -------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ez_pe_dDz_p_sigEz_Dz",
+            "A":"E",
+            "A_direction":"z",
+            "A_indStart":[1, 1, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_dt_", "_pmll_dt_sigEz_"],
+            "C":["dD", "D"],
+            "C_direction":["z", "z"],
+            "C_indStart":[[1, 1, 0], [1, 1, 0]]
+            },
+        "comment":"--------------------------------------------------------------------------------------------"
+        },
+
+        {
+        "comment":"---------------------------------- E_(yx) -= sigEz E_(yx) ----------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_me_sigEz_Ey",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[1, 0, 1],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_m_dt_sigEz_"],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[[1, 0, 1]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ex_me_sigEz_Ex",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 1, 1],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_m_dt_sigEz_"],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 1, 1]]
+            },
+        "comment":"-----------------------------------------------------------------------------------------"
+        },
+        
+        {
+        "comment":"----------------------------------- dBz = -curl E ---------------------------------------",
+        "type":"A=sumbC",
+        "parameters":{
+            "name":"dBz_e_m_curl_E",
+            "A":"dB",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_m_dt_dy_", "_pmll_dt_dy_", "_pmll_dt_dx_", "_pmll_m_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "comment":"---------------------------------- H_(yx) -= curl E --------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hy_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_p1_", "_pmll_nz_"],
+            "b":["_pmll_dt_dz_", "_pmll_m_dt_dz_", "_pmll_m_dt_dx_", "_pmll_dt_dx_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["x", "x", "z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 1], [0, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_pe_m_curl_E",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_p1_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_dt_dy_", "_pmll_m_dt_dy_", "_pmll_m_dt_dz_", "_pmll_dt_dz_"],
+            "C":["E", "E", "E", "E"],
+            "C_direction":["z", "z", "y", "y"],
+            "C_indStart":[[0, 0, 0], [0, 1, 0], [0, 0, 0], [0, 0, 1]]
+            },
+        "comment":"---------------------------------------- end -------------------------------------------"
+        },
+        {
+        "comment":"---------------------------------- B_z += dBz --------------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Bz_pe_dBz",
+            "A":"B",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_dt_"],
+            "C":["dB"],
+            "C_direction":["z"],
+            "C_indStart":[[0, 0, 0]]
+            },
+        "comment":"-------------------------------------------------------------------------------------------"
+        },
+
+        {
+        "comment":"---------------------------------- H_z += dBz + sigHz Bz -------------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hz_pe_dBz_p_sigHz_Bz",
+            "A":"H",
+            "A_direction":"z",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_", "_pmll_nz_p1_"],
+            "b":["_pmll_dt_", "_pmll_dt_sigHz_"],
+            "C":["dB", "B"],
+            "C_direction":["z", "z"],
+            "C_indStart":[[0, 0, 0], [0, 0, 0]]
+            },
+        "comment":"--------------------------------------------------------------------------------------------"
+        },
+
+        {
+        "comment":"---------------------------------- H_(yx) -= sigHz H_(yx) -------------------------------",
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hy_me_sigHz_Hy",
+            "A":"H",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_p1_", "_pmll_nz_"],
+            "b":["_pmll_m_dt_sigHz_"],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_me_sigHz_Hx",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_pmll_nx_p1_", "_pmll_ny_", "_pmll_nz_"],
+            "b":["_pmll_m_dt_sigHz_"],
+            "C":["H"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            },
+        "comment":"---------------------------------------- end -------------------------------------------"
+        },
+
+        
+        {
+        "comment":"------------------------------------ H_r = H neighbor ----------------------------------",
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hry_e_Hy_out_gb",
+            "neighborGrid":"grid_b",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gb_nx_", "_pmll_ny_p1_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hry_e_Hy_out_gf",
+            "neighborGrid":"grid_f",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx_p_gr_nx_", 0, 0],
+            "A_indEnd":["_pmll_nx_", "_pmll_ny_p1_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hry_e_Hy_out_gd",
+            "neighborGrid":"grid_d",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx_", 0, 0],
+            "A_indEnd":["_gb_nx_p_gr_nx_", "_gd_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hry_e_Hy_out_gl",
+            "neighborGrid":"grid_l",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx_", "_gd_ny_", 0],
+            "A_indEnd":["_gb_nx_p_gr_nx_", "_gd_ny_p_gr_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hry_e_Hy_out_gu",
+            "neighborGrid":"grid_u",
+            "A":"Hr",
+            "A_direction":"y",
+            "A_indStart":["_gb_nx_", "_gd_ny_p_gr_ny_", 0],
+            "A_indEnd":["_gb_nx_p_gr_nx_", "_pmll_ny_p1_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_e_Hx_out_gb",
+            "neighborGrid":"grid_b",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gb_nx_", "_pmll_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_e_Hx_out_gd",
+            "neighborGrid":"grid_d",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx_", 0, 0],
+            "A_indEnd":["_gb_nx_p_gr_nx_", "_gd_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_e_Hx_out_gl",
+            "neighborGrid":"grid_l",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx_", "_gd_ny_", 0],
+            "A_indEnd":["_gb_nx_p_gr_nx_", "_gd_ny_p_gr_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_e_Hx_out_gu",
+            "neighborGrid":"grid_u",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx_", "_gd_ny_p_gr_ny_", 0],
+            "A_indEnd":["_gb_nx_p_gr_nx_", "_pmll_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Hrx_e_Hx_out_gf",
+            "neighborGrid":"grid_f",
+            "A":"Hr",
+            "A_direction":"x",
+            "A_indStart":["_gb_nx_p_gr_nx_", 0, 0],
+            "A_indEnd":["_pmll_nx_p1_", "_pmll_ny_", 1],
+            "b":[1.0],
+            "C":["H"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
+            },
+        "comment":"------------------------------------------ end ---------------------------------------------"
+        },
+        
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindSingleUpdate",
+            "operation":"+=",
+            "steps": 1
+            }
+        },
+        {
+        "type":"timeIndexUpdate",
+        "parameters":{
+            "name":"tindReset",
+            "operation":"=",
+            "steps": 0
+            }
+        }        
+    ],
+    "updateSequences":[{"name":"update_H", "sequence":["dBz_e_m_curl_E", "Bz_pe_dBz", "Hz_pe_dBz_p_sigHz_Bz", 
+                                                       "Hy_me_sigHz_Hy", "Hy_pe_m_curl_E",
+                                                       "Hx_me_sigHz_Hx", "Hx_pe_m_curl_E" 
+                                                      ]},
+                       {"name":"update_H_out", "sequence":[ 
+                                                       "Hry_e_Hy_out_gb", "Hry_e_Hy_out_gu", "Hry_e_Hy_out_gd", 
+                                                            "Hry_e_Hy_out_gl", "Hry_e_Hy_out_gf",
+                                                       "Hrx_e_Hx_out_gb", "Hrx_e_Hx_out_gu", "Hrx_e_Hx_out_gd", 
+                                                            "Hrx_e_Hx_out_gl", "Hrx_e_Hx_out_gf"
+                                                       ]},
+                       {"name":"update_E_inside", "sequence":["dDz_e_curl_H", "Dz_pe_dDz", "Ez_pe_dDz_p_sigEz_Dz",
+                                                              "Ey_me_sigEz_Ey", "Ey_pe_curl_H", "Ey_z1_pe_curl_H",
+                                                              "Ex_me_sigEz_Ex", "Ex_pe_curl_H", "Ex_z1_pe_curl_H"]},
+                       {"name":"set_E_Edge_out", "sequence":[
+                                                             ]},                      
+                       {"name":"update_E_edge_dt2", "sequence":[]},
+                       {"name":"interpolate_E_edge_IP1_02", "sequence":[
+                                                                      ]},
+                       {"name":"interpolate_E_edge_IP1_1", "sequence":[
+                                                                      ]},
+                       {"name":"update_time", "sequence":["tindSingleUpdate"]},
+                       {"name":"reset_time", "sequence":["tindReset"]}                                                                             
+                      ],
+    "gridViews":[]
+}
+}

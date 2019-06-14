@@ -196,6 +196,7 @@ YeeGridData3D& YeeGrid3D::GetGridElement(const std::string name) {
 }
 
 void YeeGrid3D::AddUpdateInstruction(const std::string name, FDInstructionCode instructionCode, void* params) {
+    //std::cout << name << std::endl;
     const auto& found = updateInstructions.find(name);
     assert(found == updateInstructions.end()); // make sure name does not already exist.
     updateInstructions[name] = std::pair<FDInstructionCode, void*>(instructionCode, params);

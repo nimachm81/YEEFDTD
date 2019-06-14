@@ -1,0 +1,45 @@
+{
+    "updateInstructions":
+    [
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ey_z0_e_Ey_out_pmll",
+            "neighborGrid":"pml_l",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gl_nx_p1_", "_gl_ny_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_gb_nx_", "_gd_ny_", "_gll_nz_"]]
+            }
+        },
+        {
+        "type":"A=sumbC::NB",
+        "parameters":{
+            "name":"Ex_z0_e_Ex_out_pmll",
+            "neighborGrid":"pml_l",
+            "A":"E",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_gl_nx_", "_gl_ny_p1_", 1],
+            "b":[1.0],
+            "C":["E"],
+            "C_direction":["x"],
+            "C_indStart":[["_gb_nx_", "_gd_ny_", "_gll_nz_"]]
+            }
+        }        
+    ],
+    "updateSequences":[
+        {
+            "name":"set_E_Edge_out", 
+            "sequence":
+            [
+                "Ey_z0_e_Ey_out_pmll",
+                "Ex_z0_e_Ex_out_pmll"
+            ]
+        }
+    ]
+}

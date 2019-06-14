@@ -9,9 +9,9 @@
 void test_run_fdtd_1d_nonuniform_collection_from_json() {
     FPNumber grid0_z0 = 0.0;
     FPNumber grid0_z1 = 10.0;
-    std::size_t grid0_nz = 400;
+    std::size_t grid0_nz = 800;
     FPNumber grid0_dz = (grid0_z1 - grid0_z0)/(FPNumber)(grid0_nz);
-    FPNumber stabilityFactor = 0.99;
+    FPNumber stabilityFactor = 0.9;
     FPNumber grid0_dt = grid0_dz*stabilityFactor;
     FPNumber grid0_z_j = 5.0;
     std::size_t grid0_indJ = std::round(std::real((grid0_z_j - grid0_z0)/grid0_dz));
