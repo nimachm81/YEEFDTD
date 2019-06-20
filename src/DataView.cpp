@@ -4,25 +4,26 @@
 
 #include "DataView.h"
 
-DataView::DataView() {
+DataView::DataView(std::size_t bufferSize) {
     fileIsOpen = false;
     viewFolder = "data";
     viewFileExtension = ".data";
     saveOnDiskFrequency = 1;
 
-    bufferSize = 1024*1024*200;
+    this->bufferSize = bufferSize;
+    std::cout << "buffer Size : " << bufferSize << std::endl;
 
     //buffer = std::make_unique<char>(bufferSize);
     //buffer = new char[bufferSize];
 }
 
-//DataView::~DataView() {
-//    CloseFile();
-//    if(buffer != nullptr) {
-//        delete[] buffer;
-//        buffer = nullptr;
-//    }
-//}
+DataView::~DataView() {
+    CloseFile();
+    if(buffer != nullptr) {
+        delete[] buffer;
+        buffer = nullptr;
+    }
+}
 
 void DataView::SetSaveOnDiskFrequency(const std::size_t eachNSamples) {
     saveOnDiskFrequency = eachNSamples;
@@ -71,6 +72,7 @@ void DataView::CloseFile() {
 
         if(buffer != nullptr) {
             delete[] buffer;
+            buffer = nullptr;
         } else {
             assert(false);
         }

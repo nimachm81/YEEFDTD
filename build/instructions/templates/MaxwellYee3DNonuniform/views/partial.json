@@ -8,7 +8,8 @@
         "direction":"_direction_",
         "indStart":["_indxSave_0_", "_indySave_0_", "_indzSave_0_"],
         "indEnd":["_indxSave_1_", "_indySave_1_", "_indzSave_1_"],
-        "saveRate":"_save_rate_"
+        "saveRate":"_save_rate_",
+        "bufferSize":"_buffer_size_"
         }
     }
 ]

@@ -13,6 +13,11 @@
 
 #include <cstdint>    // std::int64_t
 #include <complex>
+#include <typeinfo>
+
+//#include "myBlas/avx_blas.h"
+//#define __USE_AVX__ 1
+
 
 using FPNumber = float; // floating point number. could be float, double, complex<float>, complex<double>
 using BigIntNumber = std::int64_t;

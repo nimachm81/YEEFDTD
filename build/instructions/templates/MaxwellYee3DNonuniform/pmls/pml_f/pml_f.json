@@ -231,6 +231,34 @@
             "C":["dB", "B"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_pe_dBx_p_sigHx_Bx_x0_excluded",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[1, 0, 0],
+            "A_indEnd":["_pmlf_nx_p1_", "_pmlf_ny_", "_pmlf_nz_"],
+            "b":["_pmlf_dt_", "_pmlf_dt_sigHx_"],
+            "C":["dB", "B"],
+            "C_direction":["x", "x"],
+            "C_indStart":[[1, 0, 0], [1, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Hx_x0_pe_dBx",
+            "A":"H",
+            "A_direction":"x",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":[1, "_pmlf_ny_", "_pmlf_nz_"],
+            "b":["_pmlf_dt_"],
+            "C":["dB"],
+            "C_direction":["x"],
+            "C_indStart":[[0, 0, 0]]
             },
         "comment":"--------------------------------------------------------------------------------------------"
         },
@@ -317,7 +345,7 @@
             }
         }        
     ],
-    "updateSequences":[{"name":"update_H", "sequence":["dBx_e_m_curl_E", "Bx_pe_dBx", "Hx_pe_dBx_p_sigHx_Bx", 
+    "updateSequences":[{"name":"update_H", "sequence":["dBx_e_m_curl_E", "Bx_pe_dBx", "Hx_pe_dBx_p_sigHx_Bx",
                                                        "Hy_me_sigHx_Hy", "Hy_pe_m_curl_E",
                                                        "Hz_me_sigHx_Hz", "Hz_pe_m_curl_E" 
                                                       ]},

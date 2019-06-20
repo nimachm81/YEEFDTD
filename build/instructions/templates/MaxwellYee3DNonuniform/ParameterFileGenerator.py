@@ -29,6 +29,7 @@ class GridBlock:
         self.materials = []
         self.geometries = []
         self.gridType = gridType    # "normal" or "pml"
+        self.sig_e, self.sig_h = 1.0, 1.0
     
     def SetCorners(self, r0, r1):
         self.r0 = r0
@@ -408,10 +409,14 @@ class GridBlock:
                     saveRate = viewParams['saveRate']
                     arrayName = viewParams['arrayName']
                     fileName = viewParams['fileName']
+                    bufferSize = 1024*1024*10;
+                    if "bufferSize"in viewParams:
+                        bufferSize = viewParams["bufferSize"]
                     
                     replaceDic = {'"_indxSave_0_"': str(indx0), '"_indySave_0_"': str(indy0), '"_indzSave_0_"': str(indz0),
                                   '"_indxSave_1_"': str(indx1), '"_indySave_1_"': str(indy1), '"_indzSave_1_"': str(indz1),
                                   '"_save_rate_"': str(saveRate),
+                                  '"_buffer_size_"': str(bufferSize),
                                   '"_array_"': '"' + arrayName + '"', 
                                   '"_direction_"': '"' + direction + '"', 
                                   '"_file_name_"': '"' + fileName + '"'
@@ -1901,7 +1906,7 @@ class GridBlock:
                 assert "b" in self.connections
                 assert self.connections["b"].blockLevel == self.blockLevel
         
-                pf_sig_ex, pf_sig_hx = 2.0, 2.0
+                pf_sig_ex, pf_sig_hx = self.sig_e, self.sig_h
                 replaceDic = {
                     '"_pmlf_nx_"': str(pf_nx), '"_pmlf_ny_"': str(pf_ny), '"_pmlf_nz_"': str(pf_nz),
                     '"_pmlf_nx_p1_"': str(pf_nx + 1), '"_pmlf_ny_p1_"': str(pf_ny + 1), '"_pmlf_nz_p1_"': str(pf_nz + 1),
@@ -1938,7 +1943,7 @@ class GridBlock:
                 assert "f" in self.connections
                 assert self.connections["f"].blockLevel == self.blockLevel
         
-                pb_sig_ex, pb_sig_hx = 2.0, 2.0
+                pb_sig_ex, pb_sig_hx = self.sig_e, self.sig_h
                 replaceDic = {
                     '"_pmlb_nx_"': str(pb_nx), '"_pmlb_ny_"': str(pb_ny), '"_pmlb_nz_"': str(pb_nz),
                     '"_pmlb_nx_p1_"': str(pb_nx + 1), '"_pmlb_ny_p1_"': str(pb_ny + 1), '"_pmlb_nz_p1_"': str(pb_nz + 1),
@@ -1990,7 +1995,7 @@ class GridBlock:
                 gb_nz = self.connections["lb"].nz
                 gu_nz = self.connections["lu"].nz
                 
-                pr_sig_ez, pr_sig_hz = 2.0, 2.0
+                pr_sig_ez, pr_sig_hz = self.sig_e, self.sig_h
                 replaceDic = {
                     '"_pmlr_nx_"': str(pr_nx), '"_pmlr_ny_"': str(pr_ny), '"_pmlr_nz_"': str(pr_nz),
                     '"_pmlr_nx_p1_"': str(pr_nx + 1), '"_pmlr_ny_p1_"': str(pr_ny + 1), '"_pmlr_nz_p1_"': str(pr_nz + 1),
@@ -2052,7 +2057,7 @@ class GridBlock:
                 gb_nz = self.connections["rb"].nz
                 gu_nz = self.connections["ru"].nz
                 
-                pl_sig_ez, pl_sig_hz = 2.0, 2.0
+                pl_sig_ez, pl_sig_hz = self.sig_e, self.sig_h
                 replaceDic = {
                     '"_pmll_nx_"': str(pl_nx), '"_pmll_ny_"': str(pl_ny), '"_pmll_nz_"': str(pl_nz),
                     '"_pmll_nx_p1_"': str(pl_nx + 1), '"_pmll_ny_p1_"': str(pl_ny + 1), '"_pmll_nz_p1_"': str(pl_nz + 1),

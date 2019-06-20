@@ -814,8 +814,13 @@ void ParamFileTranslator::SetSingleGridGridViews(YeeGrid3D& yee,
             int arrayDirection = stringDirectionToIntDirectionMap[viewParams.GetStringProperty("direction")];
             auto indStart = viewParams.Get3VecUintProperty("indStart");
             auto indEnd = viewParams.Get3VecUintProperty("indEnd");
+            std::size_t bufferSize = 1024*1024*10;
+            if( viewParams.GetCount("bufferSize") > 0 ) {
+                bufferSize = viewParams.GetUintProperty("bufferSize");
+                std::cout << viewName << " buffer size : " << bufferSize << std::endl;
+            }
 
-            yee.AddGridElementView(viewName, arrayName, arrayDirection, indStart, indEnd);
+            yee.AddGridElementView(viewName, arrayName, arrayDirection, indStart, indEnd, bufferSize);
 
             std::size_t saveRate = viewParams.GetUintProperty("saveRate");
             yee.SetDataStoreRate(viewName, saveRate);

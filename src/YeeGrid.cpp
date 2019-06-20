@@ -475,12 +475,15 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
             //          appear more than once
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
                     instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
-                arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
+                //arrayASlice += b*arrayCSlice;
+                arrayASlice.Add_aX(b, arrayCSlice);
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C) {
                 if(i == 0) {
-                    arrayASlice = b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
+                    //arrayASlice = b*arrayCSlice;
+                    arrayASlice.Equate_aX(b, arrayCSlice);
                 } else {
-                    arrayASlice += b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
+                    //arrayASlice += b*arrayCSlice;
+                    arrayASlice.Add_aX(b, arrayCSlice);
                 }
             } else if(instructionCode == FDInstructionCode::A_multequal_sum_b_C) {
                 if(i == 0 && numRhs == 1) {
@@ -556,12 +559,15 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
             NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C, arrayC_i_stride);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C) {
-                arrayASlice += b*arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
+                //arrayASlice += b*arrayBSlice*arrayCSlice;
+                arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
             } else if(instructionCode == FDInstructionCode::A_equal_sum_bB_C) {
                 if(i == 0) {
-                    arrayASlice = b*arrayBSlice*arrayCSlice;   // TODO : Do A = B*C in place, without creating a temp rhs
+                    //arrayASlice = b*arrayBSlice*arrayCSlice;
+                    arrayASlice.Equate_aXY(b, arrayBSlice, arrayCSlice);
                 } else {
-                    arrayASlice += b*arrayBSlice*arrayCSlice;   // TODO : Do A += B*C in place, without creating a temp rhs
+                    //arrayASlice += b*arrayBSlice*arrayCSlice;
+                    arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
                 }
             }
         }
@@ -638,12 +644,15 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
             NumberArray3D<FPNumber> arrayCSlice = arrayC.GetSlice(ind_start_C, ind_end_C, arrayC_i_stride);
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor) {
-                arrayASlice += b*arrayCSlice;   // TODO : Do A += b*C in place, without creating a temp rhs
+                //arrayASlice += b*arrayCSlice;
+                arrayASlice.Add_aX(b, arrayCSlice);
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
                 if(i == 0) {
-                    arrayASlice = b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
+                    //arrayASlice = b*arrayCSlice;
+                    arrayASlice.Equate_aX(b, arrayCSlice);
                 } else {
-                    arrayASlice += b*arrayCSlice;   // TODO : Do A = b*C in place, without creating a temp rhs
+                    //arrayASlice += b*arrayCSlice;
+                    arrayASlice.Add_aX(b, arrayCSlice);
                 }
             }
         }
@@ -1498,12 +1507,13 @@ void YeeGrid3D::PrintAllGridData() {
 
 void YeeGrid3D::AddGridElementView(std::string gridElemViewName,   // name of the gridView
             std::string gridElemName , int gridElemComponent,   // name of the gridElement and its x,y,z component
-            std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd // slice start and end
+            std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd, // slice start and end
+            std::size_t bufferSize
             ) {
     const auto& found = dataViews.find(gridElemViewName);
     assert(found == dataViews.end()); // make sure name does not already exist.
 
-    std::shared_ptr<GridElementView> view(new GridElementView);
+    std::shared_ptr<GridElementView> view = std::make_shared<GridElementView>(bufferSize);
     view->SetName(gridElemViewName);
     view->SetNumArray(gridElements[gridElemName]->GetNumArray(gridElemComponent).GetSlice(indStart, indEnd));
 

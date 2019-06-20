@@ -325,7 +325,8 @@ class YeeGrid3D {
 
     void AddGridElementView(std::string gridElemViewName,   // name of the gridView
                             std::string gridElemName , int gridElemComponent,   // name of the gridElement and its x,y,z component
-                            std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd // slice start and end
+                            std::array<std::size_t, 3> indStart, std::array<std::size_t, 3> indEnd, // slice start and end
+                            std::size_t bufferSize = 1024*1024*20
                             );
     void AddFullGridElementView(std::string gridElemViewName,   // name of the gridView
                             std::string gridElemName , int gridElemComponent   // name of the gridElement and its x,y,z component

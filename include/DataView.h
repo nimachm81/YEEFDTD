@@ -11,8 +11,8 @@
 
 class DataView {
     public:
-    DataView();
-    //~DataView();
+    DataView(std::size_t bufferSize = 1024*1024*20);
+    virtual ~DataView();
     void SetSaveOnDiskFrequency(const std::size_t eachNSamples);
     std::size_t GetSaveOnDiskFrequency() const;
     void SetName(std::string name);

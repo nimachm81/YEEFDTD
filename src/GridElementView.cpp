@@ -3,7 +3,7 @@
 
 #include "GridElementView.h"
 
-GridElementView::GridElementView() {
+GridElementView::GridElementView(std::size_t bufferSize) : DataView(bufferSize) {
 
     maxArraySizeInBytes = NumberArray3D<FPNumber>().GetMaxDataSizeInBytes();
 }

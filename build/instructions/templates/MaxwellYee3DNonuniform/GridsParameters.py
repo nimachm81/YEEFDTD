@@ -18,18 +18,23 @@ class MultilevelGridsParameters:
         self.views = []
         self.boxes = []
         self.grids = []
+        self.pmls = {}
         self.gridCollectionner = GridCollectionner()
         self.gridsIntersectingGeometries = {}
         self.viewFolder = "3D/auto/"
+        self.maxBufferSize = 1024*1024*100
+        self.minBufferSize = 1024*1024*1
         
-    def SetCenterGridDimensions(self, r0, r1, dr, S, nFactor=8):
+    def SetCenterGridDimensions(self, r0, r1, dr, S, nFactor=8, nIsPowerOf2=False):
         n_cells = ((r1 - r0)/dr).astype("int")
         #n_cells = 2**(np.ceil(np.log2(n_cells)).astype("int"))   ## n = 2**m
         
-        # n_cell is a multiple of nFactor
-        if np.any(n_cells % nFactor != 0):
+        if nIsPowerOf2:
+            n_cells = 2**(np.ceil(np.log2(n_cells)).astype("int"))   ## n = 2**m
+        elif np.any(n_cells % nFactor != 0):
+            #make  n_cell a multiple of nFactor
             n_cells += -(n_cells % nFactor) + nFactor
-        assert np.all(n_cells % nFactor == 0)
+            assert np.all(n_cells % nFactor == 0)
         
         dr = (r1 - r0)/n_cells
         dt = S / (np.linalg.norm(1.0/dr)) 
@@ -41,14 +46,18 @@ class MultilevelGridsParameters:
         assert n_lev >= 1
         box_prev = self.boxes[-1]
 
+        #print("n_prev: ", box_prev["n"], "   n_prev%8: ", box_prev["n"]%8)
         assert np.all(box_prev["n"] % 2 == 0)
         assert np.all(numOfCells % 2 == 0)
 
-        n = box_prev["n"]/2 + 2*numOfCells
+        assert np.all(box_prev["n"] % 8 == 0)
+        n_prev_8 = box_prev["n"] / 8
+        #print("n_prev_8: ", n_prev_8)
+        numOfCells += (4 - numOfCells%4)*(n_prev_8 % 2 == 0) + (2 - numOfCells%4)*(n_prev_8 % 2 != 0)
+        #print("numOfCells: ", numOfCells)
 
-        #if np.any(n % 4 != 0):
-        #    numOfCells += (n % 4 != 0)
-        #n = box_prev["n"]/2 + 2*numOfCells
+        n = box_prev["n"]/2 + 2*numOfCells
+        assert np.all(n % 8 == 0)
         
         self.layersNumOfCells.append(numOfCells)
         dr = box_prev["dr"]*2
@@ -57,6 +66,9 @@ class MultilevelGridsParameters:
         r1 = box_prev["r1"] + numOfCells*dr
         
         self.boxes.append({"r0":r0, "r1":r1, "n":n, "dr":dr, "dt":dt})
+        
+    def AddPML(self, face, numOfCells):
+        self.pmls[face] = {"n": numOfCells}
                 
     def AddGeometry(self, geomParams):
         self.geometries.append(geomParams)
@@ -219,6 +231,9 @@ class MultilevelGridsParameters:
                 for ind_lev in range(n_levels):
                     grid_dic = self.grids[ind_lev]
                     saveRate = 2**(n_levels - ind_lev - 1)
+                    bufferSize = int(self.maxBufferSize / (2*ind_lev + 1))
+                    if bufferSize < self.minBufferSize:
+                        bufferSize = self.minBufferSize
                     for grid in grid_dic.values():
                         plane = viewParams["plane"]
                         at = viewParams["at"]
@@ -236,7 +251,8 @@ class MultilevelGridsParameters:
                                 "direction": viewParams["direction"], 
                                 "arrayName": viewParams["arrayName"],
                                 "fileName": fileName, 
-                                "saveRate": saveRate
+                                "saveRate": saveRate,
+                                "bufferSize": bufferSize
                                 })
             elif viewParams["type"] == "entire":
                 for ind_lev in range(n_levels):
@@ -519,6 +535,110 @@ class MultilevelGridsParameters:
         assert len(self.gridCollectionner.grids) == layerIndex*6 + 1
         
         
+    def SetupPMLs(self):
+        if len(self.pmls) == 0:
+            return None
+
+        blockLevel = len(self.boxes) - 1
+        assert len(self.boxes) >= 2
+        box = self.boxes[-1]
+        r0, r1 = box["r0"], box["r1"]
+        dr = box["dr"]
+        dt = box["dt"]
+        n = box["n"]
+                
+        grids = self.grids[-1]
+        grid_r = grids['r']
+        grid_l = grids['l']
+        grid_u = grids['u']
+        grid_d = grids['d']
+        grid_f = grids['f']
+        grid_b = grids['b']
+        
+            
+        if "f" in self.pmls:
+            pml_params = self.pmls["f"]
+            n_pml_cells = pml_params["n"]
+            Dx_pml = n_pml_cells*dr[0]
+            
+            pml_f = GridBlock(name = "pml_f_", blockLevel = blockLevel, blockPosition = "f", gridType = "pml")
+            pml_f.SetCorners([r1[0], r0[1], r0[2]], [r1[0] + Dx_pml, r1[1], r1[2]])
+            pml_f.SetNumOfCells(n_pml_cells, n[1], n[2])
+            pml_f.SetCellDimentions(dr[0], dr[1], dr[2])
+            pml_f.SetTimeStep(dt)
+
+            grid_f.AddConnection("pml-f", pml_f)
+            pml_f.AddConnection("b", grid_f)
+
+            self.gridCollectionner.AddGrid(pml_f)
+
+        if "b" in self.pmls:
+            pml_params = self.pmls["b"]
+            n_pml_cells = pml_params["n"]
+            Dx_pml = n_pml_cells*dr[0]
+            
+            pml_b = GridBlock(name = "pml_b_", blockLevel = blockLevel, blockPosition = "b", gridType = "pml")
+            pml_b.SetCorners([r0[0] - + Dx_pml, r0[1], r0[2]], [r0[0], r1[1], r1[2]])
+            pml_b.SetNumOfCells(n_pml_cells, n[1], n[2])
+            pml_b.SetCellDimentions(dr[0], dr[1], dr[2])
+            pml_b.SetTimeStep(dt)
+
+            grid_b.AddConnection("pml-b", pml_b)
+            pml_b.AddConnection("f", grid_b)
+
+            self.gridCollectionner.AddGrid(pml_b)
+
+            
+        if "r" in self.pmls:
+            pml_params = self.pmls["r"]
+            n_pml_cells = pml_params["n"]
+            Dz_pml = n_pml_cells*dr[2]
+            
+            pml_r = GridBlock(name = "pml_r_", blockLevel = blockLevel, blockPosition = "r", gridType = "pml")
+            pml_r.SetCorners([r0[0], r0[1], r1[2]], [r1[0], r1[1], r1[2] + Dz_pml])
+            pml_r.SetNumOfCells(n[0], n[1], n_pml_cells)
+            pml_r.SetCellDimentions(dr[0], dr[1], dr[2])
+            pml_r.SetTimeStep(dt)
+            
+            grid_r.AddConnection("pml-r", pml_r)
+            grid_u.AddConnection("pml-r", pml_r)
+            grid_d.AddConnection("pml-r", pml_r)
+            grid_f.AddConnection("pml-r", pml_r)
+            grid_b.AddConnection("pml-r", pml_r)
+            pml_r.AddConnection("lc", grid_r)
+            pml_r.AddConnection("lu", grid_u)
+            pml_r.AddConnection("ld", grid_d)
+            pml_r.AddConnection("lf", grid_f)
+            pml_r.AddConnection("lb", grid_b)
+            
+            self.gridCollectionner.AddGrid(pml_r)
+
+
+        if "l" in self.pmls:
+            pml_params = self.pmls["l"]
+            n_pml_cells = pml_params["n"]
+            Dz_pml = n_pml_cells*dr[2]
+            
+            pml_l = GridBlock(name = "pml_l_", blockLevel = blockLevel, blockPosition = "l", gridType = "pml")
+            pml_l.SetCorners([r0[0], r0[1], r0[2] - Dz_pml], [r1[0], r1[1], r0[2]])
+            pml_l.SetNumOfCells(n[0], n[1], n_pml_cells)
+            pml_l.SetCellDimentions(dr[0], dr[1], dr[2])
+            pml_l.SetTimeStep(dt)
+
+            grid_l.AddConnection("pml-l", pml_l)
+            grid_u.AddConnection("pml-l", pml_l)
+            grid_d.AddConnection("pml-l", pml_l)
+            grid_f.AddConnection("pml-l", pml_l)
+            grid_b.AddConnection("pml-l", pml_l)
+            pml_l.AddConnection("rc", grid_l)
+            pml_l.AddConnection("ru", grid_u)
+            pml_l.AddConnection("rd", grid_d)
+            pml_l.AddConnection("rf", grid_f)
+            pml_l.AddConnection("rb", grid_b)
+
+            self.gridCollectionner.AddGrid(pml_l)
+
+        
     def SetupGrids(self):
         n_layers = len(self.layersNumOfCells)
         assert len(self.boxes) == n_layers
@@ -530,15 +650,23 @@ class MultilevelGridsParameters:
                 self.SetupFirstLayerGrid()
             else:
                 self.SetupSecondLayerGrid(i)
+                
+        self.SetupPMLs()
         
 
     def GetGridParamsDic(self):
-        params_dic = {"grids":{}, "views":self.views}
-        for grid_dic in self.grids:
+        params_dic = {"grids":{}, "views":self.views, "geometries":self.geometries,
+                      "materials":self.materials, "sources":self.sources,
+                      "boxes":self.boxes}
+        for lev in range(len(self.grids)):
+            grid_dic = self.grids[lev]
             for grid in grid_dic.values():
                 r0 , r1 = grid.r0, grid.r1
-        
-                params_dic["grids"][grid.name] = {"r0":r0, "r1":r1}
+                dr = np.array([grid.dx, grid.dy, grid.dz])
+                n = np.array([grid.nx, grid.ny, grid.nz])
+                dt = grid.dt
+                params_dic["grids"][grid.name] = {"r0":r0, "r1":r1, "dr":dr, "dt":dt, "n":n, "level":lev}
+        #print("\n\n", params_dic)
         return params_dic
         
         

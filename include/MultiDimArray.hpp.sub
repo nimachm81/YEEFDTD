@@ -159,6 +159,249 @@ class NumberArray3D {
         return *this;
     }
 
+    NumberArray3D& Add_aX(T a, const NumberArray3D& x) {
+        assert( x.GetShape() == shape );
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+        std::size_t ind0 = indStart[0];
+        std::size_t ind1 = indStart[1];
+        std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
+
+        T*** x_arrayData = x.GetArrayData();
+        const std::array<std::size_t, 3>& x_indStart = x.GetIndStart();
+        std::size_t x_ind0 = x_indStart[0];
+        std::size_t x_ind1 = x_indStart[1];
+        std::size_t x_ind2 = x_indStart[2];
+        const std::array<std::size_t, 3>& x_stride = x.GetStride();
+        std::size_t x_s0 = x_stride[0];
+        std::size_t x_s1 = x_stride[1];
+        std::size_t x_s2 = x_stride[2];
+
+        T* arrayData_i0i1;
+        T*  x_arrayData_i0i1;
+
+        bool isUnitStride = IsSingleStride() && x.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0][ind1 + i1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0][x_ind1 + i1] + x_ind2;
+#ifdef __USE_AVX__
+                    y_pe_ax(n2, &a, x_arrayData_i0i1, arrayData_i0i1);
+#else
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2] += a * x_arrayData_i0i1[i2];
+                    }
+#endif
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0*s0][ind1 + i1*s1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0*x_s0][x_ind1 + i1*x_s1] + x_ind2;
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2*s2] += a * x_arrayData_i0i1[i2*x_s2];
+                    }
+                }
+            }
+        }
+        return *this;
+    }
+
+
+    NumberArray3D& Equate_aX(T a, const NumberArray3D& x) {
+        assert( x.GetShape() == shape );
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+        std::size_t ind0 = indStart[0];
+        std::size_t ind1 = indStart[1];
+        std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
+
+        T*** x_arrayData = x.GetArrayData();
+        const std::array<std::size_t, 3>& x_indStart = x.GetIndStart();
+        std::size_t x_ind0 = x_indStart[0];
+        std::size_t x_ind1 = x_indStart[1];
+        std::size_t x_ind2 = x_indStart[2];
+        const std::array<std::size_t, 3>& x_stride = x.GetStride();
+        std::size_t x_s0 = x_stride[0];
+        std::size_t x_s1 = x_stride[1];
+        std::size_t x_s2 = x_stride[2];
+
+        T* arrayData_i0i1;
+        T*  x_arrayData_i0i1;
+
+        bool isUnitStride = IsSingleStride() && x.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0][ind1 + i1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0][x_ind1 + i1] + x_ind2;
+#ifdef __USE_AVX__
+                    y_e_ax(n2, &a, x_arrayData_i0i1, arrayData_i0i1);
+#else
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2] = a * x_arrayData_i0i1[i2];
+                    }
+#endif
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0*s0][ind1 + i1*s1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0*x_s0][x_ind1 + i1*x_s1] + x_ind2;
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2*s2] = a * x_arrayData_i0i1[i2*x_s2];
+                    }
+                }
+            }
+        }
+        return *this;
+    }
+
+    NumberArray3D& Add_aXY(T a, const NumberArray3D& x, const NumberArray3D& y) {
+        assert( x.GetShape() == shape );
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+        std::size_t ind0 = indStart[0];
+        std::size_t ind1 = indStart[1];
+        std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
+
+        T*** x_arrayData = x.GetArrayData();
+        const std::array<std::size_t, 3>& x_indStart = x.GetIndStart();
+        std::size_t x_ind0 = x_indStart[0];
+        std::size_t x_ind1 = x_indStart[1];
+        std::size_t x_ind2 = x_indStart[2];
+        const std::array<std::size_t, 3>& x_stride = x.GetStride();
+        std::size_t x_s0 = x_stride[0];
+        std::size_t x_s1 = x_stride[1];
+        std::size_t x_s2 = x_stride[2];
+
+        T*** y_arrayData = y.GetArrayData();
+        const std::array<std::size_t, 3>& y_indStart = y.GetIndStart();
+        std::size_t y_ind0 = y_indStart[0];
+        std::size_t y_ind1 = y_indStart[1];
+        std::size_t y_ind2 = y_indStart[2];
+        const std::array<std::size_t, 3>& y_stride = y.GetStride();
+        std::size_t y_s0 = y_stride[0];
+        std::size_t y_s1 = y_stride[1];
+        std::size_t y_s2 = y_stride[2];
+
+        T* arrayData_i0i1;
+        T*  x_arrayData_i0i1;
+        T*  y_arrayData_i0i1;
+
+        bool isUnitStride = IsSingleStride() && x.IsSingleStride() && y.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0][ind1 + i1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0][x_ind1 + i1] + x_ind2;
+                    y_arrayData_i0i1 = y_arrayData[y_ind0 + i0][y_ind1 + i1] + y_ind2;
+#ifdef __USE_AVX__
+                    z_pe_axy(n2, &a, x_arrayData_i0i1, y_arrayData_i0i1, arrayData_i0i1);
+#else
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2] += a * x_arrayData_i0i1[i2] * y_arrayData_i0i1[i2];
+                    }
+#endif
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0*s0][ind1 + i1*s1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0*x_s0][x_ind1 + i1*x_s1] + x_ind2;
+                    y_arrayData_i0i1 = y_arrayData[y_ind0 + i0*y_s0][y_ind1 + i1*y_s1] + y_ind2;
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2*s2] += a * x_arrayData_i0i1[i2*x_s2] * y_arrayData_i0i1[i2*y_s2];
+                    }
+                }
+            }
+        }
+        return *this;
+    }
+
+    NumberArray3D& Equate_aXY(T a, const NumberArray3D& x, const NumberArray3D& y) {
+        assert( x.GetShape() == shape );
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+        std::size_t ind0 = indStart[0];
+        std::size_t ind1 = indStart[1];
+        std::size_t ind2 = indStart[2];
+        std::size_t s0 = stride[0];
+        std::size_t s1 = stride[1];
+        std::size_t s2 = stride[2];
+
+        T*** x_arrayData = x.GetArrayData();
+        const std::array<std::size_t, 3>& x_indStart = x.GetIndStart();
+        std::size_t x_ind0 = x_indStart[0];
+        std::size_t x_ind1 = x_indStart[1];
+        std::size_t x_ind2 = x_indStart[2];
+        const std::array<std::size_t, 3>& x_stride = x.GetStride();
+        std::size_t x_s0 = x_stride[0];
+        std::size_t x_s1 = x_stride[1];
+        std::size_t x_s2 = x_stride[2];
+
+        T*** y_arrayData = y.GetArrayData();
+        const std::array<std::size_t, 3>& y_indStart = y.GetIndStart();
+        std::size_t y_ind0 = y_indStart[0];
+        std::size_t y_ind1 = y_indStart[1];
+        std::size_t y_ind2 = y_indStart[2];
+        const std::array<std::size_t, 3>& y_stride = y.GetStride();
+        std::size_t y_s0 = y_stride[0];
+        std::size_t y_s1 = y_stride[1];
+        std::size_t y_s2 = y_stride[2];
+
+        T* arrayData_i0i1;
+        T*  x_arrayData_i0i1;
+        T*  y_arrayData_i0i1;
+
+        bool isUnitStride = IsSingleStride() && x.IsSingleStride() && y.IsSingleStride();
+        if(isUnitStride) {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0][ind1 + i1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0][x_ind1 + i1] + x_ind2;
+                    y_arrayData_i0i1 = y_arrayData[y_ind0 + i0][y_ind1 + i1] + y_ind2;
+#ifdef __USE_AVX__
+                    z_e_axy(n2, &a, x_arrayData_i0i1, y_arrayData_i0i1, arrayData_i0i1);
+#else
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2] = a * x_arrayData_i0i1[i2] * y_arrayData_i0i1[i2];
+                    }
+#endif
+                }
+            }
+        } else {
+            for(std::size_t i0 = 0; i0 < n0; ++i0) {
+                for(std::size_t i1 = 0; i1 < n1; ++i1) {
+                    arrayData_i0i1 = arrayData[ind0 + i0*s0][ind1 + i1*s1] + ind2;
+                    x_arrayData_i0i1 = x_arrayData[x_ind0 + i0*x_s0][x_ind1 + i1*x_s1] + x_ind2;
+                    y_arrayData_i0i1 = y_arrayData[y_ind0 + i0*y_s0][y_ind1 + i1*y_s1] + y_ind2;
+                    for(std::size_t i2 = 0; i2 < n2; ++i2) {
+                        arrayData_i0i1[i2*s2] = a * x_arrayData_i0i1[i2*x_s2] * y_arrayData_i0i1[i2*y_s2];
+                    }
+                }
+            }
+        }
+        return *this;
+    }
+
     //------------------------------ Operators ---------------------------------------
     //-------------------------- automatic substitution (start) ----------------------
 \begin{substitution}

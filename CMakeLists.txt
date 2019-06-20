@@ -9,8 +9,8 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include_directories(include test ${MPI_INCLUDE_PATH})
 
-set(PROJECT_LINK_LIBS "${PROJECT_LINK_LIBS} " )
-link_directories(/usr/lib)
+set(PROJECT_LINK_LIBS ${PROJECT_LINK_LIBS} "libmyBlas.a" )
+link_directories("lib" "/usr/lib")
 
 file(GLOB SOURCES "src/*.cpp" "test/*.cpp")
 
@@ -18,5 +18,5 @@ file(GLOB SOURCES "src/*.cpp" "test/*.cpp")
 
 add_executable(main ${SOURCES})
 
-target_link_libraries(main ${MPI_CXX_LIBRARIES})
+target_link_libraries(main ${PROJECT_LINK_LIBS} ${MPI_CXX_LIBRARIES})
 

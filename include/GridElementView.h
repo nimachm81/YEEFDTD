@@ -8,7 +8,7 @@
 
 class GridElementView : public DataView {
     public:
-    GridElementView();
+    GridElementView(std::size_t bufferSize = 1024*1024*20);
     //~GridElementView();
     void SetNumArray(const NumberArray3D<FPNumber>& numArray);
 
