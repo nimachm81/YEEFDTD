@@ -360,6 +360,9 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::shared_ptr<Geometry>> geometries;
     std::unordered_map<std::string, std::shared_ptr<ParticleEmitter>> particleEmitters;
     std::unordered_map<std::string, std::shared_ptr<VectorField>> vectorFields;
+
+    bool useThreads = true;
+    std::size_t n_threads = 4;
 };
 
 

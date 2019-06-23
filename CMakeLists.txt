@@ -18,5 +18,5 @@ file(GLOB SOURCES "src/*.cpp" "test/*.cpp")
 
 add_executable(main ${SOURCES})
 
-target_link_libraries(main ${PROJECT_LINK_LIBS} ${MPI_CXX_LIBRARIES})
+target_link_libraries(main ${PROJECT_LINK_LIBS} ${MPI_CXX_LIBRARIES} -lpthread)
 

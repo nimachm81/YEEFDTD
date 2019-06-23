@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <typeinfo>
+#include <thread>
 
 #include "MultiDimArrayAllocator.hpp"
 #include "MultiDimArrayPrinting.hpp"
@@ -51,9 +52,11 @@ class NumberArray3D {
             indStart(std::move(numArray.GetIndStart())),
             stride(std::move(numArray.GetStride())),
             isSingleStride(numArray.IsSingleStride()) {
-        // Warning: array data not set ?
-        std::cout << "inside NumberArray3D's move constructor. arrayData status ??" << std::endl;
-        //arrayData = std::move(numArray.GetArrayData());
+        arrayData = numArray.GetArrayData();
+
+        if( !numArray.IsSlice() ) {
+            assert(false);  // it is not clear what happens if numArray is not a slice and it is destroyed
+        }
     }
 
     NumberArray3D(T*** arrayDataOfAnother3DArray, std::array<std::size_t, 3> shape, std::array<std::size_t, 3> indStart,
@@ -158,6 +161,307 @@ class NumberArray3D {
         }
         return *this;
     }
+
+    NumberArray3D& Add_aX_threaded(T a, NumberArray3D& x, const std::size_t N_thread = 4) {
+        assert( x.GetShape() == shape );
+
+        std::size_t n_th_x, n_th_y;
+        if(N_thread%2 == 0) {
+            n_th_x = 2;
+            n_th_y = N_thread / n_th_x;
+        } else if(N_thread%3 == 0) {
+            n_th_x = 3;
+            n_th_y = N_thread / n_th_x;
+        }
+
+        if( shape[0] < n_th_x || shape[1] < n_th_y ) {
+            return Add_aX(a, x);
+        } else {
+            std::size_t n0 = shape[0];
+            std::size_t n1 = shape[1];
+            std::size_t n2 = shape[2];
+
+            std::size_t dn0 = n0/n_th_x;
+            std::size_t dn1 = n1/n_th_y;
+
+            std::size_t ind0_i, ind1_j;
+            std::size_t n0_i, n1_j;
+
+            //std::size_t ind2_st = 0;
+
+            std::vector<std::thread> workers;
+            std::vector<NumberArray3D> thisSlices;
+            std::vector<NumberArray3D> xSlices;
+
+            for(std::size_t i = 0; i < n_th_x; ++i) {
+                ind0_i = i * dn0;
+                n0_i = dn0;
+                if(i == n_th_x - 1) {
+                    n0_i = n0 - i * dn0;
+                }
+                for(std::size_t j = 0; j < n_th_y; ++j) {
+                    ind1_j = j * dn1;
+                    n1_j = dn1;
+                    if(j == n_th_y - 1) {
+                        n1_j = n1 - j * dn1;
+                    }
+
+                    //std::cout << ind0_i << " " << ind1_j << std::endl;
+
+                    thisSlices.push_back(
+                                GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                         std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                        )
+                                        );
+                    xSlices.push_back(
+                                x.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                           std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                           )
+                                     );
+                }
+            }
+
+            for(std::size_t i = 0; i < thisSlices.size(); ++i) {
+                workers.push_back(std::thread(&NumberArray3D<T>::Add_aX, &(thisSlices[i]),
+                                  a, std::ref(xSlices[i])));
+            }
+
+            for(auto& worker : workers) {
+                worker.join();
+            }
+
+            return *this;
+        }
+    }
+
+    NumberArray3D& Equate_aX_threaded(T a, NumberArray3D& x, const std::size_t N_thread = 4) {
+        assert( x.GetShape() == shape );
+
+        std::size_t n_th_x, n_th_y;
+        if(N_thread%2 == 0) {
+            n_th_x = 2;
+            n_th_y = N_thread / n_th_x;
+        } else if(N_thread%3 == 0) {
+            n_th_x = 3;
+            n_th_y = N_thread / n_th_x;
+        }
+
+        if( shape[0] < n_th_x || shape[1] < n_th_y ) {
+            return Equate_aX(a, x);
+        } else {
+            std::size_t n0 = shape[0];
+            std::size_t n1 = shape[1];
+            std::size_t n2 = shape[2];
+
+            std::size_t dn0 = n0/n_th_x;
+            std::size_t dn1 = n1/n_th_y;
+
+            std::size_t ind0_i, ind1_j;
+            std::size_t n0_i, n1_j;
+
+            //std::size_t ind2_st = 0;
+
+            std::vector<std::thread> workers;
+            std::vector<NumberArray3D> thisSlices;
+            std::vector<NumberArray3D> xSlices;
+
+            for(std::size_t i = 0; i < n_th_x; ++i) {
+                ind0_i = i * dn0;
+                n0_i = dn0;
+                if(i == n_th_x - 1) {
+                    n0_i = n0 - i * dn0;
+                }
+                for(std::size_t j = 0; j < n_th_y; ++j) {
+                    ind1_j = j * dn1;
+                    n1_j = dn1;
+                    if(j == n_th_y - 1) {
+                        n1_j = n1 - j * dn1;
+                    }
+
+                    //std::cout << ind0_i << " " << ind1_j << std::endl;
+
+                    thisSlices.push_back(
+                                GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                         std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                        )
+                                        );
+                    xSlices.push_back(
+                                x.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                           std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                           )
+                                     );
+                }
+            }
+
+            for(std::size_t i = 0; i < thisSlices.size(); ++i) {
+                workers.push_back(std::thread(&NumberArray3D<T>::Equate_aX, &(thisSlices[i]),
+                                  a, std::ref(xSlices[i])));
+            }
+
+            for(auto& worker : workers) {
+                worker.join();
+            }
+
+            return *this;
+        }
+    }
+
+    NumberArray3D& Add_aXY_threaded(T a, NumberArray3D& x, NumberArray3D& y, const std::size_t N_thread = 4) {
+        assert( x.GetShape() == shape );
+
+        std::size_t n_th_x, n_th_y;
+        if(N_thread%2 == 0) {
+            n_th_x = 2;
+            n_th_y = N_thread / n_th_x;
+        } else if(N_thread%3 == 0) {
+            n_th_x = 3;
+            n_th_y = N_thread / n_th_x;
+        }
+
+        if( shape[0] < n_th_x || shape[1] < n_th_y ) {
+            return Add_aXY(a, x, y);
+        } else {
+            std::size_t n0 = shape[0];
+            std::size_t n1 = shape[1];
+            std::size_t n2 = shape[2];
+
+            std::size_t dn0 = n0/n_th_x;
+            std::size_t dn1 = n1/n_th_y;
+
+            std::size_t ind0_i, ind1_j;
+            std::size_t n0_i, n1_j;
+
+            //std::size_t ind2_st = 0;
+
+            std::vector<std::thread> workers;
+            std::vector<NumberArray3D> thisSlices;
+            std::vector<NumberArray3D> xSlices;
+            std::vector<NumberArray3D> ySlices;
+
+            for(std::size_t i = 0; i < n_th_x; ++i) {
+                ind0_i = i * dn0;
+                n0_i = dn0;
+                if(i == n_th_x - 1) {
+                    n0_i = n0 - i * dn0;
+                }
+                for(std::size_t j = 0; j < n_th_y; ++j) {
+                    ind1_j = j * dn1;
+                    n1_j = dn1;
+                    if(j == n_th_y - 1) {
+                        n1_j = n1 - j * dn1;
+                    }
+
+                    //std::cout << ind0_i << " " << ind1_j << std::endl;
+
+                    thisSlices.push_back(
+                                GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                         std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                        )
+                                        );
+                    xSlices.push_back(
+                                x.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                           std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                           )
+                                     );
+                    ySlices.push_back(
+                                y.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                           std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                           )
+                                     );
+                }
+            }
+
+            for(std::size_t i = 0; i < thisSlices.size(); ++i) {
+                workers.push_back(std::thread(&NumberArray3D<T>::Add_aXY, &(thisSlices[i]),
+                                  a, std::ref(xSlices[i]), std::ref(ySlices[i])));
+            }
+
+            for(auto& worker : workers) {
+                worker.join();
+            }
+
+            return *this;
+        }
+    }
+
+    NumberArray3D& Equate_aXY_threaded(T a, NumberArray3D& x, NumberArray3D& y, const std::size_t N_thread = 4) {
+        assert( x.GetShape() == shape );
+
+        std::size_t n_th_x, n_th_y;
+        if(N_thread%2 == 0) {
+            n_th_x = 2;
+            n_th_y = N_thread / n_th_x;
+        } else if(N_thread%3 == 0) {
+            n_th_x = 3;
+            n_th_y = N_thread / n_th_x;
+        }
+
+        if( shape[0] < n_th_x || shape[1] < n_th_y ) {
+            return Equate_aXY(a, x, y);
+        } else {
+            std::size_t n0 = shape[0];
+            std::size_t n1 = shape[1];
+            std::size_t n2 = shape[2];
+
+            std::size_t dn0 = n0/n_th_x;
+            std::size_t dn1 = n1/n_th_y;
+
+            std::size_t ind0_i, ind1_j;
+            std::size_t n0_i, n1_j;
+
+            //std::size_t ind2_st = 0;
+
+            std::vector<std::thread> workers;
+            std::vector<NumberArray3D> thisSlices;
+            std::vector<NumberArray3D> xSlices;
+            std::vector<NumberArray3D> ySlices;
+
+            for(std::size_t i = 0; i < n_th_x; ++i) {
+                ind0_i = i * dn0;
+                n0_i = dn0;
+                if(i == n_th_x - 1) {
+                    n0_i = n0 - i * dn0;
+                }
+                for(std::size_t j = 0; j < n_th_y; ++j) {
+                    ind1_j = j * dn1;
+                    n1_j = dn1;
+                    if(j == n_th_y - 1) {
+                        n1_j = n1 - j * dn1;
+                    }
+
+                    //std::cout << ind0_i << " " << ind1_j << std::endl;
+
+                    thisSlices.push_back(
+                                GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                         std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                        )
+                                        );
+                    xSlices.push_back(
+                                x.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                           std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                           )
+                                     );
+                    ySlices.push_back(
+                                y.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                           std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                           )
+                                     );
+                }
+            }
+
+            for(std::size_t i = 0; i < thisSlices.size(); ++i) {
+                workers.push_back(std::thread(&NumberArray3D<T>::Equate_aXY, &(thisSlices[i]),
+                                  a, std::ref(xSlices[i]), std::ref(ySlices[i])));
+            }
+
+            for(auto& worker : workers) {
+                worker.join();
+            }
+
+            return *this;
+        }
+    }
+
 
     NumberArray3D& Add_aX(T a, const NumberArray3D& x) {
         assert( x.GetShape() == shape );

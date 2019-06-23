@@ -476,14 +476,26 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C ||
                     instructionCode == FDInstructionCode::A_plusequal_sum_b_C_shifted) {
                 //arrayASlice += b*arrayCSlice;
-                arrayASlice.Add_aX(b, arrayCSlice);
+                if(!useThreads) {
+                    arrayASlice.Add_aX(b, arrayCSlice);
+                } else {
+                    arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                }
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C) {
                 if(i == 0) {
                     //arrayASlice = b*arrayCSlice;
-                    arrayASlice.Equate_aX(b, arrayCSlice);
+                    if(!useThreads) {
+                        arrayASlice.Equate_aX(b, arrayCSlice);
+                    } else {
+                        arrayASlice.Equate_aX_threaded(b, arrayCSlice, n_threads);
+                    }
                 } else {
                     //arrayASlice += b*arrayCSlice;
-                    arrayASlice.Add_aX(b, arrayCSlice);
+                    if(!useThreads) {
+                        arrayASlice.Add_aX(b, arrayCSlice);
+                    } else {
+                        arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                    }
                 }
             } else if(instructionCode == FDInstructionCode::A_multequal_sum_b_C) {
                 if(i == 0 && numRhs == 1) {
@@ -560,14 +572,26 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_bB_C) {
                 //arrayASlice += b*arrayBSlice*arrayCSlice;
-                arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
+                if(!useThreads) {
+                    arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
+                } else {
+                    arrayASlice.Add_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                }
             } else if(instructionCode == FDInstructionCode::A_equal_sum_bB_C) {
                 if(i == 0) {
                     //arrayASlice = b*arrayBSlice*arrayCSlice;
-                    arrayASlice.Equate_aXY(b, arrayBSlice, arrayCSlice);
+                    if(!useThreads) {
+                        arrayASlice.Equate_aXY(b, arrayBSlice, arrayCSlice);
+                    } else {
+                        arrayASlice.Equate_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                    }
                 } else {
                     //arrayASlice += b*arrayBSlice*arrayCSlice;
-                    arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
+                    if(!useThreads) {
+                        arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
+                    } else {
+                        arrayASlice.Add_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                    }
                 }
             }
         }
@@ -645,14 +669,26 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
 
             if(instructionCode == FDInstructionCode::A_plusequal_sum_b_C_neighbor) {
                 //arrayASlice += b*arrayCSlice;
-                arrayASlice.Add_aX(b, arrayCSlice);
+                if(!useThreads) {
+                    arrayASlice.Add_aX(b, arrayCSlice);
+                } else {
+                    arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                }
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
                 if(i == 0) {
                     //arrayASlice = b*arrayCSlice;
-                    arrayASlice.Equate_aX(b, arrayCSlice);
+                    if(!useThreads) {
+                        arrayASlice.Equate_aX(b, arrayCSlice);
+                    } else {
+                        arrayASlice.Equate_aX_threaded(b, arrayCSlice, n_threads);
+                    }
                 } else {
                     //arrayASlice += b*arrayCSlice;
-                    arrayASlice.Add_aX(b, arrayCSlice);
+                    if(!useThreads) {
+                        arrayASlice.Add_aX(b, arrayCSlice);
+                    } else {
+                        arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                    }
                 }
             }
         }
