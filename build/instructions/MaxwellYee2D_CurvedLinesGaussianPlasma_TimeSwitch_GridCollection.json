@@ -352,8 +352,19 @@
             "name":"_Eslice_name_c_",
             "array":"E",
             "direction":"x",
-            "indStart":[0, "_e_entire_ind_ym_record_", "_e_ind_z_record_c_"],
-            "indEnd":[1, "_e_entire_ind_yp_record_", "_e_ind_z_record_c_p1_"],
+            "indStart":[0, 0, "_e_ind_z_record_c_"],
+            "indEnd":[1, "_ny_p1_", "_e_ind_z_record_c_p1_"],
+            "saveRate":1
+            }
+        },
+        {
+        "type":"partial",
+        "parameters":{
+            "name":"_Hslice_name_c_",
+            "array":"H",
+            "direction":"y",
+            "indStart":[0, 0, "_e_ind_z_record_c_"],
+            "indEnd":[1, "_ny_", "_e_ind_z_record_c_p1_"],
             "saveRate":1
             }
         },

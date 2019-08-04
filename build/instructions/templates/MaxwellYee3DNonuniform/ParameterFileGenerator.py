@@ -120,6 +120,132 @@ class GridBlock:
                         if updateSequence["name"] == seqName:
                             updateSequence["sequence"].extend(j_updateSequence["sequence"])
 
+            if sourceParams["type"] == "GaussianLineSource_y":
+                json_file = open('sources/GaussianInTime/J_line_y_3D.json')
+                file_content = json_file.read()
+                json_file.close()
+                
+                j_r = sourceParams["j_r"]
+                height = sourceParams["height"]
+                polarization = sourceParams["polarization"]
+                amplitude = sourceParams["amplitude"]
+                t_center = sourceParams["t_center"]
+                t_decay = sourceParams["t_decay"]
+                modulationFrequency = sourceParams["modulationFrequency"]
+                modulationPhase = sourceParams["modulationPhase"]
+                timeOffsetFraction = sourceParams["timeOffsetFraction"]
+                dA = self.dx*self.dz
+                
+                dr = np.array([self.dx, self.dy, self.dz])
+                j_inds = ((j_r - self.r0)/dr).astype("int")
+                ny = int(height/self.dy)
+                ind_y_0 = int(j_inds[1] - ny/2)
+                ind_y_1 = ind_y_0 + ny
+                
+                if ind_y_0 < 0:
+                    ind_y_0 = 0
+                if ind_y_1 > self.ny:
+                    ind_y_1 = self.ny
+                if ny > self.ny:
+                    ny = self.ny
+                
+                ind_x, ind_z = j_inds[0], j_inds[2]
+
+                replaceDic = {'"_indxJ_"': str(ind_x), '"_indyJ_"': str(ind_y_0), '"_indzJ_"': str(ind_z),
+                              '"_indxJ_p1_"': str(ind_x + 1), '"_indyJ_p_ny_"': str(ind_y_1), '"_indzJ_p1_"': str(ind_z + 1),
+                              '"_ny_"': str(ny),
+                              '"_j_polarization_"': '"' + polarization + '"', 
+                              '"_j_amplitude_"': str(amplitude),
+                              '"_j_t_center_"': str(t_center), '"_j_t_decay_"': str(t_decay),
+                              '"_j_mod_freq_"': str(modulationFrequency), '"_j_mod_phase_"': str(modulationPhase),
+                              '"_j_time_offset_frac_"': str(timeOffsetFraction),
+                              '"_m_dt_dA_"': str(-self.dt/dA),
+                              '"J"': '"J{}"'.format(sourceIndex),
+                              '"Jupdater"': '"Jupdater{}"'.format(sourceIndex),
+                              '"J_update"': '"J_update{}"'.format(sourceIndex),
+                              '"E_me_J"': '"E_me_J{}"'.format(sourceIndex)
+                              }
+                file_content = MultiWordReplace(file_content, replaceDic)
+                currentData = json.loads(file_content)
+                
+                grid["partialGridArrays"].extend(currentData["partialGridArrays"])
+                grid["girdArrayManipulators"].extend(currentData["girdArrayManipulators"])
+                grid["updateInstructions"].extend(currentData["updateInstructions"])
+                for j_updateSequence in currentData["updateSequences"]:
+                    seqName = j_updateSequence["name"]
+                    for updateSequence in grid["updateSequences"]:
+                        if updateSequence["name"] == seqName:
+                            updateSequence["sequence"].extend(j_updateSequence["sequence"])
+
+            if sourceParams["type"] == "GaussianSheetSource_z":
+                json_file = open('sources/GaussianInTime/J_sheet_z_3D.json')
+                file_content = json_file.read()
+                json_file.close()
+                
+                j_r = sourceParams["j_r"]
+                y_width = sourceParams["y_width"]
+                x_width = sourceParams["x_width"]
+                polarization = sourceParams["polarization"]
+                amplitude = sourceParams["amplitude"]
+                t_center = sourceParams["t_center"]
+                t_decay = sourceParams["t_decay"]
+                modulationFrequency = sourceParams["modulationFrequency"]
+                modulationPhase = sourceParams["modulationPhase"]
+                timeOffsetFraction = sourceParams["timeOffsetFraction"]
+                dw = self.dz    ## thickness
+                
+                dr = np.array([self.dx, self.dy, self.dz])
+                j_inds = ((j_r - self.r0)/dr).astype("int")
+                nx = int(x_width/self.dx)
+                ny = int(y_width/self.dy)
+                ind_x_0 = int(j_inds[0] - nx/2 - 1)
+                ind_x_1 = ind_x_0 + nx + 1
+                ind_y_0 = int(j_inds[1] - ny/2)
+                ind_y_1 = ind_y_0 + ny
+                
+                if ind_x_0 < 0:
+                    ind_x_0 = 0
+                if ind_x_1 > self.nx + 1:
+                    ind_x_1 = self.nx + 1
+                if nx > self.nx:
+                    nx = self.nx
+
+                if ind_y_0 < 0:
+                    ind_y_0 = 0
+                if ind_y_1 > self.ny:
+                    ind_y_1 = self.ny
+                if ny > self.ny:
+                    ny = self.ny
+                
+                ind_x, ind_z = j_inds[0], j_inds[2]
+
+                replaceDic = {'"_indxJ_"': str(ind_x_0), '"_indyJ_"': str(ind_y_0), '"_indzJ_"': str(ind_z),
+                              '"_indxJ_p_nx_p1_"': str(ind_x_1), '"_indyJ_p_ny_"': str(ind_y_1), '"_indzJ_p1_"': str(ind_z + 1),
+                              '"_nx_"': str(nx), '"_ny_"': str(ny),
+                              '"_j_polarization_"': '"' + polarization + '"', 
+                              '"_j_amplitude_"': str(amplitude),
+                              '"_j_t_center_"': str(t_center), '"_j_t_decay_"': str(t_decay),
+                              '"_j_mod_freq_"': str(modulationFrequency), '"_j_mod_phase_"': str(modulationPhase),
+                              '"_j_time_offset_frac_"': str(timeOffsetFraction),
+                              '"_m_dt_dw_"': str(-self.dt/dw),
+                              '"J"': '"J{}"'.format(sourceIndex),
+                              '"Jupdater"': '"Jupdater{}"'.format(sourceIndex),
+                              '"J_update"': '"J_update{}"'.format(sourceIndex),
+                              '"E_me_J"': '"E_me_J{}"'.format(sourceIndex)
+                              }
+                file_content = MultiWordReplace(file_content, replaceDic)
+                currentData = json.loads(file_content)
+                
+                grid["partialGridArrays"].extend(currentData["partialGridArrays"])
+                grid["girdArrayManipulators"].extend(currentData["girdArrayManipulators"])
+                grid["updateInstructions"].extend(currentData["updateInstructions"])
+                for j_updateSequence in currentData["updateSequences"]:
+                    seqName = j_updateSequence["name"]
+                    for updateSequence in grid["updateSequences"]:
+                        if updateSequence["name"] == seqName:
+                            updateSequence["sequence"].extend(j_updateSequence["sequence"])
+
+
             elif sourceParams["type"] == "PureScatteredRectPlaneWave":
                 json_file = open('sources/PureScatteredIncidentPlaneWave/RectPlaneWave.json')
                 file_content = json_file.read()
@@ -128,12 +254,13 @@ class GridBlock:
                 ## get partial grid start and end indices         
                 r0, r1 = sourceParams["boundingBox"]    ##  bounding box around the metal
                 dr = np.array([self.dx, self.dy, self.dz])
-                inds_0 = np.round((r0 - self.r0) / dr).astype(int)
-                inds_1 = np.round((r1 - self.r0) / dr).astype(int)
+                inds_0 = np.round((r0 - self.r0) / dr).astype(int) - 1
+                inds_1 = np.round((r1 - self.r0) / dr).astype(int) + 1
                 self.truncateIndsToRange(inds_0)
                 self.truncateIndsToRange(inds_1)
                 if np.prod(inds_1 - inds_0) == 0:
                     continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
                     
                 polarization = sourceParams["polarization"]
                 amplitude = sourceParams["amplitude"]
@@ -147,7 +274,7 @@ class GridBlock:
                 
                 if polarization != 'y':
                     assert False
-                
+                                
                 n = (inds_1 - inds_0).astype(int)
                 replaceDic = {
                     '"_indx0_"': str(inds_0[0]), '"_indy0_"': str(inds_0[1]), '"_indz0_"': str(inds_0[2]), 
@@ -163,7 +290,8 @@ class GridBlock:
                     '"_rect_edge_width_"': str(rectEdgeWidth),
                     '"_planewave_freq_"': str(modulationFrequency),
                     '"_planewave_phase_"': str(modulationPhase),
-                    '"_m_dt_"': str(-self.dt)
+                    '"_m_dt_"': str(-self.dt),
+                    "__ext__": "_" + str(sourceParams["geometryName"])
                     }
 
                 file_content = MultiWordReplace(file_content, replaceDic)
@@ -194,9 +322,15 @@ class GridBlock:
         for materialIndex in range(len(self.materials)):
             materialParams = self.materials[materialIndex]
             if materialParams["type"] == "DrudeMetal_PureScattered":
-                json_file = open('materials/metal/Drude_pureScattered.json')
-                file_content = json_file.read()
-                json_file.close()
+                file_content = None
+                if "wireMeshAlong" in materialParams and materialParams["wireMeshAlong"] == "y":
+                    json_file = open('materials/metal/Drude_y_pureScattered.json')
+                    file_content = json_file.read()
+                    json_file.close()                
+                else:
+                    json_file = open('materials/metal/Drude_pureScattered.json')
+                    file_content = json_file.read()
+                    json_file.close()
     
                 ## get partial grid start and end indices         
                 r0, r1 = materialParams["boundingBox"]    ##  bounding box around the metal
@@ -207,10 +341,26 @@ class GridBlock:
                 self.truncateIndsToRange(inds_1)
                 if np.prod(inds_1 - inds_0) == 0:
                     continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
                     
                 geometryName = materialParams["geometryName"]
                 wp = materialParams["plasmaFrequency"]
                 gamma = materialParams["scatteringRate"]
+                wp_sq = wp**2
+                
+                if "wireMeshAlong" in materialParams and materialParams["wireMeshAlong"] == "y":
+                    geom = None
+                    for geomParams in self.geometries:
+                        if geomParams["geometryName"] == geometryName:
+                            geom = geomParams
+                            break
+                    assert geom != None
+                    if geom["type"] == "cylinder": 
+                        #print(geom)
+                        if  geom["alignEven"] == "yes":
+                            wp_sq *= 4
+                            print("adjusting cylinder amp")
+                
                                 
                 n = (inds_1 - inds_0).astype(int) 
                 replaceDic = {
@@ -221,11 +371,13 @@ class GridBlock:
                     '"_nx_"': str(n[0]), '"_ny_"': str(n[1]), '"_nz_"': str(n[2]),
                     '"_nx_p1_"': str(n[0] + 1), '"_ny_p1_"': str(n[1] + 1), '"_nz_p1_"': str(n[2] + 1),
                     '"_geometry_name_"': '"' + geometryName + '"',
-                    '"_wp_sq_"': str(wp**2),
+                    '"_wp_sq_"': str(wp_sq),
                     '"_gamma_"': str(gamma),
                     '"_m_dt_"': str(-self.dt),
+                    '"_dt_"': str(self.dt),
                     '"_dt_2_"': str(self.dt/2.0),
-                    '"_m_dt_2_"': str(-self.dt/2.0)
+                    '"_m_dt_2_"': str(-self.dt/2.0),
+                    "__ext__": "_" + geometryName
                     }
     
                 file_content = MultiWordReplace(file_content, replaceDic)
@@ -239,7 +391,7 @@ class GridBlock:
                     for updateSequence in grid["updateSequences"]:
                         if updateSequence["name"] == seqName:
                             updateSequence["sequence"].extend(m_updateSequence["sequence"])
-            if materialParams["type"] == "pec_PureScattered":
+            elif materialParams["type"] == "pec_PureScattered":
                 json_file = open('materials/metal/pec_pureScattered.json')
                 file_content = json_file.read()
                 json_file.close()
@@ -247,12 +399,13 @@ class GridBlock:
                 ## get partial grid start and end indices         
                 r0, r1 = materialParams["boundingBox"]    ##  bounding box around the metal
                 dr = np.array([self.dx, self.dy, self.dz])
-                inds_0 = np.round((r0 - self.r0) / dr).astype(int)
-                inds_1 = np.round((r1 - self.r0) / dr).astype(int)
+                inds_0 = np.round((r0 - self.r0) / dr).astype(int) - 1
+                inds_1 = np.round((r1 - self.r0) / dr).astype(int) + 1
                 self.truncateIndsToRange(inds_0)
                 self.truncateIndsToRange(inds_1)
                 if np.prod(inds_1 - inds_0) == 0:
                     continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
                     
                 geometryName = materialParams["geometryName"]                                
                 n = (inds_1 - inds_0).astype(int) 
@@ -263,13 +416,72 @@ class GridBlock:
                     '"_indx1_p1_"': str(inds_1[0] + 1), '"_indy1_p1_"': str(inds_1[1] + 1), '"_indz1_p1_"': str(inds_1[2] + 1), 
                     '"_nx_"': str(n[0]), '"_ny_"': str(n[1]), '"_nz_"': str(n[2]),
                     '"_nx_p1_"': str(n[0] + 1), '"_ny_p1_"': str(n[1] + 1), '"_nz_p1_"': str(n[2] + 1),
-                    '"_geometry_name_"': '"' + geometryName + '"'
+                    '"_geometry_name_"': '"' + geometryName + '"',
+                    "__ext__": "_" + str(geometryName)
                     }
     
                 file_content = MultiWordReplace(file_content, replaceDic)
                 matData = json.loads(file_content)
                 
-                grid["partialGridArrays"].extend(matData["partialGridArrays"])
+                """
+                ## merge partial grids
+                for partialGAList in matData["partialGridArrays"]:
+                    partialGAname = partialGAList["name"]
+                    exists = False
+                    for ind in range(len(grid["partialGridArrays"])):
+                        g_partialGA = grid["partialGridArrays"][ind]
+                        if g_partialGA["name"] == partialGAname:
+                            exists = True
+                            # merge
+                            partialGA_merged = self.MergeParialGridArrays(g_partialGA, partialGAList)
+                            grid["partialGridArrays"][ind] = partialGA_merged
+                            break
+                    if not exists:
+                        grid["partialGridArrays"].append(partialGAList)
+                """
+                
+                grid["partialGridArrays"].extend(matData["partialGridArrays"])        
+                grid["girdArrayManipulators"].extend(matData["girdArrayManipulators"])
+                grid["updateInstructions"].extend(matData["updateInstructions"])
+                for m_updateSequence in matData["updateSequences"]:
+                    seqName = m_updateSequence["name"]
+                    for updateSequence in grid["updateSequences"]:
+                        if updateSequence["name"] == seqName:
+                            updateSequence["sequence"].extend(m_updateSequence["sequence"])
+
+            elif materialParams["type"] == "pec":
+                json_file = open('materials/metal/pec.json')
+                file_content = json_file.read()
+                json_file.close()
+    
+                ## get partial grid start and end indices         
+                r0, r1 = materialParams["boundingBox"]    ##  bounding box around the metal
+                dr = np.array([self.dx, self.dy, self.dz])
+                inds_0 = np.round((r0 - self.r0) / dr).astype(int) - 1
+                inds_1 = np.round((r1 - self.r0) / dr).astype(int) + 1
+                self.truncateIndsToRange(inds_0)
+                self.truncateIndsToRange(inds_1)
+                if np.prod(inds_1 - inds_0) == 0:
+                    continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
+                    
+                geometryName = materialParams["geometryName"]                                
+                n = (inds_1 - inds_0).astype(int) 
+                replaceDic = {
+                    '"_indx0_"': str(inds_0[0]), '"_indy0_"': str(inds_0[1]), '"_indz0_"': str(inds_0[2]), 
+                    '"_indx1_"': str(inds_1[0]), '"_indy1_"': str(inds_1[1]), '"_indz1_"': str(inds_1[2]), 
+                    '"_indx0_p1_"': str(inds_0[0] + 1), '"_indy0_p1_"': str(inds_0[1] + 1), '"_indz0_p1_"': str(inds_0[2] + 1), 
+                    '"_indx1_p1_"': str(inds_1[0] + 1), '"_indy1_p1_"': str(inds_1[1] + 1), '"_indz1_p1_"': str(inds_1[2] + 1), 
+                    '"_nx_"': str(n[0]), '"_ny_"': str(n[1]), '"_nz_"': str(n[2]),
+                    '"_nx_p1_"': str(n[0] + 1), '"_ny_p1_"': str(n[1] + 1), '"_nz_p1_"': str(n[2] + 1),
+                    '"_geometry_name_"': '"' + geometryName + '"',
+                    "__ext__": "_" + str(geometryName)
+                    }
+    
+                file_content = MultiWordReplace(file_content, replaceDic)
+                matData = json.loads(file_content)
+                
+                grid["partialGridArrays"].extend(matData["partialGridArrays"])        
                 grid["girdArrayManipulators"].extend(matData["girdArrayManipulators"])
                 grid["updateInstructions"].extend(matData["updateInstructions"])
                 for m_updateSequence in matData["updateSequences"]:
@@ -280,6 +492,20 @@ class GridBlock:
             else:
                 assert False
  
+    def MergeParialGridArrays(self, partialGA1, partialGA2):
+        assert partialGA1["name"] == partialGA2["name"]
+        assert partialGA1["type"] == partialGA2["type"]
+        indStart = np.minimum(np.array(partialGA1["indStart"]), np.array(partialGA2["indStart"]))
+        indEnd = np.maximum(np.array(partialGA1["indStart"]) + np.array(partialGA1["nCells"]), 
+                            np.array(partialGA2["indStart"]) + np.array(partialGA2["nCells"]))
+        nCells = indEnd - indStart
+        
+        partialGA_merged = {"name":partialGA1["name"] , "type":partialGA1["type"], 
+                            "indStart":indStart.tolist(), "nCells":nCells.tolist()}
+       
+        return partialGA_merged
+        
+     
     def SetupGeometries(self, grid):
         for geomIndex in range(len(self.geometries)):
             geomParams = self.geometries[geomIndex]
@@ -297,6 +523,7 @@ class GridBlock:
                 self.truncateIndsToRange(inds_1)
                 if np.prod(inds_1 - inds_0) == 0:
                     continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
                     
                 geometryName = geomParams["geometryName"]
                 coneAngle = geomParams["coneAngle"]
@@ -323,6 +550,7 @@ class GridBlock:
                     grid["geometries"].extend(geomData["geometries"])
                 else:
                     grid["geometries"] = geomData["geometries"]
+                    
             elif geomParams["type"] == "cone":
                 json_file = open('geometries/cone.json')
                 file_content = json_file.read()
@@ -337,6 +565,7 @@ class GridBlock:
                 self.truncateIndsToRange(inds_1)
                 if np.prod(inds_1 - inds_0) == 0:
                     continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
                     
                 geometryName = geomParams["geometryName"]
                 coneAngle = geomParams["coneAngle"]
@@ -356,6 +585,48 @@ class GridBlock:
     
                 file_content = MultiWordReplace(file_content, replaceDic)
                 geomData = json.loads(file_content)
+                
+                #print(geomData)
+           
+                if "geometries" in grid:
+                    grid["geometries"].extend(geomData["geometries"])
+                else:
+                    grid["geometries"] = geomData["geometries"]
+            
+            elif geomParams["type"] == "cylinder":
+                json_file = open('geometries/cylinder.json')
+                file_content = json_file.read()
+                json_file.close()
+    
+                ## get partial grid start and end indices         
+                r0, r1 = geomParams["boundingBox"]    ##  bounding box around the metal
+                dr = np.array([self.dx, self.dy, self.dz])
+                inds_0 = np.round((r0 - self.r0) / dr).astype(int)
+                inds_1 = np.round((r1 - self.r0) / dr).astype(int)
+                self.truncateIndsToRange(inds_0)
+                self.truncateIndsToRange(inds_1)
+                if np.prod(inds_1 - inds_0) == 0:
+                    continue
+                inds_0 -= (inds_0 % 2)      # align to even grids
+                    
+                geometryName = geomParams["geometryName"]
+                radius = geomParams["radius"]
+                height = geomParams["height"]
+                topCenter = geomParams["topCenter"]
+                alignEven = geomParams["alignEven"]     ## yes/no
+
+                replaceDic = {
+                    '"_name_"': '"' + geometryName + '"',
+                    '"_radius_"': str(radius),
+                    '"_height_"': str(height),
+                    '"_top_x_"': str(topCenter[0]),
+                    '"_top_y_"': str(topCenter[1]),
+                    '"_top_z_"': str(topCenter[2]),
+                    '"_align_even_"': '"' + alignEven + '"'
+                    }
+    
+                file_content = MultiWordReplace(file_content, replaceDic)
+                geomData = json.loads(file_content) 
                 
                 #print(geomData)
            

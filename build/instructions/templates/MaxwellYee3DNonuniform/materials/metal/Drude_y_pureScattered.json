@@ -1,0 +1,141 @@
+
+{
+    "partialGridArrays":[
+            {"name":"J_metal__ext__", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}, 
+            {"name":"wp2__ext__", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}, 
+            {"name":"gamma__ext__", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
+        ],
+
+    "girdArrayManipulators":[
+        {
+        "type":"BivalueGridArrayManipulator",
+        "parameters":{
+            "name":"gammaUpdater__ext__",
+            "array":"gamma__ext__",
+            "direction":"y",
+            "geometry":"_geometry_name_",
+            "valueInside":"_gamma_",
+            "valueOutside":0.0
+            }
+        },
+        {
+        "type":"BivalueGridArrayManipulator",
+        "parameters":{
+            "name":"wp2_updater__ext__",
+            "array":"wp2__ext__",
+            "direction":"y",
+            "geometry":"_geometry_name_",
+            "valueInside":"_wp_sq_",
+            "valueOutside":0.0
+            }
+        }
+    ],
+    "updateInstructions":[
+        {
+        "type":"A+=sumbC",
+        "parameters":{
+            "name":"Ey_me_Jmetaly__ext__",
+            "A":"E",
+            "A_direction":"y",
+            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
+            "A_indEnd":["_indx1_p1_", "_indy1_", "_indz1_p1_"],
+            "b":["_m_dt_"],
+            "C":["J_metal__ext__"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]],
+            "comment":"volumetric current"
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Jmetaly_pe_Wp2Escaty__ext__",
+            "A":"J_metal__ext__",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_nx_p1_", "_ny_", "_nz_p1_"],
+            "b":["_dt_"],
+            "B":["wp2__ext__"],
+            "B_direction":["y"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["E"],
+            "C_direction":["y"],
+            "C_indStart":[["_indx0_", "_indy0_", "_indz0_"]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Jmetaly_pe_Wp2Eincy__ext__",
+            "A":"J_metal__ext__",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_nx_p1_", "_ny_", "_nz_p1_"],
+            "b":["_dt_"],
+            "B":["wp2__ext__"],
+            "B_direction":["y"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["Einc__ext__"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A+=sumbBC",
+        "parameters":{
+            "name":"Jmetaly_me_gammaJmetaly__ext__",
+            "A":"J_metal__ext__",
+            "A_direction":"y",
+            "A_indStart":[0, 0, 0],
+            "A_indEnd":["_nx_p1_", "_ny_", "_nz_p1_"],
+            "b":["_m_dt_"],
+            "B":["gamma__ext__"],
+            "B_direction":["y"],
+            "B_indStart":[[0, 0, 0]],
+            "C":["J_metal__ext__"],
+            "C_direction":["y"],
+            "C_indStart":[[0, 0, 0]]
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"gamma_update__ext__",
+            "girdArrayManipulator":"gammaUpdater__ext__"
+            }
+        },
+        {
+        "type":"A=frt",
+        "parameters":{
+            "name":"wp2_update__ext__",
+            "girdArrayManipulator":"wp2_updater__ext__"
+            }
+        }
+    ],
+    "updateSequences":[ 
+        {
+            "name":"reset_time", 
+            "sequence":[
+                "wp2_update__ext__",
+                "gamma_update__ext__"
+            ]
+        },
+        {
+            "name":"update_H", 
+            "sequence":[
+                "Jmetaly_pe_Wp2Escaty__ext__",
+                "Jmetaly_pe_Wp2Eincy__ext__",
+                "Jmetaly_me_gammaJmetaly__ext__"
+            ]
+        },
+        {
+            "name":"update_E_inside", 
+            "sequence":[
+                "Ey_me_Jmetaly__ext__"
+            ]
+        }
+    ]
+
+}
+
+

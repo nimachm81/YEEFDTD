@@ -3,9 +3,19 @@
 
 #include "YeeGridCollection.h"
 
+YeeGridCollection::YeeGridCollection(std::size_t n_threads) : numOfThreads(n_threads)
+                                                            {
+    if(n_threads > 1) {
+        useThreads = true;
+        threadedAlgera = std::make_unique<ThreadedAlgebra>(n_threads);
+    } else {
+        useThreads = false;
+    }
+}
 
 std::size_t YeeGridCollection::AddGrid() {
     grids.emplace_back();
+    grids.back().SetThreadOptions(useThreads, threadedAlgera.get());
     return grids.size() - 1;
 }
 

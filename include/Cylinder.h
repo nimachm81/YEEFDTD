@@ -1,6 +1,7 @@
 
-#ifndef _FDTD_CONE_H_
-#define _FDTD_CONE_H_
+
+#ifndef _FDTD_CYLINDER_H_
+#define _FDTD_CYLINDER_H_
 
 #include <vector>
 #include <array>
@@ -9,15 +10,13 @@
 #include "NumberTypes.h"
 #include "Geometry.h"
 
-class Cone : public Geometry {
+class Cylinder : public Geometry {
     public:
-    virtual ~Cone() { };
-    void SetConeAngle(const FPNumber angle);
-    void SetConeAngleInDegrees(const FPNumber angle_degree);
-    void SetTipRadius(const FPNumber radius);
-    void SetApexToBaseDistance(const FPNumber apexToBaseDistance);
-    void SetApexPosition(const std::array<FPNumber, 3> pos);
-    void CloseBase(bool close);
+    virtual ~Cylinder() { };
+    void SetRadius(const FPNumber r);
+    void SetTopPlane(const std::array<FPNumber, 3> center);
+    void SetHeight(const FPNumber h);
+    void SetEvenAlignment(bool alignEven);  // aligns the edges on even (%2==0) grid points
 
     bool IsPointInsideOrOn(std::array<FPNumber, 3> point);
     void ArePointsInsideOrOn(std::vector<std::array<FPNumber, 3>>& points,
@@ -57,14 +56,10 @@ class Cone : public Geometry {
 
 
     private:
-    FPNumber coneAngle = M_PI/4.0;         // wedge angle in radians (full angle)
-    FPNumber apexRadius = 0.0;   // for tipRadius > 0 the tip is rounded
-    std::array<FPNumber, 3> tipPosition;    // position of the unrounded sharp tip
-    std::array<FPNumber, 3> apexPosition;    // position of the rounded tip (apex)
-    FPNumber apexToBaseDistance = 1.0;
-    FPNumber sharpConeHeight = 1.0;         // distance from unrounded tip to base of the cone
-    bool closeBase = true;
-
+    FPNumber radius = 0.0;   // for tipRadius > 0 the tip is rounded
+    std::array<FPNumber, 3> topPlaneCenter;    // position of the unrounded sharp tip
+    FPNumber height;    // position of the rounded tip (apex)
+    bool align_even = false;
 };
 
 #endif // FDTD_CONE_H_

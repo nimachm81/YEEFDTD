@@ -1,0 +1,15 @@
+{
+"geometries":[
+        {
+        "type":"cylinder",
+        "parameters":{
+            "name":"_name_",
+            "radius":"_radius_",
+            "height":"_height_",
+            "topCenter":["_top_x_", "_top_y_", "_top_z_"],
+            "alignEven":"_align_even_"
+            }
+        }
+    ]
+}
+

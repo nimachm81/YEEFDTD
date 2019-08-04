@@ -66,13 +66,35 @@ void Test_threaded_algebra() {
 
     ThreadedAlgebra ta(4);
 
-    std::cout << "-----------------------------------------------------------" << std::endl;
-    ta.Get_y_pe_ax(A1, a, B1);
-    A1.Print();
-    A2.Add_aX(a, B1);
-    A2.Print();
-    (A1 - A2).Print();
+    for(int i = 0; i < 1000; ++i) {
+        std::cout << "---------------------------- y += ax -------------------------------" << std::endl;
+        ta.Get_y_pe_ax(A1, a, B1);
+        //A1.Print();
+        A2.Add_aX(a, B1);
+        //A2.Print();
+        (A1 - A2).Print();
 
+        std::cout << "----------------------------- y = ax ------------------------------" << std::endl;
+        ta.Get_y_e_ax(A1, a, B1);
+        //A1.Print();
+        A2.Equate_aX(a, B1);
+        //A2.Print();
+        (A1 - A2).Print();
+
+        std::cout << "----------------------------- z += axy ------------------------------" << std::endl;
+        ta.Get_z_pe_axy(A1, a, B1, C1);
+        //A1.Print();
+        A2.Add_aXY(a, B1, C1);
+        //A2.Print();
+        (A1 - A2).Print();
+
+        std::cout << "------------------------------ z = axy -----------------------------" << std::endl;
+        ta.Get_z_e_axy(A1, a, B1, C1);
+        //A1.Print();
+        A2.Equate_aXY(a, B1, C1);
+        //A2.Print();
+        (A1 - A2).Print();
+    }
 
 };
 

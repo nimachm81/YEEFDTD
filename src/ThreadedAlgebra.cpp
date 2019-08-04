@@ -1,14 +1,13 @@
 
 #include "ThreadedAlgebra.h"
 
-ThreadedAlgebra::ThreadedAlgebra(std::size_t n_threads) : startConditions(n_threads),
-                                                          mutexs(n_threads)
+ThreadedAlgebra::ThreadedAlgebra(std::size_t n_threads) : numThreads(n_threads),
+                                                          startOperation(n_threads)
                                                           {
-    numThreads = n_threads;
-
     for(std::size_t i = 0; i < numThreads; ++i) {
         threads.push_back(std::thread(&ThreadedAlgebra::CalculateForever, this));
-        argsAreReady.push_back(false);
+
+        startOperation[i].store(0, std::memory_order::memory_order_seq_cst);
     }
 }
 
@@ -27,71 +26,136 @@ void ThreadedAlgebra::MapThreadIds() {
 void ThreadedAlgebra::CalculateForever() {
     MapThreadIds();
 
-    std::size_t threadIndex = idMap[std::this_thread::get_id()];
-
-    std::unique_lock<std::mutex> threadlock(mutexs[threadIndex]);
-    threadlock.unlock();
+    const std::size_t threadIndex = idMap[std::this_thread::get_id()];
+    std::atomic<int>& startIt = startOperation[threadIndex];
 
     while(true) {
-        threadlock.lock();
-        startConditions[threadIndex].wait(threadlock, [&,this]{return argsAreReady[threadIndex];});
+        do {
 
-        if(terminateAll) {
-            threadlock.unlock();
+        } while(!startIt.load(std::memory_order::memory_order_seq_cst));
+
+        if(terminateAll.load(std::memory_order::memory_order_seq_cst)) {
             break;
         }
 
-        NumberArray3D<FPNumber>& y = arrASlices[threadIndex];
-        FPNumber a = numA;
-        NumberArray3D<FPNumber>& x = arrBSlices[threadIndex];
+        if(instruction == TAInstructionCode::y_pe_ax) {
+            NumberArray3D<FPNumber>& y = arrASlices[threadIndex];
+            FPNumber a = numA;
+            NumberArray3D<FPNumber>& x = arrBSlices[threadIndex];
 
-        y.Add_aX(a, x);
+            y.Add_aX(a, x);
+        } else if(instruction == TAInstructionCode::y_e_ax) {
+            NumberArray3D<FPNumber>& y = arrASlices[threadIndex];
+            FPNumber a = numA;
+            NumberArray3D<FPNumber>& x = arrBSlices[threadIndex];
 
-        {
-            std::lock_guard<std::mutex> lk(sharedMutex);
-            argsAreReady[threadIndex] = false;
-            numOfThreadsProcessed++;
+            y.Equate_aX(a, x);
+        } else if(instruction == TAInstructionCode::z_pe_axy) {
+            NumberArray3D<FPNumber>& z = arrASlices[threadIndex];
+            FPNumber a = numA;
+            NumberArray3D<FPNumber>& x = arrBSlices[threadIndex];
+            NumberArray3D<FPNumber>& y = arrCSlices[threadIndex];
 
-            std::cout << "numOfThreadsProcessed : " << numOfThreadsProcessed << std::endl;
+            z.Add_aXY(a, x, y);
+        } else if(instruction == TAInstructionCode::z_e_axy) {
+            NumberArray3D<FPNumber>& z = arrASlices[threadIndex];
+            FPNumber a = numA;
+            NumberArray3D<FPNumber>& x = arrBSlices[threadIndex];
+            NumberArray3D<FPNumber>& y = arrCSlices[threadIndex];
+
+            z.Equate_aXY(a, x, y);
         }
 
-        threadlock.unlock();
-        endCondition.notify_one();
-
-        assert(!terminateAll);
+        startIt.store(0, std::memory_order::memory_order_seq_cst);
+        numOfThreadsProcessed.fetch_add(1, std::memory_order::memory_order_seq_cst);
+        //std::cout << numOfThreadsProcessed << std::endl;
     }
+}
+
+void ThreadedAlgebra::SetArgsFlagsAndSignalStart() {
+    for (std::size_t i = 0; i < numThreads; ++i) {
+        startOperation[i].store(1, std::memory_order::memory_order_seq_cst);
+    }
+}
+
+void ThreadedAlgebra::WaitForResults() {
+    int numProcessed;
+    do {
+        numProcessed = numOfThreadsProcessed.load(std::memory_order::memory_order_seq_cst);
+    } while(numProcessed < numThreads);
+    numOfThreadsProcessed.store(0, std::memory_order::memory_order_seq_cst);
 }
 
 void ThreadedAlgebra::Get_y_pe_ax(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x) {
 
-    Set_y_pe_ax_args(y, a, x);
+    bool arraySizeLargeEnough = Set_y_pe_ax_args(y, a, x);
 
-    {
-        std::lock_guard<std::mutex> lk(sharedMutex);
-        for (std::size_t i = 0; i < numThreads; ++i) {
-            argsAreReady[i] = true;
-            startConditions[i].notify_one();
-        }
-        std::cout << "Args are set!" << std::endl;
-    }
-
-
-    {
-        std::unique_lock<std::mutex> lk(sharedMutex);
-        endCondition.wait(lk, [this]{return numOfThreadsProcessed >= numThreads;});
-
-        for (std::size_t i = 0; i < numThreads; ++i) {
-            assert(argsAreReady[i] == false);
-        }
-        if(numOfThreadsProcessed > numThreads) {
-            assert(false);
-        }
-        numOfThreadsProcessed = 0;
-        std::cout << "Results are ready." << std::endl;
+    if(arraySizeLargeEnough) {
+        SetArgsFlagsAndSignalStart();
+        WaitForResults();
+    } else {
+        y.Add_aX(a, x);
+        auto shape = x.GetShape();
+        //std::cout << " did not parallelize .. " << shape[0] << " " << shape[1] << " " << shape[2] << std::endl;
     }
 }
 
-void ThreadedAlgebra::Set_y_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x) {
+void ThreadedAlgebra::Get_y_e_ax(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x) {
+
+    bool arraySizeLargeEnough = Set_y_e_ax_args(y, a, x);
+
+    if(arraySizeLargeEnough) {
+        SetArgsFlagsAndSignalStart();
+        WaitForResults();
+    } else {
+        y.Equate_aX(a, x);
+        //std::cout << " did not parallelize .. " << std::endl;
+    }
+}
+
+void ThreadedAlgebra::Get_z_pe_axy(NumberArray3D<FPNumber>& z,
+                                   FPNumber a,
+                                   NumberArray3D<FPNumber>& x,
+                                   NumberArray3D<FPNumber>& y) {
+
+    bool arraySizeLargeEnough = Set_z_pe_axy_args(z, a, x, y);
+
+    if(arraySizeLargeEnough) {
+        SetArgsFlagsAndSignalStart();
+        WaitForResults();
+    } else {
+        z.Add_aXY(a, x, y);
+        //std::cout << " did not parallelize .. " << std::endl;
+    }
+}
+
+void ThreadedAlgebra::Get_z_e_axy(NumberArray3D<FPNumber>& z,
+                                  FPNumber a,
+                                  NumberArray3D<FPNumber>& x,
+                                  NumberArray3D<FPNumber>& y) {
+
+    bool arraySizeLargeEnough = Set_z_e_axy_args(z, a, x, y);
+
+    if(arraySizeLargeEnough) {
+        SetArgsFlagsAndSignalStart();
+        WaitForResults();
+    } else {
+        z.Equate_aXY(a, x, y);
+        //std::cout << " did not parallelize .. " << std::endl;
+    }
+}
+
+bool ThreadedAlgebra::Set_y_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x) {
+    instruction = TAInstructionCode::y_pe_ax;
+    return Set_y_e_or_pe_ax_args(y, a, x);
+}
+
+bool ThreadedAlgebra::Set_y_e_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x) {
+    instruction = TAInstructionCode::y_e_ax;
+    return Set_y_e_or_pe_ax_args(y, a, x);
+}
+
+bool ThreadedAlgebra::Set_y_e_or_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x) {
     arrASlices.clear();
     arrBSlices.clear();
     numA = a;
@@ -106,11 +170,14 @@ void ThreadedAlgebra::Set_y_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, N
     } else if(numThreads%3 == 0) {
         n_th_x = 3;
         n_th_y = numThreads / n_th_x;
+    } else {
+        n_th_x = 1;
+        n_th_y = numThreads;
     }
 
     if( shape[0] < n_th_x || shape[1] < n_th_y ) {
-        y.Add_aX(a, x);
-        return;
+        return false;
+
     } else {
         std::size_t n0 = shape[0];
         std::size_t n1 = shape[1];
@@ -148,17 +215,106 @@ void ThreadedAlgebra::Set_y_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, N
                                  );
             }
         }
+
+        return true;
+    }
+}
+
+bool ThreadedAlgebra::Set_z_pe_axy_args(NumberArray3D<FPNumber>& z,
+                                        FPNumber a,
+                                        NumberArray3D<FPNumber>& x,
+                                        NumberArray3D<FPNumber>& y) {
+    instruction = TAInstructionCode::z_pe_axy;
+    return Set_z_e_or_pe_axy_args(z, a, x, y);
+}
+
+bool ThreadedAlgebra::Set_z_e_axy_args(NumberArray3D<FPNumber>& z,
+                                       FPNumber a,
+                                       NumberArray3D<FPNumber>& x,
+                                       NumberArray3D<FPNumber>& y) {
+    instruction = TAInstructionCode::z_e_axy;
+    return Set_z_e_or_pe_axy_args(z, a, x, y);
+}
+
+
+bool ThreadedAlgebra::Set_z_e_or_pe_axy_args(NumberArray3D<FPNumber>& z,
+                                             FPNumber a,
+                                             NumberArray3D<FPNumber>& x,
+                                             NumberArray3D<FPNumber>& y
+                                             ) {
+    arrASlices.clear();
+    arrBSlices.clear();
+    arrCSlices.clear();
+    numA = a;
+
+    std::array<std::size_t, 3> shape = z.GetShape();
+    assert( x.GetShape() == shape && y.GetShape() == shape );
+
+    std::size_t n_th_x, n_th_y;
+    if(numThreads%2 == 0) {
+        n_th_x = 2;
+        n_th_y = numThreads / n_th_x;
+    } else if(numThreads%3 == 0) {
+        n_th_x = 3;
+        n_th_y = numThreads / n_th_x;
+    }
+
+    if( shape[0] < n_th_x || shape[1] < n_th_y ) {
+        return false;   // use single thread
+
+    } else {
+        std::size_t n0 = shape[0];
+        std::size_t n1 = shape[1];
+        std::size_t n2 = shape[2];
+
+        std::size_t dn0 = n0/n_th_x;
+        std::size_t dn1 = n1/n_th_y;
+
+        std::size_t ind0_i, ind1_j;
+        std::size_t n0_i, n1_j;
+
+
+        for(std::size_t i = 0; i < n_th_x; ++i) {
+            ind0_i = i * dn0;
+            n0_i = dn0;
+            if(i == n_th_x - 1) {
+                n0_i = n0 - i * dn0;
+            }
+            for(std::size_t j = 0; j < n_th_y; ++j) {
+                ind1_j = j * dn1;
+                n1_j = dn1;
+                if(j == n_th_y - 1) {
+                    n1_j = n1 - j * dn1;
+                }
+
+                arrASlices.push_back(
+                         z.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                    std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                    )
+                                    );
+                arrBSlices.push_back(
+                         x.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                    std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                    )
+                                    );
+                arrCSlices.push_back(
+                         y.GetSlice(std::array<std::size_t, 3>{ind0_i,        ind1_j,        0},
+                                    std::array<std::size_t, 3>{ind0_i + n0_i, ind1_j + n1_j, n2}
+                                    )
+                                    );
+            }
+        }
+
+        return true;    // use multiple thread
     }
 }
 
 
 void ThreadedAlgebra::Terminate() {
     {
-        std::lock_guard<std::mutex> lk(sharedMutex);
-        terminateAll = true;
+        terminateAll.store(true, std::memory_order::memory_order_seq_cst);
         for (std::size_t i = 0; i < numThreads; ++i) {
-            argsAreReady[i] = true;
-            startConditions[i].notify_one();
+            startOperation[i].store(1, std::memory_order::memory_order_seq_cst);
         }
     }
 

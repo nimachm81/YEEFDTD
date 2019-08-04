@@ -135,7 +135,7 @@ class NumberArray3D {
         for(std::size_t i = 0; i < 3; ++i) {
             assert(stride_slice[i] > 0);
             shape_slice[i] = (indEnd_slice[i] - 1 - indStart_slice[i]) / stride_slice[i] + 1;
-            assert(shape_slice[i] > 0);
+            assert(shape_slice[i] >= 0);
         }
         // indStart_slice_total: with respect to the origin of the allocated array
         std::array<std::size_t, 3> indStart_slice_total{indStart_slice[0]*stride[0] + indStart[0],

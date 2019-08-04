@@ -6,7 +6,7 @@ import json
 import pickle
 
 from ParameterFileGenerator import GridBlock, GridCollectionner
-from Geometries import Hyperboloid, Cone
+from Geometries import Hyperboloid, Cone, Cylinder
 
 class MultilevelGridsParameters:
     
@@ -144,6 +144,42 @@ class MultilevelGridsParameters:
                                 })
                             self.gridsIntersectingGeometries[grid.name][geomParams["geometryName"]] = boundingBox
 
+            elif geomParams["type"] == "cylinder":
+                for grid_dic in self.grids:
+                    for grid in grid_dic.values():
+                        r0 , r1 = grid.r0, grid.r1
+                        
+                        geom = Cylinder(geomParams["radius"], 
+                                        geomParams["height"], geomParams["topCenter"])
+                        boundingBox = geom.GetBoundingBox(r0[1], r1[1])
+                        
+                        if grid.name not in self.gridsIntersectingGeometries:
+                            self.gridsIntersectingGeometries[grid.name] = {}
+
+                        if boundingBox is None:
+                            continue
+                        bb_r0, bb_r1 = boundingBox
+                        
+                        ## check if the grid overlaps the boundingbox
+                        overlap_r0 = np.maximum(r0, bb_r0)
+                        overlap_r1 = np.minimum(r1, bb_r1)
+                                                
+                        if np.all(overlap_r0 <= overlap_r1):
+                            alignEven = "no"
+                            r_tc = geomParams["topCenter"]
+                            if  r0[1] < r_tc[1] < r1[1]  and r_tc[1] - geomParams["height"] < r0[1]:
+                                alignEven = "yes"
+
+                            grid.AddGeometry(
+                                {"type":"cylinder", 
+                                "geometryName": geomParams["geometryName"],
+                                "radius": geomParams["radius"], "height": geomParams["height"],
+                                "topCenter": geomParams["topCenter"],
+                                "alignEven": alignEven,
+                                "boundingBox":[bb_r0, bb_r1]
+                                })
+                            self.gridsIntersectingGeometries[grid.name][geomParams["geometryName"]] = boundingBox
+
             else:
                 assert False            
         print("gridsIntersectingGeometries ", self.gridsIntersectingGeometries)
@@ -157,12 +193,15 @@ class MultilevelGridsParameters:
                         
                         if geomName in self.gridsIntersectingGeometries[grid.name]:
                             boundingBox = self.gridsIntersectingGeometries[grid.name][geomName]
-                            grid.AddMaterial(
-                            {"type": "DrudeMetal_PureScattered",
+                            gridMat = {"type": "DrudeMetal_PureScattered",
                             "boundingBox": boundingBox,
                             "geometryName": geomName, "plasmaFrequency": matParams["plasmaFrequency"],
                             "scatteringRate": matParams["scatteringRate"]
-                            })
+                            }
+                            if "wireMeshAlong" in matParams:
+                                gridMat["wireMeshAlong"] = matParams["wireMeshAlong"]
+                            grid.AddMaterial(gridMat)
+   
             elif matParams["type"] == "pec_PureScattered":
                 geomName = matParams["geometryName"]
                 for grid_dic in self.grids:
@@ -172,6 +211,18 @@ class MultilevelGridsParameters:
                             boundingBox = self.gridsIntersectingGeometries[grid.name][geomName]
                             grid.AddMaterial(
                             {"type": "pec_PureScattered",
+                            "boundingBox": boundingBox,
+                            "geometryName": geomName
+                            })
+            elif matParams["type"] == "pec":
+                geomName = matParams["geometryName"]
+                for grid_dic in self.grids:
+                    for grid in grid_dic.values():
+                        
+                        if geomName in self.gridsIntersectingGeometries[grid.name]:
+                            boundingBox = self.gridsIntersectingGeometries[grid.name][geomName]
+                            grid.AddMaterial(
+                            {"type": "pec",
                             "boundingBox": boundingBox,
                             "geometryName": geomName
                             })
@@ -202,6 +253,68 @@ class MultilevelGridsParameters:
                                 "timeOffsetFraction": srcParams["timeOffsetFraction"]
                                 })
             
+            elif srcParams["type"] == "GaussianLineSource_y":       ## directed along y
+                for grid_dic in self.grids:
+                    for grid in grid_dic.values():
+                        j_r = srcParams["position"]     ## center point
+                        height = srcParams["height"]
+                        
+                        r0 , r1 = grid.r0, grid.r1
+                        dr = np.array([grid.dx, grid.dy, grid.dz])
+                        
+                        j_r0 = np.array([j_r[0], j_r[1] - height/2.0, j_r[2]])
+                        j_r1 = np.array([j_r[0], j_r[1] + height/2.0, j_r[2]])
+
+                        overlap_r0 = np.maximum(r0, j_r0)
+                        overlap_r1 = np.minimum(r1, j_r1)
+                        
+                        if np.all(overlap_r0 <= overlap_r1):
+                            j_inds = ((j_r - r0)/dr).astype("int")
+                            grid.AddSource(
+                                {"type":"GaussianLineSource_y",
+                                "j_r": j_r,
+                                "height": height,
+                                "polarization": srcParams["polarization"], 
+                                "amplitude": srcParams["amplitude"], 
+                                "t_center": srcParams["t_center"], 
+                                "t_decay": srcParams["t_decay"],
+                                "modulationFrequency":srcParams["modulationFrequency"], 
+                                "modulationPhase": srcParams["modulationPhase"], 
+                                "timeOffsetFraction": srcParams["timeOffsetFraction"]
+                                })
+
+            elif srcParams["type"] == "GaussianSheetSource_z":      ## normal to z
+                for grid_dic in self.grids:
+                    for grid in grid_dic.values():
+                        j_r = srcParams["position"]     ## center point
+                        y_width = srcParams["y_width"]    ## dimensions of the sheet
+                        x_width = srcParams["x_width"]    
+                        
+                        r0 , r1 = grid.r0, grid.r1
+                        dr = np.array([grid.dx, grid.dy, grid.dz])
+                        
+                        j_r0 = np.array([j_r[0] - x_width/2.0, j_r[1] - y_width/2.0, j_r[2]])
+                        j_r1 = np.array([j_r[0] + x_width/2.0, j_r[1] + y_width/2.0, j_r[2]])
+
+                        overlap_r0 = np.maximum(r0, j_r0)
+                        overlap_r1 = np.minimum(r1, j_r1)
+                        
+                        if np.all(overlap_r0 <= overlap_r1):
+                            j_inds = ((j_r - r0)/dr).astype("int")
+                            grid.AddSource(
+                                {"type":"GaussianSheetSource_z",
+                                "j_r": j_r,
+                                "y_width": y_width,
+                                "x_width": x_width,
+                                "polarization": srcParams["polarization"], 
+                                "amplitude": srcParams["amplitude"], 
+                                "t_center": srcParams["t_center"], 
+                                "t_decay": srcParams["t_decay"],
+                                "modulationFrequency":srcParams["modulationFrequency"], 
+                                "modulationPhase": srcParams["modulationPhase"], 
+                                "timeOffsetFraction": srcParams["timeOffsetFraction"]
+                                })
+            
             elif srcParams["type"] == "PureScatteredRectPlaneWave":
                 geomName = srcParams["geometryName"]
                 for grid_dic in self.grids:
@@ -209,17 +322,19 @@ class MultilevelGridsParameters:
                         
                         if geomName in self.gridsIntersectingGeometries[grid.name]:
                             boundingBox = self.gridsIntersectingGeometries[grid.name][geomName]
+
                             grid.AddSource(
                                 {"type":"PureScatteredRectPlaneWave",
                                 "boundingBox":boundingBox,
                                 "polarization": srcParams["polarization"],
-                                "amplitude": srcParams["amplitude"], 
+                                "amplitude": srcParams["amplitude"],
                                 "propagationDirection": srcParams["propagationDirection"],
                                 "propagationVelocity": srcParams["propagationVelocity"],
                                 "t_center": srcParams["t_center"], 
                                 "rectWidth": srcParams["rectWidth"], "rectEdgeWidth": srcParams["rectEdgeWidth"],
                                 "modulationFrequency": srcParams["modulationFrequency"], 
-                                "modulationPhase": srcParams["modulationPhase"]
+                                "modulationPhase": srcParams["modulationPhase"],
+                                "geometryName": geomName
                                 })
             else:
                 assert False            

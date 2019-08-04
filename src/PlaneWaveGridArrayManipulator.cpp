@@ -63,20 +63,23 @@ void PlaneWaveGridArrayManipulator::UpdateArray(const FPNumber t, GAManipulatorI
     FPNumber ay = propagationDirection[1];
     FPNumber az = propagationDirection[2];
 
+    FPNumber* arrayData_i0i1 = nullptr;
+
     for(std::size_t i0 = 0; i0 < n0; ++i0) {
         x = x0 + (FPNumber)i0*dx;
         x_ax = x * ax;
         for(std::size_t i1 = 0; i1 < n1; ++i1) {
             y = y0 + (FPNumber)i1*dy;
             y_ay = y * ay;
+            arrayData_i0i1 = arrayData[ind0 + i0][ind1 + i1];
             for(std::size_t i2 = 0; i2 < n2; ++i2) {
                 z = z0 + (FPNumber)i2*dz;
                 z_az = z * az;
 
                 if(instruction == GAManipulatorInstructionCode::Equal) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] = amplitude * GetNormalizedTemporalWaveform(t - t_center - (x_ax + y_ay + z_az)/velocity);
+                    arrayData_i0i1[ind2 + i2] = amplitude * GetNormalizedTemporalWaveform(t - t_center - (x_ax + y_ay + z_az)/velocity);
                 } else if(instruction == GAManipulatorInstructionCode::PlusEqual) {
-                    arrayData[ind0 + i0][ind1 + i1][ind2 + i2] += amplitude * GetNormalizedTemporalWaveform(t - t_center - (x_ax + y_ay + z_az)/velocity);
+                    arrayData_i0i1[ind2 + i2] += amplitude * GetNormalizedTemporalWaveform(t - t_center - (x_ax + y_ay + z_az)/velocity);
                 } else {
                     std::cout << "error: Not implemented!!!" << std::endl;
                     assert(false);

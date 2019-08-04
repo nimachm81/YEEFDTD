@@ -162,6 +162,19 @@ void ParamFileTranslator::SetSingleGridGeometries(YeeGrid3D& yee,
                     geometryParams.Get3VecRealProperty("apexPosition"),
                     closeBase
                     );
+        } else if(std::get<0>(geometryNameAndParams) == "cylinder") {
+            ParameterExtractor geometryParams(std::get<1>(geometryNameAndParams));
+            bool alignEven = false;
+            if(geometryParams.GetStringProperty("alignEven") == "yes") {
+                alignEven = true;
+            }
+            yee.AddCylinderGeometry(
+                    geometryParams.GetStringProperty("name"),
+                    geometryParams.GetRealProperty("radius"),
+                    geometryParams.GetRealProperty("height"),
+                    geometryParams.Get3VecRealProperty("topCenter"),
+                    alignEven
+                    );
         } else {
             std::cout << "error: geometry name not recognized" << std::endl;
             assert(false);

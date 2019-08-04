@@ -8,9 +8,12 @@
 
 #include "NumberTypes.h"
 #include "YeeGrid.h"
+#include "ThreadedAlgebra.h"
+
 
 class YeeGridCollection {
     public:
+    YeeGridCollection(std::size_t n_threads = 1);
     std::size_t AddGrid();  // Warning: AddGrid() may resize the grids vector, making pointers to their elements invalid
                             // After taking any pointers or references to grids elements stop calling this function
 
@@ -26,6 +29,10 @@ class YeeGridCollection {
 
     protected:
     std::vector<YeeGrid3D> grids;
+
+    bool useThreads = false;
+    std::size_t numOfThreads = 1;
+    std::unique_ptr<ThreadedAlgebra> threadedAlgera = nullptr;
 };
 
 

@@ -1,17 +1,17 @@
 
 {
     "partialGridArrays":[
-            {"name":"J_metal", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}, 
-            {"name":"wp2", "type":"NodeScalar", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}, 
-            {"name":"gamma", "type":"NodeScalar", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
+            {"name":"J_metal__ext__", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}, 
+            {"name":"wp2__ext__", "type":"NodeScalar", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}, 
+            {"name":"gamma__ext__", "type":"NodeScalar", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
         ],
 
     "girdArrayManipulators":[
         {
         "type":"BivalueGridArrayManipulator",
         "parameters":{
-            "name":"gammaUpdater",
-            "array":"gamma",
+            "name":"gammaUpdater__ext__",
+            "array":"gamma__ext__",
             "direction":"x",
             "geometry":"_geometry_name_",
             "valueInside":"_gamma_",
@@ -21,8 +21,8 @@
         {
         "type":"BivalueGridArrayManipulator",
         "parameters":{
-            "name":"wp2_updater",
-            "array":"wp2",
+            "name":"wp2_updater__ext__",
+            "array":"wp2__ext__",
             "direction":"x",
             "geometry":"_geometry_name_",
             "valueInside":"_wp_sq_",
@@ -34,13 +34,13 @@
         {
         "type":"A+=sumbC",
         "parameters":{
-            "name":"Ex_me_Jmetalx",
+            "name":"Ex_me_Jmetalx__ext__",
             "A":"E",
             "A_direction":"x",
             "A_indStart":["_indx0_", "_indy0_p1_", "_indz0_"],
             "A_indEnd":["_indx1_", "_indy1_", "_indz1_p1_"],
             "b":["_m_dt_"],
-            "C":["J_metal"],
+            "C":["J_metal__ext__"],
             "C_direction":["x"],
             "C_indStart":[[0, 1, 0]],
             "comment":"volumetric current"
@@ -49,13 +49,13 @@
         {
         "type":"A+=sumbC",
         "parameters":{
-            "name":"Ey_me_Jmetaly",
+            "name":"Ey_me_Jmetaly__ext__",
             "A":"E",
             "A_direction":"y",
             "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
             "A_indEnd":["_indx1_p1_", "_indy1_", "_indz1_p1_"],
             "b":["_m_dt_"],
-            "C":["J_metal"],
+            "C":["J_metal__ext__"],
             "C_direction":["y"],
             "C_indStart":[[0, 0, 0]],
             "comment":"volumetric current"
@@ -64,13 +64,13 @@
         {
         "type":"A+=sumbC",
         "parameters":{
-            "name":"Ez_me_Jmetalz",
+            "name":"Ez_me_Jmetalz__ext__",
             "A":"E",
             "A_direction":"z",
             "A_indStart":["_indx0_", "_indy0_p1_", "_indz0_"],
             "A_indEnd":["_indx1_p1_", "_indy1_", "_indz1_"],
             "b":["_m_dt_"],
-            "C":["J_metal"],
+            "C":["J_metal__ext__"],
             "C_direction":["z"],
             "C_indStart":[[0, 1, 0]]
             }
@@ -78,13 +78,13 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetalx_pe_Wp2Escatx",
-            "A":"J_metal",
+            "name":"Jmetalx_pe_Wp2Escatx__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_", "_ny_p1_", "_nz_p1_"],
             "b":["_dt_2_", "_dt_2_"],
-            "B":["wp2", "wp2"],
+            "B":["wp2__ext__", "wp2__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [1, 0, 0]],
             "C":["E", "E"],
@@ -96,13 +96,13 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetaly_pe_Wp2Escaty",
-            "A":"J_metal",
+            "name":"Jmetaly_pe_Wp2Escaty__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_p1_", "_ny_", "_nz_p1_"],
             "b":["_dt_2_", "_dt_2_"],
-            "B":["wp2", "wp2"],
+            "B":["wp2__ext__", "wp2__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [0, 1, 0]],
             "C":["E", "E"],
@@ -114,13 +114,13 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetalz_pe_Wp2Escatz",
-            "A":"J_metal",
+            "name":"Jmetalz_pe_Wp2Escatz__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"z",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_p1_", "_ny_p1_", "_nz_"],
             "b":["_dt_2_", "_dt_2_"],
-            "B":["wp2", "wp2"],
+            "B":["wp2__ext__", "wp2__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [0, 0, 1]],
             "C":["E", "E"],
@@ -131,16 +131,16 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetalx_pe_Wp2Eincx",
-            "A":"J_metal",
+            "name":"Jmetalx_pe_Wp2Eincx__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_", "_ny_p1_", "_nz_p1_"],
             "b":["_dt_2_", "_dt_2_"],
-            "B":["wp2", "wp2"],
+            "B":["wp2__ext__", "wp2__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [1, 0, 0]],
-            "C":["Einc", "Einc"],
+            "C":["Einc__ext__", "Einc__ext__"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]],
             "comment":"wp2 (scalar quantity) is averaged out."
@@ -149,16 +149,16 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetaly_pe_Wp2Eincy",
-            "A":"J_metal",
+            "name":"Jmetaly_pe_Wp2Eincy__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_p1_", "_ny_", "_nz_p1_"],
             "b":["_dt_2_", "_dt_2_"],
-            "B":["wp2", "wp2"],
+            "B":["wp2__ext__", "wp2__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [0, 1, 0]],
-            "C":["Einc", "Einc"],
+            "C":["Einc__ext__", "Einc__ext__"],
             "C_direction":["y", "y"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]],
             "comment":"wp2 (scalar quantity) is averaged out."
@@ -167,16 +167,16 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetalz_pe_Wp2Eincz",
-            "A":"J_metal",
+            "name":"Jmetalz_pe_Wp2Eincz__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"z",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_p1_", "_ny_p1_", "_nz_"],
             "b":["_dt_2_", "_dt_2_"],
-            "B":["wp2", "wp2"],
+            "B":["wp2__ext__", "wp2__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [0, 0, 1]],
-            "C":["Einc", "Einc"],
+            "C":["Einc__ext__", "Einc__ext__"],
             "C_direction":["z", "z"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]]
             }
@@ -184,16 +184,16 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetalx_me_gammaJmetalx",
-            "A":"J_metal",
+            "name":"Jmetalx_me_gammaJmetalx__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"x",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_", "_ny_p1_", "_nz_p1_"],
             "b":["_m_dt_2_", "_m_dt_2_"],
-            "B":["gamma", "gamma"],
+            "B":["gamma__ext__", "gamma__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [1, 0, 0]],
-            "C":["J_metal", "J_metal"],
+            "C":["J_metal__ext__", "J_metal__ext__"],
             "C_direction":["x", "x"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]]
             }
@@ -201,16 +201,16 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetaly_me_gammaJmetaly",
-            "A":"J_metal",
+            "name":"Jmetaly_me_gammaJmetaly__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"y",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_p1_", "_ny_", "_nz_p1_"],
             "b":["_m_dt_2_", "_m_dt_2_"],
-            "B":["gamma", "gamma"],
+            "B":["gamma__ext__", "gamma__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [0, 1, 0]],
-            "C":["J_metal", "J_metal"],
+            "C":["J_metal__ext__", "J_metal__ext__"],
             "C_direction":["y", "y"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]]
             }
@@ -218,16 +218,16 @@
         {
         "type":"A+=sumbBC",
         "parameters":{
-            "name":"Jmetalz_me_gammaJmetalz",
-            "A":"J_metal",
+            "name":"Jmetalz_me_gammaJmetalz__ext__",
+            "A":"J_metal__ext__",
             "A_direction":"z",
             "A_indStart":[0, 0, 0],
             "A_indEnd":["_nx_p1_", "_ny_p1_", "_nz_"],
             "b":["_m_dt_2_", "_m_dt_2_"],
-            "B":["gamma", "gamma"],
+            "B":["gamma__ext__", "gamma__ext__"],
             "B_direction":["x", "x"],
             "B_indStart":[[0, 0, 0], [0, 0, 1]],
-            "C":["J_metal", "J_metal"],
+            "C":["J_metal__ext__", "J_metal__ext__"],
             "C_direction":["z", "z"],
             "C_indStart":[[0, 0, 0], [0, 0, 0]]
             }
@@ -235,15 +235,15 @@
         {
         "type":"A=frt",
         "parameters":{
-            "name":"gamma_update",
-            "girdArrayManipulator":"gammaUpdater"
+            "name":"gamma_update__ext__",
+            "girdArrayManipulator":"gammaUpdater__ext__"
             }
         },
         {
         "type":"A=frt",
         "parameters":{
-            "name":"wp2_update",
-            "girdArrayManipulator":"wp2_updater"
+            "name":"wp2_update__ext__",
+            "girdArrayManipulator":"wp2_updater__ext__"
             }
         }
     ],
@@ -251,30 +251,30 @@
         {
             "name":"reset_time", 
             "sequence":[
-                "wp2_update",
-                "gamma_update"
+                "wp2_update__ext__",
+                "gamma_update__ext__"
             ]
         },
         {
             "name":"update_H", 
             "sequence":[
-                "Jmetalx_pe_Wp2Escatx",
-                "Jmetaly_pe_Wp2Escaty",
-                "Jmetalz_pe_Wp2Escatz",
-                "Jmetalx_pe_Wp2Eincx",
-                "Jmetaly_pe_Wp2Eincy",
-                "Jmetalz_pe_Wp2Eincz",
-                "Jmetalx_me_gammaJmetalx",
-                "Jmetaly_me_gammaJmetaly",
-                "Jmetalz_me_gammaJmetalz"
+                "Jmetalx_pe_Wp2Escatx__ext__",
+                "Jmetaly_pe_Wp2Escaty__ext__",
+                "Jmetalz_pe_Wp2Escatz__ext__",
+                "Jmetalx_pe_Wp2Eincx__ext__",
+                "Jmetaly_pe_Wp2Eincy__ext__",
+                "Jmetalz_pe_Wp2Eincz__ext__",
+                "Jmetalx_me_gammaJmetalx__ext__",
+                "Jmetaly_me_gammaJmetaly__ext__",
+                "Jmetalz_me_gammaJmetalz__ext__"
             ]
         },
         {
             "name":"update_E_inside", 
             "sequence":[
-                "Ex_me_Jmetalx",
-                "Ey_me_Jmetaly",
-                "Ez_me_Jmetalz"
+                "Ex_me_Jmetalx__ext__",
+                "Ey_me_Jmetaly__ext__",
+                "Ez_me_Jmetalz__ext__"
             ]
         }
     ]

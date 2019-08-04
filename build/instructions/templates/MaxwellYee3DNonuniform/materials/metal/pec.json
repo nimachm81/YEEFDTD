@@ -92,57 +92,6 @@
             }
         },
         {
-        "type":"A+=sumbBC",
-        "parameters":{
-            "name":"Ex_me_pecMaskxEincx__ext__",
-            "A":"E",
-            "A_direction":"x",
-            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
-            "A_indEnd":["_indx1_", "_indy1_p1_", "_indz1_p1_"],
-            "b":[-1.0],
-            "B":["pecMask__ext__"],
-            "B_direction":["x"],
-            "B_indStart":[[0, 0, 0]],
-            "C":["Einc__ext__"],
-            "C_direction":["x"],
-            "C_indStart":[[0, 0, 0]]
-            }
-        },
-        {
-        "type":"A+=sumbBC",
-        "parameters":{
-            "name":"Ey_me_pecMaskyEincy__ext__",
-            "A":"E",
-            "A_direction":"y",
-            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
-            "A_indEnd":["_indx1_p1_", "_indy1_", "_indz1_p1_"],
-            "b":[-1.0],
-            "B":["pecMask__ext__"],
-            "B_direction":["y"],
-            "B_indStart":[[0, 0, 0]],
-            "C":["Einc__ext__"],
-            "C_direction":["y"],
-            "C_indStart":[[0, 0, 0]]
-            }
-        },
-        {
-        "type":"A+=sumbBC",
-        "parameters":{
-            "name":"Ez_me_pecMaskzEincz__ext__",
-            "A":"E",
-            "A_direction":"z",
-            "A_indStart":["_indx0_", "_indy0_", "_indz0_"],
-            "A_indEnd":["_indx1_p1_", "_indy1_p1_", "_indz1_"],
-            "b":[-1.0],
-            "B":["pecMask__ext__"],
-            "B_direction":["z"],
-            "B_indStart":[[0, 0, 0]],
-            "C":["Einc__ext__"],
-            "C_direction":["z"],
-            "C_indStart":[[0, 0, 0]]
-            }
-        },
-        {
         "type":"A=frt",
         "parameters":{
             "name":"pecMask_x_update__ext__",
@@ -178,10 +127,7 @@
             "sequence":[
                 "Ex_me_pecMaskxEx__ext__",
                 "Ey_me_pecMaskyEy__ext__",
-                "Ez_me_pecMaskzEz__ext__",
-                "Ex_me_pecMaskxEincx__ext__",
-                "Ey_me_pecMaskyEincy__ext__",
-                "Ez_me_pecMaskzEincz__ext__"
+                "Ez_me_pecMaskzEz__ext__"
             ]
         }
     ]

@@ -39,8 +39,8 @@ void test_run_fdtd_curved_lines_gaussian_plasma_time_switch_2d_from_json(
 
     std::size_t numOfSamplesPerUnitLength = 50;
 
-    FPNumber y0 = -20.0;
-    FPNumber y1 = 20.0;
+    FPNumber y0 = -40.0;
+    FPNumber y1 = 40.0;
     FPNumber z0 = -7.0;
     FPNumber z1 = 7.0;
     FPNumber pml_r_z0 = z1;
@@ -162,6 +162,9 @@ void test_run_fdtd_curved_lines_gaussian_plasma_time_switch_2d_from_json(
     std::string e_slice_c_name = std::string("\"") + outputFolder + "Ec-x-slice" +
                                  file_suffix +
                                  std::string("\"");
+    std::string h_slice_c_name = std::string("\"") + outputFolder + "Hc-y-slice" +
+                                 file_suffix +
+                                 std::string("\"");
     std::string e_name = std::string("\"") + outputFolder + "E-x" +
                                  file_suffix +
                                  std::string("\"");
@@ -251,6 +254,7 @@ void test_run_fdtd_curved_lines_gaussian_plasma_time_switch_2d_from_json(
             {"\"_Eslice_name_r_\"", e_slice_r_name},
             {"\"_Eslice_name_t_\"", e_slice_t_name},
             {"\"_Eslice_name_c_\"", e_slice_c_name},
+            {"\"_Hslice_name_c_\"", h_slice_c_name},
             {"\"_E_name_\"", e_name},
             {"\"_Wp2Slice_name_\"", wp2_slice_name},
             {"\"_Wp2_name_\"", wp2_name},

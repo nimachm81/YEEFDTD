@@ -11,37 +11,56 @@
 
 #include "MultiDimArray.hpp"
 
+enum class TAInstructionCode {
+    y_pe_ax,
+    y_e_ax,
+    z_pe_axy,
+    z_e_axy
+};
+
 class ThreadedAlgebra {
     public:
-    ThreadedAlgebra(std::size_t n_threads = 4);
+    ThreadedAlgebra(std::size_t n_threads = 2);
     ~ThreadedAlgebra();
 
     void MapThreadIds();
     void CalculateForever();
 
-    void Get_y_pe_ax(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    void SetArgsFlagsAndSignalStart();
+    void WaitForResults();
 
-    void Set_y_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    void Get_y_pe_ax(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    void Get_y_e_ax(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    void Get_z_pe_axy(NumberArray3D<FPNumber>& z, FPNumber a, NumberArray3D<FPNumber>& x, NumberArray3D<FPNumber>& y);
+    void Get_z_e_axy(NumberArray3D<FPNumber>& z, FPNumber a, NumberArray3D<FPNumber>& x, NumberArray3D<FPNumber>& y);
+
+    bool Set_y_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    bool Set_y_e_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    bool Set_y_e_or_pe_ax_args(NumberArray3D<FPNumber>& y, FPNumber a, NumberArray3D<FPNumber>& x);
+    bool Set_z_pe_axy_args(NumberArray3D<FPNumber>& z, FPNumber a, NumberArray3D<FPNumber>& x, NumberArray3D<FPNumber>& y);
+    bool Set_z_e_axy_args(NumberArray3D<FPNumber>& z, FPNumber a, NumberArray3D<FPNumber>& x, NumberArray3D<FPNumber>& y);
+    bool Set_z_e_or_pe_axy_args(NumberArray3D<FPNumber>& z, FPNumber a, NumberArray3D<FPNumber>& x, NumberArray3D<FPNumber>& y);
 
     void Terminate();
 
     private:
-    std::size_t numThreads;
-    std::condition_variable endCondition;
-    std::vector<bool> argsAreReady;
-    std::vector<std::condition_variable> startConditions;
-    std::vector<std::mutex> mutexs;
-    std::mutex sharedMutex;
+    const std::size_t numThreads;
     std::atomic<bool> terminateAll = false;
-    std::atomic<std::size_t> numOfThreadsProcessed = 0;
+    std::atomic<int> numOfThreadsProcessed = -1;
+    std::vector<std::atomic<int>> startOperation;
+
+    std::mutex sharedMutex;
 
     std::vector<std::thread> threads;
     std::map<std::thread::id, std::size_t> idMap;
     std::size_t lastId = 0;
 
+    TAInstructionCode instruction;
+
     FPNumber numA;
     std::vector<NumberArray3D<FPNumber>> arrASlices;
     std::vector<NumberArray3D<FPNumber>> arrBSlices;
+    std::vector<NumberArray3D<FPNumber>> arrCSlices;
 };
 
 #endif // _THREADED_ALGEBRA_

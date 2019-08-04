@@ -20,6 +20,7 @@
 #include "ParticleEmitter.h"
 #include "Geometry.h"
 #include "VectorField.h"
+#include "ThreadedAlgebra.h"
 
 class YeeGrid3D {
     public:
@@ -245,6 +246,13 @@ class YeeGrid3D {
             const std::array<FPNumber, 3> apexPosition
             );
 
+    void AddCylinderGeometry(const std::string name,
+            const FPNumber radius,
+            const FPNumber height,
+            const std::array<FPNumber, 3> topCenter,
+            bool alignEven
+            );
+
     void AddGaussianPlaneWaveVectorField(const std::string name,
             std::array<FPNumber, 3> propagationDirection,
             FPNumber velocity,
@@ -342,6 +350,8 @@ class YeeGrid3D {
     void SetDataStoreRate(std::string gridElemViewName, std::size_t saveEveryNSammples);
     void CloseGridViewFiles();
 
+    void SetThreadOptions(bool use_threads, ThreadedAlgebra* ta);
+
     protected:
     std::size_t timeIndex = 0;
     FPNumber dt;                  // time resolution
@@ -361,8 +371,8 @@ class YeeGrid3D {
     std::unordered_map<std::string, std::shared_ptr<ParticleEmitter>> particleEmitters;
     std::unordered_map<std::string, std::shared_ptr<VectorField>> vectorFields;
 
-    bool useThreads = true;
-    std::size_t n_threads = 4;
+    bool useThreads = false;
+    ThreadedAlgebra* threadedAlgebra = nullptr;
 };
 
 

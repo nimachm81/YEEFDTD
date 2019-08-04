@@ -1,5 +1,5 @@
 
-__all__ = ["Hyperboloid", "Cone"]
+__all__ = ["Hyperboloid", "Cone", "Cylinder"]
 
 
 import numpy as np
@@ -100,5 +100,34 @@ class Cone:
             return None
             
 
+class Cylinder:
+    def __init__(self, radius, height, topCenter):
+        self.radius = radius
+        self.height = height
+        self.topCenter = topCenter
+        
+        
+    def GetBoundingBox(self, y0, y1):
+        y_top = self.topCenter[1]
+        y_bot = y_top - self.height
+        if y_top > max(y0, y1):
+            y_top = max(y0, y1)
+        if y_bot < min(y0, y1):
+            y_bot = min(y0, y1)
+        
+        x_tc, z_tc = self.topCenter[0], self.topCenter[2]
+        
+        if y_bot < y_top:
+            r0_bb = np.array([x_tc - self.radius, y_bot, z_tc - self.radius ])
+            r1_bb = np.array([x_tc + self.radius, y_top, z_tc + self.radius ])
+        
+            return [r0_bb, r1_bb]
             
+        else:
+            return None
+        
+
+        
+        
+        
         

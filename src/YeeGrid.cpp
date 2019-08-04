@@ -22,6 +22,7 @@
 #include "WedgeGeometry.h"
 #include "Cone.h"
 #include "Hyperboloid.h"
+#include "Cylinder.h"
 #include "ChargedParticleEmitter.h"
 #include "ManualChargedParticleEmitter.h"
 #include "GaussianPlaneWaveGridArrayManipulator.h"
@@ -185,7 +186,10 @@ void YeeGrid3D::AddEntireGridElement(const std::string name, ElementType elemTyp
 void YeeGrid3D::AddPartialGridElement(const std::string name, ElementType elemType
         ,std::array<std::size_t, 3> startCell ,std::array<std::size_t, 3> numCells) {
     const auto& found = gridElements.find(name);
-    assert(found == gridElements.end()); // make sure name does not already exist.
+    if( !(found == gridElements.end()) ){ // make sure name does not already exist.
+        std::cout << "error: " << name << " already exists in partial grids!!" << std::endl;
+        assert(false);
+    }
     gridElements[name] = std::make_shared<YeeGridData3D>(elemType, numCells, startCell);
 }
 
@@ -479,7 +483,8 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 if(!useThreads) {
                     arrayASlice.Add_aX(b, arrayCSlice);
                 } else {
-                    arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                    //arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                    threadedAlgebra->Get_y_pe_ax(arrayASlice, b, arrayCSlice);
                 }
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C) {
                 if(i == 0) {
@@ -487,14 +492,16 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     if(!useThreads) {
                         arrayASlice.Equate_aX(b, arrayCSlice);
                     } else {
-                        arrayASlice.Equate_aX_threaded(b, arrayCSlice, n_threads);
+                        //arrayASlice.Equate_aX_threaded(b, arrayCSlice, n_threads);
+                        threadedAlgebra->Get_y_e_ax(arrayASlice, b, arrayCSlice);
                     }
                 } else {
                     //arrayASlice += b*arrayCSlice;
                     if(!useThreads) {
                         arrayASlice.Add_aX(b, arrayCSlice);
                     } else {
-                        arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                        //arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                        threadedAlgebra->Get_y_pe_ax(arrayASlice, b, arrayCSlice);
                     }
                 }
             } else if(instructionCode == FDInstructionCode::A_multequal_sum_b_C) {
@@ -575,7 +582,8 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 if(!useThreads) {
                     arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
                 } else {
-                    arrayASlice.Add_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                    //arrayASlice.Add_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                    threadedAlgebra->Get_z_pe_axy(arrayASlice, b, arrayBSlice, arrayCSlice);
                 }
             } else if(instructionCode == FDInstructionCode::A_equal_sum_bB_C) {
                 if(i == 0) {
@@ -583,14 +591,16 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     if(!useThreads) {
                         arrayASlice.Equate_aXY(b, arrayBSlice, arrayCSlice);
                     } else {
-                        arrayASlice.Equate_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                        //arrayASlice.Equate_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                        threadedAlgebra->Get_z_e_axy(arrayASlice, b, arrayBSlice, arrayCSlice);
                     }
                 } else {
                     //arrayASlice += b*arrayBSlice*arrayCSlice;
                     if(!useThreads) {
                         arrayASlice.Add_aXY(b, arrayBSlice, arrayCSlice);
                     } else {
-                        arrayASlice.Add_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                        //arrayASlice.Add_aXY_threaded(b, arrayBSlice, arrayCSlice, n_threads);
+                        threadedAlgebra->Get_z_pe_axy(arrayASlice, b, arrayBSlice, arrayCSlice);
                     }
                 }
             }
@@ -607,7 +617,10 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
         std::string& gridManipulator_name = std::get<0>(params_tuple);
 
         auto found = gridArrayManipulators.find(gridManipulator_name);
-        assert(found != gridArrayManipulators.end());  // name is valid
+        if( !(found != gridArrayManipulators.end()) ) {  // name is valid
+            std::cout << "error: " << gridManipulator_name << " is not a valid name." << std::endl;
+            assert(false);
+        }
 
         GridArrayManipulator& gridManipulator = *gridArrayManipulators[gridManipulator_name];
         FPNumber t = gridManipulator.CalculateTime(dt, timeIndex);
@@ -672,7 +685,8 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                 if(!useThreads) {
                     arrayASlice.Add_aX(b, arrayCSlice);
                 } else {
-                    arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                    //arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                    threadedAlgebra->Get_y_pe_ax(arrayASlice, b, arrayCSlice);
                 }
             } else if(instructionCode == FDInstructionCode::A_equal_sum_b_C_neighbor) {
                 if(i == 0) {
@@ -680,14 +694,16 @@ void YeeGrid3D::ApplyUpdateInstruction(FDInstructionCode instructionCode, void* 
                     if(!useThreads) {
                         arrayASlice.Equate_aX(b, arrayCSlice);
                     } else {
-                        arrayASlice.Equate_aX_threaded(b, arrayCSlice, n_threads);
+                        //arrayASlice.Equate_aX_threaded(b, arrayCSlice, n_threads);
+                        threadedAlgebra->Get_y_e_ax(arrayASlice, b, arrayCSlice);
                     }
                 } else {
                     //arrayASlice += b*arrayCSlice;
                     if(!useThreads) {
                         arrayASlice.Add_aX(b, arrayCSlice);
                     } else {
-                        arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                        //arrayASlice.Add_aX_threaded(b, arrayCSlice, n_threads);
+                        threadedAlgebra->Get_y_pe_ax(arrayASlice, b, arrayCSlice);
                     }
                 }
             }
@@ -1035,7 +1051,12 @@ void YeeGrid3D::AddRectPlaneWaveGridArrayManipulator(const std::string name,
             FPNumber timeOffsetFraction
             ) {
     const auto& found = gridArrayManipulators.find(name);
-    assert(found == gridArrayManipulators.end()); // make sure name does not already exist.
+    if(!(found == gridArrayManipulators.end()) ) { // make sure name does not already exist.
+        std::cout << "error: " << name << " already picked in gridArrayManipulators." << std::endl;
+        assert(false);
+    }
+    const auto& found_gd = gridElements.find(gridDataName);
+    assert(found_gd != gridElements.end()); // gridDataName is valid
 
     std::shared_ptr<RectPlaneWaveGridArrayManipulator> modifier(new RectPlaneWaveGridArrayManipulator);
     modifier->SetPropagationDirection(propagationDirection);
@@ -1177,6 +1198,25 @@ void YeeGrid3D::AddHyperboloidGeometry(const std::string name,
     geometry->SetApexRadius(tipRadius);
     geometry->SetHeight(height);
     geometry->SetApexPosition(apexPosition);
+
+    geometries[name] = geometry;
+}
+
+void YeeGrid3D::AddCylinderGeometry(const std::string name,
+            const FPNumber radius,
+            const FPNumber height,
+            const std::array<FPNumber, 3> topCenter,
+            bool alignEven
+            ) {
+    const auto& found = geometries.find(name);
+    assert(found == geometries.end()); // make sure name does not already exist.
+
+    std::shared_ptr<Cylinder> geometry(new Cylinder);
+
+    geometry->SetRadius(radius);
+    geometry->SetHeight(height);
+    geometry->SetTopPlane(topCenter);
+    geometry->SetEvenAlignment(alignEven);
 
     geometries[name] = geometry;
 }
@@ -1624,3 +1664,13 @@ void YeeGrid3D::CloseGridViewFiles() {
         it->second->CloseFile();
     }
 }
+
+void YeeGrid3D::SetThreadOptions(bool use_threads, ThreadedAlgebra* ta) {
+    useThreads = use_threads;
+    threadedAlgebra = ta;
+    if(use_threads) {
+        assert(ta != nullptr);
+    }
+}
+
+

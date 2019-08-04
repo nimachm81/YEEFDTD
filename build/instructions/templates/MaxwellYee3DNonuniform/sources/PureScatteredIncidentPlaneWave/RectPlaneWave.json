@@ -1,13 +1,13 @@
 {
     "partialGridArrays":[
-        {"name":"Einc", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
+        {"name":"Einc__ext__", "type":"EdgeE", "indStart":["_indx0_", "_indy0_", "_indz0_"], "nCells":["_nx_", "_ny_", "_nz_"]}
     ],
     "girdArrayManipulators":[
         {
         "type":"RectPlaneWaveGridArrayManipulator",
         "parameters":{
-            "name":"EyincUpdater",
-            "array":"Einc",
+            "name":"EyincUpdater__ext__",
+            "array":"Einc__ext__",
             "direction":"_polarization_",
             "propagationDirection":["_planewave_direction_x_", "_planewave_direction_y_", "_planewave_direction_z_"],
             "propagationVelocity":"_planewave_velocity_",
@@ -25,8 +25,8 @@
         {
         "type":"A=frt",
         "parameters":{
-            "name":"update_Ey_inc",
-            "girdArrayManipulator":"EyincUpdater"
+            "name":"update_Ey_inc__ext__",
+            "girdArrayManipulator":"EyincUpdater__ext__"
             }
         }
     ],
@@ -34,7 +34,7 @@
         {
             "name":"update_E_inside", 
             "sequence": [
-                "update_Ey_inc"
+                "update_Ey_inc__ext__"
             ]
         }
     ]
